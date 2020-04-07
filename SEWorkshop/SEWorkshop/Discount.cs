@@ -6,5 +6,11 @@ namespace SEWorkshop
 {
     class Discount
     {
+        public ICollection<Product> Products { get; private set; }
+
+        public Discount()
+        {
+            Products = new HashSet<Product>();
+        }
     }
 }
