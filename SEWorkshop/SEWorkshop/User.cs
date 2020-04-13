@@ -6,11 +6,14 @@ namespace SEWorkshop
 {
     class User
     {
-        public Cart Cart { get; private set; }
+        public ICollection<Cart> Carts { get; private set; }
+
+        public ICollection<Purchase> Purchases { get; private set; }
 
         public User()
         {
-            Cart = new Cart(this);
+            Carts = new List<Cart>();
+            Purchases = new List<Purchase>();
         }
     }
 }

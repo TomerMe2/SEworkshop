@@ -6,12 +6,12 @@ namespace SEWorkshop
 {
     class Purchase
     {
-        public Product Product { get; private set; }
+        public Cart Cart { get; private set; }
         public User User { get; private set; }
 
-        public Purchase(Product product, User user)
+        public Purchase(Cart cart, User user)
         {
-            Product = product;
+            Cart = cart;
             User = user;
         }
     }
