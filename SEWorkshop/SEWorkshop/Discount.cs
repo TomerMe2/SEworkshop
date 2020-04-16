@@ -6,11 +6,16 @@ namespace SEWorkshop
 {
     class Discount
     {
+        public enum DiscountType {visible}
+        public DiscountType DisType { get; private set;}
+        public int Code { get; private set;}
         public ICollection<Product> Products { get; private set; }
 
-        public Discount()
+        public Discount(int code)
         {
+            DisType = DiscountType.visible;
             Products = new HashSet<Product>();
+            Code = code;
         }
     }
 }
