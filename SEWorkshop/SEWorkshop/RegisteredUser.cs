@@ -28,6 +28,7 @@ namespace SEWorkshop
 
 
         public Logout(){
+            this.Facade.Logout();
 
         }
 
