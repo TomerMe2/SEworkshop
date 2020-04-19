@@ -4,7 +4,6 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    
     class RegisteredUser : User
     {
         public ICollection<Store> Owns { get; private set; }
@@ -25,7 +24,6 @@ namespace SEWorkshop
             Messages = new List<Message>();
             Purchase_Histroy= new List<Product>();
         }
-
 
         public Logout(){
             this.Facade.Logout();

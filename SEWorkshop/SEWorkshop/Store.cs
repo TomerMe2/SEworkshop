@@ -12,7 +12,6 @@ namespace SEWorkshop
         public IList<Message> Messages { get; private set; }
         public string Store_name {get; private set; }
 
-
         public Store(RegisteredUser owner, string store_name)
         {
             Products = new List<Product>();

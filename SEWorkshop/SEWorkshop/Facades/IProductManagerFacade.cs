@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop
+namespace SEWorkshop.Facades
 {
-
- interface IProductManagerFacade
+    interface IProductManagerFacade
     {
         void AddProduct();
         
         Product GetProduct();
-
     }
-
 }

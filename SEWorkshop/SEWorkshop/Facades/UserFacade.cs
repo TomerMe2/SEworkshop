@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop
+namespace SEWorkshop.Facades
 {
     class UserFacade
     {
-
         private static ICollection<RegisteredUser> Users;
         private static bool isAuthorized;
-        public UserFacade() : base()
+        public UserFacade()
         {
             Users = new List<RegisteredUser>();
             isAuthorized = false;
