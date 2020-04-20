@@ -12,8 +12,6 @@ namespace SEWorkshop
         public IList<Message> Messages { get; private set; }
         public bool IsOpen { get; private set; }
         public string Name { get; private set; }
-        public double? Rating { get; private set; } = null;   // Rating is null when no one has rated the store
-        private int NumberOfRaters { get; set; } = 0;   // No one has rated the store before it was created
 
         public Store(RegisteredUser owner, string name)
         {
@@ -29,13 +27,6 @@ namespace SEWorkshop
         {
             IsOpen = false;
         }
-
-        public void Rate(double rate)
-        {
-            Rating = (NumberOfRaters * Rating + rate) / (NumberOfRaters + 1);
-            NumberOfRaters++;
-        }
-
 
     }
 }

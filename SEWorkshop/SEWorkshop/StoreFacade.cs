@@ -8,8 +8,8 @@ namespace SEWorkshop
     class StoreFacade
     {
         private static StoreFacade? Instance { get; set; } = null;
-
         private ICollection<Store> Stores { get; set; }
+
         private StoreFacade()
         {
             Stores = new List<Store>();
@@ -52,7 +52,6 @@ namespace SEWorkshop
                    select product;
         }
 
-
         /// <summary>
         /// Returns IEnumerable of stores that pred is true for them
         /// </summary>
@@ -62,8 +61,6 @@ namespace SEWorkshop
                    where pred(store)
                    select store;
         }
-
-
-            
+        
     }
 }
