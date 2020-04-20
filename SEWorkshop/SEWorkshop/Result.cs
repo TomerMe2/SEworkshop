@@ -7,18 +7,12 @@ namespace SEWorkshop
     public class Result
     {
         bool Successful { get; set; }
-        public string ErrorMessage { get; set; }
+        public string Message { get; set; }
 
-        protected Result()
-        {
-            this.Successful = true;
-            this.ErrorMessage = "";
-        }
-
-        protected Result(String ErrorMessage)
+        protected Result(string Message, bool isSuccessful)
         {
             this.Successful = false;
-            this.ErrorMessage = ErrorMessage;
+            this.Message = Message;
         }
 
         public bool isSuccessful()
@@ -26,14 +20,14 @@ namespace SEWorkshop
             return Successful;
         }
 
-        public static Result Success()
+        public static Result Success(string message)
         {
-            return new Result();
+            return new Result(message, true);
         }
 
-        public static Result Error(String errorMessage)
+        public static Result Error(string errorMessage)
         {
-            return new Result(errorMessage);
+            return new Result(errorMessage, false);
         }
     }
 }

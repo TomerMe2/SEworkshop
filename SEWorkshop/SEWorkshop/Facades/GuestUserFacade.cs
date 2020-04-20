@@ -6,8 +6,7 @@ namespace SEWorkshop.Facades
 {
     public class GuestUserFacade : IUserFacade
     {
-        private ICollection<LoggedInUser> Users;
-        private GuestUser guestUser = null;
+        private IDictionary<string, string> Users;
         private static GuestUserFacade Instance = null;
 
         public static GuestUserFacade getInstance()
@@ -19,43 +18,35 @@ namespace SEWorkshop.Facades
 
         private GuestUserFacade()
         {
-            Users = new List<LoggedInUser>();
-            guestUser = new GuestUser();
+            Users = new Dictionary<string, string>();
         }
 
-        public Result Register(LoggedInUser user)
+        public Result Register(string username, string password)
         {
             foreach(var User in Users)
             {
-                if(user.Username.Equals(User.Username))
+                if(username.Equals(User.Key))
                 {
                     return Result.Error("User with this username already exists");
                 }
             }
-            Users.Add(user);
-            return Result.Success();
+            Users.Add(username, password);
+            return Result.Success("Welcome!");
         }
 
-        public LoggedInUser Login(string username, string password)
+        public Result Login(string username, string password)
         {
             foreach(var User in Users)
             {
-                if(username.Equals(User.Username))
+                if(username.Equals(User.Key))
                 {
-                    if(password.Equals(User.Password))
+                    if(password.Equals(User.Value))
                     {
-                        guestUser = null;
-                        return User;                        
+                        return LoggedInUserFacade.getInstance().Login(username);
                     }
                 }
             }
-            return null;
-        }
-
-        public void Logout()
-        {
-            guestUser = new GuestUser();
-            LoggedInUserFacade.getInstance().Logout();
+            return Result.Error("Wrong Username or Password");
         }
 
         public void CreateBasket(Cart cart, Store store)

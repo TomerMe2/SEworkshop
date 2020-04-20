@@ -8,33 +8,23 @@ namespace SEWorkshop
     {
         public GuestUser() : base() { }
         
-        LoggedInUser Register(string username, string password) {
+        Result Register(string username, string password) {
             LoggedInUser user = new LoggedInUser(username, password);
-            if(Facades.LoggedInUserFacade.getInstance().HasAuthorizaton())
+            if(Facades.LoggedInUserFacade.getInstance().HasAuthorization(username))
             {
                 Console.WriteLine("Please logout before registration");
                 return null;
             }
-            if(Facades.GuestUserFacade.getInstance().Register(user).isSuccessful())
-            {
-                Console.WriteLine("An error has occured");
-                    return null;
-            }
-            return user;
+            return Facades.GuestUserFacade.getInstance().Register(username, password);
         }
 
-        LoggedInUser Login(string username, string password) {
-            if(Facades.LoggedInUserFacade.getInstance().HasAuthorizaton())
+        Result Login(string username, string password) {
+            if(Facades.LoggedInUserFacade.getInstance().HasAuthorization(username))
             {
                 Console.WriteLine("You are already logged in");
                 return null;
             }
-            LoggedInUser user = Facades.LoggedInUserFacade.getInstance().Login(username, password);
-            if(user == null)
-            {
-                Console.WriteLine("An error has occured");
-            }
-            return user;
+            return Facades.GuestUserFacade.getInstance().Login(username, password);
         }
     }
 }

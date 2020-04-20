@@ -50,15 +50,15 @@ namespace SEWorkshop.ServiceLayer
             string Username = Console.ReadLine();
             Console.Write("Password: ");
             string Password = Console.ReadLine();
-            Result result = GuestUserFacade.getInstance().Register(new LoggedInUser(Username, Password));
+            Result result = GuestUserFacade.getInstance().Register(Username, Password);
             while (!result.isSuccessful())
             {
-                Console.WriteLine(result.ErrorMessage);
+                Console.WriteLine(result.Message);
                 Console.Write("Username: ");
                 Username = Console.ReadLine();
                 Console.Write("Password: ");
                 Password = Console.ReadLine();
-                result = UserFacade.Register(new LoggedInUser(Username, Password));
+                result = UserFacade.Register(Username, Password);
             }
             Console.WriteLine("Registered Succefully");
             Login();

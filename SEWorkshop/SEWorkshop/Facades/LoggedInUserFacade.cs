@@ -6,8 +6,8 @@ namespace SEWorkshop.Facades
 {
     public class LoggedInUserFacade : IUserFacade
     {
-        private LoggedInUser loggedInUser = null;
         private static LoggedInUserFacade Instance = null;
+        private string loggedInUser {get; set; }
 
         public static LoggedInUserFacade getInstance()
         {
@@ -18,23 +18,28 @@ namespace SEWorkshop.Facades
 
         private LoggedInUserFacade()
         {
-        }
-
-        public LoggedInUser Login(String username, String password)
-        {
-            loggedInUser = GuestUserFacade.getInstance().Login(username, password);
-            return loggedInUser;
-        }
-
-        public bool HasAuthorizaton()
-        {
-            return loggedInUser != null;
-        }
-
-        public void Logout()
-        {
             loggedInUser = null;
-            GuestUserFacade.getInstance().Logout();
+        }
+
+        public Result Login(string username)
+        {
+            loggedInUser = username;
+            return Result.Success("Welcome back, " + username);
+        }
+
+        public bool HasAuthorization(string username)
+        {
+            return loggedInUser.Equals(username);
+        }
+
+        public Result Logout(string username)
+        {
+            if(!HasAuthorization(username))
+            {
+                return Result.Error("User is not authorized!");
+            }
+            loggedInUser = null;
+            return Result.Success("Goodbye!");
         }
 
         public void CreateBasket(Cart cart, Store store)
