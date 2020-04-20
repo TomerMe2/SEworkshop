@@ -27,9 +27,7 @@ namespace SEWorkshop
 
         public Logout(){
             this.Facade.Logout();
-
         }
-
 
         public void OpenStore(string store_name){
             Store new_store= new Store(this.RegisteredUser, store_name);
@@ -38,18 +36,17 @@ namespace SEWorkshop
 
         } 
 
-
         public Boolean PurchaseHistoryContainsProduct(Product pro){
-                foreach(Purchase p in Purchase_Histroy){
-                    foreach(Cart c in p){
-                        foreach(Product prod in c){
-                            if(prod.Product_name ==pro.Product_name && pro.Store==prod.Store){
-                                return true;
-                            }
+            foreach(Purchase p in Purchase_Histroy){
+                foreach(Cart c in p){
+                    foreach(Product prod in c){
+                        if(prod.Product_name ==pro.Product_name && pro.Store==prod.Store){
+                            return true;
                         }
                     }
                 }
-                return false;
+            }
+            return false;
         }
 
         public void WriteReview(string review, Product p){

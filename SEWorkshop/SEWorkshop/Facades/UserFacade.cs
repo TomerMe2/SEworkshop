@@ -6,36 +6,50 @@ namespace SEWorkshop.Facades
 {
     class UserFacade
     {
-        private static ICollection<RegisteredUser> Users;
-        private static bool isAuthorized;
-        public UserFacade()
+        private ICollection<RegisteredUser> Users;
+        private RegisteredUser loggedInUser = null;
+        private static UserFacade Instance = null;
+
+        public static UserFacade getInstance()
+        {
+            if (Instance == null)
+                Instance = new UserFacade();
+            return Instance;
+        }
+
+        private UserFacade()
         {
             Users = new List<RegisteredUser>();
-            isAuthorized = false;
         }
-        
-        public static bool Register(RegisteredUser user)
+
+        public bool isLoggedIn()
         {
-            if(isAuthorized)
+            return loggedInUser != null;
+        }
+
+        public Result Register(string Username, string Password)
+        {
+            RegisteredUser user = new RegisteredUser(Username, Password);
+            if(isLoggedIn())
             {
-                return false;
+                return Result.Error("User is already logged in");
             }
             foreach(var User in Users)
             {
                 if(user.Username.Equals(User.Username))
                 {
-                    return false;
+                    return Result.Error("User with this username already exists");
                 }
             }
             Users.Add(user);
-            return true;
+            return Result.Success();
         }
 
-        public static RegisteredUser Login(string username, string password)
+        public bool Login(string username, string password)
         {
-            if(isAuthorized)
+            if(isLoggedIn())
             {
-                return null;
+                return false;
             }
             foreach(var User in Users)
             {
@@ -43,26 +57,17 @@ namespace SEWorkshop.Facades
                 {
                     if(password.Equals(User.Password))
                     {
-                        isAuthorized = true;
-                        return User;
-                    }
-                    else
-                    {
-                        return null;
+                        loggedInUser = User;
+                        return true;
                     }
                 }
             }
-            return null;
+            return false;
         }
 
-        public static void Logout()
+        public void Logout()
         {
-            isAuthorized = false;
-        }
-
-        public static bool HasAuthorizaton()
-        {
-            return isAuthorized;
+            loggedInUser = null;
         }
     }
 }
