@@ -7,7 +7,6 @@ namespace SEWorkshop.ServiceLayer
 {
     class GuestUI : UserUI
     {
-        UserFacade UserFacadeInstance = null;
         public static void Home()
         {
             //UserFacadeInstance = UserFacade.getInstance();
@@ -51,7 +50,7 @@ namespace SEWorkshop.ServiceLayer
             string Username = Console.ReadLine();
             Console.Write("Password: ");
             string Password = Console.ReadLine();
-            Result result = UserFacade.getInstance().Register(Username, Password);
+            Result result = GuestUserFacade.getInstance().Register(new LoggedInUser(Username, Password));
             while (!result.isSuccessful())
             {
                 Console.WriteLine(result.ErrorMessage);
@@ -59,7 +58,7 @@ namespace SEWorkshop.ServiceLayer
                 Username = Console.ReadLine();
                 Console.Write("Password: ");
                 Password = Console.ReadLine();
-                result = UserFacade.getInstance().Register(Username, Password);
+                result = GuestUserFacade.getInstance().Register(new LoggedInUser(Username, Password));
             }
             Console.WriteLine("Registered Succefully");
             Login();

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Discount
+    public class Discount
     {
         public enum DiscountType {visible}
         public DiscountType DisType { get; private set;}

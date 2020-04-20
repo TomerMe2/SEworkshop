@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Administrator : RegisteredUser
+    class Administrator : LoggedInUser
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }
 

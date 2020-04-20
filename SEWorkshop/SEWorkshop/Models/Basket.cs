@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Basket
+    public class Basket
     {
         public Store Store { get; private set; }
         public Cart Cart { get; private set; }

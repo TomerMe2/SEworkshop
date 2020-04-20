@@ -4,17 +4,17 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class RegisteredUser : User
+    public class LoggedInUser : User
     {
-        public ICollection<Store> Owns { get; private set; }
-        public ICollection<Store> Manages { get; private set; }
+        public IList<Store> Owns { get; private set; }
+        public IList<Store> Manages { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
         public IList<Purchase> Purchase_Histroy{get; private set;}
         public string Username {get; private set;}
         public string Password {get; private set;} 
 
-        public RegisteredUser(string username, string password)
+        public LoggedInUser(string username, string password)
         {
             Username=username;
             Password=password;
@@ -22,17 +22,17 @@ namespace SEWorkshop
             Manages = new List<Store>();
             Reviews = new List<Review>();
             Messages = new List<Message>();
-            Purchase_Histroy= new List<Product>();
+            Purchase_Histroy= new List<Purchase>();
         }
 
-        public Logout(){
-            this.Facade.Logout();
+        public void Logout(){
+            Facades.LoggedInUserFacade.getInstance().Logout();
         }
 
         public void OpenStore(string store_name){
-            Store new_store= new Store(this.RegisteredUser, store_name);
+            Store new_store= new Store(Facades.LoggedInUserFacade.getInstance().LoggedInUser, store_name);
             Owns.Add(new_store);
-            Console.WriteLine("store: "+ name + " has opened\n");
+            Console.WriteLine("store: "+ store_name + " has opened\n");
 
         } 
 
@@ -40,7 +40,7 @@ namespace SEWorkshop
             foreach(Purchase p in Purchase_Histroy){
                 foreach(Cart c in p){
                     foreach(Product prod in c){
-                        if(prod.Product_name ==pro.Product_name && pro.Store==prod.Store){
+                        if(prod.Name ==pro.Name && pro.Store==prod.Store){
                             return true;
                         }
                     }

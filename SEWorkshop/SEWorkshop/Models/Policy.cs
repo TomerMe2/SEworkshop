@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Policy
+    public class Policy
     {
         public ICollection<Rule> Rules { get; private set; }
         public ICollection<Product> Products { get; private set; }

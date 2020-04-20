@@ -4,12 +4,12 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Review
+    public class Review
     {
-        public RegisteredUser Writer { get; private set; }
+        public LoggedInUser Writer { get; private set; }
         public Product Product { get; private set; }
 
-        public Review(RegisteredUser writer, Product product)
+        public Review(LoggedInUser writer, Product product)
         {
             Writer = writer;
             Product = product;

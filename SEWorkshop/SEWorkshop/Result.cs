@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Result
+    public class Result
     {
         bool Successful { get; set; }
         public string ErrorMessage { get; set; }

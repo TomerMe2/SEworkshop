@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Product
+    public class Product
     {
         public string Name {get; private set; } 
         public string Category {get; private set; }

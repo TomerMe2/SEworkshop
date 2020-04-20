@@ -4,18 +4,18 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class GuestUser : User
+    public class GuestUser : User
     {
         public GuestUser() : base() { }
         
-        RegisteredUser Register(string username, string password) {
-            RegisteredUser user = new RegisteredUser(username, password);
-            if(UserFacade.HasAuthorizaton())
+        LoggedInUser Register(string username, string password) {
+            LoggedInUser user = new LoggedInUser(username, password);
+            if(Facades.LoggedInUserFacade.getInstance().HasAuthorizaton())
             {
                 Console.WriteLine("Please logout before registration");
                 return null;
             }
-            if(!UserFacade.Register(user))
+            if(Facades.GuestUserFacade.getInstance().Register(user).isSuccessful())
             {
                 Console.WriteLine("An error has occured");
                     return null;
@@ -23,13 +23,13 @@ namespace SEWorkshop
             return user;
         }
 
-        RegisteredUser Login(string username, string password) {
-            if(UserFacade.HasAuthorizaton())
+        LoggedInUser Login(string username, string password) {
+            if(Facades.LoggedInUserFacade.getInstance().HasAuthorizaton())
             {
                 Console.WriteLine("You are already logged in");
                 return null;
             }
-            RegisteredUser user = UserFacade.Login(username, password);
+            LoggedInUser user = Facades.LoggedInUserFacade.getInstance().Login(username, password);
             if(user == null)
             {
                 Console.WriteLine("An error has occured");
