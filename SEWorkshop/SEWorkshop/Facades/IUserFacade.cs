@@ -13,6 +13,6 @@ namespace SEWorkshop.Facades
         public void AddProductToCart(User user, Product product); //throws exception
         public void RemoveProductFromCart(User user, Product product); //throws exception
         public void Purchase(User user, Basket basket); //throws exception
-        public IEnumerable<Purchase> WatchPurcahseHistory(User user);
+        public IEnumerable<Purchase> PurcahseHistory(User user);
     }
 }

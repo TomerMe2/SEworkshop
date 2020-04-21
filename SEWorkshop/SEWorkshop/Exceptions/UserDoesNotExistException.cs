@@ -1,6 +1,5 @@
 namespace SEWorkshop.Exceptions
 {
-
     [System.Serializable]
     public class UserDoesNotExistException : System.Exception
     {

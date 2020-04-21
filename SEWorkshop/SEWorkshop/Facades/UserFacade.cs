@@ -118,7 +118,7 @@ namespace SEWorkshop.Facades
             Purchases.Add(purchase);
         }
 
-        public IEnumerable<Purchase> WatchPurcahseHistory(User user)
+        public IEnumerable<Purchase> PurcahseHistory(User user)
         {
             if(!HasPermission)
             {
