@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SEWorkshop
+namespace SEWorkshop.Models
 {
     class Program
     {

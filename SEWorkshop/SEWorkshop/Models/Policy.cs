@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop
+namespace SEWorkshop.Models
 {
     public class Policy
     {
