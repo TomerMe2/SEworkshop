@@ -16,8 +16,8 @@ namespace SEWorkshop
 
         public LoggedInUser(string username, string password)
         {
-            Username=username;
-            Password=password;
+            Username = username;
+            Password = password;
             Owns = new List<Store>();
             Manages = new List<Store>();
             Reviews = new List<Review>();

@@ -6,7 +6,7 @@ namespace SEWorkshop.Facades
 {
     public class GuestUserFacade : IUserFacade
     {
-        private IDictionary<string, string> Users;
+        private IDictionary<string, string> Users {get; set;}
         private static GuestUserFacade Instance = null;
 
         public static GuestUserFacade getInstance()

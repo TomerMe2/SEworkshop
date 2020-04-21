@@ -8,21 +8,19 @@ namespace SEWorkshop
     {
         public GuestUser() : base() { }
         
-        Result Register(string username, string password) {
+        public Result Register(string username, string password) {
             LoggedInUser user = new LoggedInUser(username, password);
             if(Facades.LoggedInUserFacade.getInstance().HasAuthorization(username))
             {
-                Console.WriteLine("Please logout before registration");
-                return null;
+                return Result.Error("Please logout before registration");
             }
             return Facades.GuestUserFacade.getInstance().Register(username, password);
         }
 
-        Result Login(string username, string password) {
+        public Result Login(string username, string password) {
             if(Facades.LoggedInUserFacade.getInstance().HasAuthorization(username))
             {
-                Console.WriteLine("You are already logged in");
-                return null;
+                return Result.Error("You are already logged in");
             }
             return Facades.GuestUserFacade.getInstance().Login(username, password);
         }
