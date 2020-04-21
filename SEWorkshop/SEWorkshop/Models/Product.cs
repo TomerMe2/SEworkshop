@@ -25,7 +25,7 @@ namespace SEWorkshop
         {
             string output = "Name: " + Name +
             "\nDescription: " + Description + 
-            "\nStore: " + Store.Store_name +
+            "\nStore: " + Store.StoreName +
             "\nCategory: " + Category +
             "\nPrice: " + Price;
             return output;
