@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Models;
 
 namespace SEWorkshop.Facades
 {

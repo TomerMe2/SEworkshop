@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop
+namespace SEWorkshop.Models
 {
     public class Product
     {
@@ -25,7 +25,7 @@ namespace SEWorkshop
         {
             string output = "Name: " + Name +
             "\nDescription: " + Description + 
-            "\nStore: " + Store.StoreName +
+            "\nStore: " + Store.Name +
             "\nCategory: " + Category +
             "\nPrice: " + Price;
             return output;
