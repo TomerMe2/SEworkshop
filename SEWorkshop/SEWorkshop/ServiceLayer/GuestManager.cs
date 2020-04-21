@@ -5,7 +5,7 @@ using SEWorkshop.Facades;
 
 namespace SEWorkshop.ServiceLayer
 {
-    class GuestService : UserService
+    class GuestManager : IUserManager
     {
         private GuestUserFacade UserFacade = GuestUserFacade.getInstance();
         public static void Main()

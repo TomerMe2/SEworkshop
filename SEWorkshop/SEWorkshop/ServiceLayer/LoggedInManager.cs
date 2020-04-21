@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.ServiceLayer
 {
-    class LoggedInService : UserService
+    class LoggedInManager : IUserManager
     {
     }
 }

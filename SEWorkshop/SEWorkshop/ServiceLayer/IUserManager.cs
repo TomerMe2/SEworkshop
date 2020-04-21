@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.ServiceLayer
 {
-    class UserService
+    class IUserManager
     {
         public static void Home()
         {
