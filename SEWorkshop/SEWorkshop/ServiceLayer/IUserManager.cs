@@ -4,43 +4,20 @@ using System.Text;
 
 namespace SEWorkshop.ServiceLayer
 {
-    class IUserManager
+    interface IUserManager
     {
-        public static void Home()
-        {
-            Console.WriteLine("Welcome to the trading system!");
-            Console.WriteLine("1. Browse Stores\n 2. Search Product\n 3. My Cart\n");
-        }
-
-        protected static void ApplyChoice(int choice)
-        {
-            switch (choice)
-            {
-                case 1:
-                    BrowseStores();
-                    break;
-                case 2:
-                    SearchProduct();
-                    break;
-                case 3:
-                    MyCart();
-                    break;
-            }
-        }
-
-        private static void MyCart()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void SearchProduct()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void BrowseStores()
-        {
-            throw new NotImplementedException();
-        }
+        public void Register(string username, string password); //throws exception
+        public void Login(string username, string password); //throws exception
+        public IEnumerable<Store> BrowseStores();
+        public IEnumerable<Product> SearchProducts(Func<Product, bool> pred);
+        public IEnumerable<Product> FilterProducts(IEnumerable<Product> products, Func<Product, bool> pred);
+        public void SaveProductToBasket(Product product); //throws exception
+        public IEnumerable<Basket> MyCart();
+        public void AddProductToCart(Product product); //throws exception
+        public void RemoveProductFromCart(Product product); //throws exception
+        public void Purchase(Product product); //throws exception
+        public void Logout(); //throws exception
+        public void OpenStore(Store store); //throws exception
+        public IEnumerable<Purchase> WatchPurcahseHistory(); //throws exception
     }
 }

@@ -6,13 +6,12 @@ namespace SEWorkshop
 {
     public class Purchase
     {
-        public Cart Cart { get; private set; }
-        public User User { get; private set; }
-
-        public Purchase(Cart cart, User user)
+        public Basket Basket { get; private set; }
+        public DateTime TimeStamp { get; private set; }
+        public Purchase(Basket basket)
         {
-            Cart = cart;
-            User = user;
+            Basket = basket;
+            TimeStamp = DateTime.Now;
         }
     }
 }
