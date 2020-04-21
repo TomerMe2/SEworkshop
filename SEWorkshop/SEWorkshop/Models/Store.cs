@@ -6,23 +6,24 @@ namespace SEWorkshop
 {
     public class Store
     {
-        public IEnumerable<Product> Products { get; private set; }
-        public IEnumerable<LoggedInUser> Managers { get; private set; }
-        public IEnumerable<LoggedInUser> Owners { get; private set; }
-        public IEnumerable<Message> Messages { get; private set; }
-        public IEnumerable<Discount> Discounts { get; private set; }
-        public string Store_name {get; private set; }
+        public ICollection<Product> Products { get; private set; }
+        public ICollection<LoggedInUser> Managers { get; private set; }
+        public ICollection<LoggedInUser> Owners { get; private set; }
+        public ICollection<Message> Messages { get; private set; }
+        public ICollection<Discount> Discounts { get; private set; }
+        public string StoreName {get; private set; }
         public Policy Policy { get; private set; }
+        public bool IsOpen { get; internal set; }
 
-        public Store(LoggedInUser owner, string store_name, Policy policy)
+        public Store(LoggedInUser owner, string storeName)
         {
             Products = new List<Product>();
             Managers = new List<LoggedInUser>();
             Owners = new List<LoggedInUser>() { owner };
             Messages = new List<Message>();
             Discounts = new List<Discount>();
-            Store_name = store_name;
-            Policy = policy;
+            StoreName = storeName;
+            Policy = new Policy();
         }
     }
 }
