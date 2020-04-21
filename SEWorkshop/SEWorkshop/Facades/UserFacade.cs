@@ -133,7 +133,7 @@ namespace SEWorkshop.Facades
             newBasket.Products.Add(product);
             user.Cart.Baskets.Add(newBasket);
         }
-
+        
         public void RemoveProductFromCart(User user, Product product)
         {
             foreach(var basket in user.Cart.Baskets)
