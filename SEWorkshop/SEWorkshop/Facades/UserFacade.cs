@@ -64,6 +64,14 @@ namespace SEWorkshop.Facades
             throw new UserDoesNotExistException();
         }
 
+        public void Logout()
+        {
+            if(!HasPermission)
+            {
+                throw new UserHasNoPermissionException();
+            }
+            HasPermission = false;
+        }
         public IEnumerable<Basket> MyCart(User user)
         {
             return user.Cart.Baskets;
