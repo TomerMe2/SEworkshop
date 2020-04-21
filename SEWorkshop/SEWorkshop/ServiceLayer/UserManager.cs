@@ -16,7 +16,7 @@ namespace SEWorkshop.ServiceLayer
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Product> FilterProducts(IEnumerable<Product> products, Func<Product, bool> pred)
+        public IEnumerable<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +51,7 @@ namespace SEWorkshop.ServiceLayer
             throw new NotImplementedException();
         }
 
-        public void RemoveProductToCart(Product product)
+        public void RemoveProductFromCart(Product product)
         {
             throw new NotImplementedException();
         }
