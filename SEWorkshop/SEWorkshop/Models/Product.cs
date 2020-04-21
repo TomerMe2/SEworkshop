@@ -6,22 +6,25 @@ namespace SEWorkshop
 {
     public class Product
     {
-        public string Name {get; private set; } 
-        public string Category {get; private set; }
-        public float Price { get; private set; }
         public Store Store { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Category { get; set; }
+        public double Price { get; set; }
 
-        public Product(string name, string category, float price, Store store)
+        public Product(Store store, string name, string description, string category, double price)
         {
+            Store = store;
             Name = name;
+            Description = description;
             Category = category;
             Price = price;
-            Store = store;
         }
 
         public override string ToString()
         {
             string output = "Name: " + Name +
+            "\nDescription: " + Description + 
             "\nStore: " + Store.Store_name +
             "\nCategory: " + Category +
             "\nPrice: " + Price;
