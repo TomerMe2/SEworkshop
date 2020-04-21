@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
+using NLog;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -12,6 +13,7 @@ namespace SEWorkshop.ServiceLayer
         readonly IStoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User User = new GuestUser();
         bool IsLoggedIn = false;
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
         {
