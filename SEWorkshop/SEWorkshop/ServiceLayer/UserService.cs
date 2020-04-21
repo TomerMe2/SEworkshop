@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.ServiceLayer
 {
-    class UserUI
+    class UserService
     {
         public static void Home()
         {
