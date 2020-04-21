@@ -39,7 +39,7 @@ namespace SEWorkshop.Facades
         {
             return (from store in Stores
                     where store.IsOpen
-                    select store).ToList<Store>();
+                    select store).ToList();
         }
 
         /// <summary>
@@ -49,12 +49,19 @@ namespace SEWorkshop.Facades
         {
             return (from store in BrowseStores()
                 where pred(store)
-                select store).ToList<Store>();
+                select store).ToList();
         }
 
         public bool IsProductExists(Product product)
         {
-            throw new NotImplementedException();
+            return (from prod in AllActiveProducts()
+                    where prod == product
+                    select prod).Any();
+        }
+
+        private IEnumerable<Product> AllActiveProducts()
+        {
+            return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products));
         }
 
         /// <summary>
@@ -62,14 +69,16 @@ namespace SEWorkshop.Facades
         /// </summary>
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
-            return (from product in BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products))
+            return (from product in AllActiveProducts()
                    where pred(product)
-                   select product).ToList<Product>();
+                   select product).ToList();
         }
 
         public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
-            throw new NotImplementedException();
+            return (from product in products
+                    where pred(product)
+                    select product).ToList();
         }
     }
 }
