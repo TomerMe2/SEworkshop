@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class GuestUser : User
+    public class GuestUser : User
     {
         public GuestUser() : base() { }
     }

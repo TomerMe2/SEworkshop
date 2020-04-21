@@ -4,13 +4,15 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Discount
+    public class Basket
     {
+        public Store Store { get; private set; }
         public ICollection<Product> Products { get; private set; }
 
-        public Discount()
+        public Basket(Store store)
         {
-            Products = new HashSet<Product>();
+            Store = store;
+            Products = new List<Product>();
         }
     }
 }

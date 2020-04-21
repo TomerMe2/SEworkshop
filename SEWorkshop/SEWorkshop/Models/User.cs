@@ -4,15 +4,13 @@ using System.Text;
 
 namespace SEWorkshop
 {
-    class Purchase
+    public class User
     {
         public Cart Cart { get; private set; }
-        public User User { get; private set; }
 
-        public Purchase(Cart cart, User user)
+        public User()
         {
-            Cart = cart;
-            User = user;
+            Cart = new Cart();
         }
     }
 }
