@@ -4,21 +4,21 @@ using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Facades
 {
-    public class GuestUserFacade : IUserFacade
+    public class UserFacade : IUserFacade
     {
         private ICollection<LoggedInUser> Users {get; set;}
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
-        private static GuestUserFacade Instance = null;
+        private static UserFacade Instance = null;
 
-        public static GuestUserFacade getInstance()
+        public static UserFacade GetInstance()
         {
             if (Instance == null)
-                Instance = new GuestUserFacade();
+                Instance = new UserFacade();
             return Instance;
         }
 
-        private GuestUserFacade()
+        private UserFacade()
         {
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();

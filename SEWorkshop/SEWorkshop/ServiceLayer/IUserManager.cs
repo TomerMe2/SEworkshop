@@ -10,7 +10,6 @@ namespace SEWorkshop.ServiceLayer
         public void Login(string username, string password); //throws exception
         public IEnumerable<Store> BrowseStores();
         public IEnumerable<Product> SearchProducts(Func<Product, bool> pred);
-        public IEnumerable<Product> FilterProducts(IEnumerable<Product> products, Func<Product, bool> pred);
         public IEnumerable<Basket> MyCart();
         public void AddProductToCart(Product product); //throws exception
         public void RemoveProductFromCart(Product product); //throws exception
