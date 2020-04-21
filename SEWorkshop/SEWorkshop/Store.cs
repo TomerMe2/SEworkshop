@@ -12,8 +12,9 @@ namespace SEWorkshop
         public IList<Message> Messages { get; private set; }
         public bool IsOpen { get; private set; }
         public string Name { get; private set; }
+        public Policy Policy { get; private set; }
 
-        public Store(RegisteredUser owner, string name)
+        public Store(RegisteredUser owner, string name, Policy policy)
         {
             Products = new List<Product>();
             Managers = new List<RegisteredUser>();
@@ -21,6 +22,7 @@ namespace SEWorkshop
             Messages = new List<Message>();
             IsOpen = true;
             Name = name;
+            Policy = policy;
         }
 
         public void CloseStore()
