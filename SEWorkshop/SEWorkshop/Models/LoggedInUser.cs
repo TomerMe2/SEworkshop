@@ -13,11 +13,13 @@ namespace SEWorkshop.Models
         public IList<Purchase> PurchaseHistory{get; private set;}
         public string Username {get; private set;}
         public string Password {get; private set;} 
+        public bool Appoint { get; private set; }
 
         public LoggedInUser(string username, string password)
         {
             Username = username;
             Password = password;
+            Appoint = false;
             Owns = new List<Store>();
             Manages = new List<Store>();
             Reviews = new List<Review>();

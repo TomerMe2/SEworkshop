@@ -10,7 +10,7 @@ namespace SEWorkshop.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
-        public double Price { get; set; }
+        public double Price { get   ; set; }
 
         public Product(Store store, string name, string description, string category, double price)
         {
