@@ -1,4 +1,5 @@
 ﻿using SEWorkshop.Models;
+using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,10 @@ namespace SEWorkshop.Facades
         /// <returns>The created store</returns>
         public Store CreateStore(LoggedInUser owner, string storeName)
         {
-
+            Func<Store, bool> StoresWithThisNamePredicate = store => store.Name.Equals(storeName);
+            ICollection<Store> StoresWithTheSameName = SearchStore(StoresWithThisNamePredicate);
+            if (StoresWithTheSameName.Count > 0)
+                throw new StoreWithThisNameAlreadyExistsException();
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
             return newStore;
@@ -77,44 +81,173 @@ namespace SEWorkshop.Facades
 
         public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
+            if (products.Count == 0)
+                throw new NoProductsToFilterException();
             return (from product in products
                     where pred(product)
                     select product).ToList();
         }
 
-        bool isUserAStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
-                                                                    where owner == user
-                                                                    select owner).ToList().Count()> 0);
-
-
-        bool isUserAStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
-                                                                    where manager == user
-                                                                    select manager).ToList().Count() > 0);
-
-        public void AddProduct(LoggedInUser user, Store store, string name, string description, string category, double price)
+        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price)
         {
-           
-            if (isUserAStoreOwner(user, store))
+            ICollection<Authorizations> authorizations;
+            if (isUserAStoreOwner(loggedInUser, store)
+                || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Products)))
             {
                 Product newProduct = new Product(store, name, description, category, price);
                 if (!IsProductExists(newProduct))
                 {
                     AllActiveProducts().ToList().Add(newProduct);
+                    return;
                 }
             }
-
+            throw new Exception();
         }
 
-        public void RemoveProduct(LoggedInUser user, Store store, Product product)
+        public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product)
         {
-            if (isUserAStoreOwner(user, store))
+            ICollection<Authorizations> authorizations;
+            if (isUserAStoreOwner(loggedInUser, store)
+                || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Products)))
             {
                 if (IsProductExists(product))
                 {
                     AllActiveProducts().ToList().Remove(product);
+                    return;
                 }
             }
+            throw new Exception();
         }
+
+        public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
+        {
+            ICollection<Authorizations> authorizations;
+            if((isUserAStoreOwner(loggedInUser, store)
+                || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Owner)))
+                && !isUserAStoreOwner(newOwner,store))
+            {
+                store.Owners.Add(newOwner, loggedInUser);
+                newOwner.Owns.Add(store);
+                return;
+            }
+            throw new Exception();
+        }
+
+        public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
+        {
+            ICollection<Authorizations> authorizations;
+            if ((isUserAStoreOwner(loggedInUser, store)
+                    || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Manager)))
+                && !isUserAStoreOwner(newManager,store))
+            {
+                store.Managers.Add(newManager, loggedInUser);
+                newManager.Manages.Add(store, new List<Authorizations>()
+                {
+                    Authorizations.Watching
+                });
+                return;
+            }
+            throw new Exception();
+        }
+
+        public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
+        {
+            ICollection<Authorizations> authorizations;
+            if ((isUserAStoreOwner(loggedInUser, store)
+                    || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Authorizing)))
+                && !isUserAStoreOwner(manager,store))
+            {
+                if(loggedInUser.Manages.TryGetValue(store, out authorizations)
+                        && authorizations.Contains(authorization))
+                    {
+                        authorizations.Remove(authorization);
+                    }
+                    else if (authorizations.Contains(authorization))
+                    {
+                        authorizations.Add(authorization);
+                    }
+                return;
+            }
+            throw new Exception();
+        }
+
+        public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
+        {
+            ICollection<Authorizations> authorizations;
+            if ((isUserAStoreOwner(loggedInUser, store)
+                    || (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations.Contains(Authorizations.Manager)))
+                && isUserAStoreOwner(managerToRemove,store))
+            {
+                LoggedInUser appointer;
+                if(!store.Managers.TryGetValue(managerToRemove, out appointer) ||
+                    appointer != loggedInUser)
+                {
+                    throw new Exception();
+                }
+                store.Managers.Remove(managerToRemove);
+                managerToRemove.Manages.Remove(store);
+            }
+            throw new Exception();
+        }
+        public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
+        {
+            ICollection<Authorizations> authorizations;
+            if(isUserAStoreOwner(loggedInUser, store) ||
+                (isUserAStoreManager(loggedInUser, store) &&
+                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                && authorizations.Contains(Authorizations.Replying)))
+            {
+                return store.Messages;
+            }
+            throw new Exception();
+        }
+
+        public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
+        {
+            ICollection<Authorizations> authorizations;
+            if(isUserAStoreOwner(loggedInUser, store) ||
+                (isUserAStoreManager(loggedInUser, store) &&
+                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                && authorizations.Contains(Authorizations.Replying)))
+            {
+                Message reply = new Message(loggedInUser, description, message);
+                message.Next = reply;
+            }
+            throw new Exception();
+        }
+
+        public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
+        {
+            ICollection<Authorizations> authorizations;
+            if(isUserAStoreOwner(loggedInUser, store) ||
+                (isUserAStoreManager(loggedInUser, store) &&
+                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                && authorizations.Contains(Authorizations.Replying)))
+            {
+                return store.Purchases;
+            }
+            throw new Exception();
+        }
+
+        bool isUserAStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
+                                                                    where owner.Value == user
+                                                                    select owner).ToList().Count()> 0);
+
+        bool isUserAStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
+                                                                    where manager.Value == user
+                                                                    select manager).ToList().Count() > 0);
 
         public void EditProductPrice(Product product, string description) => product.Description= description;
 
@@ -124,37 +257,5 @@ namespace SEWorkshop.Facades
 
         public void EditProductPrice(Product product, double price) => product.Price = price;
 
-        public void SetNewStoreOwner(LoggedInUser user, Store store, LoggedInUser newOwner)
-        {
-           if( isUserAStoreOwner(user, store)&& isUserAStoreManager(user, store)&& !isUserAStoreOwner(newOwner,store))
-            {
-                store.Owners.Add(newOwner);
-                //TODO set that newOwner was appointed by loggedinUser
-            }
-        }
-
-        public void SetStoreManager(LoggedInUser loggedinUser, Store store, LoggedInUser newManager)
-        {
-            if (isUserAStoreManager(loggedinUser, store)&& !isUserAStoreManager(newManager, store))
-            {
-                store.Managers.Add(newManager);
-                //TODO: set that newManager was appointed by loggedinUser
-            }
-        }
-
-        public void SetPermissionsOfManager(LoggedInUser loggedinUser, Store store, LoggedInUser manager,string newPermission)
-        {
-            
-        }
-
-        public void RemoveStoreManager(LoggedInUser loggedinUser, Store store, LoggedInUser managerToRemove)
-        {
-
-        }
-
-        public void ViewPurchaseHistory(LoggedInUser loggedinUser, Store store)
-        {
-
-        }
     }
 }

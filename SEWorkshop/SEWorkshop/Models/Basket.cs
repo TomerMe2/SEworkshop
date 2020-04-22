@@ -8,7 +8,6 @@ namespace SEWorkshop.Models
     {
         public Store Store { get; private set; }
         public ICollection<Product> Products { get; private set; }
-
         public Basket(Store store)
         {
             Store = store;

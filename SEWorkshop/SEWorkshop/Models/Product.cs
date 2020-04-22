@@ -11,6 +11,7 @@ namespace SEWorkshop.Models
         public string Description { get; set; }
         public string Category { get; set; }
         public double Price { get   ; set; }
+        public ICollection<Review> Reviews {get ; set;}
 
         public Product(Store store, string name, string description, string category, double price)
         {
@@ -19,6 +20,7 @@ namespace SEWorkshop.Models
             Description = description;
             Category = category;
             Price = price;
+            Reviews = new List<Review>();
         }
 
         public override string ToString()

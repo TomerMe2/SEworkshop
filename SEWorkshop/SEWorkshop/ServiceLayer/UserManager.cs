@@ -11,7 +11,6 @@ namespace SEWorkshop.ServiceLayer
         IUserFacade UserFacadeInstance = UserFacade.GetInstance();
         readonly IStoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User User = new GuestUser();
-        bool IsLoggedIn = false;
 
         public UserManager()
         {
@@ -19,8 +18,6 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddProductToCart(Product product)
         {
-            if (!StoreFacadeInstance.IsProductExists(product))
-                throw new ProductNotInTradingSystemException();
             UserFacadeInstance.AddProductToCart(User, product);
         }
 
@@ -31,23 +28,22 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
-            if (products.Count == 0)
-                throw new NoProductsToFilterException();
             return StoreFacadeInstance.FilterProducts(products, pred);
         }
 
         public void Login(string username, string password)
         {
-            if (IsLoggedIn)
-                throw new UserAlreadyLoggedInException();
-            User = new LoggedInUser(username, password);
+            Cart cart = User.Cart;
+            User = UserFacadeInstance.Login(username, password);
+            User.Cart = cart;
         }
 
         public void Logout()
         {
-            if (!IsLoggedIn)
-                throw new UserIsNotLoggedInException();
+            Cart cart = User.Cart;
+            UserFacadeInstance.Logout();
             User = new GuestUser();
+            User.Cart = cart;
         }
 
         public IEnumerable<Basket> MyCart()
@@ -57,31 +53,21 @@ namespace SEWorkshop.ServiceLayer
 
         public void OpenStore(LoggedInUser owner, string storeName)
         {
-            Func<Store, bool> StoresWithThisNamePredicate = store => store.Name.Equals(storeName);
-            ICollection<Store> StoresWithTheSameName = StoreFacadeInstance.SearchStore(StoresWithThisNamePredicate);
-            if (StoresWithTheSameName.Count > 0)
-                throw new StoreWithThisNameAlreadyExistsException();
             StoreFacadeInstance.CreateStore(owner, storeName);
         }
 
         public void Purchase(Basket basket)
         {
-            if (basket.Products.Count == 0)
-                throw new BasketIsEmptyException();
             UserFacadeInstance.Purchase(User, basket);
         }
 
         public void Register(string username, string password)
         {
-            if (IsLoggedIn)
-                throw new UserAlreadyLoggedInException();
             UserFacadeInstance.Register(username, password);
         }
 
         public void RemoveProductFromCart(Product product)
         {
-            if (!StoreFacadeInstance.IsProductExists(product))
-                throw new ProductNotInTradingSystemException();
             UserFacadeInstance.RemoveProductFromCart(User, product);
         }
 
