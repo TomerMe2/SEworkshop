@@ -22,19 +22,32 @@ namespace SEWorkshop.Facades
             }
             return Instance;
         }
-        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price)
+
+        public bool UserHasPermission(LoggedInUser loggedInUser, Store store)
         {
             ICollection<Authorizations>? authorizations;
-            if (isUserAStoreOwner(loggedInUser, store)
-                || (isUserAStoreManager(loggedInUser, store)
-                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
-                    && authorizations != null
-                    && authorizations.Contains(Authorizations.Products)))
+            // to add a product it is required that the user who want to add the proudct is a store owner or a manager
+            if ((isUserAStoreOwner(loggedInUser, store)
+                || (isUserAStoreManager(loggedInUser, store))
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)// ravid explain this to me 
+                    && authorizations != null           //user must be logged in to add a product
+                    && authorizations.Contains(Authorizations.Products))) { return true; }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price)
+        {
+            // to add a product it is required that the user who want to add the proudct is a store owner or a manager
+            if (UserHasPermission(loggedInUser, store)) 
             {
                 Product newProduct = new Product(store, name, description, category, price);
-                if (!StoreFacade.GetInstance().IsProductExists(newProduct))
+                if (!store.Products.Contains(newProduct))
                 {
-                    StoreFacade.GetInstance().AllActiveProducts().ToList().Add(newProduct);
+                    store.Products.Add(newProduct);
                     return;
                 }
             }
@@ -43,16 +56,11 @@ namespace SEWorkshop.Facades
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product)
         {
-            ICollection<Authorizations>? authorizations;
-            if (isUserAStoreOwner(loggedInUser, store)
-                || (isUserAStoreManager(loggedInUser, store)
-                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
-                    && authorizations != null
-                    && authorizations.Contains(Authorizations.Products)))
+            if (UserHasPermission(loggedInUser,store))
             {
-                if (StoreFacade.GetInstance().IsProductExists(product))
+                if (store.Products.Contains(product))
                 {
-                    StoreFacade.GetInstance().AllActiveProducts().ToList().Remove(product);
+                    store.Products.Remove(product);
                     return;
                 }
             }
@@ -193,9 +201,9 @@ namespace SEWorkshop.Facades
                                                                     where manager.Value == user
                                                                     select manager).ToList().Count() > 0);
 
-        public void EditProductPrice(Product product, string description) => product.Description= description;
+        public void EditProductPrice(Product product, string description) => product.Description = description;
 
-        public void EditProductCategory(Product product, string category) => product.Category= category;
+        public void EditProductCategory(Product product, string category) => product.Category = category;
 
         public void EditProductName(Product product, string name) => product.Name = name;
 
