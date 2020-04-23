@@ -4,6 +4,7 @@ using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Facades.Adapters;
+using System.Linq;
 
 namespace SEWorkshop.Facades
 {
@@ -33,7 +34,10 @@ namespace SEWorkshop.Facades
             HasPermission = false;
         }
         
-        public LoggedInUser Register(string username, string password)
+        /// <summary>
+        /// Password is SHA256 encrypted
+        /// </summary>
+        public LoggedInUser Register(string username, byte[] password)
         {
             if(HasPermission)
             {
@@ -52,7 +56,10 @@ namespace SEWorkshop.Facades
             return newUser;
         }
 
-        public LoggedInUser Login(string username, string password)
+        /// <summary>
+        /// Password is SHA256 encrypted
+        /// </summary>
+        public LoggedInUser Login(string username, byte[] password)
         {
             if(HasPermission)
             {
@@ -62,7 +69,7 @@ namespace SEWorkshop.Facades
             {
                 if(user.Username.Equals(username))
                 {
-                    if(user.Password.Equals(password))
+                    if(user.Password.SequenceEqual(password))
                     {
                         HasPermission = true;
                         return user;

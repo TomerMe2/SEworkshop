@@ -4,6 +4,8 @@ using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using NLog;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -42,7 +44,10 @@ namespace SEWorkshop.ServiceLayer
         {
             if (IsLoggedIn)
                 throw new UserAlreadyLoggedInException();
-            User = new LoggedInUser(username, password);
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            SHA256Managed hashstring = new SHA256Managed();
+            byte[] hash = hashstring.ComputeHash(bytes);
+            User = new LoggedInUser(username, hash);
         }
 
         public void Logout()
@@ -77,7 +82,10 @@ namespace SEWorkshop.ServiceLayer
         {
             if (IsLoggedIn)
                 throw new UserAlreadyLoggedInException();
-            UserFacadeInstance.Register(username, password);
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            SHA256Managed hashstring = new SHA256Managed();
+            byte[] hash = hashstring.ComputeHash(bytes);
+            UserFacadeInstance.Register(username, hash);
         }
 
         public void RemoveProductFromCart(Product product)
