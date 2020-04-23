@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 
@@ -11,6 +12,8 @@ namespace SEWorkshop.Facades
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
         private static UserFacade? Instance = null;
+
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public static UserFacade GetInstance()
         {
@@ -42,6 +45,7 @@ namespace SEWorkshop.Facades
         {
             if(HasPermission)
             {
+                log.Info("Logged in user tried to register");
                 throw new UserAlreadyLoggedInException();
             }
             foreach(var user in Users)

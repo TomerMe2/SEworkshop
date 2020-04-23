@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
+using NLog;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -12,6 +13,7 @@ namespace SEWorkshop.ServiceLayer
         ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
         readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User User = new GuestUser();
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
         {
