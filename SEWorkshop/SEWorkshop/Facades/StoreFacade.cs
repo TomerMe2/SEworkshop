@@ -3,7 +3,6 @@ using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SEWorkshop.Models;
 using NLog;
 
 namespace SEWorkshop.Facades

@@ -24,10 +24,11 @@ namespace SEWorkshop.Facades
         }
         public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if (isUserAStoreOwner(loggedInUser, store)
                 || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Products)))
             {
                 Product newProduct = new Product(store, name, description, category, price);
@@ -42,10 +43,11 @@ namespace SEWorkshop.Facades
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if (isUserAStoreOwner(loggedInUser, store)
                 || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Products)))
             {
                 if (StoreFacade.GetInstance().IsProductExists(product))
@@ -59,10 +61,11 @@ namespace SEWorkshop.Facades
 
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if((isUserAStoreOwner(loggedInUser, store)
                 || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Owner)))
                 && !isUserAStoreOwner(newOwner,store))
             {
@@ -75,10 +78,11 @@ namespace SEWorkshop.Facades
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if ((isUserAStoreOwner(loggedInUser, store)
                     || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Manager)))
                 && !isUserAStoreOwner(newManager,store))
             {
@@ -94,22 +98,23 @@ namespace SEWorkshop.Facades
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if ((isUserAStoreOwner(loggedInUser, store)
                     || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Authorizing)))
                 && !isUserAStoreOwner(manager,store))
             {
                 if(loggedInUser.Manages.TryGetValue(store, out authorizations)
                         && authorizations.Contains(authorization))
-                    {
-                        authorizations.Remove(authorization);
-                    }
-                    else if (authorizations.Contains(authorization))
-                    {
-                        authorizations.Add(authorization);
-                    }
+                {
+                    authorizations.Remove(authorization);
+                }
+                else if (authorizations != null && authorizations.Contains(authorization))
+                {
+                    authorizations.Add(authorization);
+                }
                 return;
             }
             throw new UserHasNoPermissionException();
@@ -117,14 +122,15 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if ((isUserAStoreOwner(loggedInUser, store)
                     || (isUserAStoreManager(loggedInUser, store)
                     && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                     && authorizations.Contains(Authorizations.Manager)))
                 && isUserAStoreOwner(managerToRemove,store))
             {
-                LoggedInUser appointer;
+                LoggedInUser? appointer;
                 if(!store.Managers.TryGetValue(managerToRemove, out appointer) ||
                     appointer != loggedInUser)
                 {
@@ -137,10 +143,11 @@ namespace SEWorkshop.Facades
         }
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if(isUserAStoreOwner(loggedInUser, store) ||
-                (isUserAStoreManager(loggedInUser, store) &&
-                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                 && authorizations.Contains(Authorizations.Replying)))
             {
                 return store.Messages;
@@ -150,10 +157,11 @@ namespace SEWorkshop.Facades
 
         public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if(isUserAStoreOwner(loggedInUser, store) ||
-                (isUserAStoreManager(loggedInUser, store) &&
-                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                 && authorizations.Contains(Authorizations.Replying)))
             {
                 Message reply = new Message(loggedInUser, description, message);
@@ -164,10 +172,11 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
-            ICollection<Authorizations> authorizations;
+            ICollection<Authorizations>? authorizations;
             if(isUserAStoreOwner(loggedInUser, store) ||
-                (isUserAStoreManager(loggedInUser, store) &&
-                loggedInUser.Manages.TryGetValue(store, out authorizations)
+                (isUserAStoreManager(loggedInUser, store)
+                    && loggedInUser.Manages.TryGetValue(store, out authorizations)
+                    && authorizations != null
                 && authorizations.Contains(Authorizations.Replying)))
             {
                 return store.Purchases;
