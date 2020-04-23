@@ -141,6 +141,36 @@ namespace SEWorkshop.Facades
             }
             return userPurchases;
         }
+
+        public IEnumerable<Purchase> UserPurchaseHistory(User requesting, User user)
+        {
+            if (!(requesting is Administrator))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            return PurcahseHistory(user);
+        }
+
+        public IEnumerable<Purchase> StorePurchaseHistory(User requesting, Store store)
+        {
+            if (!(requesting is Administrator))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            ICollection<Purchase> purchaseHistory = new List<Purchase>();
+            foreach (var user in Users)
+            {
+                foreach (var purchase in PurcahseHistory(user))
+                {
+                    if (purchase.Basket.Store.Equals(store))
+                    {
+                        purchaseHistory.Add(purchase);
+                    }
+                }
+            }
+            return purchaseHistory;
+        }
+
         public void WriteReview(User user, Product product, string description)
         {
             if(!HasPermission)

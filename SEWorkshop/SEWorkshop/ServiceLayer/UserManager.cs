@@ -80,5 +80,15 @@ namespace SEWorkshop.ServiceLayer
         {
             return UserFacadeInstance.PurcahseHistory(User);
         }
+
+        public IEnumerable<Purchase> UserPurchaseHistory(User user)
+        {
+            return UserFacadeInstance.UserPurchaseHistory(User, user);
+        }
+
+        public IEnumerable<Purchase> StorePurchaseHistory(Store store)
+        {
+            return UserFacadeInstance.StorePurchaseHistory(User, store);
+        }
     }
 }
