@@ -18,5 +18,14 @@ namespace SEWorkshop.ServiceLayer
         public void Logout(); //throws exception
         public void OpenStore(LoggedInUser owner, string storeName); //throws exception
         public IEnumerable<Purchase> PurcahseHistory(); //throws exception
+        public void AddProduct(Store store, string name, string description, string category, double price); //throws exception
+        public void RemoveProduct(Store store, string name); //throws exception
+        public void AddStoreOwner(Store store, string username); //throws exception
+        public void AddStoreManager(Store store, string username); //throws exception
+        public void SetPermissionsOfManager(Store store, string username, string authorization); //throws exception
+        public void RemoveStoreManager(Store store, string username); //throws exception
+        public IEnumerable<Message> ViewMessage(Store store); //throws exception
+        public void MessageReply(Message message, Store store, string description); //throws exception
+        public IEnumerable<Purchase> ViewPurchaseHistory(Store store); //throws exception
     }
 }

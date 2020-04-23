@@ -8,8 +8,9 @@ namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        IUserFacade UserFacadeInstance = UserFacade.GetInstance();
-        readonly IStoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
+        UserFacade UserFacadeInstance = UserFacade.GetInstance();
+        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
+        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User User = new GuestUser();
 
         public UserManager()
@@ -89,6 +90,112 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Purchase> StorePurchaseHistory(Store store)
         {
             return UserFacadeInstance.StorePurchaseHistory(User, store);
+        }
+        public void AddProduct(Store store, string name, string description, string category, double price)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacadeInstance.AddProduct((LoggedInUser)User, store, name, description, category, price);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void RemoveProduct(Store store, string name)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacadeInstance.RemoveProduct((LoggedInUser)User, store, store.GetProduct(name));
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void AddStoreOwner(Store store, string username)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                LoggedInUser newOwner = UserFacadeInstance.GetUser(username);
+                ManageFacadeInstance.AddStoreOwner((LoggedInUser)User, store, newOwner);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void AddStoreManager(Store store, string username)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                LoggedInUser newManager = UserFacadeInstance.GetUser(username);
+                ManageFacadeInstance.AddStoreManager((LoggedInUser)User, store, newManager);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void SetPermissionsOfManager(Store store, string username, string auth)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                LoggedInUser newManager = UserFacadeInstance.GetUser(username);
+                Authorizations authorization;
+                switch (auth)
+                {
+                    case "Products":
+                        authorization = Authorizations.Products;
+                        break;
+
+                    case "Owner":
+                        authorization = Authorizations.Owner;
+                        break;
+
+                    case "Manager":
+                        authorization = Authorizations.Manager;
+                        break;
+
+                    case "Authorizing":
+                        authorization = Authorizations.Authorizing;
+                        break;
+
+                    case "Replying":
+                        authorization = Authorizations.Replying;
+                        break;
+
+                    case "Watching":
+                        authorization = Authorizations.Watching;
+                        break;
+                    
+                    default:
+                        throw new AuthorizationDoesNotExistException();
+                }
+                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)User, store, newManager, authorization);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void RemoveStoreManager(Store store, string username)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                LoggedInUser manager = UserFacadeInstance.GetUser(username);
+                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)User, store, manager);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public IEnumerable<Message> ViewMessage(Store store)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacadeInstance.ViewMessage((LoggedInUser)User, store);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public void MessageReply(Message message, Store store, string description)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacadeInstance.MessageReply((LoggedInUser)User, message, store, description);
+            }
+            throw new UserHasNoPermissionException();
+        }
+        public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)User, store);
+            }
+            throw new UserHasNoPermissionException();
         }
     }
 }

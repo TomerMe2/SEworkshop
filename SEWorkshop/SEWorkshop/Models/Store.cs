@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models
 {
@@ -34,6 +35,18 @@ namespace SEWorkshop.Models
         public void CloseStore()
         {
             IsOpen = false;
+        }
+
+        public Product GetProduct(string name)
+        {
+            foreach(var product in Products)
+            {
+                if(product.Name.Equals(name))
+                {
+                    return product;
+                }
+            }
+            throw new ProductNotInTradingSystemException();
         }
     }
 }

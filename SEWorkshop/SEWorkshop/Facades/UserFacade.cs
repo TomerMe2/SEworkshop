@@ -25,6 +25,18 @@ namespace SEWorkshop.Facades
             Purchases = new List<Purchase>();
             HasPermission = false;
         }
+
+        public LoggedInUser GetUser(string username)
+        {
+            foreach(var user in Users)
+            {
+                if(user.Username.Equals(username))
+                {
+                    return user;
+                }
+            }
+            throw new UserDoesNotExistException();
+        }
         
         public LoggedInUser Register(string username, string password)
         {
