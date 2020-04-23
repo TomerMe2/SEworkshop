@@ -90,6 +90,5 @@ namespace SEWorkshop.Facades
                     where pred(product)
                     select product).ToList();
         }
-
     }
 }

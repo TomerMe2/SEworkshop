@@ -89,6 +89,7 @@ namespace SEWorkshop.Facades
             }
             HasPermission = false;
         }
+
         public IEnumerable<Basket> MyCart(User user)
         {
             return user.Cart.Baskets;

@@ -141,6 +141,7 @@ namespace SEWorkshop.Facades
             }
             throw new UserHasNoPermissionException();
         }
+
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
             ICollection<Authorizations>? authorizations;

@@ -13,7 +13,7 @@ namespace SEWorkshop.ServiceLayer
         ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
         readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User User = new GuestUser();
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
         {
@@ -93,6 +93,7 @@ namespace SEWorkshop.ServiceLayer
         {
             return UserFacadeInstance.StorePurchaseHistory(User, store);
         }
+
         public void AddProduct(Store store, string name, string description, string category, double price)
         {
             if(UserFacadeInstance.HasPermission)
@@ -101,6 +102,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void RemoveProduct(Store store, string name)
         {
             if(UserFacadeInstance.HasPermission)
@@ -109,6 +111,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void AddStoreOwner(Store store, string username)
         {
             if(UserFacadeInstance.HasPermission)
@@ -118,6 +121,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void AddStoreManager(Store store, string username)
         {
             if(UserFacadeInstance.HasPermission)
@@ -127,6 +131,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void SetPermissionsOfManager(Store store, string username, string auth)
         {
             if(UserFacadeInstance.HasPermission)
@@ -166,6 +171,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void RemoveStoreManager(Store store, string username)
         {
             if(UserFacadeInstance.HasPermission)
@@ -175,6 +181,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public IEnumerable<Message> ViewMessage(Store store)
         {
             if(UserFacadeInstance.HasPermission)
@@ -183,6 +190,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public void MessageReply(Message message, Store store, string description)
         {
             if(UserFacadeInstance.HasPermission)
@@ -191,6 +199,7 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
+
         public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
         {
             if(UserFacadeInstance.HasPermission)

@@ -25,12 +25,12 @@ namespace SEWorkshop.Models
     }
 
     public enum Authorizations
-        {
-            Products,
-            Owner,
-            Manager,
-            Authorizing,
-            Replying,
-            Watching
-        }
+    {
+        Products,
+        Owner,
+        Manager,
+        Authorizing,
+        Replying,
+        Watching
+    }
 }
