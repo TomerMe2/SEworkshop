@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
+using SEWorkshop.Adapters;
+using System.Linq;
 
 namespace SEWorkshop.Facades
 {
@@ -12,6 +14,9 @@ namespace SEWorkshop.Facades
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
         private static UserFacade Instance = null;
+
+        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
+        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -29,7 +34,10 @@ namespace SEWorkshop.Facades
             HasPermission = false;
         }
         
-        public LoggedInUser Register(string username, string password)
+        /// <summary>
+        /// Password is SHA256 encrypted
+        /// </summary>
+        public LoggedInUser Register(string username, byte[] password)
         {
             if(HasPermission)
             {
@@ -48,7 +56,10 @@ namespace SEWorkshop.Facades
             return newUser;
         }
 
-        public LoggedInUser Login(string username, string password)
+        /// <summary>
+        /// Password is SHA256 encrypted
+        /// </summary>
+        public LoggedInUser Login(string username, byte[] password)
         {
             if(HasPermission)
             {
@@ -58,7 +69,7 @@ namespace SEWorkshop.Facades
             {
                 if(user.Username.Equals(username))
                 {
-                    if(user.Password.Equals(password))
+                    if(user.Password.SequenceEqual(password))
                     {
                         HasPermission = true;
                         return user;
@@ -111,6 +122,10 @@ namespace SEWorkshop.Facades
 
         public void Purchase(User user, Basket basket)
         {
+            const string CREDIT_CARD_NUMBER_STUB = "1234";
+            const string CITY_NAME_STUB = "Beer Sheva";
+            const string STREET_NAME_STUB = "Sderot Ben Gurion";
+            const string HOUSE_NUMBER_STUB = "111";
             Purchase purchase;
             if(HasPermission)
             {
@@ -120,7 +135,16 @@ namespace SEWorkshop.Facades
             {
                 purchase = new Purchase(new GuestUser(), basket);
             }
-            Purchases.Add(purchase);
+            if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
+                && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
+            {
+                supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+                Purchases.Add(purchase);
+            }
+            else
+            {
+                throw new PurchaseFailedException();
+            }
         }
 
         public IEnumerable<Purchase> PurcahseHistory(User user)

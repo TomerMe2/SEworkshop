@@ -4,6 +4,9 @@ using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using NLog;
+using System.Text;
+using System.Security.Cryptography;
+using SEWorkshop.Adapters;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -11,6 +14,7 @@ namespace SEWorkshop.ServiceLayer
     {
         IUserFacade UserFacadeInstance = UserFacade.GetInstance();
         readonly IStoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter(); 
         User User = new GuestUser();
         bool IsLoggedIn = false;
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
@@ -42,7 +46,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if (IsLoggedIn)
                 throw new UserAlreadyLoggedInException();
-            User = new LoggedInUser(username, password);
+            User = new LoggedInUser(username, securityAdapter.Encrypt(password));
         }
 
         public void Logout()
@@ -77,7 +81,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if (IsLoggedIn)
                 throw new UserAlreadyLoggedInException();
-            UserFacadeInstance.Register(username, password);
+            UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
         public void RemoveProductFromCart(Product product)
