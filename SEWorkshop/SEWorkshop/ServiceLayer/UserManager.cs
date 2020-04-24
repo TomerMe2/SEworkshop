@@ -17,15 +17,14 @@ namespace SEWorkshop.ServiceLayer
         ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
         UserFacade UserFacadeInstance = UserFacade.GetInstance();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
         private ITyposFixerProxy TyposFixerNames { get; set; }
         private ITyposFixerProxy TyposFixerCategories { get; set; }
         private ITyposFixerProxy TyposFixerKeywords { get; set; }
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
         {
-            //List<string> dictionary = AllActiveProducts().Select(product => product.Name.Replace(' ', '_')).ToList();
-            //replacing spaces with _, so different words will be related one product name in the typos fixer algorithm
             TyposFixerNames = new TyposFixer(new List<string>());
             TyposFixerCategories = new TyposFixer(new List<string>());
             TyposFixerKeywords = new TyposFixer(new List<string>());
@@ -100,7 +99,7 @@ namespace SEWorkshop.ServiceLayer
                 return products;
             string corrected = TyposFixerNames.Correct(input);
             products = SearchProducts(product => product.Name.ToLower().Replace(' ', '_').Equals(corrected));
-            input = corrected;
+            input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
             return products;
         }
 
@@ -112,25 +111,42 @@ namespace SEWorkshop.ServiceLayer
                 return products;
             string corrected = TyposFixerNames.Correct(input);
             products = SearchProducts(product => product.Category.ToLower().Replace(' ', '_').Equals(corrected));
-            input = corrected;
+            input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
             return products;
         }
 
         public IEnumerable<Product> SearchProductsByKeywords(ref string input)
-        {
+        { 
             string localInput = input;
-            Func<Product, bool> predicate = product => product.Name.Equals(localInput) ||
-                                            product.Category.Equals(localInput) ||
-                                            product.Description.Split(' ').Contains(localInput);
+            bool hasWordInsideOther(string[] words1, List<string> words2)
+            {
+                foreach (string word1 in words1)
+                {
+                    foreach (string word2 in words2)
+                    {
+                        if (word1.Equals(word2.ToLower()))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            };
+            bool hasWordInsideInput(string[] words) => hasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
+            bool predicate(Product product) => hasWordInsideInput(product.Name.Split(' ')) ||
+                                            hasWordInsideInput(product.Category.Split(' ')) ||
+                                            hasWordInsideInput(product.Description.Split(' '));
             IEnumerable <Product> products = SearchProducts(predicate);
             if (products.Any())
                 return products;
-            string corrected = TyposFixerNames.Correct(input);
-            Func<Product, bool> correctedPredicate = product => product.Name.ToLower().Replace(' ', '_').Equals(localInput) ||
-                                            product.Category.ToLower().Replace(' ', '_').Equals(localInput) ||
-                                            product.Description.ToLower().Replace(' ', '_').Split(' ').Contains(localInput);
+            // Each word should be corrected seperatly because the words do not have to depend on each other
+            List<string> corrected = input.Split(' ').Select(word => TyposFixerKeywords.Correct(word)).ToList();
+            bool hasWordInsideCorrected(string[] words) => hasWordInsideOther(words, corrected);  // curry version
+            bool correctedPredicate(Product product) => hasWordInsideCorrected(product.Name.Split(' ')) ||
+                                            hasWordInsideCorrected(product.Category.Split(' ')) ||
+                                            hasWordInsideCorrected(product.Description.Split(' '));
             products = SearchProducts(correctedPredicate);
-            input = corrected;
+            input = String.Join(' ', corrected);
             return products;
         }
 
@@ -172,11 +188,19 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
+                //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
                 TyposFixerNames.AddToDictionary(name.Replace(' ', '_'));
                 TyposFixerCategories.AddToDictionary(category.Replace(' ', '_'));
-                TyposFixerKeywords.AddToDictionary(name.Replace(' ', '_'));
-                TyposFixerKeywords.AddToDictionary(category.Replace(' ', '_'));
-                foreach (var word in description.Split(' '))
+                // for keywods, we are treating each word in an un-connected way, because each word is a keyword
+                foreach(string word in name.Split(' '))
+                {
+                    TyposFixerKeywords.AddToDictionary(word);
+                }
+                foreach (string word in category.Split(' '))
+                {
+                    TyposFixerKeywords.AddToDictionary(word);
+                }
+                foreach (string word in description.Split(' '))
                 {
                     TyposFixerKeywords.AddToDictionary(word);
                 }

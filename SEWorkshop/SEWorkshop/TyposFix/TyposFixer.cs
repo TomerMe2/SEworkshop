@@ -30,18 +30,18 @@ namespace SEWorkshop.TyposFix
 			}
 		}
 
-		public string Correct(string word)
+		public string Correct(string input)
 		{
-			if (string.IsNullOrEmpty(word))
-				return word;
+			if (string.IsNullOrEmpty(input))
+				return input;
 
-			word = word.ToLower();
+			input = input.ToLower();
 
 			// known()
-			if (_dictionary.ContainsKey(word))
-				return word;
+			if (_dictionary.ContainsKey(input))
+				return input;
 
-			List<String> list = Edits(word);
+			List<String> list = Edits(input);
 			Dictionary<string, int> candidates = new Dictionary<string, int>();
 
 			foreach (string wordVariation in list)
@@ -63,7 +63,7 @@ namespace SEWorkshop.TyposFix
 				}
 			}
 
-			return (candidates.Count > 0) ? candidates.OrderByDescending(x => x.Value).First().Key : word;
+			return (candidates.Count > 0) ? candidates.OrderByDescending(x => x.Value).First().Key : input;
 		}
 
 		private List<string> Edits(string word)
@@ -134,12 +134,12 @@ namespace SEWorkshop.TyposFix
 		public void AddToDictionary(string productName)
 		{
 			if (!_dictionary.ContainsKey(productName))
-				_dictionary.Add(productName.ToLower(), 1); ;
+				_dictionary.Add(productName.Trim().ToLower(), 1);
 		}
 
 		public void RemoveFromDictionary(string productName)
 		{
-			_dictionary.Remove(productName);
+			_dictionary.Remove(productName.Trim().ToLower());
 		}
 	}
 }
