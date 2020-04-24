@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
-using SEWorkshop.Facades.Adapters;
+using SEWorkshop.Adapters;
 using System.Linq;
 
 namespace SEWorkshop.Facades
@@ -135,7 +135,8 @@ namespace SEWorkshop.Facades
             {
                 purchase = new Purchase(new GuestUser(), basket);
             }
-            if(billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
+            if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
+                && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
             {
                 supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
                 Purchases.Add(purchase);

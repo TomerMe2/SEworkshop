@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop.Facades.Adapters
+namespace SEWorkshop.Adapters
 {
     interface ISecurityAdapter
     {
+        public byte[] Encrypt(string toEncrypt);
     }
 }

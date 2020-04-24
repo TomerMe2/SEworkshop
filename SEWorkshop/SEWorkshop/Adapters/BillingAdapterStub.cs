@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Models;
 
-namespace SEWorkshop.Facades.Adapters
+namespace SEWorkshop.Adapters
 {
     class BillingAdapterStub : IBillingAdapter
     {

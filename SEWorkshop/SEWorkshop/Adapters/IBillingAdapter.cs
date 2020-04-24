@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop.Facades.Adapters
+namespace SEWorkshop.Adapters
 {
     interface IBillingAdapter
     {
