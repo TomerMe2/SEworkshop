@@ -58,6 +58,13 @@ namespace SEWorkshop.Facades
                     throw new UserAlreadyExistsException();
                 }
             }
+            foreach(var admin in Administrators)
+            {
+                if(admin.Username.Equals(username))
+                {
+                    throw new UserAlreadyExistsException();
+                }
+            }
             LoggedInUser newUser = new LoggedInUser(username, password);
             Users.Add(newUser);
             return newUser;
