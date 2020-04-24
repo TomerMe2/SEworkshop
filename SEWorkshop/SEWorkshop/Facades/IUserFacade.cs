@@ -7,8 +7,8 @@ namespace SEWorkshop.Facades
 {
     interface IUserFacade
     {
-        public LoggedInUser Register(string username, string password); //throws exception
-        public LoggedInUser Login(string username, string password); //throws exception
+        public LoggedInUser Register(string username, byte[] password); //throws exception
+        public LoggedInUser Login(string username, byte[] password); //throws exception
         public void Logout(); //throws exception        
         public IEnumerable<Basket> MyCart(User user);
         public void AddProductToCart(User user, Product product); //throws exception

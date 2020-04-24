@@ -4,15 +4,20 @@ using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using NLog;
+using System.Text;
+using System.Security.Cryptography;
+using SEWorkshop.Adapters;
 
 namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        UserFacade UserFacadeInstance = UserFacade.GetInstance();
-        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
-        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User currUser = new GuestUser();
+        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
+        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
+        UserFacade UserFacadeInstance = UserFacade.GetInstance();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter(); 
+        bool IsLoggedIn = false;
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
