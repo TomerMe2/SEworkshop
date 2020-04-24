@@ -218,14 +218,5 @@ namespace SEWorkshop.ServiceLayer
             }
             throw new UserHasNoPermissionException();
         }
-
-        public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
-        {
-            if(UserFacadeInstance.HasPermission)
-            {
-                ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
-            }
-            throw new UserHasNoPermissionException();
-        }
     }
 }
