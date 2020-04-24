@@ -6,17 +6,16 @@ namespace SEWorkshop.Models
 {
     public class Message
     {
-        public Store Store { get; private set; }
+        public User WrittenBy { get; private set; }
+        public string Description {get; private set;}
         public Message? Prev { get; private set; }
-        public Message? Next { get; private set; }
-        public LoggedInUser WrittenBy { get; private set; }
+        public Message? Next { get; set; }
 
-        public Message(Store store, LoggedInUser writtenBy, Message? prev = null, Message? next = null)
+        public Message(User writtenBy, string description, Message? prev = null)
         {
-            Store = store;
             WrittenBy = writtenBy;
+            Description = description;
             Prev = prev;
-            Next = next;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace SEWorkshop.Models
 {
     public class User
     {
-        public Cart Cart { get; private set; }
+        public Cart Cart { get; set; }
 
         public User()
         {

@@ -11,12 +11,15 @@ namespace SEWorkshop.Facades
     public class UserFacade : IUserFacade
     {
         private ICollection<LoggedInUser> Users {get; set;}
+        private ICollection<LoggedInUser> Administrators {get; set;}
+
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
-        private static UserFacade Instance = null;
+        private static UserFacade? Instance = null;
 
         private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -31,7 +34,20 @@ namespace SEWorkshop.Facades
         {
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();
+            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
             HasPermission = false;
+        }
+
+        public LoggedInUser GetUser(string username)
+        {
+            foreach(var user in Users)
+            {
+                if(user.Username.Equals(username))
+                {
+                    return user;
+                }
+            }
+            throw new UserDoesNotExistException();
         }
         
         /// <summary>
@@ -47,6 +63,13 @@ namespace SEWorkshop.Facades
             foreach(var user in Users)
             {
                 if(user.Username.Equals(username))
+                {
+                    throw new UserAlreadyExistsException();
+                }
+            }
+            foreach(var admin in Administrators)
+            {
+                if(admin.Username.Equals(username))
                 {
                     throw new UserAlreadyExistsException();
                 }
@@ -77,6 +100,18 @@ namespace SEWorkshop.Facades
                     break;
                 }
             }
+            foreach(var admin in Administrators)
+            {
+                if(admin.Username.Equals(username))
+                {
+                    if(admin.Password.Equals(password))
+                    {
+                        HasPermission = true;
+                        return admin;
+                    }
+                    break;
+                }
+            }
             throw new UserDoesNotExistException();
         }
 
@@ -88,6 +123,7 @@ namespace SEWorkshop.Facades
             }
             HasPermission = false;
         }
+
         public IEnumerable<Basket> MyCart(User user)
         {
             return user.Cart.Baskets;
@@ -95,6 +131,8 @@ namespace SEWorkshop.Facades
         
         public void AddProductToCart(User user, Product product)
         {
+            if (!StoreFacade.GetInstance().IsProductExists(product))
+                throw new ProductNotInTradingSystemException();
             Cart cart = user.Cart;
             foreach(var basket in cart.Baskets)
             {
@@ -126,6 +164,8 @@ namespace SEWorkshop.Facades
             const string CITY_NAME_STUB = "Beer Sheva";
             const string STREET_NAME_STUB = "Sderot Ben Gurion";
             const string HOUSE_NUMBER_STUB = "111";
+            if (basket.Products.Count == 0)
+                throw new BasketIsEmptyException();
             Purchase purchase;
             if(HasPermission)
             {
@@ -139,6 +179,8 @@ namespace SEWorkshop.Facades
                 && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
             {
                 supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+                user.Cart.Baskets.Remove(basket);
+                basket.Store.Purchases.Add(purchase);
                 Purchases.Add(purchase);
             }
             else
@@ -162,6 +204,56 @@ namespace SEWorkshop.Facades
                 }
             }
             return userPurchases;
+        }
+
+        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, LoggedInUser user)
+        {
+            if (!Administrators.Contains(requesting))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            return PurcahseHistory(user);
+        }
+
+        public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
+        {
+            if (!Administrators.Contains(requesting))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            ICollection<Purchase> purchaseHistory = new List<Purchase>();
+            foreach (var user in Users)
+            {
+                foreach (var purchase in PurcahseHistory(user))
+                {
+                    if (purchase.Basket.Store.Equals(store))
+                    {
+                        purchaseHistory.Add(purchase);
+                    }
+                }
+            }
+            return purchaseHistory;
+        }
+
+        public void WriteReview(User user, Product product, string description)
+        {
+            if(!HasPermission)
+            {
+                throw new UserHasNoPermissionException();
+            }
+            Review review = new Review(user, description);
+            product.Reviews.Add(review);
+            ((LoggedInUser) user).Reviews.Add(review);
+        }
+        public void WriteMessage(User user, Store store, string description)
+        {
+            if(!HasPermission)
+            {
+                throw new UserHasNoPermissionException();
+            }
+            Message message = new Message(user, description);
+            store.Messages.Add(new Message(user, description));
+            ((LoggedInUser) user).Messages.Add(message);
         }
     }
 }

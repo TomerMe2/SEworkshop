@@ -6,13 +6,13 @@ namespace SEWorkshop.Models
 {
     public class Review
     {
-        public LoggedInUser Writer { get; private set; }
-        public Product Product { get; private set; }
+        public User Writer { get; private set; }
+        public string Description;
 
-        public Review(LoggedInUser writer, Product product)
+        public Review(User writer, string description)
         {
             Writer = writer;
-            Product = product;
+            Description = description;
         }
     }
 }

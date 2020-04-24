@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SEWorkshop.Models;
+using SEWorkshop.Exceptions;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using SEWorkshop.Models;
 using NLog;
 
 namespace SEWorkshop.Facades
@@ -34,6 +34,10 @@ namespace SEWorkshop.Facades
         /// <returns>The created store</returns>
         public Store CreateStore(LoggedInUser owner, string storeName)
         {
+            Func<Store, bool> StoresWithThisNamePredicate = store => store.Name.Equals(storeName);
+            ICollection<Store> StoresWithTheSameName = SearchStore(StoresWithThisNamePredicate);
+            if (StoresWithTheSameName.Count > 0)
+                throw new StoreWithThisNameAlreadyExistsException();
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
             return newStore;
@@ -52,8 +56,8 @@ namespace SEWorkshop.Facades
         public ICollection<Store> SearchStore(Func<Store, bool> pred)
         {
             return (from store in BrowseStores()
-                where pred(store)
-                select store).ToList();
+                    where pred(store)
+                    select store).ToList();
         }
 
         public bool IsProductExists(Product product)
@@ -63,7 +67,7 @@ namespace SEWorkshop.Facades
                     select prod).Any();
         }
 
-        private IEnumerable<Product> AllActiveProducts()
+        public IEnumerable<Product> AllActiveProducts()
         {
             return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products));
         }
@@ -74,12 +78,14 @@ namespace SEWorkshop.Facades
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             return (from product in AllActiveProducts()
-                   where pred(product)
-                   select product).ToList();
+                    where pred(product)
+                    select product).ToList();
         }
 
         public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
+            if (products.Count == 0)
+                throw new NoProductsToFilterException();
             return (from product in products
                     where pred(product)
                     select product).ToList();
