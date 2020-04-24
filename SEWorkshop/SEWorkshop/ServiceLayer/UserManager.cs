@@ -12,7 +12,7 @@ namespace SEWorkshop.ServiceLayer
         UserFacade UserFacadeInstance = UserFacade.GetInstance();
         ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
         readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
-        User User = new GuestUser();
+        User currUser = new GuestUser();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         public UserManager()
@@ -21,7 +21,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddProductToCart(Product product)
         {
-            UserFacadeInstance.AddProductToCart(User, product);
+            UserFacadeInstance.AddProductToCart(currUser, product);
         }
 
         public IEnumerable<Store> BrowseStores()
@@ -37,22 +37,22 @@ namespace SEWorkshop.ServiceLayer
         public void Login(string username, string password)
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
-            Cart cart = User.Cart;
-            User = UserFacadeInstance.Login(username, password);
-            User.Cart = cart;
+            Cart cart = currUser.Cart;
+            currUser = UserFacadeInstance.Login(username, password);
+            currUser.Cart = cart;
         }
 
         public void Logout()
         {
-            Cart cart = User.Cart;
+            Cart cart = currUser.Cart;
             UserFacadeInstance.Logout();
-            User = new GuestUser();
-            User.Cart = cart;
+            currUser = new GuestUser();
+            currUser.Cart = cart;
         }
 
         public IEnumerable<Basket> MyCart()
         {
-            return UserFacadeInstance.MyCart(User);
+            return UserFacadeInstance.MyCart(currUser);
         }
 
         public void OpenStore(LoggedInUser owner, string storeName)
@@ -62,7 +62,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void Purchase(Basket basket)
         {
-            UserFacadeInstance.Purchase(User, basket);
+            UserFacadeInstance.Purchase(currUser, basket);
         }
 
         public void Register(string username, string password)
@@ -72,7 +72,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemoveProductFromCart(Product product)
         {
-            UserFacadeInstance.RemoveProductFromCart(User, product);
+            UserFacadeInstance.RemoveProductFromCart(currUser, product);
         }
 
         public IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -82,24 +82,42 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<Purchase> PurcahseHistory()
         {
-            return UserFacadeInstance.PurcahseHistory(User);
+            return UserFacadeInstance.PurcahseHistory(currUser);
         }
 
-        public IEnumerable<Purchase> UserPurchaseHistory(User user)
+        public void WriteReview(Product product, string description)
         {
-            return UserFacadeInstance.UserPurchaseHistory(User, user);
+            UserFacadeInstance.WriteReview(currUser, product, description);
+        }
+
+        public void WriteMessage(Store store, string description)
+        {
+            UserFacadeInstance.WriteMessage(currUser, store, description);
+        }
+
+        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser user)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                return UserFacadeInstance.UserPurchaseHistory((LoggedInUser)currUser, user);
+            }
+            throw new UserHasNoPermissionException();
         }
 
         public IEnumerable<Purchase> StorePurchaseHistory(Store store)
         {
-            return UserFacadeInstance.StorePurchaseHistory(User, store);
+            if(UserFacadeInstance.HasPermission)
+            {
+                return UserFacadeInstance.StorePurchaseHistory((LoggedInUser)currUser, store);
+            }
+            throw new UserHasNoPermissionException();
         }
 
         public void AddProduct(Store store, string name, string description, string category, double price)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)User, store, name, description, category, price);
+                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
             }
             throw new UserHasNoPermissionException();
         }
@@ -108,7 +126,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.RemoveProduct((LoggedInUser)User, store, store.GetProduct(name));
+                ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, store.GetProduct(name));
             }
             throw new UserHasNoPermissionException();
         }
@@ -118,7 +136,7 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser newOwner = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreOwner((LoggedInUser)User, store, newOwner);
+                ManageFacadeInstance.AddStoreOwner((LoggedInUser)currUser, store, newOwner);
             }
             throw new UserHasNoPermissionException();
         }
@@ -128,7 +146,7 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser newManager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreManager((LoggedInUser)User, store, newManager);
+                ManageFacadeInstance.AddStoreManager((LoggedInUser)currUser, store, newManager);
             }
             throw new UserHasNoPermissionException();
         }
@@ -168,7 +186,7 @@ namespace SEWorkshop.ServiceLayer
                     default:
                         throw new AuthorizationDoesNotExistException();
                 }
-                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)User, store, newManager, authorization);
+                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)currUser, store, newManager, authorization);
             }
             throw new UserHasNoPermissionException();
         }
@@ -178,7 +196,7 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser manager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)User, store, manager);
+                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)currUser, store, manager);
             }
             throw new UserHasNoPermissionException();
         }
@@ -187,7 +205,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.ViewMessage((LoggedInUser)User, store);
+                ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, store);
             }
             throw new UserHasNoPermissionException();
         }
@@ -196,7 +214,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.MessageReply((LoggedInUser)User, message, store, description);
+                ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, store, description);
             }
             throw new UserHasNoPermissionException();
         }
@@ -205,7 +223,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)User, store);
+                ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
             }
             throw new UserHasNoPermissionException();
         }

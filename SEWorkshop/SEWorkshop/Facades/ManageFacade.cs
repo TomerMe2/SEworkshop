@@ -70,7 +70,6 @@ namespace SEWorkshop.Facades
 
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
-            ICollection<Authorizations>? authorizations;
             if(UserHasPermission(loggedInUser,store, Authorizations.Owner)
                 && !isUserAStoreOwner(newOwner,store))
             {
@@ -83,7 +82,6 @@ namespace SEWorkshop.Facades
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-            ICollection<Authorizations>? authorizations;
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
                 && !isUserAStoreOwner(newManager,store))
             {
@@ -119,7 +117,6 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-            ICollection<Authorizations>? authorizations;
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
                 && isUserAStoreOwner(managerToRemove,store))
             {
@@ -137,7 +134,6 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-            ICollection<Authorizations>? authorizations;
             if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
             {
                 return store.Messages;
@@ -147,7 +143,6 @@ namespace SEWorkshop.Facades
 
         public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            ICollection<Authorizations>? authorizations;
             if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
             {
                 Message reply = new Message(loggedInUser, description, message);
@@ -158,7 +153,6 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
-            ICollection<Authorizations>? authorizations;
             if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
             {
                 return store.Purchases;

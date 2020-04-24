@@ -17,6 +17,8 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(Basket basket); //throws exception
         public void Logout(); //throws exception
         public void OpenStore(LoggedInUser owner, string storeName); //throws exception
+        public void WriteReview(Product product, string description); // throws exception
+        public void WriteMessage(Store store, string description); // throws exception
         public IEnumerable<Purchase> PurcahseHistory(); //throws exception
         public void AddProduct(Store store, string name, string description, string category, double price); //throws exception
         public void RemoveProduct(Store store, string name); //throws exception

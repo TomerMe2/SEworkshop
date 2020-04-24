@@ -9,6 +9,8 @@ namespace SEWorkshop.Facades
     public class UserFacade : IUserFacade
     {
         private ICollection<LoggedInUser> Users {get; set;}
+        private ICollection<LoggedInUser> Administrators {get; set;}
+
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
         private static UserFacade? Instance = null;
@@ -26,6 +28,7 @@ namespace SEWorkshop.Facades
         {
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();
+            Administrators = new List<LoggedInUser>(){new Administrator("admin", "sadnaTeam")};
             HasPermission = false;
         }
 
@@ -74,6 +77,18 @@ namespace SEWorkshop.Facades
                     {
                         HasPermission = true;
                         return user;
+                    }
+                    break;
+                }
+            }
+            foreach(var admin in Administrators)
+            {
+                if(admin.Username.Equals(username))
+                {
+                    if(admin.Password.Equals(password))
+                    {
+                        HasPermission = true;
+                        return admin;
                     }
                     break;
                 }
@@ -159,18 +174,18 @@ namespace SEWorkshop.Facades
             return userPurchases;
         }
 
-        public IEnumerable<Purchase> UserPurchaseHistory(User requesting, User user)
+        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, LoggedInUser user)
         {
-            if (!(requesting is Administrator))
+            if (!Administrators.Contains(requesting))
             {
                 throw new UserHasNoPermissionException();
             }
             return PurcahseHistory(user);
         }
 
-        public IEnumerable<Purchase> StorePurchaseHistory(User requesting, Store store)
+        public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
-            if (!(requesting is Administrator))
+            if (!Administrators.Contains(requesting))
             {
                 throw new UserHasNoPermissionException();
             }
