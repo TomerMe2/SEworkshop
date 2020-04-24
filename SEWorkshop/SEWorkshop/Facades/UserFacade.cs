@@ -19,6 +19,7 @@ namespace SEWorkshop.Facades
 
         private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -33,7 +34,7 @@ namespace SEWorkshop.Facades
         {
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();
-            Administrators = new List<LoggedInUser>(){new Administrator("admin", "sadnaTeam")};
+            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
             HasPermission = false;
         }
 
@@ -178,7 +179,7 @@ namespace SEWorkshop.Facades
                 && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
             {
                 supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
-                user.Cart.Basket.Remove(basket);
+                user.Cart.Baskets.Remove(basket);
                 basket.Store.Purchases.Add(purchase);
                 Purchases.Add(purchase);
             }
