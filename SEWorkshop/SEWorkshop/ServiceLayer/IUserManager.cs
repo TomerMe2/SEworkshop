@@ -17,7 +17,9 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(Basket basket);
         public void Register(string username, string password);
         public void RemoveProductFromCart(Product product);
-        public IEnumerable<Product> SearchProducts(Func<Product, bool> pred);
+        public IEnumerable<Product> SearchProductsByName(ref string input);
+        public IEnumerable<Product> SearchProductsByCategory(ref string input);
+        public IEnumerable<Product> SearchProductsByKeywords(ref string input);
         public IEnumerable<Purchase> PurcahseHistory();
         public void WriteReview(Product product, string description);
         public void WriteMessage(Store store, string description);
