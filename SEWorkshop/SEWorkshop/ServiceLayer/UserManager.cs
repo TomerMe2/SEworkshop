@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
-<<<<<<< HEAD
 using NLog;
-<<<<<<< HEAD
-=======
->>>>>>> compiling
-=======
 using System.Linq;
 using SEWorkshop.Adapters;
 using SEWorkshop.TyposFix;
->>>>>>> 00eb967d5336e2abc7ab8b6b70acf387d59cc128
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -74,13 +68,6 @@ namespace SEWorkshop.ServiceLayer
 
         public void OpenStore(LoggedInUser owner, string storeName)
         {
-<<<<<<< HEAD
-=======
-            Func<Store, bool> StoresWithThisNamePredicate = store => store.Name.Equals(storeName);
-            ICollection<Store> StoresWithTheSameName = StoreFacadeInstance.SearchStore(StoresWithThisNamePredicate);
-            if (StoresWithTheSameName.Count > 0)
-                throw new StoreWithThisNameAlreadyExistsException();
->>>>>>> compiling
             StoreFacadeInstance.CreateStore(owner, storeName);
         }
 

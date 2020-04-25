@@ -156,13 +156,8 @@ namespace SEWorkshop.Facades
             user.Cart.Baskets.Add(newBasket);
             newBasket.Products.Add((product, quantity));
         }
-<<<<<<< HEAD
-        
-        public void RemoveProductFromCart(User user, Product product)
-=======
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
->>>>>>> 00eb967d5336e2abc7ab8b6b70acf387d59cc128
         {
             if (quantity < 1)
                 throw new ArgumentOutOfRangeException("quantity should be higher then 0");

@@ -8,22 +8,14 @@ namespace SEWorkshop.Models
     public class Store
     {
         public ICollection<Product> Products { get; private set; }
-<<<<<<< HEAD
         public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
         public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
-=======
-        public ICollection<LoggedInUser> Managers { get; private set; }
-        public ICollection<LoggedInUser> Owners { get; private set; }
->>>>>>> compiling
         public IList<Message> Messages { get; private set; }
         public ICollection<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
         public string Name { get; private set; }
         public Policy Policy { get; private set; }
-<<<<<<< HEAD
         public ICollection<Purchase> Purchases {get; private set; }
-=======
->>>>>>> compiling
 
         public Store(LoggedInUser owner, string name)
         {
@@ -55,11 +47,6 @@ namespace SEWorkshop.Models
                 }
             }
             throw new ProductNotInTradingSystemException();
-        }
-
-        public void CloseStore()
-        {
-            IsOpen = false;
         }
     }
 }

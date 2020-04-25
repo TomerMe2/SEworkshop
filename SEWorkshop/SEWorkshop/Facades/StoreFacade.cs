@@ -3,15 +3,8 @@ using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
 using NLog;
-<<<<<<< HEAD
-=======
-using SEWorkshop.Models;
->>>>>>> compiling
-=======
 using SEWorkshop.TyposFix;
->>>>>>> 00eb967d5336e2abc7ab8b6b70acf387d59cc128
 
 namespace SEWorkshop.Facades
 {
