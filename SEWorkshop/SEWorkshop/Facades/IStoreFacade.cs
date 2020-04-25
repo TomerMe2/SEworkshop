@@ -5,7 +5,7 @@ using SEWorkshop.Models;
 
 namespace SEWorkshop.Facades
 {
-    interface IStoreFacade
+    public interface IStoreFacade
     {
         public Store CreateStore(LoggedInUser owner, string storeName);
         public ICollection<Store> BrowseStores();

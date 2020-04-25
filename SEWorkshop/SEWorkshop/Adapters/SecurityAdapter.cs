@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SEWorkshop.Adapters
 {
-    class SecurityAdapter : ISecurityAdapter
+    public class SecurityAdapter : ISecurityAdapter
     {
         /// <summary>
         /// Encrypts using SHA256

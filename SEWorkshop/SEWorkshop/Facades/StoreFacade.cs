@@ -24,6 +24,7 @@ namespace SEWorkshop.Facades
             if (Instance is null)
             {
                 Instance = new StoreFacade();
+                log.Info("StoreFacade instance was created");
             }
             return Instance;
         }
@@ -37,9 +38,16 @@ namespace SEWorkshop.Facades
             Func<Store, bool> StoresWithThisNamePredicate = store => store.Name.Equals(storeName);
             ICollection<Store> StoresWithTheSameName = SearchStore(StoresWithThisNamePredicate);
             if (StoresWithTheSameName.Count > 0)
+            {
+                log.Info(String.Format("User {0} tried to create a store with name {1} and it's already exist",
+                    owner.Username, storeName));
                 throw new StoreWithThisNameAlreadyExistsException();
+            }
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
+            owner.Owns.Add(newStore);
+            log.Info(String.Format("User {0} created a store with name {1}",
+                    owner.Username, storeName));
             return newStore;
         }
 
@@ -85,7 +93,11 @@ namespace SEWorkshop.Facades
         public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
             if (products.Count == 0)
+            {
+                log.Info("Attemp to filter an empty collection");
                 throw new NoProductsToFilterException();
+
+            }
             return (from product in products
                     where pred(product)
                     select product).ToList();

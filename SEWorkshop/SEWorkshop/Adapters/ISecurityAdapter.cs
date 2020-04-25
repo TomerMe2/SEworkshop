@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.Adapters
 {
-    interface ISecurityAdapter
+    public interface ISecurityAdapter
     {
         public byte[] Encrypt(string toEncrypt);
     }
