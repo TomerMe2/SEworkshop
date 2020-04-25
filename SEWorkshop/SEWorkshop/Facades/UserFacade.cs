@@ -240,11 +240,16 @@ namespace SEWorkshop.Facades
             return userPurchases;
         }
 
-        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, LoggedInUser user)
+        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
             if (!Administrators.Contains(requesting))
             {
                 throw new UserHasNoPermissionException();
+            }
+            var user = Users.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
+            if(user is null)
+            {
+                throw new UserDoesNotExistException();
             }
             return PurcahseHistory(user);
         }

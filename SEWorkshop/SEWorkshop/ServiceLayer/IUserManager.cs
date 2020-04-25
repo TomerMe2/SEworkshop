@@ -7,16 +7,16 @@ namespace SEWorkshop.ServiceLayer
 {
     interface IUserManager
     {
-        public void AddProductToCart(Product product, int quantity);
+        public void AddProductToCart(string storeName, string productName, int quantity);
         public IEnumerable<Store> BrowseStores();
         public IEnumerable<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred);
         public void Login(string username, string password);
         public void Logout();
         public IEnumerable<Basket> MyCart();
-        public void OpenStore(LoggedInUser owner, string storeName);
+        public void OpenStore(string storeName);
         public void Purchase(Basket basket);
         public void Register(string username, string password);
-        public void RemoveProductFromCart(Product product, int quantity);
+        public void RemoveProductFromCart(string storeName, string productName, int quantity);
 
         /// <summary>
         /// input can be corrected inside this method. If it's corrected, the value of input will be changed.
@@ -34,23 +34,23 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Product> SearchProductsByKeywords(ref string input);
 
         public IEnumerable<Purchase> PurcahseHistory();
-        public void WriteReview(Product product, string description);
-        public void WriteMessage(Store store, string description);
-        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser user);
-        public IEnumerable<Purchase> StorePurchaseHistory(Store store);
-        public IEnumerable<Purchase> ManagingPurchaseHistory(Store store);
-        public void AddProduct(Store store, string name, string description, string category, double price, int quantity);
-        public void RemoveProduct(Store store, string name);
-        public void AddStoreOwner(Store store, string username);
-        public void AddStoreManager(Store store, string username);
-        public void SetPermissionsOfManager(Store store, string username, string authorization);
-        public void RemoveStoreManager(Store store, string username);
-        public IEnumerable<Message> ViewMessage(Store store);
-        public void MessageReply(Message message, Store store, string description);
-        public void EditProductName(Store store, Product product, string Name);
-        public void EditProductCategory(Store store, Product product, string category);
-        public void EditProductPrice(Store store, Product product, double price);
-        public void EditProductQuantity(Store store, Product product, int quantity);
-        public void EditProductDescription(Store store, Product product, string description);
+        public void WriteReview(string storeName, string productName, string description);
+        public void WriteMessage(string storeName, string description);
+        public IEnumerable<Purchase> UserPurchaseHistory(string userNm);
+        public IEnumerable<Purchase> StorePurchaseHistory(string storeNm);
+        public IEnumerable<Purchase> ManagingPurchaseHistory(string storeNm);
+        public void AddProduct(string storeNm, string productName, string description, string category, double price, int quantity);
+        public void RemoveProduct(string storeNm, string productName);
+        public void AddStoreOwner(string storeNm, string username);
+        public void AddStoreManager(string storeNm, string username);
+        public void SetPermissionsOfManager(string storeNm, string username, string authorization);
+        public void RemoveStoreManager(string storeNm, string username);
+        public IEnumerable<Message> ViewMessage(string storeNm);
+        public void MessageReply(Message message, string storeNm, string description);
+        public void EditProductName(string storeName, string productName, string Name);
+        public void EditProductCategory(string storeName, string productName, string category);
+        public void EditProductPrice(string storeName, string productName, double price);
+        public void EditProductQuantity(string storeName, string productName, int quantity);
+        public void EditProductDescription(string storeName, string productName, string description);
     }
 }
