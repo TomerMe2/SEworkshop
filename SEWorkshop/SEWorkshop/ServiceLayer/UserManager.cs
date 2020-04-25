@@ -30,9 +30,33 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerKeywords = new TyposFixer(new List<string>());
         }
 
-        public void AddProductToCart(Product product, int quantity)
+        private Product GetProduct(string storeName, string productName)
         {
-            UserFacadeInstance.AddProductToCart(currUser, product, quantity);
+            var product = StoreFacadeInstance.SearchProducts(prod => prod.Store.Name.Equals(storeName) && prod.Name.Equals(productName))
+                .FirstOrDefault();
+            if (product is null)
+            {
+                Log.Info(string.Format("Someone searched for a non existing product with name {0} and store name {1}",
+                    productName, storeName));
+                throw new ProductNotInTradingSystemException();
+            }
+            return product;
+        }
+
+        private Store GetStore(string storeName)
+        {
+            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            if (store is null)
+            {
+                Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
+                throw new StoreNotInTradingSystemException();
+            }
+            return store;
+        }
+
+        public void AddProductToCart(string storeName, string productName, int quantity)
+        {
+            UserFacadeInstance.AddProductToCart(currUser, GetProduct(storeName, productName), quantity);
         }
 
         public IEnumerable<Store> BrowseStores()
@@ -66,13 +90,13 @@ namespace SEWorkshop.ServiceLayer
             return UserFacadeInstance.MyCart(currUser);
         }
 
-        public Store OpenStore(string storeName)
+        public void OpenStore(string storeName)
         {
             if(currUser is GuestUser)
             {
                 throw new UserHasNoPermissionException();
             }
-            return StoreFacadeInstance.CreateStore((LoggedInUser)currUser, storeName);
+            StoreFacadeInstance.CreateStore((LoggedInUser)currUser, storeName);
         }
 
         public void Purchase(Basket basket)
@@ -85,9 +109,9 @@ namespace SEWorkshop.ServiceLayer
             UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
-        public void RemoveProductFromCart(Product product, int quantity)
+        public void RemoveProductFromCart(string storeName, string productName, int quantity)
         {
-            UserFacadeInstance.RemoveProductFromCart(currUser, product, quantity);
+            UserFacadeInstance.RemoveProductFromCart(currUser, GetProduct(storeName, productName), quantity);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -159,24 +183,24 @@ namespace SEWorkshop.ServiceLayer
             return UserFacadeInstance.PurcahseHistory(currUser);
         }
 
-        public void WriteReview(Product product, string description)
+        public void WriteReview(string storeName, string productName, string description)
         {
             if(description.Equals(string.Empty))
             {
-                Log.Info(string.Format("Someone tried to write empty review on product named {0}", product.Name));
+                Log.Info(string.Format("Someone tried to write empty review on product named {0}", productName));
                 throw new ArgumentException("description is empty");
             }
-            UserFacadeInstance.WriteReview(currUser, product, description);
+            UserFacadeInstance.WriteReview(currUser, GetProduct(storeName, productName), description);
         }
 
-        public void WriteMessage(Store store, string description)
+        public void WriteMessage(string storeName, string description)
         {
             if (description.Equals(string.Empty))
             {
-                Log.Info(string.Format("Someone tried to write empty message to store named {0}", store.Name));
+                Log.Info(string.Format("Someone tried to write empty message to store named {0}", storeName));
                 throw new ArgumentException("description is empty");
             }
-            UserFacadeInstance.WriteMessage(currUser, store, description);
+            UserFacadeInstance.WriteMessage(currUser, GetStore(storeName), description);
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(string userNm)
@@ -188,34 +212,34 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public IEnumerable<Purchase> StorePurchaseHistory(Store store)
+        public IEnumerable<Purchase> StorePurchaseHistory(string storeName)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                return UserFacadeInstance.StorePurchaseHistory((LoggedInUser)currUser, store);
+                return UserFacadeInstance.StorePurchaseHistory((LoggedInUser)currUser, GetStore(storeName));
             }
             throw new UserHasNoPermissionException();
         }
 
-        public IEnumerable<Purchase> ManagingPurchaseHistory(Store store)
+        public IEnumerable<Purchase> ManagingPurchaseHistory(string storeName)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                return ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
+                return ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, GetStore(storeName));
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
+        public void AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price, quantity);
+                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
-                TyposFixerNames.AddToDictionary(name);
+                TyposFixerNames.AddToDictionary(productName);
                 TyposFixerCategories.AddToDictionary(category);
                 // for keywods, we are treating each word in an un-connected way, because each word is a keyword
-                foreach(string word in name.Split(' '))
+                foreach(string word in productName.Split(' '))
                 {
                     TyposFixerKeywords.AddToDictionary(word);
                 }
@@ -232,11 +256,12 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void RemoveProduct(Store store, string name)
+        public void RemoveProduct(string storeName, string productName)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                Product product = store.GetProduct(name);
+                Store store = GetStore(storeName);
+                Product product = GetProduct(storeName, productName);
                 ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, product);
                 // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
                 // same applies for category
@@ -246,9 +271,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductDescription(Store store, Product product, string Description)
+        public void EditProductDescription(string storeName, string productName, string Description)
         {
-             if(UserFacadeInstance.HasPermission)
+            Store store = GetStore(storeName);
+            Product product = GetProduct(storeName, productName);
+            if (UserFacadeInstance.HasPermission)
              {
                 ManageFacade.GetInstance().EditProductDescription((LoggedInUser)currUser, store, product, Description);
                 return;
@@ -256,9 +283,11 @@ namespace SEWorkshop.ServiceLayer
              throw new UserHasNoPermissionException();
         }
 
-        public void EditProductPrice(Store store, Product product, double price)
+        public void EditProductPrice(string storeName, string productName, double price)
         {
-            if(UserFacadeInstance.HasPermission)
+            Store store = GetStore(storeName);
+            Product product = GetProduct(storeName, productName);
+            if (UserFacadeInstance.HasPermission)
             {            
                 ManageFacade.GetInstance().EditProductPrice((LoggedInUser)currUser, store, product, price);
                 return;
@@ -266,9 +295,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductCategory(Store store, Product product, string category)
+        public void EditProductCategory(string storeName, string productName, string category)
         {
-            if(UserFacadeInstance.HasPermission)
+            Store store = GetStore(storeName);
+            Product product = GetProduct(storeName, productName);
+            if (UserFacadeInstance.HasPermission)
             {
                 ManageFacade.GetInstance().EditProductCategory((LoggedInUser)currUser, store, product, category);
                 return;
@@ -276,49 +307,51 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductName(Store store, Product product, string name)
+        public void EditProductName(string storeName, string productName, string name)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductName((LoggedInUser)currUser, store, product, name);
+                ManageFacade.GetInstance().EditProductName((LoggedInUser)currUser, GetStore(storeName),
+                    GetProduct(storeName, productName), name);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductQuantity(Store store, Product product, int quantity)
+        public void EditProductQuantity(string storeName, string productName, int quantity)
         {
             if (UserFacadeInstance.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)currUser, store, product, quantity);
+                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)currUser, GetStore(storeName),
+                    GetProduct(storeName, productName), quantity);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void AddStoreOwner(Store store, string username)
+        public void AddStoreOwner(string storeName, string username)
         {
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser newOwner = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreOwner((LoggedInUser)currUser, store, newOwner);
+                ManageFacadeInstance.AddStoreOwner((LoggedInUser)currUser, GetStore(storeName), newOwner);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void AddStoreManager(Store store, string username)
+        public void AddStoreManager(string storeName, string username)
         {
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser newManager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreManager((LoggedInUser)currUser, store, newManager);
+                ManageFacadeInstance.AddStoreManager((LoggedInUser)currUser, GetStore(storeName), newManager);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void SetPermissionsOfManager(Store store, string username, string auth)
+        public void SetPermissionsOfManager(string storeName, string username, string auth)
         {
             if(UserFacadeInstance.HasPermission)
             {
@@ -353,37 +386,37 @@ namespace SEWorkshop.ServiceLayer
                     default:
                         throw new AuthorizationDoesNotExistException();
                 }
-                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)currUser, store, newManager, authorization);
+                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)currUser, GetStore(storeName), newManager, authorization);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void RemoveStoreManager(Store store, string username)
+        public void RemoveStoreManager(string storeName, string username)
         {
             if(UserFacadeInstance.HasPermission)
             {
                 LoggedInUser manager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)currUser, store, manager);
+                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)currUser, GetStore(storeName), manager);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public IEnumerable<Message> ViewMessage(Store store)
+        public IEnumerable<Message> ViewMessage(string storeName)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                return ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, store);
+                return ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, GetStore(storeName));
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void MessageReply(Message message, Store store, string description)
+        public void MessageReply(Message message, string storeName, string description)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, store, description);
+                ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
                 return;
             }
             throw new UserHasNoPermissionException();
