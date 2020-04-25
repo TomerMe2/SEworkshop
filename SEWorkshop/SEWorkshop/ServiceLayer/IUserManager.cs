@@ -38,6 +38,7 @@ namespace SEWorkshop.ServiceLayer
         public void WriteMessage(Store store, string description);
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser user);
         public IEnumerable<Purchase> StorePurchaseHistory(Store store);
+        public IEnumerable<Purchase> ManagingPurchaseHistory(Store store);
         public void AddProduct(Store store, string name, string description, string category, double price, int quantity);
         public void RemoveProduct(Store store, string name);
         public void AddStoreOwner(Store store, string username);

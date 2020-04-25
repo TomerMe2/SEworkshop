@@ -183,6 +183,15 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
+        public IEnumerable<Purchase> ManagingPurchaseHistory(Store store)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                return ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
+            }
+            throw new UserHasNoPermissionException();
+        }
+
         public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
