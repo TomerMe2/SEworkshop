@@ -189,8 +189,8 @@ namespace SEWorkshop.ServiceLayer
             {
                 ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
-                TyposFixerNames.AddToDictionary(name.Replace(' ', '_'));
-                TyposFixerCategories.AddToDictionary(category.Replace(' ', '_'));
+                TyposFixerNames.AddToDictionary(name);
+                TyposFixerCategories.AddToDictionary(category);
                 // for keywods, we are treating each word in an un-connected way, because each word is a keyword
                 foreach(string word in name.Split(' '))
                 {
@@ -214,7 +214,8 @@ namespace SEWorkshop.ServiceLayer
             {
                 Product product = store.GetProduct(name);
                 ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, product);
-                //we don't need to remove the product's description there are lots of produts with possibly similar descriptions
+                // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
+                // same applies for category
                 TyposFixerNames.RemoveFromDictionary(product.Name);
             }
             throw new UserHasNoPermissionException();

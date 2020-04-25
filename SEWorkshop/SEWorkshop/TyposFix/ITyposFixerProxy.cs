@@ -6,8 +6,8 @@ namespace SEWorkshop.TyposFix
 {
     interface ITyposFixerProxy
     {
-        public void AddToDictionary(string productName);
-        public void RemoveFromDictionary(string productName);
+        public void AddToDictionary(string input);
+        public void RemoveFromDictionary(string input);
         public string Correct(string input);
     }
 }

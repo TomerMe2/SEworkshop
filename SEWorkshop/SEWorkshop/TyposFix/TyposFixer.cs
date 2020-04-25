@@ -131,15 +131,18 @@ namespace SEWorkshop.TyposFix
 			return deletes.Union(transposes).Union(replaces).Union(inserts).ToList();
 		}
 
-		public void AddToDictionary(string productName)
-		{
-			if (!_dictionary.ContainsKey(productName))
-				_dictionary.Add(productName.Trim().ToLower(), 1);
-		}
+        public void AddToDictionary(string input)
+        {
+            if (!_dictionary.ContainsKey(input))
+            {
+                // The algorithm will think of the input as one word
+                _dictionary.Add(input.Trim().ToLower().Replace(' ', '_'), 1);
+            }
+        }
 
-		public void RemoveFromDictionary(string productName)
+		public void RemoveFromDictionary(string input)
 		{
-			_dictionary.Remove(productName.Trim().ToLower());
+			_dictionary.Remove(input.Trim().ToLower().Replace(' ', '_'));
 		}
 	}
 }
