@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
+using SEWorkshop.TyposFix;
 
 namespace SEWorkshop.Facades
 {
@@ -11,7 +12,6 @@ namespace SEWorkshop.Facades
     {
         private static StoreFacade? Instance { get; set; } = null;
         private ICollection<Store> Stores { get; set; }
-
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         private StoreFacade()
