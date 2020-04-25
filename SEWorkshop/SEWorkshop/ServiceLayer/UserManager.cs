@@ -43,7 +43,7 @@ namespace SEWorkshop.ServiceLayer
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
             Cart cart = currUser.Cart;
-            currUser = UserFacadeInstance.Login(username, password);
+            currUser = UserFacadeInstance.Login(username, securityAdapter.Encrypt(password));
             currUser.Cart = cart;
         }
 
@@ -72,7 +72,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void Register(string username, string password)
         {
-            UserFacadeInstance.Register(username, password);
+            UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
         public void RemoveProductFromCart(Product product)
