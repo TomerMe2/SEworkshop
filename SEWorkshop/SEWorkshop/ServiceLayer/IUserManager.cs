@@ -13,7 +13,7 @@ namespace SEWorkshop.ServiceLayer
         public void Login(string username, string password);
         public void Logout();
         public IEnumerable<Basket> MyCart();
-        public void OpenStore(LoggedInUser owner, string storeName);
+        public Store OpenStore(string storeName);
         public void Purchase(Basket basket);
         public void Register(string username, string password);
         public void RemoveProductFromCart(Product product, int quantity);
@@ -36,7 +36,7 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Purchase> PurcahseHistory();
         public void WriteReview(Product product, string description);
         public void WriteMessage(Store store, string description);
-        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser user);
+        public IEnumerable<Purchase> UserPurchaseHistory(string userNm);
         public IEnumerable<Purchase> StorePurchaseHistory(Store store);
         public IEnumerable<Purchase> ManagingPurchaseHistory(Store store);
         public void AddProduct(Store store, string name, string description, string category, double price, int quantity);

@@ -66,9 +66,13 @@ namespace SEWorkshop.ServiceLayer
             return UserFacadeInstance.MyCart(currUser);
         }
 
-        public void OpenStore(LoggedInUser owner, string storeName)
+        public Store OpenStore(string storeName)
         {
-            StoreFacadeInstance.CreateStore(owner, storeName);
+            if(currUser is GuestUser)
+            {
+                throw new UserHasNoPermissionException();
+            }
+            return StoreFacadeInstance.CreateStore((LoggedInUser)currUser, storeName);
         }
 
         public void Purchase(Basket basket)
@@ -157,19 +161,29 @@ namespace SEWorkshop.ServiceLayer
 
         public void WriteReview(Product product, string description)
         {
+            if(description.Equals(string.Empty))
+            {
+                Log.Info(string.Format("Someone tried to write empty review on product named {0}", product.Name));
+                throw new ArgumentException("description is empty");
+            }
             UserFacadeInstance.WriteReview(currUser, product, description);
         }
 
         public void WriteMessage(Store store, string description)
         {
+            if (description.Equals(string.Empty))
+            {
+                Log.Info(string.Format("Someone tried to write empty message to store named {0}", store.Name));
+                throw new ArgumentException("description is empty");
+            }
             UserFacadeInstance.WriteMessage(currUser, store, description);
         }
 
-        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser user)
+        public IEnumerable<Purchase> UserPurchaseHistory(string userNm)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                return UserFacadeInstance.UserPurchaseHistory((LoggedInUser)currUser, user);
+                return UserFacadeInstance.UserPurchaseHistory((LoggedInUser)currUser, userNm);
             }
             throw new UserHasNoPermissionException();
         }
