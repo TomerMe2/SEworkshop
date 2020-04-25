@@ -30,9 +30,9 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerKeywords = new TyposFixer(new List<string>());
         }
 
-        public void AddProductToCart(Product product)
+        public void AddProductToCart(Product product, int quantity)
         {
-            UserFacadeInstance.AddProductToCart(currUser, product);
+            UserFacadeInstance.AddProductToCart(currUser, product, quantity);
         }
 
         public IEnumerable<Store> BrowseStores()
@@ -81,9 +81,9 @@ namespace SEWorkshop.ServiceLayer
             UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
-        public void RemoveProductFromCart(Product product)
+        public void RemoveProductFromCart(Product product, int quantity)
         {
-            UserFacadeInstance.RemoveProductFromCart(currUser, product);
+            UserFacadeInstance.RemoveProductFromCart(currUser, product, quantity);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -183,11 +183,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(Store store, string name, string description, string category, double price)
+        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
+                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price, quantity);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
                 TyposFixerNames.AddToDictionary(name);
                 TyposFixerCategories.AddToDictionary(category);
