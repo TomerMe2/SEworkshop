@@ -129,6 +129,18 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
+        public void EditProductQuantity(LoggedInUser loggedInUser, Store store, Product product, int quantity)
+        {
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if (!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                product.Quantity = quantity;
+            }
+            throw new UserHasNoPermissionException();
+        }
 
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {

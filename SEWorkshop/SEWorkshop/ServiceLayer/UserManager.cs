@@ -272,6 +272,16 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
+        public void EditProductQuantity(Store store, Product product, int quantity)
+        {
+            if (UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)currUser, store, product, quantity);
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
         public void AddStoreOwner(Store store, string username)
         {
             if(UserFacadeInstance.HasPermission)
