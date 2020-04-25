@@ -5,26 +5,40 @@ using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 <<<<<<< HEAD
 using NLog;
+<<<<<<< HEAD
 =======
 >>>>>>> compiling
+=======
+using System.Linq;
+using SEWorkshop.Adapters;
+using SEWorkshop.TyposFix;
+>>>>>>> 00eb967d5336e2abc7ab8b6b70acf387d59cc128
 
 namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        UserFacade UserFacadeInstance = UserFacade.GetInstance();
-        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
-        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
         User currUser = new GuestUser();
+        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
+        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
+        UserFacade UserFacadeInstance = UserFacade.GetInstance();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        private ITyposFixerProxy TyposFixerNames { get; set; }
+        private ITyposFixerProxy TyposFixerCategories { get; set; }
+        private ITyposFixerProxy TyposFixerKeywords { get; set; }
 
         public UserManager()
         {
+            TyposFixerNames = new TyposFixer(new List<string>());
+            TyposFixerCategories = new TyposFixer(new List<string>());
+            TyposFixerKeywords = new TyposFixer(new List<string>());
         }
 
-        public void AddProductToCart(Product product)
+        public void AddProductToCart(Product product, int quantity)
         {
-            UserFacadeInstance.AddProductToCart(currUser, product);
+            UserFacadeInstance.AddProductToCart(currUser, product, quantity);
         }
 
         public IEnumerable<Store> BrowseStores()
@@ -41,7 +55,7 @@ namespace SEWorkshop.ServiceLayer
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
             Cart cart = currUser.Cart;
-            currUser = UserFacadeInstance.Login(username, password);
+            currUser = UserFacadeInstance.Login(username, securityAdapter.Encrypt(password));
             currUser.Cart = cart;
         }
 
@@ -77,17 +91,76 @@ namespace SEWorkshop.ServiceLayer
 
         public void Register(string username, string password)
         {
-            UserFacadeInstance.Register(username, password);
+            UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
-        public void RemoveProductFromCart(Product product)
+        public void RemoveProductFromCart(Product product, int quantity)
         {
-            UserFacadeInstance.RemoveProductFromCart(currUser, product);
+            UserFacadeInstance.RemoveProductFromCart(currUser, product, quantity);
         }
 
-        public IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
+        private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
         {
             return StoreFacadeInstance.SearchProducts(pred);
+        }
+
+        public IEnumerable<Product> SearchProductsByName(ref string input)
+        {
+            string localInput = input;
+            IEnumerable<Product> products = SearchProducts(product => product.Name.Equals(localInput));
+            if (products.Any())
+                return products;
+            string corrected = TyposFixerNames.Correct(input);
+            products = SearchProducts(product => product.Name.ToLower().Replace(' ', '_').Equals(corrected));
+            input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
+            return products;
+        }
+
+        public IEnumerable<Product> SearchProductsByCategory(ref string input)
+        {
+            string localInput = input;
+            IEnumerable<Product> products = SearchProducts(product => product.Category.Equals(localInput));
+            if (products.Any())
+                return products;
+            string corrected = TyposFixerNames.Correct(input);
+            products = SearchProducts(product => product.Category.ToLower().Replace(' ', '_').Equals(corrected));
+            input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
+            return products;
+        }
+
+        public IEnumerable<Product> SearchProductsByKeywords(ref string input)
+        { 
+            string localInput = input;
+            bool hasWordInsideOther(string[] words1, List<string> words2)
+            {
+                foreach (string word1 in words1)
+                {
+                    foreach (string word2 in words2)
+                    {
+                        if (word1.Equals(word2.ToLower()))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            };
+            bool hasWordInsideInput(string[] words) => hasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
+            bool predicate(Product product) => hasWordInsideInput(product.Name.Split(' ')) ||
+                                            hasWordInsideInput(product.Category.Split(' ')) ||
+                                            hasWordInsideInput(product.Description.Split(' '));
+            IEnumerable <Product> products = SearchProducts(predicate);
+            if (products.Any())
+                return products;
+            // Each word should be corrected seperatly because the words do not have to depend on each other
+            List<string> corrected = input.Split(' ').Select(word => TyposFixerKeywords.Correct(word)).ToList();
+            bool hasWordInsideCorrected(string[] words) => hasWordInsideOther(words, corrected);  // curry version
+            bool correctedPredicate(Product product) => hasWordInsideCorrected(product.Name.Split(' ')) ||
+                                            hasWordInsideCorrected(product.Category.Split(' ')) ||
+                                            hasWordInsideCorrected(product.Description.Split(' '));
+            products = SearchProducts(correctedPredicate);
+            input = String.Join(' ', corrected);
+            return products;
         }
 
         public IEnumerable<Purchase> PurcahseHistory()
@@ -123,11 +196,27 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(Store store, string name, string description, string category, double price)
+        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
+                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price, quantity);
+                //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
+                TyposFixerNames.AddToDictionary(name);
+                TyposFixerCategories.AddToDictionary(category);
+                // for keywods, we are treating each word in an un-connected way, because each word is a keyword
+                foreach(string word in name.Split(' '))
+                {
+                    TyposFixerKeywords.AddToDictionary(word);
+                }
+                foreach (string word in category.Split(' '))
+                {
+                    TyposFixerKeywords.AddToDictionary(word);
+                }
+                foreach (string word in description.Split(' '))
+                {
+                    TyposFixerKeywords.AddToDictionary(word);
+                }
             }
             throw new UserHasNoPermissionException();
         }
@@ -136,7 +225,11 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, store.GetProduct(name));
+                Product product = store.GetProduct(name);
+                ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, product);
+                // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
+                // same applies for category
+                TyposFixerNames.RemoveFromDictionary(product.Name);
             }
             throw new UserHasNoPermissionException();
         }
@@ -225,15 +318,6 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, store, description);
-            }
-            throw new UserHasNoPermissionException();
-        }
-
-        public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
-        {
-            if(UserFacadeInstance.HasPermission)
-            {
-                ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
             }
             throw new UserHasNoPermissionException();
         }

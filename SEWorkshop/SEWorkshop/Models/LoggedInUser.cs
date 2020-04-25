@@ -11,9 +11,9 @@ namespace SEWorkshop.Models
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
         public string Username {get; private set;}
-        public string Password {get; private set;} 
+        public byte[] Password {get; private set;}   //it will be SHA256 encrypted password
 
-        public LoggedInUser(string username, string password)
+        public LoggedInUser(string username, byte[] password)
         {
             Username = username;
             Password = password;

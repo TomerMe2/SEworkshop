@@ -8,7 +8,7 @@ namespace SEWorkshop.Models
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }
 
-        public Administrator(string username, string password) : base(username, password)
+        public Administrator(string username, byte[] password) : base(username, password)
         {
             PurchasesToView = new List<Purchase>();
         }
