@@ -183,6 +183,15 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
+        public IEnumerable<Purchase> ManagingPurchaseHistory(Store store)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                return ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, store);
+            }
+            throw new UserHasNoPermissionException();
+        }
+
         public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
@@ -204,6 +213,7 @@ namespace SEWorkshop.ServiceLayer
                 {
                     TyposFixerKeywords.AddToDictionary(word);
                 }
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -217,6 +227,57 @@ namespace SEWorkshop.ServiceLayer
                 // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
                 // same applies for category
                 TyposFixerNames.RemoveFromDictionary(product.Name);
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductDescription(Store store, Product product, string Description)
+        {
+             if(UserFacadeInstance.HasPermission)
+             {
+                ManageFacade.GetInstance().EditProductDescription((LoggedInUser)currUser, store, product, Description);
+                return;
+             }
+             throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductPrice(Store store, Product product, double price)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {            
+                ManageFacade.GetInstance().EditProductPrice((LoggedInUser)currUser, store, product, price);
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductCategory(Store store, Product product, string category)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductCategory((LoggedInUser)currUser, store, product, category);
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductName(Store store, Product product, string name)
+        {
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductName((LoggedInUser)currUser, store, product, name);
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductQuantity(Store store, Product product, int quantity)
+        {
+            if (UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)currUser, store, product, quantity);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -227,6 +288,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 LoggedInUser newOwner = UserFacadeInstance.GetUser(username);
                 ManageFacadeInstance.AddStoreOwner((LoggedInUser)currUser, store, newOwner);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -237,6 +299,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 LoggedInUser newManager = UserFacadeInstance.GetUser(username);
                 ManageFacadeInstance.AddStoreManager((LoggedInUser)currUser, store, newManager);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -277,6 +340,7 @@ namespace SEWorkshop.ServiceLayer
                         throw new AuthorizationDoesNotExistException();
                 }
                 ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)currUser, store, newManager, authorization);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -287,6 +351,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 LoggedInUser manager = UserFacadeInstance.GetUser(username);
                 ManageFacadeInstance.RemoveStoreManager((LoggedInUser)currUser, store, manager);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -295,7 +360,7 @@ namespace SEWorkshop.ServiceLayer
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, store);
+                return ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, store);
             }
             throw new UserHasNoPermissionException();
         }
@@ -305,6 +370,7 @@ namespace SEWorkshop.ServiceLayer
             if(UserFacadeInstance.HasPermission)
             {
                 ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, store, description);
+                return;
             }
             throw new UserHasNoPermissionException();
         }

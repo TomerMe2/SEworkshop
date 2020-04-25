@@ -46,7 +46,7 @@ namespace SEWorkshop.Facades
             if (UserHasPermission(loggedInUser, store, Authorizations.Products)) 
             {
                 Product newProduct = new Product(store, name, description, category, price, quantity);
-                if (!store.Products.Contains(newProduct))
+                if (!StoreContainsProduct(store, newProduct))
                 {
                     store.Products.Add(newProduct);
                     return;
@@ -55,15 +55,89 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
-        public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product)
+        public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
         {
             if (UserHasPermission(loggedInUser,store, Authorizations.Products))
             {
-                if (store.Products.Contains(product))
+                if (StoreContainsProduct(store, productToRemove))
                 {
-                    store.Products.Remove(product);
+                    store.Products.Remove(productToRemove);
                     return;
                 }
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductDescription(LoggedInUser loggedInUser, Store store, Product product, string description)
+        {
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if(!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                product.Description = description;
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductCategory(LoggedInUser loggedInUser, Store store, Product product, string category)
+        {
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if(!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                product.Category = category;
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductName(LoggedInUser loggedInUser, Store store, Product product, string name)
+        {
+            Product demo = new Product(store, name, "", "", 0, 0);
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if(!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                if(StoreContainsProduct(store, demo))
+                {
+                    throw new StoreWithThisNameAlreadyExistsException();
+                }
+                product.Name = name;
+                return;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+
+        public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price)
+        {
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if(!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                product.Price = price;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductQuantity(LoggedInUser loggedInUser, Store store, Product product, int quantity)
+        {
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            {
+                if (!StoreContainsProduct(store, product))
+                {
+                    throw new ProductNotInTradingSystemException();
+                }
+                product.Quantity = quantity;
             }
             throw new UserHasNoPermissionException();
         }
@@ -143,7 +217,7 @@ namespace SEWorkshop.Facades
 
         public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
+            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
             {
                 Message reply = new Message(loggedInUser, description, message);
                 message.Next = reply;
@@ -153,7 +227,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
-            if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
+            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
             {
                 return store.Purchases;
             }
@@ -168,12 +242,8 @@ namespace SEWorkshop.Facades
                                                                     where manager.Value == user
                                                                     select manager).ToList().Count() > 0);
 
-        public void EditProductPrice(Product product, string description) => product.Description = description;
-
-        public void EditProductCategory(Product product, string category) => product.Category = category;
-
-        public void EditProductName(Product product, string name) => product.Name = name;
-
-        public void EditProductPrice(Product product, double price) => product.Price = price;
-    }
+        public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products 
+                                                                            where pr.Name== product.Name
+                                                                            select product).ToList().Count()> 0);
+     }
 }
