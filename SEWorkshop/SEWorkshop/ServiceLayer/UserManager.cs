@@ -232,37 +232,41 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductDescription(Store store, Product product, string Description){
+        public void EditProductDescription(Store store, Product product, string Description)
+        {
              if(UserFacadeInstance.HasPermission)
              {
-                ManageFacade.GetInstance().EditProductDescription(product, Description);
+                ManageFacade.GetInstance().EditProductDescription((LoggedInUser)currUser, store, product, Description);
                 return;
              }
              throw new UserHasNoPermissionException();
         }
 
-        public void EditProductPrice(Store store, Product product, double price){
+        public void EditProductPrice(Store store, Product product, double price)
+        {
             if(UserFacadeInstance.HasPermission)
             {            
-                ManageFacade.GetInstance().EditProductPrice(product, price);
+                ManageFacade.GetInstance().EditProductPrice((LoggedInUser)currUser, store, product, price);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductCategory(Store store, Product product, string category){
+        public void EditProductCategory(Store store, Product product, string category)
+        {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductCategory(product, category);
+                ManageFacade.GetInstance().EditProductCategory((LoggedInUser)currUser, store, product, category);
                 return;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductName(Store store, Product product, string name){
+        public void EditProductName(Store store, Product product, string name)
+        {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductName(product, name);
+                ManageFacade.GetInstance().EditProductName((LoggedInUser)currUser, store, product, name);
                 return;
             }
             throw new UserHasNoPermissionException();

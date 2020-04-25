@@ -47,5 +47,9 @@ namespace SEWorkshop.ServiceLayer
         public void RemoveStoreManager(Store store, string username);
         public IEnumerable<Message> ViewMessage(Store store);
         public void MessageReply(Message message, Store store, string description);
+        public void EditProductCategory(Store store, Product product, string category);
+        public void EditProductPrice(Store store, Product product, double price);
+        public void EditProductName(Store store, Product product, string Name);
+        public void EditProductDescription(Store store, Product product, string description);
     }
 }

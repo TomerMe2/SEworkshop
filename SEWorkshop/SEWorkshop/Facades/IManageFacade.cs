@@ -16,5 +16,9 @@ namespace SEWorkshop.Facades
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store); //throws exception
         public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description); //throws exception
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store); //throws exception
+        public void EditProductDescription(LoggedInUser loggedInUser, Store store, Product product, string description); //throws exception
+        public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price); //throws exception
+        public void EditProductName(LoggedInUser loggedInUser, Store store, Product product, string name); //throws exception
+        public void EditProductCategory(LoggedInUser loggedInUser, Store store, Product product, string category); //throws exception
     }
 }
