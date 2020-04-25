@@ -221,6 +221,38 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
+        public void EditProductDescription(Product product, string Description){
+             if(UserFacadeInstance.HasPermission)
+             {
+                ManageFacade.GetInstance().EditProductDescription(product, Description);
+             }
+             throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductPrice(Product product, double price){
+            if(UserFacadeInstance.HasPermission)
+            {            
+                ManageFacade.GetInstance().EditProductPrice(product, price);        
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductCategory(Product product, string category){
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductCategory(product, category);
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void EditProductName(Product product, string name){
+            if(UserFacadeInstance.HasPermission)
+            {
+                ManageFacade.GetInstance().EditProductName(product, name);
+            }
+            throw new UserHasNoPermissionException();
+        }
+
         public void AddStoreOwner(Store store, string username)
         {
             if(UserFacadeInstance.HasPermission)

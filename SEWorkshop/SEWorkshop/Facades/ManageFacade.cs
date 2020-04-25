@@ -46,7 +46,7 @@ namespace SEWorkshop.Facades
             if (UserHasPermission(loggedInUser, store, Authorizations.Products)) 
             {
                 Product newProduct = new Product(store, name, description, category, price, quantity);
-                if (!store.Products.Contains(newProduct))
+                if (!StoreContainsProduct(store, newProduct))
                 {
                     store.Products.Add(newProduct);
                     return;
@@ -55,13 +55,13 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
-        public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product)
+        public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
         {
             if (UserHasPermission(loggedInUser,store, Authorizations.Products))
             {
-                if (store.Products.Contains(product))
+                if (StoreContainsProduct(store, productToRemove))
                 {
-                    store.Products.Remove(product);
+                    store.Products.Remove(productToRemove);
                     return;
                 }
             }
@@ -168,12 +168,16 @@ namespace SEWorkshop.Facades
                                                                     where manager.Value == user
                                                                     select manager).ToList().Count() > 0);
 
-        public void EditProductPrice(Product product, string description) => product.Description = description;
+        public void EditProductDescription(Product product, string description) => product.Description = description;
 
         public void EditProductCategory(Product product, string category) => product.Category = category;
 
         public void EditProductName(Product product, string name) => product.Name = name;
 
         public void EditProductPrice(Product product, double price) => product.Price = price;
-    }
+
+        public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products 
+                                                                            where pr.Name== product.Name
+                                                                            select product).ToList().Count()> 0);
+     }
 }
