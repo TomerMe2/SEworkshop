@@ -17,7 +17,22 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(Basket basket);
         public void Register(string username, string password);
         public void RemoveProductFromCart(Product product, int quantity);
-        public IEnumerable<Product> SearchProducts(Func<Product, bool> pred);
+
+        /// <summary>
+        /// input can be corrected inside this method. If it's corrected, the value of input will be changed.
+        /// </summary>
+        public IEnumerable<Product> SearchProductsByName(ref string input);
+
+        /// <summary>
+        /// input can be corrected inside this method. If it's corrected, the value of input will be changed.
+        /// </summary>
+        public IEnumerable<Product> SearchProductsByCategory(ref string input);
+
+        /// <summary>
+        /// input can be corrected inside this method. If it's corrected, the value of input will be changed.
+        /// </summary>
+        public IEnumerable<Product> SearchProductsByKeywords(ref string input);
+
         public IEnumerable<Purchase> PurcahseHistory();
         public void WriteReview(Product product, string description);
         public void WriteMessage(Store store, string description);
