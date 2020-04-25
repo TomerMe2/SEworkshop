@@ -7,6 +7,6 @@ namespace SEWorkshop.Adapters
 {
     interface IBillingAdapter
     {
-        public bool Bill(ICollection<Product> products, string creditCardNumber);
+        public bool Bill(ICollection<(Product, int)> products, string creditCardNumber);
     }
 }

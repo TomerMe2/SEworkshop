@@ -24,9 +24,9 @@ namespace SEWorkshop.ServiceLayer
         {
         }
 
-        public void AddProductToCart(Product product)
+        public void AddProductToCart(Product product, int quantity)
         {
-            UserFacadeInstance.AddProductToCart(currUser, product);
+            UserFacadeInstance.AddProductToCart(currUser, product, quantity);
         }
 
         public IEnumerable<Store> BrowseStores()
@@ -43,7 +43,7 @@ namespace SEWorkshop.ServiceLayer
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
             Cart cart = currUser.Cart;
-            currUser = UserFacadeInstance.Login(username, password);
+            currUser = UserFacadeInstance.Login(username, securityAdapter.Encrypt(password));
             currUser.Cart = cart;
         }
 
@@ -72,12 +72,12 @@ namespace SEWorkshop.ServiceLayer
 
         public void Register(string username, string password)
         {
-            UserFacadeInstance.Register(username, password);
+            UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
         }
 
-        public void RemoveProductFromCart(Product product)
+        public void RemoveProductFromCart(Product product, int quantity)
         {
-            UserFacadeInstance.RemoveProductFromCart(currUser, product);
+            UserFacadeInstance.RemoveProductFromCart(currUser, product, quantity);
         }
 
         public IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -118,11 +118,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(Store store, string name, string description, string category, double price)
+        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price);
+                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, store, name, description, category, price, quantity);
             }
             throw new UserHasNoPermissionException();
         }

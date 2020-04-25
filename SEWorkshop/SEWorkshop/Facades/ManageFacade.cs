@@ -39,13 +39,13 @@ namespace SEWorkshop.Facades
 
         }
 
-        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price)
+        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
            
             if (UserHasPermission(loggedInUser, store, Authorizations.Products)) 
             {
-                Product newProduct = new Product(store, name, description, category, price);
+                Product newProduct = new Product(store, name, description, category, price, quantity);
                 if (!store.Products.Contains(newProduct))
                 {
                     store.Products.Add(newProduct);
