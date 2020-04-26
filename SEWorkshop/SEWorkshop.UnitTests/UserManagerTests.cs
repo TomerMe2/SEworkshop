@@ -272,11 +272,11 @@ namespace SEWorkshop.UnitTests
             Manager.AddStoreManager("UserPurchaseHistory_store1", "UserPurchaseHistory_user2");
             Manager.SetPermissionsOfManager("UserPurchaseHistory_store1", "UserPurchaseHistory_user2", "Products");
             Manager.AddProduct("UserPurchaseHistory_store1", "uph_prod1", "ninini", "cat1", 11, 1);
-            Manager.AddProductToCart("UserPurchaseHistoryy_store1", "uph_prod1", 1);
-            var basket = Manager.MyCart().ElementAt(0);
+            Manager.AddProductToCart("UserPurchaseHistory_store1", "uph_prod1", 1);
+            var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
             Manager.Purchase(basket);
-            var result = Manager.UserPurchaseHistory("UserPurchaseHistory_user1");
-            Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
+            var result = Manager.PurcahseHistory();
+            Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
         }
 
         public void StorePurchaseHistory()
