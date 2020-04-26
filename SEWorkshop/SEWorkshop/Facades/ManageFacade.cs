@@ -129,6 +129,7 @@ namespace SEWorkshop.Facades
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Price = price;
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -142,6 +143,7 @@ namespace SEWorkshop.Facades
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Quantity = quantity;
+                return;
             }
             throw new UserHasNoPermissionException();
         }
