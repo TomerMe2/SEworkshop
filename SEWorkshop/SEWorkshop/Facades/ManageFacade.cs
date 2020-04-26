@@ -34,8 +34,8 @@ namespace SEWorkshop.Facades
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
-           
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products)) 
+
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
             {
                 Product newProduct = new Product(store, name, description, category, price, quantity);
                 if (!StoreContainsProduct(store, newProduct))
@@ -53,7 +53,7 @@ namespace SEWorkshop.Facades
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
         {
-            if (UserHasPermission(loggedInUser,store, Authorizations.Products))
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
             {
                 if (StoreContainsProduct(store, productToRemove))
                 {
@@ -68,7 +68,7 @@ namespace SEWorkshop.Facades
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Products))
             {
-                if(!StoreContainsProduct(store, product))
+                if (!StoreContainsProduct(store, product))
                 {
                     throw new ProductNotInTradingSystemException();
                 }
@@ -82,7 +82,7 @@ namespace SEWorkshop.Facades
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Products))
             {
-                if(!StoreContainsProduct(store, product))
+                if (!StoreContainsProduct(store, product))
                 {
                     throw new ProductNotInTradingSystemException();
                 }
@@ -97,11 +97,11 @@ namespace SEWorkshop.Facades
             Product demo = new Product(store, name, "", "", 0, 0);
             if (UserHasPermission(loggedInUser, store, Authorizations.Products))
             {
-                if(!StoreContainsProduct(store, product))
+                if (!StoreContainsProduct(store, product))
                 {
                     throw new ProductNotInTradingSystemException();
                 }
-                if(StoreContainsProduct(store, demo))
+                if (StoreContainsProduct(store, demo))
                 {
                     throw new StoreWithThisNameAlreadyExistsException();
                 }
@@ -114,9 +114,9 @@ namespace SEWorkshop.Facades
 
         public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price)
         {
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products)|| price<0)
             {
-                if(!StoreContainsProduct(store, product))
+                if (!StoreContainsProduct(store, product))
                 {
                     throw new ProductNotInTradingSystemException();
                 }
@@ -142,35 +142,31 @@ namespace SEWorkshop.Facades
 
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
-            if(UserHasPermission(loggedInUser,store, Authorizations.Owner)
-                && !isUserAStoreOwner(newOwner,store))
-            {
-                store.Owners.Add(newOwner, loggedInUser);
-                newOwner.Owns.Add(store);
-                return;
-            }
-            throw new UserHasNoPermissionException();
+            if (!UserHasPermission(loggedInUser, store, Authorizations.Owner))
+                throw new UserHasNoPermissionException();
+            if (!IsUserStoreOwner(newOwner, store))
+                throw new UserIsAlreadyStoreOwnerException();
+            store.Owners.Add(newOwner, loggedInUser);
+            newOwner.Owns.Add(store);
         }
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-            if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && !isUserAStoreOwner(newManager,store))
+            if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
+                throw new UserHasNoPermissionException();
+            if (!IsUserStoreManager(newManager, store))
+                throw new UserIsAlreadyStoreManagerException();
+            store.Managers.Add(newManager, loggedInUser);
+            newManager.Manages.Add(store, new List<Authorizations>()
             {
-                store.Managers.Add(newManager, loggedInUser);
-                newManager.Manages.Add(store, new List<Authorizations>()
-                {
-                    Authorizations.Watching
-                });
-                return;
-            }
-            throw new UserHasNoPermissionException();
+                Authorizations.Watching
+            });
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
-                && !isUserAStoreOwner(manager,store))
+                && !IsUserStoreOwner(manager, store))
             {
                 if (!manager.Manages.ContainsKey(store)
                     || store.Managers[manager] != loggedInUser)
@@ -237,23 +233,23 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
-            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
+            if (UserHasPermission(loggedInUser, store, Authorizations.Watching))
             {
                 return store.Purchases;
             }
             throw new UserHasNoPermissionException();
         }
 
-        bool isUserAStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
-                                                                    where owner.Key == user
-                                                                    select owner).ToList().Count()> 0);
+        public bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
+                                                                          where owner.Value == user
+                                                                          select owner).ToList().Count() > 0);
 
-        bool isUserAStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
-                                                                    where manager.Key == user
-                                                                    select manager).ToList().Count() > 0);
+        public bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
+                                                                            where manager.Value == user
+                                                                            select manager).ToList().Count() > 0);
 
-        public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products 
+        public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products
                                                                             where pr.Name == product.Name
-                                                                            select product).ToList().Count()> 0);
-     }
+                                                                            select product).ToList().Count() > 0);
+    }
 }
