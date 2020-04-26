@@ -220,11 +220,6 @@ namespace SEWorkshop.UnitTests
 
         }
 
-        public void RemoveProductFromCart()
-        {
-
-        }
-
         public void PurcahseHistory()
         {
 
@@ -274,7 +269,6 @@ namespace SEWorkshop.UnitTests
             {
                 exceptionWasThrown = true;
             }
-            //TODO: ADD A PRODUCT TO A STORE THAT IS NOT MINE
             Assert.IsTrue(exceptionWasThrown);
         }
 
@@ -305,7 +299,7 @@ namespace SEWorkshop.UnitTests
         }
 
         [Test]
-        public void AddStoreManagerAndSetPermissionTest()
+        public void AddStoreManagerAndSetPermissionAndRemoveManagerTest()
         {
             Manager.Register("AddStoreManager1", "999");
             Manager.Register("AddStoreManager2", "wallak");
@@ -316,16 +310,21 @@ namespace SEWorkshop.UnitTests
             Manager.Logout();
             Manager.Login("AddStoreManager2", "wallak");
             Manager.AddProduct("AddStoreManagerStr", "kloom", "hi", "mashoo", 666, 666);
-        }
-
-        public void SetPermissionsOfManager()
-        {
-
-        }
-
-        public void RemoveStoreManager()
-        {
-
+            Manager.Logout();
+            Manager.Login("AddStoreManager1", "999");
+            Manager.RemoveStoreManager("AddStoreManagerStr", "AddStoreManager2");
+            Manager.Logout();
+            Manager.Login("AddStoreManager2", "wallak");
+            bool isException = false;
+            try
+            {
+                Manager.AddProduct("AddStoreManagerStr", "kloom2", "hi", "mashoo", 666, 666);
+            }
+            catch (UserHasNoPermissionException)
+            {
+                isException = true;
+            }
+            Assert.IsTrue(isException);
         }
 
         public void ViewMessage()
