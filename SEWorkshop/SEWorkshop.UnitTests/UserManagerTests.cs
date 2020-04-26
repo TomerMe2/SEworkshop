@@ -30,6 +30,7 @@ namespace SEWorkshop.UnitTests
             catch { }
         }
 
+        
         [Test]
         public void CartTest()
         {
@@ -80,6 +81,7 @@ namespace SEWorkshop.UnitTests
 
 
         }
+        
 
         [Test]
         public void BrowseStoresTest()
@@ -289,10 +291,11 @@ namespace SEWorkshop.UnitTests
             Manager.Register("ManagingPurchaseHistory_user2", "1111");
             Manager.Login("ManagingPurchaseHistory_user1", "1111");
             Manager.OpenStore("ManagingPurchaseHistory_store1");
-            Manager.AddStoreOwner("ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2");
+            Manager.AddStoreManager("ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2");
             Manager.SetPermissionsOfManager("ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2", "Products");
-            Manager.AddProduct("ManagingPurchaseHistory_store1", "mph_prod1", "ninini", "cat1", 11, 1);
-            Manager.AddProductToCart("ManagingPurchaseHistory_store1", "mph_prod1", 1);
+            Manager.AddProduct("ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", "ninini", "cat1", 11, 1);
+            Manager.AddProductToCart("ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", 1);
+            var checkcheck = Manager.MyCart();
             var basket = Manager.MyCart().ElementAt(0);
             Manager.Purchase(basket);
             var result = Manager.ManagingPurchaseHistory("ManagingPurchaseHistory_store1");

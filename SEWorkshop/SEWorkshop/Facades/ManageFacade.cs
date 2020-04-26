@@ -194,7 +194,7 @@ namespace SEWorkshop.Facades
             {
                 if (!store.Managers.ContainsKey(managerToRemove))
                 {
-                    throw new UserHasNoPermissionException();
+                    throw new UserIsNotMangerOfTheStoreException();
                 }
                 LoggedInUser appointer = store.Managers[managerToRemove];
                 if(appointer != loggedInUser)
