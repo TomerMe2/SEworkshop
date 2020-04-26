@@ -115,23 +115,9 @@ namespace SEWorkshop.UnitTests
             res = Manager.FilterProducts(res.ToList(), prod => prod.Price < 4);
             Assert.IsTrue(res.Count() > 0);
             Assert.IsTrue(res.All(prod => prod.Price < 4));
-
-            //string catNotGood = "snackks";
-            //res = Manager.SearchProductsByCategory(ref catNotGood);
-            //Assert.AreEqual("snacks", catNotGood);
-            //Assert.IsTrue(res.All(prod => prod.Category.Equals(catNotGood)));
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("bamba")).Count() > 0);
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("bisli")).Count() > 0);
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("Drill")).Count() == 0);
-
+            
             string name = "bamba";
             res = Manager.SearchProductsByName(ref name);
-            Assert.IsTrue(res.Count() > 0);
-            Assert.IsTrue(res.All(prod => prod.Name.Equals("bamba")));
-
-            string nameNotGood = "bambi";
-            res = Manager.SearchProductsByName(ref nameNotGood);
-            Assert.AreEqual("bamba", nameNotGood);
             Assert.IsTrue(res.Count() > 0);
             Assert.IsTrue(res.All(prod => prod.Name.Equals("bamba")));
 
