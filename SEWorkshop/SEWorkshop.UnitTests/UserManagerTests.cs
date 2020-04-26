@@ -116,7 +116,7 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(res.Count() > 0);
             Assert.IsTrue(res.All(prod => prod.Price < 4));
 
-            string catNotGood = "snicks";
+            string catNotGood = "snackks";
             res = Manager.SearchProductsByCategory(ref catNotGood);
             Assert.AreEqual("snacks", catNotGood);
             Assert.IsTrue(res.All(prod => prod.Category.Equals(catNotGood)));
