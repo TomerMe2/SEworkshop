@@ -118,7 +118,7 @@ namespace SEWorkshop.Facades
 
         public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price)
         {
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            if (UserHasPermission(loggedInUser, store, Authorizations.Products)|| price<0)
             {
                 if(!StoreContainsProduct(store, product))
                 {
