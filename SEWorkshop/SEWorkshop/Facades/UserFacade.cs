@@ -55,6 +55,7 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Register(string username, byte[] password)
         {
+            log.Info("User tries to register with the username: {0}", username);
             if(HasPermission)
             {
                 log.Info("Logged in user tried to register");
@@ -64,6 +65,7 @@ namespace SEWorkshop.Facades
             {
                 if(user.Username.Equals(username))
                 {
+                    log.Info("User tried to register with already existing username");
                     throw new UserAlreadyExistsException();
                 }
             }
@@ -71,11 +73,13 @@ namespace SEWorkshop.Facades
             {
                 if(admin.Username.Equals(username))
                 {
+                    log.Info("User tried to register with already existing admin username");
                     throw new UserAlreadyExistsException();
                 }
             }
             LoggedInUser newUser = new LoggedInUser(username, password);
             Users.Add(newUser);
+            log.Info("Registration has been completed successfully");
             return newUser;
         }
 
@@ -84,8 +88,10 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Login(string username, byte[] password)
         {
+            log.Info("User tries to login with the username: {0}", username);
             if(HasPermission)
             {
+                log.Info("Logged in user tried to log in");
                 throw new UserAlreadyLoggedInException();
             }
             foreach(var user in Users)
@@ -94,6 +100,7 @@ namespace SEWorkshop.Facades
                 {
                     if(user.Password.SequenceEqual(password))
                     {
+                        log.Info("Logging in has been completed successfully");
                         HasPermission = true;
                         return user;
                     }
@@ -106,37 +113,53 @@ namespace SEWorkshop.Facades
                 {
                     if(admin.Password.SequenceEqual(password))
                     {
+                        log.Info("Logging in has been completed successfully");
                         HasPermission = true;
                         return admin;
                     }
                     break;
                 }
             }
+            log.Info("User tried to log in with non existing username");
             throw new UserDoesNotExistException();
         }
 
         public void Logout()
         {
+            log.Info("User tries to logout");
             if(!HasPermission)
             {
+                log.Info("User tried to logout while being a guest user");
                 throw new UserHasNoPermissionException();
             }
+            log.Info("Logout has been completed successfully");
             HasPermission = false;
         }
 
         public IEnumerable<Basket> MyCart(User user)
         {
+            log.Info("User fetches cart data");
             return user.Cart.Baskets;
         }
         
         public void AddProductToCart(User user, Product product, int quantity)
         {
+            log.Info("User tries to add a product to cart");
             if (!StoreFacade.GetInstance().IsProductExists(product))
+            {
+                log.Info("User tried to add an unexisting product to cart");
                 throw new ProductNotInTradingSystemException();
+            }
             if (quantity < 1)
+            {
+                log.Info("User tried to add a product with no quantity to cart");
                 throw new NegativeQuantityException();
+            }
             if (product.Quantity - quantity < 0)
+            {
+                log.Info("User tried to add a product with unavailable amount to cart");
                 throw new NegativeInventoryException();
+            }
             Cart cart = user.Cart;
             foreach(var basket in cart.Baskets)
             {
@@ -150,10 +173,12 @@ namespace SEWorkshop.Facades
                         basket.Products.Remove((recordProd, recordQuan));  //so we can add it later :)
                     }
                     basket.Products.Add((product, quantity));
+                    log.Info("Product has been added to cart successfully");
                     return;  // basket found and updated. Nothing more to do here...
                 }
             }
             // if we got here, the correct basket doesn't exists now, so we should create it!
+            log.Info("Product has been added to a new basket in cart");
             Basket newBasket = new Basket(product.Store);
             user.Cart.Baskets.Add(newBasket);
             newBasket.Products.Add((product, quantity));
@@ -161,8 +186,12 @@ namespace SEWorkshop.Facades
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
         {
+            log.Info("User tries to remove a product from cart");
             if (quantity < 1)
+            {
+                log.Info("User tried to remove a product with no quantity from cart");
                 throw new NegativeQuantityException();
+            }
             foreach (var basket in user.Cart.Baskets)
             {
                 if(product.Store == basket.Store)
@@ -170,11 +199,13 @@ namespace SEWorkshop.Facades
                     var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
                     if (recordProd is null)
                     {
+                        log.Info("User tried to remove a product that is not in the cart");
                         throw new ProductIsNotInCartException();
                     }
                     int quantityDelta = recordQuan - quantity;
                     if (quantityDelta < 0)
                     {
+                        log.Info("User tried to remove too much of this product");
                         throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
                     }
                     basket.Products.Remove((recordProd, recordQuan));
@@ -183,20 +214,26 @@ namespace SEWorkshop.Facades
                         // The item should still be in the basket because it still has a positive quantity
                         basket.Products.Add((product, quantityDelta));
                     }
+                    log.Info("Product has been removed from cart successfully");
                     return;
                 }
             }
+            log.Info("User tried to remove a product that is not in the cart");
             throw new ProductIsNotInCartException();
         }
 
         public void Purchase(User user, Basket basket)
         {
+            log.Info("User tries to purchase a basket");
             const string CREDIT_CARD_NUMBER_STUB = "1234";
             const string CITY_NAME_STUB = "Beer Sheva";
-            const string STREET_NAME_STUB = "Sderot Ben Gurion";
+            const string STREET_NAME_STUB = "Shderot Ben Gurion";
             const string HOUSE_NUMBER_STUB = "111";
             if (basket.Products.Count == 0)
+            {
+                log.Info("User tried to purchase an empty basket");
                 throw new BasketIsEmptyException();
+            }
             Purchase purchase;
             if (HasPermission)
                 purchase = new Purchase(user, basket);
@@ -205,12 +242,16 @@ namespace SEWorkshop.Facades
             foreach (var (prod, purchaseQuantity) in basket.Products)
             {
                 if (purchaseQuantity <= 0)
+                {
+                    log.Info("User tried to purchase a non positive amount of a product");
                     throw new NegativeQuantityException();
+                }
             }
             foreach (var (prod, purchaseQuantity) in basket.Products)
             {
                 if (prod.Quantity - purchaseQuantity < 0)
                 {
+                    log.Info("User tries to purchase unavailable amount of a product");
                     throw new NegativeInventoryException();
                 }
             }
@@ -226,17 +267,21 @@ namespace SEWorkshop.Facades
                     prod.Quantity = prod.Quantity - purchaseQuantity;
                 }
                 Purchases.Add(purchase);
+                log.Info("Purchase has been completed successfully");
             }
             else
             {
+                log.Info("Purchase has failed");
                 throw new PurchaseFailedException();
             }
         }
 
         public IEnumerable<Purchase> PurcahseHistory(User user)
         {
+            log.Info("User tries to seek its purchase history");
             if(!HasPermission)
             {
+                log.Info("An unsigned in user cannot have permission for that action");
                 throw new UserHasNoPermissionException();
             }
             ICollection<Purchase> userPurchases = new List<Purchase>();
@@ -247,27 +292,34 @@ namespace SEWorkshop.Facades
                     userPurchases.Add(purchase);
                 }
             }
+            log.Info("Purchase history seek has been completed successfully");
             return userPurchases;
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
+            log.Info("Admin tries to seek {0}'s purchase history", userNmToView);
             if (!Administrators.Contains(requesting))
             {
+                log.Info("A unauthorized user tried to fetch data without permission");
                 throw new UserHasNoPermissionException();
             }
             var user = Users.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
             if(user is null)
             {
+                log.Info("User does not exist");
                 throw new UserDoesNotExistException();
             }
+            log.Info("Data has been fetched successfully");
             return PurcahseHistory(user);
         }
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
+            log.Info("Admin tries to seek {0}'s purchase history", store.Name);
             if (!Administrators.Contains(requesting))
             {
+                log.Info("A unauthorized user tried to fetch data without permission");
                 throw new UserHasNoPermissionException();
             }
             ICollection<Purchase> purchaseHistory = new List<Purchase>();
@@ -281,28 +333,45 @@ namespace SEWorkshop.Facades
                     }
                 }
             }
+            log.Info("Data has been fetched successfully");
             return purchaseHistory;
         }
 
         public void WriteReview(User user, Product product, string description)
         {
+            log.Info("User tries to write a review");
             if (!HasPermission)
+            {
+                log.Info("An unsigned in user cannot have permission for that action");
                 throw new UserHasNoPermissionException();
+            }
             if (description.Length == 0)
+            {
+                log.Info("The review is empty");
                 throw new ReviewIsEmptyException();
+            }
             Review review = new Review(user, description);
             product.Reviews.Add(review);
             ((LoggedInUser) user).Reviews.Add(review);
+            log.Info("The review has been published successfully");
         }
         public void WriteMessage(User user, Store store, string description)
         {
+            log.Info("User tries to write a message");
             if (!HasPermission)
+            {
+                log.Info("An unsigned in user cannot have permission for that action");
                 throw new UserHasNoPermissionException();
+            }
             if (description.Length == 0)
+            {
+                log.Info("The message is empty");
                 throw new MessageIsEmptyException();
+            }
             Message message = new Message(user, description);
             store.Messages.Add(new Message(user, description));
             ((LoggedInUser) user).Messages.Add(message);
+            log.Info("The message has been published successfully");
         }
     }
 }
