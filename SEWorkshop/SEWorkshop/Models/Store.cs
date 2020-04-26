@@ -29,7 +29,7 @@ namespace SEWorkshop.Models
             Policy = new Policy();
             Purchases = new List<Purchase>();
 
-            Owners.Add(owner, owner);
+            Owners.Add(owner, new LoggedInUser("DEMO", new Byte[0]));
         }
 
         public void CloseStore()
