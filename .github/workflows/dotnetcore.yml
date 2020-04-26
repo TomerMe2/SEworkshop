@@ -17,10 +17,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Move Back Directory
-      run: cd ../
-    - name: Move Directory
-      run: cd SEworkshop
+    - name: Check dir
+      run: ls
     - name: Install dependencies
       run: dotnet restore
     - name: Build
