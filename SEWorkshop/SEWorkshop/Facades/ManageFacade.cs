@@ -26,8 +26,8 @@ namespace SEWorkshop.Facades
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
-            return (isUserAStoreOwner(loggedInUser, store)
-                    || (isUserAStoreManager(loggedInUser, store)
+            return (IsUserStoreOwner(loggedInUser, store)
+                    || (IsUserStoreManager(loggedInUser, store)
                         && loggedInUser.Manages[store].Contains(authorization)));
         }
 
@@ -144,7 +144,7 @@ namespace SEWorkshop.Facades
         {
             if (!UserHasPermission(loggedInUser, store, Authorizations.Owner))
                 throw new UserHasNoPermissionException();
-            if (!IsUserStoreOwner(newOwner, store))
+            if (IsUserStoreOwner(newOwner, store))
                 throw new UserIsAlreadyStoreOwnerException();
             store.Owners.Add(newOwner, loggedInUser);
             newOwner.Owns.Add(store);
@@ -154,7 +154,7 @@ namespace SEWorkshop.Facades
         {
             if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
                 throw new UserHasNoPermissionException();
-            if (!IsUserStoreManager(newManager, store))
+            if (IsUserStoreManager(newManager, store))
                 throw new UserIsAlreadyStoreManagerException();
             store.Managers.Add(newManager, loggedInUser);
             newManager.Manages.Add(store, new List<Authorizations>()
@@ -190,7 +190,7 @@ namespace SEWorkshop.Facades
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && isUserAStoreManager(managerToRemove,store))
+                && IsUserStoreManager(managerToRemove,store))
             {
                 if (!store.Managers.ContainsKey(managerToRemove))
                 {
@@ -241,11 +241,11 @@ namespace SEWorkshop.Facades
         }
 
         public bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
-                                                                          where owner.Value == user
+                                                                          where owner.Key == user
                                                                           select owner).ToList().Count() > 0);
 
         public bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
-                                                                            where manager.Value == user
+                                                                            where manager.Key == user
                                                                             select manager).ToList().Count() > 0);
 
         public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products
