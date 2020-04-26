@@ -21,5 +21,10 @@ namespace SEWorkshop.Facades
         public void EditProductCategory(LoggedInUser loggedInUser, Store store, Product product, string category); //throws exception
         public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price); //throws exception
         public void EditProductQuantity(LoggedInUser loggedInUser, Store store, Product product, int quantity); //throws exception
+        public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization);
+        public bool IsUserStoreOwner(LoggedInUser user, Store store);
+        public bool IsUserStoreManager(LoggedInUser user, Store store);
+        public bool StoreContainsProduct(Store store, Product product);
+
     }
 }

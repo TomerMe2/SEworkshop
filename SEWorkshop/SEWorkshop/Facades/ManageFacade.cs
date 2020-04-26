@@ -229,11 +229,11 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
-        bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
+        public bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
                                                                           where owner.Value == user
                                                                           select owner).ToList().Count() > 0);
 
-        bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
+        public bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
                                                                             where manager.Value == user
                                                                             select manager).ToList().Count() > 0);
 
