@@ -154,7 +154,7 @@ namespace SEWorkshop.Facades
         {
             if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
                 throw new UserHasNoPermissionException();
-            if (IsUserStoreManager(newManager, store))
+            if (IsUserStoreManager(newManager, store) || IsUserStoreOwner(newManager, store))
                 throw new UserIsAlreadyStoreManagerException();
             store.Managers.Add(newManager, loggedInUser);
             newManager.Manages.Add(store, new List<Authorizations>()
@@ -189,12 +189,17 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
+            bool isStoreManager = IsUserStoreManager(managerToRemove, store);
+            if (!isStoreManager)
+            {
+                throw new UserIsNotMangerOfTheStoreException();
+            }
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && IsUserStoreManager(managerToRemove,store))
+                && IsUserStoreManager(managerToRemove, store))
             {
                 if (!store.Managers.ContainsKey(managerToRemove))
                 {
-                    throw new UserHasNoPermissionException();
+                    throw new UserIsNotMangerOfTheStoreException();
                 }
                 LoggedInUser appointer = store.Managers[managerToRemove];
                 if(appointer != loggedInUser)
