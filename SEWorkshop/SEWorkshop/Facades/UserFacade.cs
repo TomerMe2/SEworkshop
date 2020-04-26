@@ -104,7 +104,7 @@ namespace SEWorkshop.Facades
             {
                 if(admin.Username.Equals(username))
                 {
-                    if(admin.Password.Equals(password))
+                    if(admin.Password.SequenceEqual(password))
                     {
                         HasPermission = true;
                         return admin;
@@ -198,13 +198,14 @@ namespace SEWorkshop.Facades
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            if(HasPermission)
-            {
+            if (HasPermission)
                 purchase = new Purchase(user, basket);
-            }
             else
-            {
                 purchase = new Purchase(new GuestUser(), basket);
+            foreach (var (prod, purchaseQuantity) in basket.Products)
+            {
+                if (purchaseQuantity <= 0)
+                    throw new NegativeQuantityException();
             }
             foreach (var (prod, purchaseQuantity) in basket.Products)
             {
@@ -285,20 +286,20 @@ namespace SEWorkshop.Facades
 
         public void WriteReview(User user, Product product, string description)
         {
-            if(!HasPermission)
-            {
+            if (!HasPermission)
                 throw new UserHasNoPermissionException();
-            }
+            if (description.Length == 0)
+                throw new ReviewIsEmptyException();
             Review review = new Review(user, description);
             product.Reviews.Add(review);
             ((LoggedInUser) user).Reviews.Add(review);
         }
         public void WriteMessage(User user, Store store, string description)
         {
-            if(!HasPermission)
-            {
+            if (!HasPermission)
                 throw new UserHasNoPermissionException();
-            }
+            if (description.Length == 0)
+                throw new MessageIsEmptyException();
             Message message = new Message(user, description);
             store.Messages.Add(new Message(user, description));
             ((LoggedInUser) user).Messages.Add(message);
