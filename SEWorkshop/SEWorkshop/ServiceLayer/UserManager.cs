@@ -149,22 +149,22 @@ namespace SEWorkshop.ServiceLayer
             IEnumerable<Product> products = SearchProducts(product => product.Category.Equals(localInput));
             if (products.Any())
                 return products;
-            string corrected = TyposFixerNames.Correct(input);
+            string corrected = TyposFixerCategories.Correct(input);
             products = SearchProducts(product => product.Category.ToLower().Replace(' ', '_').Equals(corrected));
             input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
             return products;
         }
-
+        
         public IEnumerable<Product> SearchProductsByKeywords(ref string input)
         { 
             string localInput = input;
-            bool hasWordInsideOther(string[] words1, List<string> words2)
+            bool HasWordInsideOther(string[] words1, List<string> words2)
             {
                 foreach (string word1 in words1)
                 {
                     foreach (string word2 in words2)
                     {
-                        if (word1.Equals(word2.ToLower()))
+                        if (word1.ToLower().Equals(word2.ToLower()))
                         {
                             return true;
                         }
@@ -172,7 +172,7 @@ namespace SEWorkshop.ServiceLayer
                 }
                 return false;
             };
-            bool hasWordInsideInput(string[] words) => hasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
+            bool hasWordInsideInput(string[] words) => HasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
             bool predicate(Product product) => hasWordInsideInput(product.Name.Split(' ')) ||
                                             hasWordInsideInput(product.Category.Split(' ')) ||
                                             hasWordInsideInput(product.Description.Split(' '));
@@ -181,7 +181,7 @@ namespace SEWorkshop.ServiceLayer
                 return products;
             // Each word should be corrected seperatly because the words do not have to depend on each other
             List<string> corrected = input.Split(' ').Select(word => TyposFixerKeywords.Correct(word)).ToList();
-            bool hasWordInsideCorrected(string[] words) => hasWordInsideOther(words, corrected);  // curry version
+            bool hasWordInsideCorrected(string[] words) => HasWordInsideOther(words, corrected);  // curry version
             bool correctedPredicate(Product product) => hasWordInsideCorrected(product.Name.Split(' ')) ||
                                             hasWordInsideCorrected(product.Category.Split(' ')) ||
                                             hasWordInsideCorrected(product.Description.Split(' '));
@@ -242,11 +242,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
+        public Product AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
+                Product product = ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
                 TyposFixerNames.AddToDictionary(productName);
                 TyposFixerCategories.AddToDictionary(category);
@@ -263,7 +263,7 @@ namespace SEWorkshop.ServiceLayer
                 {
                     TyposFixerKeywords.AddToDictionary(word);
                 }
-                return;
+                return product;
             }
             throw new UserHasNoPermissionException();
         }
@@ -424,12 +424,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void MessageReply(Message message, string storeName, string description)
+        public Message MessageReply(Message message, string storeName, string description)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
-                return;
+                return ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
             }
             throw new UserHasNoPermissionException();
         }

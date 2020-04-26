@@ -133,6 +133,7 @@ namespace SEWorkshop.TyposFix
 
         public void AddToDictionary(string input)
         {
+            input = input.Trim().ToLower().Replace(' ', '_');
             if (!_dictionary.ContainsKey(input))
             {
                 // The algorithm will think of the input as one word
@@ -142,7 +143,11 @@ namespace SEWorkshop.TyposFix
 
 		public void RemoveFromDictionary(string input)
 		{
-			_dictionary.Remove(input.Trim().ToLower().Replace(' ', '_'));
-		}
+            input = input.Trim().ToLower().Replace(' ', '_');
+            if (_dictionary.ContainsKey(input))
+            {
+                _dictionary.Remove(input.Trim().ToLower().Replace(' ', '_'));
+            }
+        }
 	}
 }

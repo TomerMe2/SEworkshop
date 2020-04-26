@@ -1,4 +1,4 @@
-﻿namespace SEWorkshop.Exceptions
+namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
     public class StoreNotInTradingSystemException : System.Exception
