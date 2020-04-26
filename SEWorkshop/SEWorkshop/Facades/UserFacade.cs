@@ -104,7 +104,7 @@ namespace SEWorkshop.Facades
             {
                 if(admin.Username.Equals(username))
                 {
-                    if(admin.Password.Equals(password))
+                    if(admin.Password.SequenceEqual(password))
                     {
                         HasPermission = true;
                         return admin;
