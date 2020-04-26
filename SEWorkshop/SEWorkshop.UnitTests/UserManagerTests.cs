@@ -142,13 +142,13 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(res.Where(prod => prod.Name.Equals("bisli")).Count() == 0);
             Assert.IsTrue(res.Where(prod => prod.Name.Equals("Drill")).Count() > 0);
 
-            //string keywordsNotGood = "yumi POERHOUSE";
-            //res = Manager.SearchProductsByKeywords(ref keywordsNotGood);
-            //Assert.AreEqual("yummi powerhouse", keywordsNotGood);
-            //Assert.IsTrue(res.Count() > 1);
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("bamba")).Count() > 0);
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("bisli")).Count() == 0);
-            //Assert.IsTrue(res.Where(prod => prod.Name.Equals("Drill")).Count() > 0);
+            string keywordsNotGood = "yumi POERHOUSE";
+            res = Manager.SearchProductsByKeywords(ref keywordsNotGood);
+            Assert.AreEqual("yummi powerhouse", keywordsNotGood);
+            Assert.IsTrue(res.Count() > 1);
+            Assert.IsTrue(res.Where(prod => prod.Name.Equals("bamba")).Count() > 0);
+            Assert.IsTrue(res.Where(prod => prod.Name.Equals("bisli")).Count() == 0);
+            Assert.IsTrue(res.Where(prod => prod.Name.Equals("Drill")).Count() > 0);
         }
 
         [Test]
