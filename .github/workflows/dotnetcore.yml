@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Move Dir
-      run: cd SEWorkshop
+      run: cd SEWorkshop/SEWorkshop
     - name: Check dir
       run: ls
     - name: Install dependencies
