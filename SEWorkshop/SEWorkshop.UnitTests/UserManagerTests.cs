@@ -129,11 +129,11 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(res.Count() > 0);
             Assert.IsTrue(res.All(prod => prod.Name.Equals("bamba")));
 
-            //string nameNotGood = "bambi";
-            //res = Manager.SearchProductsByName(ref nameNotGood);
-            //Assert.AreEqual("bamba", nameNotGood);
-            //Assert.IsTrue(res.Count() > 0);
-            //Assert.IsTrue(res.All(prod => prod.Name.Equals("bamba")));
+            string nameNotGood = "bambi";
+            res = Manager.SearchProductsByName(ref nameNotGood);
+            Assert.AreEqual("bamba", nameNotGood);
+            Assert.IsTrue(res.Count() > 0);
+            Assert.IsTrue(res.All(prod => prod.Name.Equals("bamba")));
 
             string keywords = "yummi POWERHOUSE";
             res = Manager.SearchProductsByKeywords(ref keywords);
