@@ -189,8 +189,13 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
+            bool isStoreManager = IsUserStoreManager(managerToRemove, store);
+            if (!isStoreManager)
+            {
+                throw new UserIsNotMangerOfTheStoreException();
+            }
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && IsUserStoreManager(managerToRemove,store))
+                && IsUserStoreManager(managerToRemove, store))
             {
                 if (!store.Managers.ContainsKey(managerToRemove))
                 {
