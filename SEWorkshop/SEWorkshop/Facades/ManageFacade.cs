@@ -39,7 +39,7 @@ namespace SEWorkshop.Facades
 
         }
 
-        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
+        public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
            
@@ -49,7 +49,7 @@ namespace SEWorkshop.Facades
                 if (!StoreContainsProduct(store, newProduct))
                 {
                     store.Products.Add(newProduct);
-                    return;
+                    return newProduct;
                 }
                 else
                 {
@@ -196,7 +196,7 @@ namespace SEWorkshop.Facades
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && isUserAStoreOwner(managerToRemove,store))
+                && isUserAStoreManager(managerToRemove,store))
             {
                 LoggedInUser? appointer;
                 if(!store.Managers.TryGetValue(managerToRemove, out appointer) ||
@@ -206,6 +206,7 @@ namespace SEWorkshop.Facades
                 }
                 store.Managers.Remove(managerToRemove);
                 managerToRemove.Manages.Remove(store);
+                return;
             }
             throw new UserHasNoPermissionException();
         }
@@ -219,12 +220,13 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
-        public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
+        public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
             if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
             {
                 Message reply = new Message(loggedInUser, description, message);
                 message.Next = reply;
+                return reply;
             }
             throw new UserHasNoPermissionException();
         }
