@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="..\SEWorkshop\SEWorkshop.csproj"/>
+        <ProjectReference Include="..\SEWorkshop\SEWorkshop.csproj"/>
     </ItemGroup>
 
 </Project>
