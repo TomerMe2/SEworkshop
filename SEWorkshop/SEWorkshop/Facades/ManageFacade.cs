@@ -51,6 +51,10 @@ namespace SEWorkshop.Facades
                     store.Products.Add(newProduct);
                     return;
                 }
+                else
+                {
+                    throw new ProductAlreadyExistException();
+                }
             }
             throw new UserHasNoPermissionException();
         }
@@ -235,15 +239,15 @@ namespace SEWorkshop.Facades
         }
 
         bool isUserAStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
-                                                                    where owner.Value == user
+                                                                    where owner.Key == user
                                                                     select owner).ToList().Count()> 0);
 
         bool isUserAStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
-                                                                    where manager.Value == user
+                                                                    where manager.Key == user
                                                                     select manager).ToList().Count() > 0);
 
         public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products 
-                                                                            where pr.Name== product.Name
+                                                                            where pr.Name == product.Name
                                                                             select product).ToList().Count()> 0);
      }
 }
