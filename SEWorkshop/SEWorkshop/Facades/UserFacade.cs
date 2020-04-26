@@ -134,7 +134,7 @@ namespace SEWorkshop.Facades
             if (!StoreFacade.GetInstance().IsProductExists(product))
                 throw new ProductNotInTradingSystemException();
             if (quantity < 1)
-                throw new ArgumentOutOfRangeException("Quantity should be higher then 0");
+                throw new NegativeQuantityException();
             if (product.Quantity - quantity < 0)
                 throw new NegativeInventoryException();
             Cart cart = user.Cart;
@@ -162,7 +162,7 @@ namespace SEWorkshop.Facades
         public void RemoveProductFromCart(User user, Product product, int quantity)
         {
             if (quantity < 1)
-                throw new ArgumentOutOfRangeException("quantity should not be higher then 0");
+                throw new NegativeQuantityException();
             foreach (var basket in user.Cart.Baskets)
             {
                 if(product.Store == basket.Store)

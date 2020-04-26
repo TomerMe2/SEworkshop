@@ -197,21 +197,12 @@ namespace SEWorkshop.ServiceLayer
 
         public void WriteReview(string storeName, string productName, string description)
         {
-            if(description.Equals(string.Empty))
-            {
-                Log.Info(string.Format("Someone tried to write empty review on product named {0}", productName));
-                throw new ArgumentException("description is empty");
-            }
             UserFacadeInstance.WriteReview(currUser, GetProduct(storeName, productName), description);
         }
 
         public void WriteMessage(string storeName, string description)
         {
-            if (description.Equals(string.Empty))
-            {
-                Log.Info(string.Format("Someone tried to write empty message to store named {0}", storeName));
-                throw new ArgumentException("description is empty");
-            }
+
             UserFacadeInstance.WriteMessage(currUser, GetStore(storeName), description);
         }
 

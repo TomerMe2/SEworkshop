@@ -154,7 +154,7 @@ namespace SEWorkshop.Facades
         {
             if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
                 throw new UserHasNoPermissionException();
-            if (IsUserStoreManager(newManager, store))
+            if (IsUserStoreManager(newManager, store) || IsUserStoreOwner(newManager, store))
                 throw new UserIsAlreadyStoreManagerException();
             store.Managers.Add(newManager, loggedInUser);
             newManager.Manages.Add(store, new List<Authorizations>()
