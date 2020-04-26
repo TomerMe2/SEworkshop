@@ -175,16 +175,19 @@ namespace SEWorkshop.Facades
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
-            ICollection<Authorizations>? authorizations;
             if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
                 && !isUserAStoreOwner(manager,store))
             {
-                if(loggedInUser.Manages.TryGetValue(store, out authorizations)
-                        && authorizations.Contains(authorization))
+                if (!manager.Manages.ContainsKey(store))
+                {
+                    throw new UserHasNoPermissionException();
+                }
+                ICollection<Authorizations> authorizations = manager.Manages[store];
+                if (authorizations.Contains(authorization))
                 {
                     authorizations.Remove(authorization);
                 }
-                else if (authorizations != null && authorizations.Contains(authorization))
+                else
                 {
                     authorizations.Add(authorization);
                 }
@@ -196,18 +199,24 @@ namespace SEWorkshop.Facades
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && isUserAStoreOwner(managerToRemove,store))
+                || isUserAStoreOwner(loggedInUser, store))
             {
-                LoggedInUser? appointer;
-                if(!store.Managers.TryGetValue(managerToRemove, out appointer) ||
-                    appointer != loggedInUser)
+                if (!store.Managers.ContainsKey(managerToRemove))
+                {
+                    throw new UserHasNoPermissionException();
+                }
+                LoggedInUser appointer = store.Managers[managerToRemove];
+                if(appointer != loggedInUser)
                 {
                     throw new UserHasNoPermissionException();
                 }
                 store.Managers.Remove(managerToRemove);
                 managerToRemove.Manages.Remove(store);
             }
-            throw new UserHasNoPermissionException();
+            else
+            {
+                throw new UserHasNoPermissionException();
+            }
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)

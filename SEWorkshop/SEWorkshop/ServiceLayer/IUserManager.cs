@@ -5,7 +5,7 @@ using SEWorkshop.Models;
 
 namespace SEWorkshop.ServiceLayer
 {
-    interface IUserManager
+    public interface IUserManager
     {
         public void AddProductToCart(string storeName, string productName, int quantity);
         public IEnumerable<Store> BrowseStores();
