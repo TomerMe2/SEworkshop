@@ -17,6 +17,9 @@ namespace SEWorkshop.Facades
         public IEnumerable<Purchase> PurcahseHistory(User user);
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userToView);
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store);
+        public void WriteReview(User user, Product product, string description);
+        public void WriteMessage(User user, Store store, string description);
+
         public LoggedInUser GetUser(string username);
     }
 }
