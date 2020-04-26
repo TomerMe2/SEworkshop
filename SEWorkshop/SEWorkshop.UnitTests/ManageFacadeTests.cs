@@ -137,6 +137,18 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(messages.Count() == 1 && messages.First() == message);
         }
         [Test]
+        public void ViewPurchaseHistoryTest()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser client = new LoggedInUser("client", SecurityAdapter.Encrypt("1324"));
+            Purchase purchase = new Purchase(client, new Basket(store));
+            store.Purchases.Add(purchase);
+            IEnumerable<Purchase> purchases = Facade.ViewPurchaseHistory(usr, store);
+            Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
+        }
+        [Test]
         public void MessageReplyTest()
         {
             const string STORE_NAME = "Google Play";
@@ -214,6 +226,242 @@ namespace SEWorkshop.UnitTests
             store.Products.Add(product);
             Facade.EditProductQuantity(usr, store, product, 200);
             Assert.IsTrue(product.Quantity == 200);
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestProducts()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Products);
+            Product product;
+            bool success = true;
+            try
+            {
+                product = Facade.AddProduct(newManager, store, "ManagerProduct1", "Facebook", "Social", 4.00, 100);
+            }
+            catch
+            {
+                success = false;
+                product = null;
+            }
+            Assert.IsTrue(success && store.Products.Contains(product));
+
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Products);
+            try
+            {
+                Facade.AddProduct(newManager, store, "ManagerProduct2", "Facebook", "Social", 4.00, 100);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success);
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestOwner()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Owner);
+            LoggedInUser ownerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
+            bool success = true;
+            try
+            {
+                Facade.AddStoreOwner(newManager, store, ownerToTest1);
+            }
+            catch
+            {
+                success = false;
+            }
+            Assert.IsTrue(success && store.Owners[ownerToTest1] == newManager);
+
+            LoggedInUser ownerToTest2 = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Owner);
+            try
+            {
+                Facade.AddStoreOwner(newManager, store, ownerToTest2);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success);
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestManager()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
+            LoggedInUser managerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
+            bool success = true;
+            try
+            {
+                Facade.AddStoreManager(newManager, store, managerToTest1);
+            }
+            catch
+            {
+                success = false;
+            }
+            Assert.IsTrue(success && store.Managers[managerToTest1] == newManager);
+            
+            LoggedInUser managerToTest2 = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
+            try
+            {
+                Facade.AddStoreManager(newManager, store, managerToTest2);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success);
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestAuthorizing()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
+            LoggedInUser managerToTest1 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(managerToTest1, newManager);
+            managerToTest1.Manages.Add(store, new List<Authorizations>());
+            bool success = true;
+            try
+            {
+                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Products);
+            }
+            catch
+            {
+                success = false;
+            }
+            Assert.IsTrue(success && managerToTest1.Manages[store].Contains(Authorizations.Products));
+            
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
+            try
+            {
+                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Products);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success);
+            LoggedInUser managerToTest2 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(managerToTest2, usr);
+            managerToTest2.Manages.Add(store, new List<Authorizations>());
+            try
+            {
+                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Authorizing);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success);
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestReplying()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
+            LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
+            Message message1 = new Message(client, "Great store!");
+            store.Messages.Add(message1);
+            bool success = true;
+            Message reply1 = new Message(usr, "");
+            try
+            {
+                reply1 = Facade.MessageReply(newManager, message1, store, "Thank you!");
+            }
+            catch
+            {
+                success = false;
+            }
+            Assert.IsTrue(success && message1.Next == reply1 && reply1.Prev == message1
+                            && reply1.Description.Equals("Thank you!"));
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
+
+            Message message2 = new Message(client, "Piece of garbage...");
+            store.Messages.Add(message2);
+            Message reply2 = new Message(usr, "");
+            try
+            {
+                reply2 = Facade.MessageReply(newManager, message2, store, "goto L");
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success && message2.Next != reply2
+                            && reply2.Description.Equals(""));
+        }
+        [Test]
+        public void SetPermissionsOfManagerTestWatching()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            newManager.Manages.Add(store, new List<Authorizations>());
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
+            LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
+            Message message1 = new Message(client, "Great store!");
+            store.Messages.Add(message1);
+            IEnumerable<Message> output1 = new List<Message>();
+            bool success = true;
+            try
+            {
+                output1 = Facade.ViewMessage(newManager, store);
+            }
+            catch
+            {
+                success = false;
+            }
+            Assert.IsTrue(success && output1.Contains(message1));
+
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
+            Purchase purchase = new Purchase(client, new Basket(store));
+            store.Purchases.Add(purchase);
+            IEnumerable<Purchase> output2 = new List<Purchase>();
+            try
+            {
+                output2 = Facade.ViewPurchaseHistory(newManager, store);
+                success = false;
+            }
+            catch
+            {
+                success = true;
+            }
+            Assert.IsTrue(success && !output2.Contains(purchase));
         }
     }
 }
