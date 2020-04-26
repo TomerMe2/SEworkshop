@@ -39,11 +39,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.GetUser("gue2");
                 Assert.Fail();
             }
-            catch (UserDoesNotExistException e)
+            catch (UserDoesNotExistException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -65,11 +65,11 @@ namespace SEWorkshop.UnitTests
                 
                 Assert.Fail();
             }
-            catch (UserAlreadyLoggedInException e)
+            catch (UserAlreadyLoggedInException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -88,11 +88,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Register("rue1", securityAdaprer.Encrypt("pass"));
                 Assert.Fail();
             }
-            catch (UserAlreadyExistsException e)
+            catch (UserAlreadyExistsException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -110,11 +110,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Register("admin", securityAdaprer.Encrypt("sadnaTeam"));
                 Assert.Fail();
             }
-            catch (UserAlreadyExistsException e)
+            catch (UserAlreadyExistsException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -146,11 +146,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Login("luali1", securityAdaprer.Encrypt("1111"));
                 Assert.Fail();
             }
-            catch (UserAlreadyLoggedInException e)
+            catch (UserAlreadyLoggedInException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -171,11 +171,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Login("wrong", securityAdaprer.Encrypt("1111"));
                 Assert.Fail();
             }
-            catch (UserDoesNotExistException e)
+            catch (UserDoesNotExistException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -195,11 +195,11 @@ namespace SEWorkshop.UnitTests
                 var result = userFacade.Login("lwp1", securityAdaprer.Encrypt("2222"));
                 Assert.Fail();
             }
-            catch (UserDoesNotExistException e)
+            catch (UserDoesNotExistException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -232,11 +232,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Login("admin", securityAdaprer.Encrypt("wrong"));
                 Assert.Fail();
             }
-            catch (UserDoesNotExistException e)
+            catch (UserDoesNotExistException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -262,11 +262,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Logout();
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -282,7 +282,7 @@ namespace SEWorkshop.UnitTests
                 userFacade.Logout();
                 Assert.That(userFacade.HasPermission, Is.False);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -376,11 +376,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.Purchase(peb_user1, new Basket(peb_store1));
                 Assert.Fail();
             }
-            catch (BasketIsEmptyException e)
+            catch (BasketIsEmptyException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -429,11 +429,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.PurcahseHistory(phnp_user1);
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -487,11 +487,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.UserPurchaseHistory(uphrna_user1, "uphrna_user2");
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -542,11 +542,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.StorePurchaseHistory(sphrna_user1, sphrna_store1);
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -611,11 +611,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.WriteReview(wrnp_user1, wrnp_product1, "Great book!");
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -660,11 +660,11 @@ namespace SEWorkshop.UnitTests
                 userFacade.WriteMessage(wmnp_user1, wmnp_store1, "Do you have any bananas?");
                 Assert.Fail();
             }
-            catch (UserHasNoPermissionException e)
+            catch (UserHasNoPermissionException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
