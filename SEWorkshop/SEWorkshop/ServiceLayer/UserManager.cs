@@ -88,7 +88,6 @@ namespace SEWorkshop.ServiceLayer
             Cart cart = currUser.Cart;
             UserFacadeInstance.Logout();
             currUser = new GuestUser();
-            currUser.Cart = cart;
         }
 
         public IEnumerable<Basket> MyCart()
