@@ -38,7 +38,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 Log.Info(string.Format("Someone searched for a non existing product with name {0} and store name {1}",
                     productName, storeName));
-                throw new ProductNotInTradingSystemException();
+                throw new ProductNotInTheStoreException();
             }
             return product;
         }
@@ -48,7 +48,7 @@ namespace SEWorkshop.ServiceLayer
             var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
-                Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
+                Log.Info(string.Format("Someone tried to add product to cart with a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
             return store;
@@ -56,6 +56,12 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddProductToCart(string storeName, string productName, int quantity)
         {
+            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            if (store is null)
+            {
+                Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
+                throw new StoreNotInTradingSystemException();
+            }
             UserFacadeInstance.AddProductToCart(currUser, GetProduct(storeName, productName), quantity);
         }
 
@@ -111,6 +117,12 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemoveProductFromCart(string storeName, string productName, int quantity)
         {
+            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            if (store is null)
+            {
+                Log.Info(string.Format("Someone tried to remove product from cart with a non existing store with name {0}", storeName));
+                throw new StoreNotInTradingSystemException();
+            }
             UserFacadeInstance.RemoveProductFromCart(currUser, GetProduct(storeName, productName), quantity);
         }
 
