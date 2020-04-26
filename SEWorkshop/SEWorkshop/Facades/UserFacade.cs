@@ -135,6 +135,8 @@ namespace SEWorkshop.Facades
                 throw new ProductNotInTradingSystemException();
             if (quantity < 1)
                 throw new ArgumentOutOfRangeException("Quantity should be higher then 0");
+            if (product.Quantity - quantity < 0)
+                throw new NegativeInventoryException();
             Cart cart = user.Cart;
             foreach(var basket in cart.Baskets)
             {
@@ -160,7 +162,7 @@ namespace SEWorkshop.Facades
         public void RemoveProductFromCart(User user, Product product, int quantity)
         {
             if (quantity < 1)
-                throw new ArgumentOutOfRangeException("quantity should be higher then 0");
+                throw new ArgumentOutOfRangeException("quantity should not be higher then 0");
             foreach (var basket in user.Cart.Baskets)
             {
                 if(product.Store == basket.Store)
@@ -173,9 +175,9 @@ namespace SEWorkshop.Facades
                     int quantityDelta = recordQuan - quantity;
                     if (quantityDelta < 0)
                     {
-                        throw new ArgumentOutOfRangeException("quantity in stock minus quantity is smaller then 0");
+                        throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
                     }
-                    basket.Products.Remove((product, quantity));
+                    basket.Products.Remove((recordProd, recordQuan));
                     if (quantityDelta > 0)
                     {
                         // The item should still be in the basket because it still has a positive quantity
@@ -203,6 +205,13 @@ namespace SEWorkshop.Facades
             else
             {
                 purchase = new Purchase(new GuestUser(), basket);
+            }
+            foreach (var (prod, purchaseQuantity) in basket.Products)
+            {
+                if (prod.Quantity - purchaseQuantity < 0)
+                {
+                    throw new NegativeInventoryException();
+                }
             }
             if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
                 && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))

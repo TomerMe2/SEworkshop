@@ -137,22 +137,22 @@ namespace SEWorkshop.ServiceLayer
             IEnumerable<Product> products = SearchProducts(product => product.Category.Equals(localInput));
             if (products.Any())
                 return products;
-            string corrected = TyposFixerNames.Correct(input);
+            string corrected = TyposFixerCategories.Correct(input);
             products = SearchProducts(product => product.Category.ToLower().Replace(' ', '_').Equals(corrected));
             input = corrected.Replace('_', ' ');   // the typo fixer returns '_' instead of ' ', so it will fix it
             return products;
         }
-
+        
         public IEnumerable<Product> SearchProductsByKeywords(ref string input)
         { 
             string localInput = input;
-            bool hasWordInsideOther(string[] words1, List<string> words2)
+            bool HasWordInsideOther(string[] words1, List<string> words2)
             {
                 foreach (string word1 in words1)
                 {
                     foreach (string word2 in words2)
                     {
-                        if (word1.Equals(word2.ToLower()))
+                        if (word1.ToLower().Equals(word2.ToLower()))
                         {
                             return true;
                         }
@@ -160,7 +160,7 @@ namespace SEWorkshop.ServiceLayer
                 }
                 return false;
             };
-            bool hasWordInsideInput(string[] words) => hasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
+            bool hasWordInsideInput(string[] words) => HasWordInsideOther(words, localInput.Split(' ').ToList());   // curry version
             bool predicate(Product product) => hasWordInsideInput(product.Name.Split(' ')) ||
                                             hasWordInsideInput(product.Category.Split(' ')) ||
                                             hasWordInsideInput(product.Description.Split(' '));
@@ -169,7 +169,7 @@ namespace SEWorkshop.ServiceLayer
                 return products;
             // Each word should be corrected seperatly because the words do not have to depend on each other
             List<string> corrected = input.Split(' ').Select(word => TyposFixerKeywords.Correct(word)).ToList();
-            bool hasWordInsideCorrected(string[] words) => hasWordInsideOther(words, corrected);  // curry version
+            bool hasWordInsideCorrected(string[] words) => HasWordInsideOther(words, corrected);  // curry version
             bool correctedPredicate(Product product) => hasWordInsideCorrected(product.Name.Split(' ')) ||
                                             hasWordInsideCorrected(product.Category.Split(' ')) ||
                                             hasWordInsideCorrected(product.Description.Split(' '));
