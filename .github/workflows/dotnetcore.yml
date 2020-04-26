@@ -17,12 +17,11 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Move Dir
-      run: cd SEWorkshop/SEWorkshop
     - name: Check dir
       run: ls
     - name: Install dependencies
       run: dotnet restore
+      working-directory: SEWorkshop
     - name: Build
       run: dotnet build SEworkshop/SEworkshop/SEworkshop/SEWorkshop.csproj --configuration Release --no-restore
     - name: Test
