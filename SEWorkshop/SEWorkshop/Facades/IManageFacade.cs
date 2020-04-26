@@ -5,7 +5,7 @@ using SEWorkshop.Models;
 
 namespace SEWorkshop.Facades
 {
-    interface IManageFacade
+    public interface IManageFacade
     {
         public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity); //throws exception
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product); //throws exception
