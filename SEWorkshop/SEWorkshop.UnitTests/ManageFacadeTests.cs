@@ -6,12 +6,11 @@ using SEWorkshop.Facades;
 using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using System.Linq;
-using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.UnitTests
 {
     [TestFixture]
-    class UnitManageFacadeTests
+    class ManageFacadeTests
     {
         private IManageFacade Facade { get; set; }
         private ISecurityAdapter SecurityAdapter { get; set; } 
@@ -63,6 +62,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(catched);
         }
+
         [Test]
         public void AddStoreOwnerTest()
         {
@@ -83,6 +83,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(catched);
         }
+
         [Test]
         public void AddStoreManagerTest()
         {
@@ -103,6 +104,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(catched);
         }
+
         [Test]
         public void RemoveStoreManagerTest()
         {
@@ -124,6 +126,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(catched);
         }
+
         [Test]
         public void ViewMessageTest()
         {
@@ -136,6 +139,7 @@ namespace SEWorkshop.UnitTests
             IEnumerable<Message> messages = Facade.ViewMessage(usr, store);
             Assert.IsTrue(messages.Count() == 1 && messages.First() == message);
         }
+
         [Test]
         public void ViewPurchaseHistoryTest()
         {
@@ -148,6 +152,7 @@ namespace SEWorkshop.UnitTests
             IEnumerable<Purchase> purchases = Facade.ViewPurchaseHistory(usr, store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
         }
+
         [Test]
         public void MessageReplyTest()
         {
@@ -160,6 +165,7 @@ namespace SEWorkshop.UnitTests
             Message reply = Facade.MessageReply(usr, message, store, "Thank you!");
             Assert.IsTrue(reply.Prev == message && message.Next == reply && reply.Description.Equals("Thank you!"));
         }
+
         [Test]
         public void EditProductDescriptionTest()
         {
@@ -171,6 +177,7 @@ namespace SEWorkshop.UnitTests
             Facade.EditProductDescription(usr, store, product, "Awesome App");
             Assert.IsTrue(product.Description.Equals("Awesome App"));
         }
+
         [Test]
         public void EditProductNameTest()
         {
@@ -205,6 +212,7 @@ namespace SEWorkshop.UnitTests
             Facade.EditProductPrice(usr, store, product, 0.00);
             Assert.IsTrue(product.Price == 0);
         }
+
         [Test]
         public void EditProductCategoryTest()
         {
@@ -216,6 +224,7 @@ namespace SEWorkshop.UnitTests
             Facade.EditProductCategory(usr, store, product, "General Communication");
             Assert.IsTrue(product.Category.Equals("General Communication"));
         }
+
         [Test]
         public void EditProductQuantityTest()
         {
@@ -227,6 +236,7 @@ namespace SEWorkshop.UnitTests
             Facade.EditProductQuantity(usr, store, product, 200);
             Assert.IsTrue(product.Quantity == 200);
         }
+
         [Test]
         public void SetPermissionsOfManagerTestProducts()
         {
@@ -262,6 +272,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(success);
         }
+
         [Test]
         public void SetPermissionsOfManagerTestOwner()
         {
@@ -297,6 +308,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(success);
         }
+
         [Test]
         public void SetPermissionsOfManagerTestManager()
         {
@@ -332,6 +344,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(success);
         }
+
         [Test]
         public void SetPermissionsOfManagerTestAuthorizing()
         {
@@ -381,6 +394,7 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(success);
         }
+
         [Test]
         public void SetPermissionsOfManagerTestReplying()
         {
@@ -423,6 +437,7 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(success && message2.Next != reply2
                             && reply2.Description.Equals(""));
         }
+
         [Test]
         public void SetPermissionsOfManagerTestWatching()
         {

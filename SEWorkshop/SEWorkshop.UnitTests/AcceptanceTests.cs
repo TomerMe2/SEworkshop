@@ -5,7 +5,6 @@ using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Collections.Generic;
 using System.Linq;
-using SEWorkshop.Adapters;
 
 namespace SEWorkshop.UnitTests
 {
@@ -306,9 +305,5 @@ namespace SEWorkshop.UnitTests
 			Assert.That(() => um.StorePurchaseHistory("store1"), Throws.Nothing);
 			Assert.That(() => um.UserPurchaseHistory("user"), Throws.Nothing);
 		}
-
-
 	}
 }
-
-
