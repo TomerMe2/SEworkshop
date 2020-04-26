@@ -11,7 +11,7 @@ using SEWorkshop.Exceptions;
 namespace SEWorkshop.UnitTests
 {
     [TestFixture]
-    class ManageFacadeTests
+    class UnitManageFacadeTests
     {
         private IManageFacade Facade { get; set; }
         private ISecurityAdapter SecurityAdapter { get; set; } 
