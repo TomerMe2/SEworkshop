@@ -25,21 +25,13 @@ namespace SEWorkshop.Facades
 
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
         {
-            ICollection<Authorizations>? authorizations;
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
-            if ((isUserAStoreOwner(loggedInUser, store)
-                || (isUserAStoreManager(loggedInUser, store))
-                    && loggedInUser.Manages.TryGetValue(store, out authorizations)// ravid explain this to me 
-                    && authorizations != null           //user must be logged in to add a product
-                    && authorizations.Contains(Authorizations.Products))) { return true; }
-            else
-            {
-                return false;
-            }
-
+            return (isUserAStoreOwner(loggedInUser, store)
+                    || (isUserAStoreManager(loggedInUser, store)
+                        && loggedInUser.Manages[store].Contains(authorization)));
         }
 
-        public void AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
+        public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
            
@@ -49,7 +41,7 @@ namespace SEWorkshop.Facades
                 if (!StoreContainsProduct(store, newProduct))
                 {
                     store.Products.Add(newProduct);
-                    return;
+                    return newProduct;
                 }
                 else
                 {
@@ -180,7 +172,8 @@ namespace SEWorkshop.Facades
             if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
                 && !isUserAStoreOwner(manager,store))
             {
-                if (!manager.Manages.ContainsKey(store))
+                if (!manager.Manages.ContainsKey(store)
+                    || store.Managers[manager] != loggedInUser)
                 {
                     throw new UserHasNoPermissionException();
                 }
@@ -201,7 +194,7 @@ namespace SEWorkshop.Facades
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
             if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                || isUserAStoreOwner(loggedInUser, store))
+                && isUserAStoreManager(managerToRemove,store))
             {
                 if (!store.Managers.ContainsKey(managerToRemove))
                 {
@@ -214,6 +207,7 @@ namespace SEWorkshop.Facades
                 }
                 store.Managers.Remove(managerToRemove);
                 managerToRemove.Manages.Remove(store);
+                return;
             }
             else
             {
@@ -223,19 +217,20 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-            if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
+            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
             {
                 return store.Messages;
             }
             throw new UserHasNoPermissionException();
         }
 
-        public void MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
+        public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
+            if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
             {
                 Message reply = new Message(loggedInUser, description, message);
                 message.Next = reply;
+                return reply;
             }
             throw new UserHasNoPermissionException();
         }

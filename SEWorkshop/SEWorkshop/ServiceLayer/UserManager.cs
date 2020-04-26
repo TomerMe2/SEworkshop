@@ -230,11 +230,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
+        public Product AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
+                Product product = ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
                 TyposFixerNames.AddToDictionary(productName);
                 TyposFixerCategories.AddToDictionary(category);
@@ -251,7 +251,7 @@ namespace SEWorkshop.ServiceLayer
                 {
                     TyposFixerKeywords.AddToDictionary(word);
                 }
-                return;
+                return product;
             }
             throw new UserHasNoPermissionException();
         }
@@ -412,12 +412,11 @@ namespace SEWorkshop.ServiceLayer
             throw new UserHasNoPermissionException();
         }
 
-        public void MessageReply(Message message, string storeName, string description)
+        public Message MessageReply(Message message, string storeName, string description)
         {
             if(UserFacadeInstance.HasPermission)
             {
-                ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
-                return;
+                return ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
             }
             throw new UserHasNoPermissionException();
         }
