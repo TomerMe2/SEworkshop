@@ -12,19 +12,18 @@ namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        User currUser = new GuestUser();
-        readonly StoreFacade StoreFacadeInstance = StoreFacade.GetInstance();
-        ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
-        UserFacade UserFacadeInstance = UserFacade.GetInstance();
-        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private const string EVENT_LOG_NM = "event_log.txt";
         private const string ERROR_LOG_NM = "error_log.txt";
 
-
+        private User CurrUser { get; set; }
+        private IStoreFacade StrFacade { get; } 
+        private IManageFacade MngFacade { get; }
+        private IUserFacade UsrFacade { get; }
         private ITyposFixerProxy TyposFixerNames { get; set; }
         private ITyposFixerProxy TyposFixerCategories { get; set; }
         private ITyposFixerProxy TyposFixerKeywords { get; set; }
+        private ISecurityAdapter SecurityAdapter { get; }
 
         public UserManager()
         {
@@ -32,6 +31,24 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerNames = new TyposFixer(new List<string>());
             TyposFixerCategories = new TyposFixer(new List<string>());
             TyposFixerKeywords = new TyposFixer(new List<string>());
+            StrFacade = StoreFacade.GetInstance();
+            MngFacade = ManageFacade.GetInstance();
+            UsrFacade = UserFacade.GetInstance();
+            SecurityAdapter = new SecurityAdapter();
+            CurrUser = new GuestUser();
+        }
+
+        public UserManager(IStoreFacade storeFacade, IManageFacade manageFacade, IUserFacade userFacade)
+        {
+            ConfigLog();
+            TyposFixerNames = new TyposFixer(new List<string>());
+            TyposFixerCategories = new TyposFixer(new List<string>());
+            TyposFixerKeywords = new TyposFixer(new List<string>());
+            StrFacade = storeFacade;
+            MngFacade = manageFacade;
+            UsrFacade = userFacade;
+            SecurityAdapter = new SecurityAdapter();
+            CurrUser = new GuestUser();
         }
 
         private static void ConfigLog()
@@ -52,7 +69,7 @@ namespace SEWorkshop.ServiceLayer
         private Product GetProduct(string storeName, string productName)
         {
             Log.Info(string.Format("GetProduct was invoked with storeName {0} and productName {1}", storeName, productName));
-            var product = StoreFacadeInstance.SearchProducts(prod => prod.Store.Name.Equals(storeName) && prod.Name.Equals(productName))
+            var product = StrFacade.SearchProducts(prod => prod.Store.Name.Equals(storeName) && prod.Name.Equals(productName))
                 .FirstOrDefault();
             if (product is null)
             {
@@ -66,7 +83,7 @@ namespace SEWorkshop.ServiceLayer
         private Store GetStore(string storeName)
         {
             Log.Info(string.Format("GetStore was invoked with storeName {0}", storeName));
-            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            var store = StrFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
                 Log.Info(string.Format("Someone tried to add product to cart with a non existing store with name {0}", storeName));
@@ -79,90 +96,90 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
-            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            var store = StrFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
                 Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
-            UserFacadeInstance.AddProductToCart(currUser, GetProduct(storeName, productName), quantity);
+            UsrFacade.AddProductToCart(CurrUser, GetProduct(storeName, productName), quantity);
         }
 
         public IEnumerable<Store> BrowseStores()
         {
             Log.Info("BrowseStores was invoked");
-            return StoreFacadeInstance.BrowseStores();
+            return StrFacade.BrowseStores();
         }
 
         public IEnumerable<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
             Log.Info("FilterProducts was invoked");
-            return StoreFacadeInstance.FilterProducts(products, pred);
+            return StrFacade.FilterProducts(products, pred);
         }
 
         public void Login(string username, string password)
         {
             Log.Info(string.Format("Login was invoked with username {0}", username));
             //preserve loggedIn user's cart that he gathered as a GuestUser.
-            Cart cart = currUser.Cart;
-            currUser = UserFacadeInstance.Login(username, securityAdapter.Encrypt(password));
-            currUser.Cart = cart;
+            Cart cart = CurrUser.Cart;
+            CurrUser = UsrFacade.Login(username, SecurityAdapter.Encrypt(password));
+            CurrUser.Cart = cart;
         }
 
         public void Logout()
         {
             Log.Info("Logout was invoked");
-            Cart cart = currUser.Cart;
-            UserFacadeInstance.Logout();
-            currUser = new GuestUser();
+            Cart cart = CurrUser.Cart;
+            UsrFacade.Logout();
+            CurrUser = new GuestUser();
         }
 
         public IEnumerable<Basket> MyCart()
         {
             Log.Info("MyCart was invoked");
-            return UserFacadeInstance.MyCart(currUser);
+            return UsrFacade.MyCart(CurrUser);
         }
 
         public void OpenStore(string storeName)
         {
             Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
-            if (currUser is GuestUser)
+            if (CurrUser is GuestUser)
             {
                 Log.Info(string.Format("GuestUser invoked OpenStore"));
                 throw new UserHasNoPermissionException();
             }
-            StoreFacadeInstance.CreateStore((LoggedInUser)currUser, storeName);
+            StrFacade.CreateStore((LoggedInUser)CurrUser, storeName);
         }
 
         public void Purchase(Basket basket)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            UserFacadeInstance.Purchase(currUser, basket);
+            UsrFacade.Purchase(CurrUser, basket);
         }
 
         public void Register(string username, string password)
         {
             Log.Info(string.Format("Register was invoked with username {0}", username));
-            UserFacadeInstance.Register(username, securityAdapter.Encrypt(password));
+            UsrFacade.Register(username, SecurityAdapter.Encrypt(password));
         }
 
         public void RemoveProductFromCart(string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("RemoveProductFromCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
-            var store = StoreFacadeInstance.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            var store = StrFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
                 Log.Info(string.Format("Someone tried to remove product from cart with a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
-            UserFacadeInstance.RemoveProductFromCart(currUser, GetProduct(storeName, productName), quantity);
+            UsrFacade.RemoveProductFromCart(CurrUser, GetProduct(storeName, productName), quantity);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
         {
             Log.Info("SearchProducts was invoked");
-            return StoreFacadeInstance.SearchProducts(pred);
+            return StrFacade.SearchProducts(pred);
         }
 
         public IEnumerable<Product> SearchProductsByName(ref string input)
@@ -233,29 +250,29 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Purchase> PurcahseHistory()
         {
             Log.Info("PurchaseHistory was invoked");
-            return UserFacadeInstance.PurcahseHistory(currUser);
+            return UsrFacade.PurcahseHistory(CurrUser);
         }
 
         public void WriteReview(string storeName, string productName, string description)
         {
             Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
                 storeName, productName, description));
-            UserFacadeInstance.WriteReview(currUser, GetProduct(storeName, productName), description);
+            UsrFacade.WriteReview(CurrUser, GetProduct(storeName, productName), description);
         }
 
         public void WriteMessage(string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            UserFacadeInstance.WriteMessage(currUser, GetStore(storeName), description);
+            UsrFacade.WriteMessage(CurrUser, GetStore(storeName), description);
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(string userNm)
         {
             Log.Info(string.Format("WriteReview was invoked with userName {0}", userNm));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                return UserFacadeInstance.UserPurchaseHistory((LoggedInUser)currUser, userNm);
+                return UsrFacade.UserPurchaseHistory((LoggedInUser)CurrUser, userNm);
             }
             Log.Info(string.Format("userName {0} has no permission", userNm));
             throw new UserHasNoPermissionException();
@@ -264,9 +281,9 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Purchase> StorePurchaseHistory(string storeName)
         {
             Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                return UserFacadeInstance.StorePurchaseHistory((LoggedInUser)currUser, GetStore(storeName));
+                return UsrFacade.StorePurchaseHistory((LoggedInUser)CurrUser, GetStore(storeName));
             }
             Log.Info("user has no permission");
             throw new UserHasNoPermissionException();
@@ -275,9 +292,9 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Purchase> ManagingPurchaseHistory(string storeName)
         {
             Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                return ManageFacadeInstance.ViewPurchaseHistory((LoggedInUser)currUser, GetStore(storeName));
+                return MngFacade.ViewPurchaseHistory((LoggedInUser)CurrUser, GetStore(storeName));
             }
             Log.Info("user has no permission");
             throw new UserHasNoPermissionException();
@@ -287,9 +304,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
                 " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                Product product = ManageFacadeInstance.AddProduct((LoggedInUser)currUser, GetStore(storeName), productName, description, category, price, quantity);
+                Product product = MngFacade.AddProduct((LoggedInUser)CurrUser, GetStore(storeName), productName, description, category, price, quantity);
                 //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
                 TyposFixerNames.AddToDictionary(productName);
                 TyposFixerCategories.AddToDictionary(category);
@@ -315,11 +332,11 @@ namespace SEWorkshop.ServiceLayer
         public void RemoveProduct(string storeName, string productName)
         {
             Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
                 Store store = GetStore(storeName);
                 Product product = GetProduct(storeName, productName);
-                ManageFacadeInstance.RemoveProduct((LoggedInUser)currUser, store, product);
+                MngFacade.RemoveProduct((LoggedInUser)CurrUser, store, product);
                 // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
                 // same applies for category
                 TyposFixerNames.RemoveFromDictionary(product.Name);
@@ -335,9 +352,9 @@ namespace SEWorkshop.ServiceLayer
                 storeName, productName, description));
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
              {
-                ManageFacade.GetInstance().EditProductDescription((LoggedInUser)currUser, store, product, description);
+                ManageFacade.GetInstance().EditProductDescription((LoggedInUser)CurrUser, store, product, description);
                 return;
              }
             Log.Info("user has no permission");
@@ -350,9 +367,9 @@ namespace SEWorkshop.ServiceLayer
                 storeName, productName, price));
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {            
-                ManageFacade.GetInstance().EditProductPrice((LoggedInUser)currUser, store, product, price);
+                ManageFacade.GetInstance().EditProductPrice((LoggedInUser)CurrUser, store, product, price);
                 return;
             }
             Log.Info("user has no permission");
@@ -365,9 +382,9 @@ namespace SEWorkshop.ServiceLayer
                 storeName, productName, category));
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductCategory((LoggedInUser)currUser, store, product, category);
+                ManageFacade.GetInstance().EditProductCategory((LoggedInUser)CurrUser, store, product, category);
                 return;
             }
             Log.Info("user has no permission");
@@ -378,9 +395,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("EditProductName was invoked with storeName {0}, productName {1}, name {2}",
                 storeName, productName, name));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductName((LoggedInUser)currUser, GetStore(storeName),
+                ManageFacade.GetInstance().EditProductName((LoggedInUser)CurrUser, GetStore(storeName),
                     GetProduct(storeName, productName), name);
                 return;
             }
@@ -392,9 +409,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("EditProductQuantity was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)currUser, GetStore(storeName),
+                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)CurrUser, GetStore(storeName),
                     GetProduct(storeName, productName), quantity);
                 return;
             }
@@ -406,10 +423,10 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}",
                 storeName, username));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                LoggedInUser newOwner = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreOwner((LoggedInUser)currUser, GetStore(storeName), newOwner);
+                LoggedInUser newOwner = UsrFacade.GetUser(username);
+                MngFacade.AddStoreOwner((LoggedInUser)CurrUser, GetStore(storeName), newOwner);
                 return;
             }
             Log.Info("user has no permission");
@@ -420,10 +437,10 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
                 storeName, username));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                LoggedInUser newManager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.AddStoreManager((LoggedInUser)currUser, GetStore(storeName), newManager);
+                LoggedInUser newManager = UsrFacade.GetUser(username);
+                MngFacade.AddStoreManager((LoggedInUser)CurrUser, GetStore(storeName), newManager);
                 return;
             }
             Log.Info("user has no permission");
@@ -434,9 +451,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
                 storeName, username, auth));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                LoggedInUser newManager = UserFacadeInstance.GetUser(username);
+                LoggedInUser newManager = UsrFacade.GetUser(username);
                 Authorizations authorization;
                 switch (auth)
                 {
@@ -467,7 +484,7 @@ namespace SEWorkshop.ServiceLayer
                     default:
                         throw new AuthorizationDoesNotExistException();
                 }
-                ManageFacadeInstance.SetPermissionsOfManager((LoggedInUser)currUser, GetStore(storeName), newManager, authorization);
+                MngFacade.SetPermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), newManager, authorization);
                 return;
             }
             Log.Info("user has no permission");
@@ -478,10 +495,10 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
                 storeName, username));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                LoggedInUser manager = UserFacadeInstance.GetUser(username);
-                ManageFacadeInstance.RemoveStoreManager((LoggedInUser)currUser, GetStore(storeName), manager);
+                LoggedInUser manager = UsrFacade.GetUser(username);
+                MngFacade.RemoveStoreManager((LoggedInUser)CurrUser, GetStore(storeName), manager);
                 return;
             }
             Log.Info("user has no permission");
@@ -491,9 +508,9 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<Message> ViewMessage(string storeName)
         {
             Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                return ManageFacadeInstance.ViewMessage((LoggedInUser)currUser, GetStore(storeName));
+                return MngFacade.ViewMessage((LoggedInUser)CurrUser, GetStore(storeName));
             }
             Log.Info("user has no permission");
             throw new UserHasNoPermissionException();
@@ -502,9 +519,9 @@ namespace SEWorkshop.ServiceLayer
         public Message MessageReply(Message message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            if (UserFacadeInstance.HasPermission)
+            if (UsrFacade.HasPermission)
             {
-                return ManageFacadeInstance.MessageReply((LoggedInUser)currUser, message, GetStore(storeName), description);
+                return MngFacade.MessageReply((LoggedInUser)CurrUser, message, GetStore(storeName), description);
             }
             Log.Info("user has no permission");
             throw new UserHasNoPermissionException();
