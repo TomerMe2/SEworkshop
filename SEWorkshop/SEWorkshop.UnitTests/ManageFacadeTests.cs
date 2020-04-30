@@ -18,7 +18,7 @@ namespace SEWorkshop.UnitTests
         [OneTimeSetUp]
         public void Init()
         {
-            Facade = ManageFacade.GetInstance();
+            Facade = new ManageFacade();
             SecurityAdapter = new SecurityAdapter();
         }
 

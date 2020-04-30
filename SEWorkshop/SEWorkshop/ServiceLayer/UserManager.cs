@@ -31,9 +31,9 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerNames = new TyposFixer(new List<string>());
             TyposFixerCategories = new TyposFixer(new List<string>());
             TyposFixerKeywords = new TyposFixer(new List<string>());
-            StrFacade = StoreFacade.GetInstance();
-            MngFacade = ManageFacade.GetInstance();
-            UsrFacade = UserFacade.GetInstance();
+            StrFacade = new StoreFacade();
+            MngFacade = new ManageFacade();
+            UsrFacade = new UserFacade(StrFacade);
             SecurityAdapter = new SecurityAdapter();
             CurrUser = new GuestUser();
         }
@@ -354,7 +354,7 @@ namespace SEWorkshop.ServiceLayer
             Product product = GetProduct(storeName, productName);
             if (UsrFacade.HasPermission)
              {
-                ManageFacade.GetInstance().EditProductDescription((LoggedInUser)CurrUser, store, product, description);
+                MngFacade.EditProductDescription((LoggedInUser)CurrUser, store, product, description);
                 return;
              }
             Log.Info("user has no permission");
@@ -368,8 +368,8 @@ namespace SEWorkshop.ServiceLayer
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
             if (UsrFacade.HasPermission)
-            {            
-                ManageFacade.GetInstance().EditProductPrice((LoggedInUser)CurrUser, store, product, price);
+            {
+                MngFacade.EditProductPrice((LoggedInUser)CurrUser, store, product, price);
                 return;
             }
             Log.Info("user has no permission");
@@ -384,7 +384,7 @@ namespace SEWorkshop.ServiceLayer
             Product product = GetProduct(storeName, productName);
             if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductCategory((LoggedInUser)CurrUser, store, product, category);
+                MngFacade.EditProductCategory((LoggedInUser)CurrUser, store, product, category);
                 return;
             }
             Log.Info("user has no permission");
@@ -397,7 +397,7 @@ namespace SEWorkshop.ServiceLayer
                 storeName, productName, name));
             if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductName((LoggedInUser)CurrUser, GetStore(storeName),
+                MngFacade.EditProductName((LoggedInUser)CurrUser, GetStore(storeName),
                     GetProduct(storeName, productName), name);
                 return;
             }
@@ -411,7 +411,7 @@ namespace SEWorkshop.ServiceLayer
                 storeName, productName, quantity));
             if (UsrFacade.HasPermission)
             {
-                ManageFacade.GetInstance().EditProductQuantity((LoggedInUser)CurrUser, GetStore(storeName),
+                MngFacade.EditProductQuantity((LoggedInUser)CurrUser, GetStore(storeName),
                     GetProduct(storeName, productName), quantity);
                 return;
             }

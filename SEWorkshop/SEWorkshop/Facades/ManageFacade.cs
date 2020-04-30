@@ -9,20 +9,11 @@ namespace SEWorkshop.Facades
 {
     public class ManageFacade : IManageFacade
     {
-        private static ManageFacade? Instance { get; set; } = null;
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        private ManageFacade()
+        public ManageFacade()
         {
-        }
-
-        public static ManageFacade GetInstance()
-        {
-            if (Instance is null)
-            {
-                Instance = new ManageFacade();
-            }
-            return Instance;
+            log.Info("ManageFacade created");
         }
 
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)

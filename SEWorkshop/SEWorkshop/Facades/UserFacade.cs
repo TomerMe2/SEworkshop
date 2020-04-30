@@ -10,12 +10,11 @@ namespace SEWorkshop.Facades
 {
     public class UserFacade : IUserFacade
     {
+        private IStoreFacade StoreFacade { get; }
         private ICollection<LoggedInUser> Users {get; set;}
         private ICollection<LoggedInUser> Administrators {get; set;}
-
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
-        private static UserFacade? Instance = null;
 
         private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
@@ -23,15 +22,9 @@ namespace SEWorkshop.Facades
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public static UserFacade GetInstance()
+        public UserFacade(IStoreFacade storeFacade)
         {
-            if (Instance == null)
-                Instance = new UserFacade();
-            return Instance;
-        }
-
-        private UserFacade()
-        {
+            StoreFacade = storeFacade;
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();
             Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
@@ -145,7 +138,7 @@ namespace SEWorkshop.Facades
         public void AddProductToCart(User user, Product product, int quantity)
         {
             log.Info("User tries to add a product to cart");
-            if (!StoreFacade.GetInstance().IsProductExists(product))
+            if (!StoreFacade.IsProductExists(product))
             {
                 log.Info("User tried to add an unexisting product to cart");
                 throw new ProductNotInTradingSystemException();
