@@ -14,7 +14,7 @@ namespace SEWorkshop.Models
         public Discount(int code)
         {
             DisType = DiscountType.visible;
-            Products = new HashSet<Product>();
+            Products = new List<Product>();
             Code = code;
         }
     }
