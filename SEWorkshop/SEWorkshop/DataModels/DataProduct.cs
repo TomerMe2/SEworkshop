@@ -6,15 +6,15 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataProduct
+    public class DataProduct
     {
-        public DataStore Store { get => new DataStore(); }
-        public string Name { get => InnerProduct.Name; }
-        public string Description { get => InnerProduct.Description; }
-        public string Category { get => InnerProduct.Category; }
-        public double Price { get => InnerProduct.Price; }
-        public int Quantity { get => InnerProduct.Quantity; }
-        public IReadOnlyCollection<DataReview> Reviews { get => InnerProduct.Reviews.Select(rev => new DataReview()).ToList().AsReadOnly(); }
+        public DataStore Store => new DataStore(InnerProduct.Store);
+        public string Name => InnerProduct.Name;
+        public string Description => InnerProduct.Description;
+        public string Category => InnerProduct.Category;
+        public double Price => InnerProduct.Price;
+        public int Quantity => InnerProduct.Quantity;
+        public IReadOnlyCollection<DataReview> Reviews => InnerProduct.Reviews.Select(rev => new DataReview(rev)).ToList().AsReadOnly();
         private Product InnerProduct { get; }
 
         public DataProduct(Product product)

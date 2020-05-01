@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataLoggedInUser : DataUser
+    public class DataLoggedInUser : DataUser
     {
         public enum Authorizations
         {
@@ -26,7 +26,7 @@ namespace SEWorkshop.DataModels
         public IReadOnlyList<DataReview> Reviews => InnerLoggedInUser.Reviews.Select(review =>
                                                                               new DataReview(review)).ToList().AsReadOnly();
         public IReadOnlyList<DataMessage> Messages => InnerLoggedInUser.Messages.Select(message =>
-                                                                                new DataMessage()).ToList().AsReadOnly();
+                                                                                new DataMessage(message)).ToList().AsReadOnly();
         public string Username => InnerLoggedInUser.Username;
         public byte[] Password => InnerLoggedInUser.Password;
         private LoggedInUser InnerLoggedInUser { get; }

@@ -6,15 +6,15 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataDiscount
+    public class DataDiscount
     {
         public enum DiscountType { visible }
 
         //cast from Models.Discount.DiscountType to DataModels.DataDiscount.DiscountType
-        public DiscountType DisType { get => (DiscountType)InnerDiscount.DisType; }
-        public int Code { get => InnerDiscount.Code; }
-        public IReadOnlyCollection<DataProduct> Products { get => InnerDiscount.Products.Select(prod =>
-                                                                                new DataProduct(prod)).ToList().AsReadOnly(); }
+        public DiscountType DisType => (DiscountType)InnerDiscount.DisType;
+        public int Code => InnerDiscount.Code;
+        public IReadOnlyCollection<DataProduct> Products => InnerDiscount.Products.Select(prod =>
+                                                                                new DataProduct(prod)).ToList().AsReadOnly();
         private Discount InnerDiscount { get; }
 
         public DataDiscount(Discount discount)

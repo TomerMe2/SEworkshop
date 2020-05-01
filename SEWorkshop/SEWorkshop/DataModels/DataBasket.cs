@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataBasket
+    public class DataBasket
     {
-        public DataStore Store { get => new DataStore(); }
-        public IReadOnlyCollection<(DataProduct, int)> Products { get =>
-                InnerBasket.Products.Select((product, amount) => (new DataProduct(), amount)).ToList().AsReadOnly(); }
+        public DataStore Store => new DataStore(InnerBasket.Store);
+        public IReadOnlyCollection<(DataProduct, int)> Products =>
+                InnerBasket.Products.Select((tup) => (new DataProduct(tup.Item1), tup.Item2)).ToList().AsReadOnly();
         private Basket InnerBasket { get; }
 
         public DataBasket(Basket basket)

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    class DataGuestUser : DataUser
+    public class DataGuestUser : DataUser
     {
         public DataGuestUser(GuestUser guestUsr) : base(guestUsr) { }
     }

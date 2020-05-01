@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataCart
+    public class DataCart
     {
-        public IReadOnlyCollection<DataBasket> Baskets { get => InnerCart.Baskets.Select(bskt => new DataBasket()).ToList().AsReadOnly(); }
+        public IReadOnlyCollection<DataBasket> Baskets => InnerCart.Baskets.Select(bskt => new DataBasket(bskt)).ToList().AsReadOnly();
         private Cart InnerCart{ get; }
 
         public DataCart(Cart cart)

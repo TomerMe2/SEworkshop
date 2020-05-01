@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    class DataPolicy
+    public class DataPolicy
     {
         public IReadOnlyCollection<DataRule> Rules => InnerPolicy.Rules.Select(rule => new DataRule(rule)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataProduct> Products => InnerPolicy.Products.Select(prod => new DataProduct(prod)).ToList().AsReadOnly();

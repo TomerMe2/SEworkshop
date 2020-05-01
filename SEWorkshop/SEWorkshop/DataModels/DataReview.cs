@@ -5,10 +5,10 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    class DataReview
+    public class DataReview
     {
-        public DataUser Writer { get => new DataUser(InnerReview.Writer); }
-        public string Description { get => InnerReview.Description; }
+        public DataUser Writer => new DataUser(InnerReview.Writer);
+        public string Description => InnerReview.Description;
         private Review InnerReview { get; }
 
         public DataReview(Review review)

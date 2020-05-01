@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    class DataUser
+    public class DataUser
     {
-        public DataCart Cart { get => new DataCart(InnerUser.Cart); }
+        public DataCart Cart => new DataCart(InnerUser.Cart);
         private User InnerUser { get; }
 
         public DataUser(User usr)

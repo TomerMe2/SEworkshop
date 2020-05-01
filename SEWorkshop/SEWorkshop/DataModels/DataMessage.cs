@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    class DataMessage
+    public class DataMessage
     {
         public DataUser WrittenBy => new DataUser(InnerMessage.WrittenBy);
         public string Description => InnerMessage.Description;
