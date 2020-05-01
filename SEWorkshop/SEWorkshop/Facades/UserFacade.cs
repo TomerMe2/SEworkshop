@@ -142,48 +142,7 @@ namespace SEWorkshop.Facades
             return user.Cart.Baskets;
         }
         
-        public void AddProductToCart(User user, Product product, int quantity)
-        {
-            log.Info("User tries to add a product to cart");
-            if (!StoreFacade.GetInstance().IsProductExists(product))
-            {
-                log.Info("User tried to add an unexisting product to cart");
-                throw new ProductNotInTradingSystemException();
-            }
-            if (quantity < 1)
-            {
-                log.Info("User tried to add a product with no quantity to cart");
-                throw new NegativeQuantityException();
-            }
-            if (product.Quantity - quantity < 0)
-            {
-                log.Info("User tried to add a product with unavailable amount to cart");
-                throw new NegativeInventoryException();
-            }
-            Cart cart = user.Cart;
-            foreach(var basket in cart.Baskets)
-            {
-                if(product.Store == basket.Store)
-                {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (!(recordProd is null))
-                    {
-                        quantity = quantity + recordQuan;
-                        // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
-                        basket.Products.Remove((recordProd, recordQuan));  //so we can add it later :)
-                    }
-                    basket.Products.Add((product, quantity));
-                    log.Info("Product has been added to cart successfully");
-                    return;  // basket found and updated. Nothing more to do here...
-                }
-            }
-            // if we got here, the correct basket doesn't exists now, so we should create it!
-            log.Info("Product has been added to a new basket in cart");
-            Basket newBasket = new Basket(product.Store);
-            user.Cart.Baskets.Add(newBasket);
-            newBasket.Products.Add((product, quantity));
-        }
-
+       
         public void RemoveProductFromCart(User user, Product product, int quantity)
         {
             log.Info("User tries to remove a product from cart");

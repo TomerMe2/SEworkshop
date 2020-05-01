@@ -11,7 +11,6 @@ namespace SEWorkshop.Facades
         public LoggedInUser Login(string username, byte[] password); //throws exception
         public void Logout(); //throws exception        
         public IEnumerable<Basket> MyCart(User user);
-        public void AddProductToCart(User user, Product product, int quantity); //throws exception
         public void RemoveProductFromCart(User user, Product product, int quantity); //throws exception
         public void Purchase(User user, Basket basket); //throws exception
         public IEnumerable<Purchase> PurcahseHistory(User user);

@@ -11,11 +11,7 @@ namespace SEWorkshop.Models
     public class User
     {
         public Cart Cart { get; set; }
-<<<<<<< Updated upstream
-        public bool HasPermission {get; private set;}
-=======
         public bool HasPermission { get; private set; }
->>>>>>> Stashed changes
         private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
@@ -23,28 +19,10 @@ namespace SEWorkshop.Models
         public User()
         {
             Cart = new Cart();
-<<<<<<< Updated upstream
             HasPermission=false;
         }
 
-        public void AddProductToCart(Product product, int quantity)
-        { 
-            //TODO ask amit about store products
-            if (!StoreFacade.GetInstance().IsProductExists(product))
-            {
-               throw new ProductNotInTradingSystemException();
-            }
-            if (quantity < 1)
-            {
-              throw new NegativeQuantityException();
-            }
-            if (product.Quantity - quantity < 0)
-            {
-              throw new NegativeInventoryException();
-=======
-            HasPermission = false;
-        }
-
+       
         public void AddProductToCart(Product product, int quantity)
         {
             //TODO ask amit about store products
@@ -59,7 +37,6 @@ namespace SEWorkshop.Models
             if (product.Quantity - quantity < 0)
             {
                 throw new NegativeInventoryException();
->>>>>>> Stashed changes
             }
             Cart cart = this.Cart;
             foreach (var basket in cart.Baskets)
