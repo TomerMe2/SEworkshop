@@ -19,7 +19,7 @@ namespace SEWorkshop.UnitTests
         [OneTimeSetUp]
         public void Init()
         {
-            Facade = StoreFacade.GetInstance();
+            Facade = new StoreFacade();
             SecurityAdapter = new SecurityAdapter();
         }
 

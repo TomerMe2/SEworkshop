@@ -5,8 +5,10 @@ using SEWorkshop.Models;
 
 namespace SEWorkshop.Facades
 {
-    interface IUserFacade
+    public interface IUserFacade
     {
+        bool HasPermission { get; }
+
         public LoggedInUser Register(string username, byte[] password); //throws exception
         public LoggedInUser Login(string username, byte[] password); //throws exception
         public void Logout(); //throws exception        
