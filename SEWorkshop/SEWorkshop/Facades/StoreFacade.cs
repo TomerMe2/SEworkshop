@@ -88,15 +88,15 @@ namespace SEWorkshop.Facades
         /// <summary>
         /// Returns IEnumerable of products that pred is true for them
         /// </summary>
-        public ICollection<Product> SearchProducts(Func<Product, bool> pred)
+        /*public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             log.Info("SearchProducts was invoked");
             return (from product in AllActiveProducts()
                     where pred(product)
                     select product).ToList();
-        }
+        }*/
 
-        public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
+            /*public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
         {
             log.Info("FilterProducts was invoked");
             if (products.Count == 0)
@@ -108,6 +108,6 @@ namespace SEWorkshop.Facades
             return (from product in products
                     where pred(product)
                     select product).ToList();
-        }
+        }*/
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using NLog;
 using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models
@@ -16,6 +18,8 @@ namespace SEWorkshop.Models
         public string Name { get; private set; }
         public Policy Policy { get; private set; }
         public ICollection<Purchase> Purchases {get; private set; }
+        
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public Store(LoggedInUser owner, string name)
         {
@@ -47,6 +51,28 @@ namespace SEWorkshop.Models
                 }
             }
             throw new ProductNotInTradingSystemException();
+        }
+        
+        public ICollection<Product> SearchProducts(Func<Product, bool> pred)
+        {
+            log.Info("SearchProducts was invoked");
+            return (from product in Products
+                where pred(product)
+                select product).ToList();
+        }
+        
+        public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
+        {
+            log.Info("FilterProducts was invoked");
+            if (products.Count == 0)
+            {
+                log.Info("Attemp to filter an empty collection");
+                throw new NoProductsToFilterException();
+
+            }
+            return (from product in products
+                where pred(product)
+                select product).ToList();
         }
     }
 }
