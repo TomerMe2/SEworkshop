@@ -12,7 +12,6 @@ namespace SEWorkshop.Facades
     {
         private ICollection<LoggedInUser> Users {get; set;}
         private ICollection<LoggedInUser> Administrators {get; set;}
-
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
         private static UserFacade? Instance = null;
@@ -142,99 +141,8 @@ namespace SEWorkshop.Facades
             return user.Cart.Baskets;
         }
         
-       
-        public void RemoveProductFromCart(User user, Product product, int quantity)
-        {
-            log.Info("User tries to remove a product from cart");
-            if (quantity < 1)
-            {
-                log.Info("User tried to remove a product with no quantity from cart");
-                throw new NegativeQuantityException();
-            }
-            foreach (var basket in user.Cart.Baskets)
-            {
-                if(product.Store == basket.Store)
-                {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (recordProd is null)
-                    {
-                        log.Info("User tried to remove a product that is not in the cart");
-                        throw new ProductIsNotInCartException();
-                    }
-                    int quantityDelta = recordQuan - quantity;
-                    if (quantityDelta < 0)
-                    {
-                        log.Info("User tried to remove too much of this product");
-                        throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
-                    }
-                    basket.Products.Remove((recordProd, recordQuan));
-                    if (quantityDelta > 0)
-                    {
-                        // The item should still be in the basket because it still has a positive quantity
-                        basket.Products.Add((product, quantityDelta));
-                    }
-                    log.Info("Product has been removed from cart successfully");
-                    return;
-                }
-            }
-            log.Info("User tried to remove a product that is not in the cart");
-            throw new ProductIsNotInCartException();
-        }
-
-        public void Purchase(User user, Basket basket)
-        {
-            log.Info("User tries to purchase a basket");
-            const string CREDIT_CARD_NUMBER_STUB = "1234";
-            const string CITY_NAME_STUB = "Beer Sheva";
-            const string STREET_NAME_STUB = "Shderot Ben Gurion";
-            const string HOUSE_NUMBER_STUB = "111";
-            if (basket.Products.Count == 0)
-            {
-                log.Info("User tried to purchase an empty basket");
-                throw new BasketIsEmptyException();
-            }
-            Purchase purchase;
-            if (HasPermission)
-                purchase = new Purchase(user, basket);
-            else
-                purchase = new Purchase(new GuestUser(), basket);
-            foreach (var (prod, purchaseQuantity) in basket.Products)
-            {
-                if (purchaseQuantity <= 0)
-                {
-                    log.Info("User tried to purchase a non positive amount of a product");
-                    throw new NegativeQuantityException();
-                }
-            }
-            foreach (var (prod, purchaseQuantity) in basket.Products)
-            {
-                if (prod.Quantity - purchaseQuantity < 0)
-                {
-                    log.Info("User tries to purchase unavailable amount of a product");
-                    throw new NegativeInventoryException();
-                }
-            }
-            if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
-                && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
-            {
-                supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
-                user.Cart.Baskets.Remove(basket);
-                basket.Store.Purchases.Add(purchase);
-                // Update the quantity in the product itself
-                foreach(var (prod, purchaseQuantity) in basket.Products)
-                {
-                    prod.Quantity = prod.Quantity - purchaseQuantity;
-                }
-                Purchases.Add(purchase);
-                log.Info("Purchase has been completed successfully");
-            }
-            else
-            {
-                log.Info("Purchase has failed");
-                throw new PurchaseFailedException();
-            }
-        }
-
+      
+      
         public IEnumerable<Purchase> PurcahseHistory(User user)
         {
             log.Info("User tries to seek its purchase history");
@@ -296,41 +204,7 @@ namespace SEWorkshop.Facades
             return purchaseHistory;
         }
 
-        public void WriteReview(User user, Product product, string description)
-        {
-            log.Info("User tries to write a review");
-            if (!HasPermission)
-            {
-                log.Info("An unsigned in user cannot have permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (description.Length == 0)
-            {
-                log.Info("The review is empty");
-                throw new ReviewIsEmptyException();
-            }
-            Review review = new Review(user, description);
-            product.Reviews.Add(review);
-            ((LoggedInUser) user).Reviews.Add(review);
-            log.Info("The review has been published successfully");
-        }
-        public void WriteMessage(User user, Store store, string description)
-        {
-            log.Info("User tries to write a message");
-            if (!HasPermission)
-            {
-                log.Info("An unsigned in user cannot have permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (description.Length == 0)
-            {
-                log.Info("The message is empty");
-                throw new MessageIsEmptyException();
-            }
-            Message message = new Message(user, description);
-            store.Messages.Add(new Message(user, description));
-            ((LoggedInUser) user).Messages.Add(message);
-            log.Info("The message has been published successfully");
-        }
+       
+       
     }
 }

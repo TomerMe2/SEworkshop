@@ -19,10 +19,10 @@ namespace SEWorkshop.Models
         public User()
         {
             Cart = new Cart();
-            HasPermission=false;
+            HasPermission = false;
         }
 
-       
+
         public void AddProductToCart(Product product, int quantity)
         {
             //TODO ask amit about store products
@@ -94,52 +94,24 @@ namespace SEWorkshop.Models
 
         public void Purchase(User user, Basket basket)
         {
-            const string CREDIT_CARD_NUMBER_STUB = "1234";
-            const string CITY_NAME_STUB = "Beer Sheva";
-            const string STREET_NAME_STUB = "Shderot Ben Gurion";
-            const string HOUSE_NUMBER_STUB = "111";
             if (basket.Products.Count == 0)
-            {
                 throw new BasketIsEmptyException();
-            }
             Purchase purchase;
             if (HasPermission)
                 purchase = new Purchase(user, basket);
             else
                 purchase = new Purchase(new GuestUser(), basket);
+         
+            ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)
             {
                 if (purchaseQuantity <= 0)
-                {
                     throw new NegativeQuantityException();
-                }
+                else
+                    productsToPurchase.Add((prod, purchaseQuantity));
             }
-            foreach (var (prod, purchaseQuantity) in basket.Products)
-            {
-                if (prod.Quantity - purchaseQuantity < 0)
-                {
-                    throw new NegativeInventoryException();
-                }
-            }
-            if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
-                && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
-            {
-                supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
-                user.Cart.Baskets.Remove(basket);
-                basket.Store.Purchases.Add(purchase);
-                // Update the quantity in the product itself
-                foreach (var (prod, purchaseQuantity) in basket.Products)
-                {
-                    prod.Quantity = prod.Quantity - purchaseQuantity;
-                }
-                //TODO ask if user is loggedin add it to user purchases
-                // add purchase to store purchase history
-                //Purchases.Add(purchase);
-            }
-            else
-            {
-                throw new PurchaseFailedException();
-            }
+            // store.purchase(productsToPurchase);
+            // TODO when to add purchase to loggedin user purchase history
         }
     }
 }
