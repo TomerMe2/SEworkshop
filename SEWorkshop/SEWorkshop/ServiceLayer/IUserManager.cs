@@ -14,7 +14,7 @@ namespace SEWorkshop.ServiceLayer
         public void Logout();
         public IEnumerable<Basket> MyCart();
         public void OpenStore(string storeName);
-        public void Purchase(Basket basket);
+        public void Purchase(Basket basket, string creditCardNumber, Address address);
         public void Register(string username, string password);
         public void RemoveProductFromCart(string storeName, string productName, int quantity);
 

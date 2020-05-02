@@ -215,13 +215,9 @@ namespace SEWorkshop.Facades
             throw new ProductIsNotInCartException();
         }
 
-        public void Purchase(User user, Basket basket)
+        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
             log.Info("User tries to purchase a basket");
-            const string CREDIT_CARD_NUMBER_STUB = "1234";
-            const string CITY_NAME_STUB = "Beer Sheva";
-            const string STREET_NAME_STUB = "Shderot Ben Gurion";
-            const string HOUSE_NUMBER_STUB = "111";
             if (basket.Products.Count == 0)
             {
                 log.Info("User tried to purchase an empty basket");
@@ -248,10 +244,10 @@ namespace SEWorkshop.Facades
                     throw new NegativeInventoryException();
                 }
             }
-            if (supplyAdapter.CanSupply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
-                && billingAdapter.Bill(basket.Products, CREDIT_CARD_NUMBER_STUB))
+            if (supplyAdapter.CanSupply(basket.Products, address)
+                && billingAdapter.Bill(basket.Products, creditCardNumber))
             {
-                supplyAdapter.Supply(basket.Products, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+                supplyAdapter.Supply(basket.Products, address);
                 user.Cart.Baskets.Remove(basket);
                 basket.Store.Purchases.Add(purchase);
                 // Update the quantity in the product itself

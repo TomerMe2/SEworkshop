@@ -151,10 +151,10 @@ namespace SEWorkshop.ServiceLayer
             StrFacade.CreateStore((LoggedInUser)CurrUser, storeName);
         }
 
-        public void Purchase(Basket basket)
+        public void Purchase(Basket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            UsrFacade.Purchase(CurrUser, basket);
+            UsrFacade.Purchase(CurrUser, basket, creditCardNumber, address);
         }
 
         public void Register(string username, string password)

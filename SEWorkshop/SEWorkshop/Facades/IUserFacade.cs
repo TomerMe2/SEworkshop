@@ -15,7 +15,7 @@ namespace SEWorkshop.Facades
         public IEnumerable<Basket> MyCart(User user);
         public void AddProductToCart(User user, Product product, int quantity); //throws exception
         public void RemoveProductFromCart(User user, Product product, int quantity); //throws exception
-        public void Purchase(User user, Basket basket); //throws exception
+        public void Purchase(User user, Basket basket, string creditCardNumber, Address address); //throws exception
         public IEnumerable<Purchase> PurcahseHistory(User user);
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userToView);
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store);

@@ -78,10 +78,7 @@ namespace SEWorkshop.UnitTests
             cart = Manager.MyCart();
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
             Assert.IsFalse(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2")).Any());
-
-
         }
-        
 
         [Test]
         public void BrowseStoresTest()
@@ -220,7 +217,9 @@ namespace SEWorkshop.UnitTests
             Manager.AddProduct("PurchaseHistory_store1", "ph_prod1", "ninini", "cat1", 11, 1);
             Manager.AddProductToCart("PurchaseHistoryy_store1", "ph_prod1", 1);
             var basket = Manager.MyCart().ElementAt(0);
-            Manager.Purchase(basket);
+            string creditCardNumber = "1234";
+            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.PurcahseHistory();
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
         }
@@ -260,7 +259,9 @@ namespace SEWorkshop.UnitTests
             Manager.AddProduct("UserPurchaseHistory_store1", "uph_prod1", "ninini", "cat1", 11, 1);
             Manager.AddProductToCart("UserPurchaseHistory_store1", "uph_prod1", 1);
             var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
-            Manager.Purchase(basket);
+            string creditCardNumber = "1234";
+            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.PurcahseHistory();
             Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
         }
@@ -283,7 +284,9 @@ namespace SEWorkshop.UnitTests
             Manager.AddProductToCart("ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", 1);
             var checkcheck = Manager.MyCart();
             var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("ManagingPurchaseHistory_store1"));
-            Manager.Purchase(basket);
+            string creditCardNumber = "1234";
+            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.ManagingPurchaseHistory("ManagingPurchaseHistory_store1");
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
         }
@@ -476,7 +479,6 @@ namespace SEWorkshop.UnitTests
             Assert.That(res.Quantity, Is.Not.EqualTo(1));
         }
 
-        
         [Test]
         public void EditProductDescription()
         {

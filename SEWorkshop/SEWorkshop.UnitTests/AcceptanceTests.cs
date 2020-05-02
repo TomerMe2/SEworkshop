@@ -124,9 +124,11 @@ namespace SEWorkshop.UnitTests
 		{
 			um.AddProductToCart("store1", "bisli", 1);
 			Basket basket = um.MyCart().First();
-			Assert.That(() => um.Purchase(basket), Throws.Nothing);
+			string creditCardNumber = "5555";
+			Address address = new Address("Pardes Hanna-Karkur", "Hadarim", "1");
+			Assert.That(() => um.Purchase(basket, creditCardNumber, address), Throws.Nothing);
 			basket.Products.Clear();
-			Assert.Throws<BasketIsEmptyException>(delegate { um.Purchase(basket); });
+			Assert.Throws<BasketIsEmptyException>(delegate { um.Purchase(basket, creditCardNumber, address); });
 		}
 
 		[Test, Order(30)]
