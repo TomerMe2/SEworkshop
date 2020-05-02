@@ -7,10 +7,11 @@ using System.Text;
 
 namespace SEWorkshop.Models
 {
-    class Manages
+    public class Manages
     {
         public LoggedInUser LoggedInUser { get; set; }
         public Store Store { get; set; }
+        public  ICollection<Authorizations> AuthoriztionsOfUser { get; private set; }
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
 
@@ -18,11 +19,12 @@ namespace SEWorkshop.Models
         {
             LoggedInUser = loggedInUser;
             Store = store;
+            AuthoriztionsOfUser = new List<Authorizations>();
         }
 
         public bool IsUserStoreOwner() => ((from owner in Store.Owners
-                                             where owner.Key == LoggedInUser
-                                             select owner).ToList().Count() > 0);
+                                            where owner.Key == LoggedInUser
+                                            select owner).ToList().Count() > 0);
 
         public bool IsUserStoreManager() => ((from manager in Store.Managers
                                               where manager.Key == LoggedInUser
@@ -37,9 +39,97 @@ namespace SEWorkshop.Models
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
             return (IsUserStoreOwner()
                     || (IsUserStoreManager()
-                        && LoggedInUser.Manages[Store].Contains(authorization)));
+                        && AuthoriztionsOfUser.Contains(authorization)));
+        }
+        public void AddStoreOwner(LoggedInUser newOwner)
+        {
+            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+            if (!UserHasPermission( Authorizations.Owner))
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+            if (IsUserStoreOwner())
+            {
+                log.Info("The requested user is already a store owner");
+                throw new UserIsAlreadyStoreOwnerException();
+            }
+            Store.Owners.Add(newOwner, LoggedInUser);
+            newOwner.Owns.Add(Store);
+            log.Info("A new owner has been added successfully");
+        }
+        public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
+        {
+            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
+            if (UserHasPermission(Authorizations.Authorizing)
+                && !IsUserStoreOwner())
+            {
+                if (Store.Managers[manager] != this.LoggedInUser)
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+
+                ICollection<Authorizations> authorizations =man.AuthoriztionsOfUser;
+                if (authorizations.Contains(authorization))
+                {
+                    log.Info("Permission has been taken away successfully");
+                    authorizations.Remove(authorization);
+                }
+                else
+                {
+                    log.Info("Permission has been granted successfully");
+                    authorizations.Add(authorization);
+                }
+                return;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
         }
 
+        public Product AddProduct(string name, string description, string category, double price, int quantity)
+        {
+            // to add a product it is required that the user who want to add the proudct is a store owner or a manager
+            log.Info("User tries to add a new product to store");
+            if (UserHasPermission(Authorizations.Products))
+            {
+                Product newProduct = new Product(Store, name, description, category, price, quantity);
+                if (!StoreContainsProduct(newProduct))
+                {
+                    Store.Products.Add(newProduct);
+                    log.Info("Product has been added to store successfully");
+                    return newProduct;
+                }
+                else
+                {
+                    log.Info("Product is already exists in store");
+                    throw new ProductAlreadyExistException();
+                }
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
+        public void RemoveProduct(Product productToRemove)
+        {
+            log.Info("User tries to add a new product to store");
+            if (UserHasPermission(Authorizations.Products))
+            {
+                if (StoreContainsProduct(productToRemove))
+                {
+                    Store.Products.Remove(productToRemove);
+                    log.Info("Product has been removed from store successfully");
+                    return;
+                }
+                else
+                {
+                    log.Info("Product does not exist in store");
+                    throw new ProductNotInTheStoreException();
+                }
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
 
         public void EditProductDescription(Product product, string description)
         {
@@ -77,10 +167,10 @@ namespace SEWorkshop.Models
             throw new UserHasNoPermissionException();
         }
 
-        public void EditProductName(LoggedInUser loggedInUser, Store store, Product product, string name)
+        public void EditProductName( Product product, string name)
         {
             log.Info("User tries to modify product's name");
-            Product demo = new Product(store, name, "", "", 0, 0);
+            Product demo = new Product(Store, name, "", "", 0, 0);
             if (UserHasPermission(Authorizations.Products))
             {
                 if (!StoreContainsProduct(product))
@@ -129,6 +219,8 @@ namespace SEWorkshop.Models
                     log.Info("Product does not exist in store");
                     throw new ProductNotInTradingSystemException();
                 }
+
+                //TODO : update in store class
                 log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
                 return;

@@ -1,4 +1,5 @@
-﻿using SEWorkshop.Exceptions;
+﻿using NLog;
+using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SEWorkshop.Models
     public class LoggedInUser : User
     {
         public ICollection<Store> Owns { get; private set; }
-        public IDictionary<Store, ICollection<Authorizations>> Manages { get; private set; }
+        public ICollection<Manages> Manage { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
         public string Username { get; private set; }
@@ -17,13 +18,14 @@ namespace SEWorkshop.Models
         private ICollection<Purchase> Purchases { get; set; }
         private ICollection<LoggedInUser> Administrators { get; set; }
         private ICollection<LoggedInUser> Users { get; set; }
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public LoggedInUser(string username, byte[] password)
         {
             Username = username;
             Password = password;
             Owns = new List<Store>();
-            Manages = new Dictionary<Store, ICollection<Authorizations>>();
+            Manage = new List<Manages>();
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
@@ -43,7 +45,6 @@ namespace SEWorkshop.Models
             product.Reviews.Add(review);
             Reviews.Add(review);
         }
-
         public void WriteMessage(Store store, string description)
         {
             if (!HasPermission)
@@ -58,37 +59,70 @@ namespace SEWorkshop.Models
             store.Messages.Add(message);
             Messages.Add(message);
         }
-
-        public void AddProduct()
+        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
-            throw new NotImplementedException();
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.AddProduct(name, description, category, price, quantity);
         }
-
-        public void RemoveProduct()
+        public void RemoveProduct(Store store, Product productToRemove)
         {
-            throw new NotImplementedException();
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.RemoveProduct(productToRemove);
         }
-
-        public void Edit()
+        public void EditProductDescription( Store store, Product product, string description)
         {
-            throw new NotImplementedException();
-        }
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.EditProductDescription(product, description);
 
-        public void AddStoreOwner()
+        }
+        public void EditProductCategory(Store store, Product product, string category)
         {
-            throw new NotImplementedException();
-        }
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.EditProductCategory(product, category);
 
+        }
+        public void EditProductName(Store store, Product product, string name)
+        {
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.EditProductName(product, name);
+
+        }
+        public void EditProductPrice(Store store, Product product, double price)
+        {
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.EditProductPrice(product, price);
+
+        }
+        public void EditProductQuantity(Store store, Product product, int quantity)
+        {
+            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            mangement.EditProductQuantity(product, quantity);
+
+        }
+        public void SetPermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
+        {
+            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
+               
+            if (!isManger(manager, store))
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+            var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(store));
+            man.SetPermissionsOfManager(manager, authorization);
+                return;
+        }
+        public void AddStoreOwner(Store store, LoggedInUser newOwner)
+        {
+            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
+            management.AddStoreOwner(newOwner);
+            
+        }
         public void AddStoreManager()
         {
             throw new NotImplementedException();
         }
-
-        public void SetPermissionOfManager()
-        {
-            throw new NotImplementedException();
-        }
-
         public void RemoveStoreManager()
         {
             throw new NotImplementedException();
@@ -103,8 +137,6 @@ namespace SEWorkshop.Models
         {
             throw new NotImplementedException();
         }
-
-
 
         public IEnumerable<Purchase> UserPurchaseHistory(string userNmToView)
         {
@@ -136,9 +168,22 @@ namespace SEWorkshop.Models
             }
             return userPurchases;
         }
+
+        public bool isManger(LoggedInUser loggedInUser, Store store)
+        {
+            foreach (var m in loggedInUser.Manage)
+            {
+                if (m.Store == store)
+                    return true;
+
+            }
+            return false;
+        }
+
+      
+
+
     }
-
-
 
 
 
