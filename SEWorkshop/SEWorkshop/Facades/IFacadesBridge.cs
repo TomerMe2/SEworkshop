@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SEWorkshop.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using SEWorkshop.DataModels;
 
-namespace SEWorkshop.ServiceLayer
+namespace SEWorkshop.Facades
 {
-    public interface IUserManager
+    public interface IFacadesBridge
     {
         public void AddProductToCart(string storeName, string productName, int quantity);
         public IEnumerable<DataStore> BrowseStores();

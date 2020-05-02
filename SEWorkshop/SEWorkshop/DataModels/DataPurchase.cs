@@ -5,16 +5,12 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataPurchase
+    public class DataPurchase : DataModel<Purchase>
     {
-        public DataUser User => new DataUser(InnerPurchase.User);
-        public DataBasket Basket => new DataBasket(InnerPurchase.Basket);
-        public DateTime TimeStamp => InnerPurchase.TimeStamp;
-        private Purchase InnerPurchase { get; }
+        public DataUser User => new DataUser(InnerModel.User);
+        public DataBasket Basket => new DataBasket(InnerModel.Basket);
+        public DateTime TimeStamp => InnerModel.TimeStamp;
 
-        public DataPurchase(Purchase prchs)
-        {
-            InnerPurchase = prchs;
-        }
+        public DataPurchase(Purchase prchs) : base(prchs) { }
     }
 }

@@ -6,14 +6,10 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataCart
+    public class DataCart : DataModel<Cart>
     {
-        public IReadOnlyCollection<DataBasket> Baskets => InnerCart.Baskets.Select(bskt => new DataBasket(bskt)).ToList().AsReadOnly();
-        private Cart InnerCart{ get; }
+        public IReadOnlyCollection<DataBasket> Baskets => InnerModel.Baskets.Select(bskt => new DataBasket(bskt)).ToList().AsReadOnly();
 
-        public DataCart(Cart cart)
-        {
-            InnerCart = cart;
-        }
+        public DataCart(Cart cart) : base(cart) { }
     }
 }

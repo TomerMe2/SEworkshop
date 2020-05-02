@@ -21,10 +21,19 @@ namespace SEWorkshop.ServiceLayer
         private const string EVENT_LOG_NM = "event_log.txt";
         private const string ERROR_LOG_NM = "error_log.txt";
 
+        private IFacadesBridge Bridge { get; }
+        private ITyposFixerProxy TyposFixerNames { get; }
+        private ITyposFixerProxy TyposFixerCategories { get; }
+        private ITyposFixerProxy TyposFixerKeywords { get; }
 
-        private ITyposFixerProxy TyposFixerNames { get; set; }
-        private ITyposFixerProxy TyposFixerCategories { get; set; }
-        private ITyposFixerProxy TyposFixerKeywords { get; set; }
+        public UserManager(IFacadesBridge facadesBridge)
+        {
+            ConfigLog();
+            TyposFixerNames = new TyposFixer(new List<string>());
+            TyposFixerCategories = new TyposFixer(new List<string>());
+            TyposFixerKeywords = new TyposFixer(new List<string>());
+            Bridge = facadesBridge;
+        }
 
         public UserManager()
         {
@@ -32,6 +41,7 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerNames = new TyposFixer(new List<string>());
             TyposFixerCategories = new TyposFixer(new List<string>());
             TyposFixerKeywords = new TyposFixer(new List<string>());
+            Bridge = new FacadeBridge();
         }
 
         private static void ConfigLog()

@@ -23,14 +23,4 @@ namespace SEWorkshop.Models
             Messages = new List<Message>();
         }
     }
-
-    public enum Authorizations
-    {
-        Products,
-        Owner,
-        Manager,
-        Authorizing,
-        Replying,
-        Watching
-    }
 }

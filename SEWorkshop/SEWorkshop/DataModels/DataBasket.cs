@@ -6,17 +6,13 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataBasket
+    public class DataBasket : DataModel<Basket>
     {
-        public DataStore Store => new DataStore(InnerBasket.Store);
+        public DataStore Store => new DataStore(InnerModel.Store);
         public IReadOnlyCollection<(DataProduct, int)> Products =>
-                InnerBasket.Products.Select((tup) => (new DataProduct(tup.Item1), tup.Item2)).ToList().AsReadOnly();
-        private Basket InnerBasket { get; }
+                InnerModel.Products.Select((tup) => (new DataProduct(tup.Item1), tup.Item2)).ToList().AsReadOnly();
 
-        public DataBasket(Basket basket)
-        {
-            InnerBasket = basket;
-        }
+        public DataBasket(Basket basket) : base(basket) { }
 
     }
 }

@@ -5,17 +5,13 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataMessage
+    public class DataMessage : DataModel<Message>
     {
-        public DataUser WrittenBy => new DataUser(InnerMessage.WrittenBy);
-        public string Description => InnerMessage.Description;
-        public DataMessage? Prev => InnerMessage.Prev != null ? new DataMessage(InnerMessage.Prev) : null;
-        public DataMessage? Next => InnerMessage.Next != null ? new DataMessage(InnerMessage.Next) : null;
-        private Message InnerMessage { get; }
+        public DataUser WrittenBy => new DataUser(InnerModel.WrittenBy);
+        public string Description => InnerModel.Description;
+        public DataMessage? Prev => InnerModel.Prev != null ? new DataMessage(InnerModel.Prev) : null;
+        public DataMessage? Next => InnerModel.Next != null ? new DataMessage(InnerModel.Next) : null;
 
-        public DataMessage(Message msg)
-        {
-            InnerMessage = msg;
-        }
+        public DataMessage(Message msg) : base(msg) { }
     }
 }

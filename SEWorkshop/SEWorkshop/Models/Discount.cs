@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models
 {
     public class Discount
     {
-        public enum DiscountType {visible}
         public DiscountType DisType { get; private set;}
         public int Code { get; private set;}
         public ICollection<Product> Products { get; private set; }

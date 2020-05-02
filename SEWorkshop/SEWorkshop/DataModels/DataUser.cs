@@ -5,14 +5,10 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataUser
+    public class DataUser : DataModel<User>
     {
-        public DataCart Cart => new DataCart(InnerUser.Cart);
-        private User InnerUser { get; }
+        public DataCart Cart => new DataCart(InnerModel.Cart);
 
-        public DataUser(User usr)
-        {
-            InnerUser = usr;
-        }
+        public DataUser(User usr) : base(usr) { }
     }
 }

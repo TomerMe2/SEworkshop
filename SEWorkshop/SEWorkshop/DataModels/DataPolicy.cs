@@ -7,28 +7,20 @@ using System.Linq;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataPolicy
+    public class DataPolicy : DataModel<Policy>
     {
-        public IReadOnlyCollection<DataRule> Rules => InnerPolicy.Rules.Select(rule => new DataRule(rule)).ToList().AsReadOnly();
-        public IReadOnlyCollection<DataProduct> Products => InnerPolicy.Products.Select(prod => new DataProduct(prod)).ToList().AsReadOnly();
-        private Policy InnerPolicy { get; }
+        public IReadOnlyCollection<DataRule> Rules => InnerModel.Rules.Select(rule => new DataRule(rule)).ToList().AsReadOnly();
+        public IReadOnlyCollection<DataProduct> Products => InnerModel.Products.Select(prod => new DataProduct(prod)).ToList().AsReadOnly();
 
-        public DataPolicy(Policy policy)
+        public DataPolicy(Policy policy) : base(policy) { }
+
+        public class DataRule : DataModel<Rule>
         {
-            InnerPolicy = policy;
-        }
+            public int Number => InnerModel.Number;
+            public string Description => InnerModel.Description;
+            public IReadOnlyCollection<DataRule> References => InnerModel.References.Select(rule => new DataRule(rule)).ToList().AsReadOnly();
 
-        public class DataRule
-        {
-            public int Number => InnerRule.Number;
-            public string Description => InnerRule.Description;
-            public IReadOnlyCollection<DataRule> References => InnerRule.References.Select(rule => new DataRule(rule)).ToList().AsReadOnly();
-            private Rule InnerRule { get; }
-
-            public DataRule(Rule rule)
-            {
-                InnerRule = rule;
-            }
+            public DataRule(Rule rule) : base(rule) { }
         }
     }
 }
