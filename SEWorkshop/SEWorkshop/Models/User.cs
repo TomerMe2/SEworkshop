@@ -89,13 +89,13 @@ namespace SEWorkshop.Models
             throw new ProductIsNotInCartException();
         }
 
-        public void Purchase(User user, Basket basket)
+        public void Purchase(Basket basket)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
             if (HasPermission)
-                purchase = new Purchase(user, basket);
+                purchase = new Purchase(this, basket);
             else
                 purchase = new Purchase(new GuestUser(), basket);
          

@@ -11,7 +11,7 @@ namespace SEWorkshop.Facades
         public ICollection<Store> BrowseStores();
         public ICollection<Store> SearchStore(Func<Store, bool> pred);
         public bool IsProductExists(Product product);
-        //public ICollection<Product> SearchProducts(Func<Product, bool> pred);
-        //public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred);
+        public ICollection<Product> SearchProducts(Func<Product, bool> pred);
+        public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred);
     }
 }

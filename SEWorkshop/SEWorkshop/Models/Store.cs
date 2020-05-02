@@ -65,20 +65,6 @@ namespace SEWorkshop.Models
                 where pred(product)
                 select product).ToList();
         }
-        
-        public ICollection<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
-        {
-            log.Info("FilterProducts was invoked");
-            if (products.Count == 0)
-            {
-                log.Info("Attemp to filter an empty collection");
-                throw new NoProductsToFilterException();
-
-            }
-            return (from product in products
-                where pred(product)
-                select product).ToList();
-        }
 
         public void PurchaseBasket(ICollection<(Product, int)> itemsList)
         {
