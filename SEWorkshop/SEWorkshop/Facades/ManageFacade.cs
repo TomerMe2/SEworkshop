@@ -28,9 +28,11 @@ namespace SEWorkshop.Facades
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
+            var management = loggedInUser.Manage.FirstOrDefault(man => man.Store.Equals(store));
+
             return (IsUserStoreOwner(loggedInUser, store)
                     || (IsUserStoreManager(loggedInUser, store)
-                        && loggedInUser.Manages[store].Contains(authorization)));
+                        && management.AuthoriztionsOfUser.Contains(authorization)));
         }
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
@@ -205,10 +207,9 @@ namespace SEWorkshop.Facades
                 throw new UserIsAlreadyStoreManagerException();
             }
             store.Managers.Add(newManager, loggedInUser);
-            newManager.Manages.Add(store, new List<Authorizations>()
-            {
-                Authorizations.Watching
-            });
+            Manages managementToAdd = new Manages(newManager, store);
+            managementToAdd.SetPermissionsOfManager(loggedInUser, Authorizations.Watching);
+            newManager.Manage.Add(managementToAdd);
             log.Info("A new manager has been added successfully");
         }
 
@@ -218,13 +219,16 @@ namespace SEWorkshop.Facades
             if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
                 && !IsUserStoreOwner(manager, store))
             {
-                if (!manager.Manages.ContainsKey(store)
+                if ((manager.Manage.FirstOrDefault(man => man.Store.Equals(store)) == default)
                     || store.Managers[manager] != loggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                ICollection<Authorizations> authorizations = manager.Manages[store];
+                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(store));
+
+                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
+
                 if (authorizations.Contains(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
@@ -265,8 +269,8 @@ namespace SEWorkshop.Facades
                     throw new UserHasNoPermissionException();
                 }
                 store.Managers.Remove(managerToRemove);
-                managerToRemove.Manages.Remove(store);
-                log.Info("The manager has been removed successfully");
+                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(store));
+                managerToRemove.Manage.Remove(management); log.Info("The manager has been removed successfully");
                 return;
             }
             else

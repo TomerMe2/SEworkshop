@@ -26,10 +26,15 @@ namespace SEWorkshop.Models
                                             where owner.Key == LoggedInUser
                                             select owner).ToList().Count() > 0);
 
+        public bool IsUserStoreOwner(LoggedInUser loggedInUser) => ((from owner in Store.Owners
+                                                                     where owner.Key == loggedInUser
+                                                                     select owner).ToList().Count() > 0);
         public bool IsUserStoreManager() => ((from manager in Store.Managers
                                               where manager.Key == LoggedInUser
                                               select manager).ToList().Count() > 0);
-
+        public bool IsUserStoreManager(LoggedInUser loggedInUser) => ((from manager in Store.Managers
+                                              where manager.Key == loggedInUser
+                                              select manager).ToList().Count() > 0);
         public bool StoreContainsProduct(Product product) => ((from pr in Store.Products
                                                                where pr.Name == product.Name
                                                                select product).ToList().Count() > 0);
@@ -41,6 +46,7 @@ namespace SEWorkshop.Models
                     || (IsUserStoreManager()
                         && AuthoriztionsOfUser.Contains(authorization)));
         }
+       
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
@@ -58,6 +64,62 @@ namespace SEWorkshop.Models
             newOwner.Owns.Add(Store);
             log.Info("A new owner has been added successfully");
         }
+
+        public void AddStoreManager(LoggedInUser newManager)
+        {
+            log.Info("User tries to add a new manager {0} to store", newManager.Username);
+            if (!UserHasPermission(Authorizations.Manager))
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+            if (IsUserStoreManager() || IsUserStoreOwner())
+            {
+                log.Info("The requested user is already a store manager or owner");
+                throw new UserIsAlreadyStoreManagerException();
+            }
+            Store.Managers.Add(newManager, LoggedInUser);
+            Manages mangement = new Manages(newManager, Store);
+            newManager.Manage.Add(mangement);
+            log.Info("A new manager has been added successfully");
+        }
+
+        public void RemoveStoreManager(LoggedInUser managerToRemove)
+        {
+            log.Info("User tries to remove the manager {0} from store", managerToRemove.Username);
+            bool isStoreManager = IsUserStoreManager(managerToRemove);
+            if (!isStoreManager)
+            {
+                log.Info("The requested manager is not a store manager");
+                throw new UserIsNotMangerOfTheStoreException();
+            }
+            if (UserHasPermission(Authorizations.Manager)
+                && IsUserStoreManager(managerToRemove))
+            {
+                if (!Store.Managers.ContainsKey(managerToRemove))
+                {
+                    log.Info("The requested manager is not a store manager");
+                    throw new UserIsNotMangerOfTheStoreException();
+                }
+                LoggedInUser appointer = Store.Managers[managerToRemove];
+                if (appointer != LoggedInUser)
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+                Store.Managers.Remove(managerToRemove);
+                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+                managerToRemove.Manage.Remove(management);
+                log.Info("The manager has been removed successfully");
+                return;
+            }
+            else
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+        }
+
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
@@ -110,6 +172,7 @@ namespace SEWorkshop.Models
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
+       
         public void RemoveProduct(Product productToRemove)
         {
             log.Info("User tries to add a new product to store");
@@ -229,7 +292,42 @@ namespace SEWorkshop.Models
             throw new UserHasNoPermissionException();
         }
 
+        public IEnumerable<Message> GetMessage()
+        {
+            log.Info("User tries to view messages of store {0}", Store.Name);
+            if (UserHasPermission(Authorizations.Watching))
+            {
+                log.Info("Data has been fetched successfully");
+                return Store.Messages;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
 
+        public Message MessageReply(Message message, string description)
+        {
+            log.Info("User tries to reply to a message");
+            if (UserHasPermission(Authorizations.Replying))
+            {
+                Message reply = new Message(LoggedInUser, description, message);
+                message.Next = reply;
+                log.Info("Reply has been published successfully");
+                return reply;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
+        public IEnumerable<Purchase> ViewPurchaseHistory()
+        {
+            log.Info("User tries to view purchase history of store {0}", Store.Name);
+            if (UserHasPermission( Authorizations.Watching))
+            {
+                log.Info("Data has been fetched successfully");
+                return Store.Purchases;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
 
     }
     public enum Authorizations

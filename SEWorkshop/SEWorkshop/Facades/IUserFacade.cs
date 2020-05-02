@@ -12,6 +12,7 @@ namespace SEWorkshop.Facades
         public void Logout(); //throws exception        
         public IEnumerable<Basket> MyCart(User user);
         public IEnumerable<Purchase> PurcahseHistory(User user);
+        public void Purchase(User user, Basket basket);
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userToView);
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store);
         public LoggedInUser GetUser(string username);
