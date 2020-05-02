@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NLog;
+using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models
@@ -18,6 +19,10 @@ namespace SEWorkshop.Models
         public string Name { get; private set; }
         public Policy Policy { get; private set; }
         public ICollection<Purchase> Purchases {get; private set; }
+        
+        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
+        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -73,6 +78,47 @@ namespace SEWorkshop.Models
             return (from product in products
                 where pred(product)
                 select product).ToList();
+        }
+
+        public void PurchaseBasket(ICollection<(Product, int)> itemsList)
+        {
+            const string CREDIT_CARD_NUMBER_STUB = "1234";
+            const string CITY_NAME_STUB = "Beer Sheva";
+            const string STREET_NAME_STUB = "Shderot Ben Gurion";
+            const string HOUSE_NUMBER_STUB = "111";
+            /*foreach (var (prod, purchaseQuantity) in itemsList)
+            {
+                if (purchaseQuantity <= 0)
+                {
+                    throw new NegativeQuantityException();
+                }
+            }*/
+            foreach (var (prod, purchaseQuantity) in itemsList)
+            {
+                if (prod.Quantity - purchaseQuantity < 0)
+                {
+                    throw new NegativeInventoryException();
+                }
+            }
+            if (supplyAdapter.CanSupply(itemsList, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
+                && billingAdapter.Bill(itemsList, CREDIT_CARD_NUMBER_STUB))
+            {
+                supplyAdapter.Supply(itemsList, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+                /*user.Cart.Baskets.Remove(basket);
+                basket.Store.Purchases.Add(purchase);*/  //TODO: check where those lines need to be
+                // Update the quantity in the product itself
+                foreach (var (prod, purchaseQuantity) in itemsList)
+                {
+                    prod.Quantity = prod.Quantity - purchaseQuantity;
+                }
+                //TODO ask if user is loggedin add it to user purchases
+                // add purchase to store purchase history
+                //Purchases.Add(purchase);
+            }
+            else
+            {
+                throw new PurchaseFailedException();
+            }
         }
     }
 }

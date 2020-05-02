@@ -12,9 +12,6 @@ namespace SEWorkshop.Models
     {
         public Cart Cart { get; set; }
         public bool HasPermission { get; private set; }
-        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
-        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
-        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
         public User()
         {
@@ -110,7 +107,7 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            // store.purchase(productsToPurchase);
+            basket.Store.PurchaseBasket(productsToPurchase);
             // TODO when to add purchase to loggedin user purchase history
         }
     }
