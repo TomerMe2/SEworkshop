@@ -108,6 +108,8 @@ namespace SEWorkshop.Models
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
             basket.Store.PurchaseBasket(productsToPurchase);
+            Cart.Baskets.Remove(basket);
+            basket.Store.Purchases.Add(purchase);
             // TODO when to add purchase to loggedin user purchase history
         }
     }

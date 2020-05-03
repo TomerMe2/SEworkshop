@@ -8,7 +8,7 @@ using SEWorkshop.Adapters;
 using System.Linq;
 using SEWorkshop.Exceptions;
 
-namespace SEWorkshop.UnitTests
+namespace SEWorkshop.Tests
 {
     [TestFixture]
     class StoreFacadeTests

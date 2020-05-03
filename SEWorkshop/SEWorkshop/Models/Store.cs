@@ -46,7 +46,7 @@ namespace SEWorkshop.Models
             IsOpen = false;
         }
 
-        public Product GetProduct(string name)
+        public Product GetProduct(string name) //TODO: I think this is a redundant function and we should remove it (Amit)
         {
             foreach(var product in Products)
             {
@@ -90,8 +90,6 @@ namespace SEWorkshop.Models
                 && billingAdapter.Bill(itemsList, CREDIT_CARD_NUMBER_STUB))
             {
                 supplyAdapter.Supply(itemsList, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
-                /*user.Cart.Baskets.Remove(basket);
-                basket.Store.Purchases.Add(purchase);*/  //TODO: check where those lines need to be
                 // Update the quantity in the product itself
                 foreach (var (prod, purchaseQuantity) in itemsList)
                 {
