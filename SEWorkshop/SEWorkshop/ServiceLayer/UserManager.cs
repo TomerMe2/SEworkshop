@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using SEWorkshop.Facades;
 using SEWorkshop.Exceptions;
-using SEWorkshop.Models;
 using NLog;
 using System.Linq;
 using SEWorkshop.Adapters;
