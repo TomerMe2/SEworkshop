@@ -33,7 +33,7 @@ namespace SEWorkshop.ServiceLayer
         /// </summary>
         public IEnumerable<DataProduct> SearchProductsByKeywords(ref string input);
 
-        public IEnumerable<DataPurchase> PurcahseHistory();
+        public IEnumerable<DataPurchase> PurchaseHistory();
         public void WriteReview(string storeName, string productName, string description);
         public void WriteMessage(string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(string userNm);

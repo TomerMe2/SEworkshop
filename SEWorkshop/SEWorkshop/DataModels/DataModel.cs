@@ -17,5 +17,20 @@ namespace SEWorkshop.DataModels
         {
             return model == InnerModel;
         }
+
+        public override bool Equals(object? obj)
+        {
+            var other = obj as DataModel<T>;
+            if (other is null)
+            {
+                return false;
+            }
+            return other.Represents(InnerModel);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
