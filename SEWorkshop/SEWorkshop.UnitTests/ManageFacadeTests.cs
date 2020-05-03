@@ -245,7 +245,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Products);
             Product product;
             bool success = true;
@@ -281,7 +282,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Owner);
             LoggedInUser ownerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             bool success = true;
@@ -317,7 +319,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
             LoggedInUser managerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             bool success = true;
@@ -353,11 +356,13 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             LoggedInUser managerToTest1 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(managerToTest1, newManager);
-            managerToTest1.Manages.Add(store, new List<Authorizations>());
+            Manages management1 = new Manages(managerToTest1, store);
+            managerToTest1.Manage.Add(management1);
             bool success = true;
             try
             {
@@ -367,7 +372,8 @@ namespace SEWorkshop.UnitTests
             {
                 success = false;
             }
-            Assert.IsTrue(success && managerToTest1.Manages[store].Contains(Authorizations.Products));
+            var manage = managerToTest1.Manage.FirstOrDefault(man => man.Store.Equals(store));
+            Assert.IsTrue(success && manage.AuthoriztionsOfUser.Contains(Authorizations.Products));
             
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             try
@@ -382,7 +388,8 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(success);
             LoggedInUser managerToTest2 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(managerToTest2, usr);
-            managerToTest2.Manages.Add(store, new List<Authorizations>());
+            Manages management2 = new Manages(managerToTest2, store);
+            managerToTest2.Manage.Add(management2);
             try
             {
                 Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Authorizing);
@@ -403,7 +410,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
             LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
             Message message1 = new Message(client, "Great store!");
@@ -446,7 +454,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             store.Managers.Add(newManager, usr);
-            newManager.Manages.Add(store, new List<Authorizations>());
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
             LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
             Message message1 = new Message(client, "Great store!");
