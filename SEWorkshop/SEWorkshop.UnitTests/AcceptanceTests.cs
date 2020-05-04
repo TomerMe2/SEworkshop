@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
-using SEWorkshop.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -70,7 +69,7 @@ namespace SEWorkshop.UnitTests
 		public void Test_2_5_4()
 		{
 			string food = "food";
-			ICollection<Product> products = (ICollection<Product>)um.SearchProductsByCategory(ref food);
+			var products = um.SearchProductsByCategory(ref food).ToList();
 			Assert.That(() => um.FilterProducts(products, (x) => x.Name.Equals("bisli")), Throws.Nothing);
 			Assert.AreEqual((um.FilterProducts(products, (x) => x.Name.Equals("bisli"))).Count(), 1);
 		}
@@ -123,10 +122,9 @@ namespace SEWorkshop.UnitTests
 		public void Test_2_8()
 		{
 			um.AddProductToCart("store1", "bisli", 1);
-			Basket basket = um.MyCart().First();
+			var basket = um.MyCart().First();
 			Assert.That(() => um.Purchase(basket), Throws.Nothing);
-			basket.Products.Clear();
-			Assert.Throws<BasketIsEmptyException>(delegate { um.Purchase(basket); });
+			Assert.Throws<BasketNotInSystemException>(delegate { um.Purchase(basket); });
 		}
 
 		[Test, Order(30)]
@@ -165,10 +163,10 @@ namespace SEWorkshop.UnitTests
 		[Test, Order(22)]
 		public void Test_3_7()
 		{
-			Assert.That(() => um.PurcahseHistory(), Throws.Nothing);
-			Assert.NotNull(um.PurcahseHistory());
+			Assert.That(() => um.PurchaseHistory(), Throws.Nothing);
+			Assert.NotNull(um.PurchaseHistory());
 			um.Logout();
-			Assert.Throws<UserHasNoPermissionException>(delegate { um.PurcahseHistory(); });
+			Assert.Throws<UserHasNoPermissionException>(delegate { um.PurchaseHistory(); });
 		}
 
 		[Test, Order(4)]
@@ -197,7 +195,7 @@ namespace SEWorkshop.UnitTests
 		{
 			string bamba = "bamba";
 			string bamba2 = "bamba2";
-			Product bamb = um.SearchProductsByName(ref bamba).First();
+			var bamb = um.SearchProductsByName(ref bamba).First();
 			Assert.That(() => um.EditProductName("store1", "bamba", "bamba2"), Throws.Nothing);
 			Assert.That(() => um.EditProductCategory("store1", "bamba2", "electronics"), Throws.Nothing);
 			Assert.That(() => um.EditProductPrice("store1", "bamba2", 215), Throws.Nothing);
@@ -263,7 +261,7 @@ namespace SEWorkshop.UnitTests
 		public void Test_4_9()
 		{
 			Assert.That(() => um.ViewMessage("store1"), Throws.Nothing);
-			Message m = um.ViewMessage("store1").Last();
+			var m = um.ViewMessage("store1").Last();
 			Assert.That(() => um.MessageReply(m, "store1", "thank you"), Throws.Nothing);
 			um.Logout();
 			um.Login("managerSecondOwner", "1234");
@@ -285,7 +283,7 @@ namespace SEWorkshop.UnitTests
 		[Test, Order(27)]
 		public void Test_5_1()
 		{
-			Message m = um.ViewMessage("store1").Last();
+			var m = um.ViewMessage("store1").Last();
 			Assert.That(() => um.AddProduct("store1", "chair", "with wheels", "furniture", 350, 1), Throws.Nothing);
 			Assert.Throws<UserHasNoPermissionException>(delegate { um.AddStoreManager("store1", "notManager"); });
 			Assert.Throws<UserHasNoPermissionException>(delegate { um.MessageReply(m, "store1", "not thank you"); });
