@@ -20,17 +20,21 @@ namespace SEWorkshop.UnitTests
         {
 			Assert.That(() => bridge.Register("user", "1234"), Throws.Nothing);
 			Assert.Throws<UserAlreadyExistsException>(delegate { bridge.Register("user", "1234"); });
-			Assert.That(() => bridge.Register("secondOwner", "1234"), Throws.Nothing);
-			Assert.That(() => bridge.Register("notManager", "1234"), Throws.Nothing);
-			Assert.That(() => bridge.Register("managerFirstOwner", "1234"), Throws.Nothing);
-			Assert.That(() => bridge.Register("managerSecondOwner", "1234"), Throws.Nothing);
+			bridge.Register("secondOwner", "1234");
+			bridge.Register("notManager", "1234");
+			bridge.Register("managerFirstOwner", "1234");
+			bridge.Register("managerSecondOwner", "1234");
 		}
 
 		[Test, Order(2)]
 		public void Test_2_3()
 		{
 			Assert.Throws<UserDoesNotExistException>(delegate { bridge.Login("user3", "1234"); });
+			Assert.Throws<UserDoesNotExistException>(delegate { bridge.Login("user", "12345"); });
+			Assert.Throws<UserDoesNotExistException>(delegate { bridge.Login("user3", "12345"); });
 			Assert.That(() => bridge.Login("user", "1234"), Throws.Nothing);
+			Assert.Throws<UserAlreadyLoggedInException>(delegate { bridge.Login("user3", "12345"); });
+			Assert.Throws<UserAlreadyLoggedInException>(delegate { bridge.Register("user3", "12345"); });
 		}
 
 		[Test, Order(13)]
@@ -141,6 +145,9 @@ namespace SEWorkshop.UnitTests
 		[Test, Order(3)]
 		public void Test_3_2()
 		{
+			bridge.Logout();
+			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.OpenStore("store1"); });
+			bridge.Login("user", "1234");
 			Assert.That(() => bridge.OpenStore("store1"), Throws.Nothing);
 			Assert.Throws<StoreWithThisNameAlreadyExistsException>(delegate { bridge.OpenStore("store1"); });
 		}
