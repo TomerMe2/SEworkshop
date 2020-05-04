@@ -57,37 +57,6 @@ namespace SEWorkshop.ServiceLayer
             LogManager.Configuration = config;
         }
 
-        /*
-
-        private Product GetProduct(string storeName, string productName)
-        {
-            Log.Info(string.Format("GetProduct was invoked with storeName {0} and productName {1}", storeName, productName));
-            var product = StoreFacade.SearchProducts(prod => prod.Store.Name.Equals(storeName) && prod.Name.Equals(productName))
-                .FirstOrDefault();
-            if (product is null)
-            {
-                Log.Info(string.Format("Someone searched for a non existing product with name {0} and store name {1}",
-                    productName, storeName));
-                throw new ProductNotInTheStoreException();
-            }
-            return product;
-        }
-        
-
-        private Store GetStore(string storeName)
-        {
-            Log.Info(string.Format("GetStore was invoked with storeName {0}", storeName));
-            var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
-            if (store is null)
-            {
-                Log.Info(string.Format("Someone tried to add product to cart with a non existing store with name {0}", storeName));
-                throw new StoreNotInTradingSystemException();
-            }
-            return store;
-        }
-
-            */
-
         public void AddProductToCart(string storeName, string productName, int quantity)
         {
             FacadesBridge.AddProductToCart(storeName, productName, quantity);
