@@ -7,7 +7,7 @@ namespace SEWorkshop.Models
 {
     public class LoggedInUser : User
     {
-        public ICollection<Store> Owns { get; private set; }
+        public ICollection<Owns> Owns { get; private set; }
         public ICollection<Manages> Manage { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
@@ -22,7 +22,7 @@ namespace SEWorkshop.Models
         {
             Username = username;
             Password = password;
-            Owns = new List<Store>();
+            Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();
             Messages = new List<Message>();
@@ -59,102 +59,114 @@ namespace SEWorkshop.Models
             Messages.Add(message);
         }
         
-        public void AddProduct(Store store, string name, string description, string category, double price, int quantity)
+        public Product AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.AddProduct(name, description, category, price, quantity);
+             var ownership =(from owner in Owns
+             where owner.Store.Name == store.Name
+             select owner).First();
+
+            //var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
+               if(ownership == default)
+            {
+                throw new BasketIsEmptyException();
+            } 
+            return ownership.AddProduct(name, description, category, price, quantity);
         }
         
         public void RemoveProduct(Store store, Product productToRemove)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.RemoveProduct(productToRemove);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            
+            ownership.RemoveProduct(productToRemove);
         }
         
         public void EditProductDescription( Store store, Product product, string description)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.EditProductDescription(product, description);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.EditProductDescription(product, description);
 
         }
         
         public void EditProductCategory(Store store, Product product, string category)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.EditProductCategory(product, category);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.EditProductCategory(product, category);
 
         }
         
         public void EditProductName(Store store, Product product, string name)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.EditProductName(product, name);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.EditProductName(product, name);
 
         }
         
         public void EditProductPrice(Store store, Product product, double price)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.EditProductPrice(product, price);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.EditProductPrice(product, price);
 
         }
         
         public void EditProductQuantity(Store store, Product product, int quantity)
         {
-            var mangement = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            mangement.EditProductQuantity(product, quantity);
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.EditProductQuantity(product, quantity);
 
         }
         
         public void SetPermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
-            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
-               
-            if (!isManger(store))
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-            var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(store));
-            man.SetPermissionsOfManager(manager, authorization);
-                return;
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            ownership.SetPermissionsOfManager(manager, authorization);
         }
         
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            management.AddStoreOwner(newOwner);
+            if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
+            {
+                throw new UserIsAlreadyStoreManagerException();
+            }
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            ownership.AddStoreOwner(newOwner);
             
         }
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            management.AddStoreManager(newManager);
+            
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            if (ownership == default)
+            {
+                throw new UserIsNotMangerOfTheStoreException();
+            }
+                ownership.AddStoreManager(newManager);
         }
         
         public void RemoveStoreManager(Store store, LoggedInUser managerToRemove)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            management.RemoveStoreManager(managerToRemove);
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            ownership.RemoveStoreManager(managerToRemove);
         }
 
-        public void MessageReply(Message message, Store store, string description)
+        public Message MessageReply(Message message, Store store, string description)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            management.MessageReply(message, description);
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+          //  var management = Manage.FirstOrDefault(man => (man.Store.Equals(store)) && man.AuthoriztionsOfUser.Contains(Authorizations.Replying));
+           
+            return ownership.MessageReply(message, description);
         }
 
-        public IEnumerable<Message> getMassage(Store store)
+        public IEnumerable<Message> getMessage(Store store)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            return management.GetMessage();
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            return ownership.GetMessage();
         }
 
         public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
         {
-            var management = Manage.FirstOrDefault(man => man.Store.Equals(store));
-            return management.ViewPurchaseHistory();
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            return ownership.ViewPurchaseHistory();
         }
 
 
@@ -177,7 +189,7 @@ namespace SEWorkshop.Models
 
         public bool isManger(Store store)
         {
-            if( Manage.FirstOrDefault(man => man.Store.Equals(store)) != default)
+            if(Owns.FirstOrDefault(man => man.Store == store) != default)
             {
                 return true;
             }

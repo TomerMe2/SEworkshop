@@ -32,7 +32,7 @@ namespace SEWorkshop.Facades
 
             return (IsUserStoreOwner(loggedInUser, store)
                     || (IsUserStoreManager(loggedInUser, store)
-                        && management.AuthoriztionsOfUser.Contains(authorization)));
+                        && management.AuthoriztionsOfUser.Contains(Authorizations.Authorizing)));
         }
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
@@ -189,7 +189,8 @@ namespace SEWorkshop.Facades
                 throw new UserIsAlreadyStoreOwnerException();
             }
             store.Owners.Add(newOwner, loggedInUser);
-            newOwner.Owns.Add(store);
+            Owns ownership = new Owns(newOwner, store);
+            newOwner.Owns.Add(ownership);
             log.Info("A new owner has been added successfully");
         }
 
@@ -208,7 +209,9 @@ namespace SEWorkshop.Facades
             }
             store.Managers.Add(newManager, loggedInUser);
             Manages managementToAdd = new Manages(newManager, store);
-            managementToAdd.SetPermissionsOfManager(loggedInUser, Authorizations.Watching);
+            var ownership = loggedInUser.Owns.FirstOrDefault(man => man.Store.Equals(store));
+
+            ownership.SetPermissionsOfManager(loggedInUser, Authorizations.Watching);
             newManager.Manage.Add(managementToAdd);
             log.Info("A new manager has been added successfully");
         }

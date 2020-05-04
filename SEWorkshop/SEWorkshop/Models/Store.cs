@@ -37,7 +37,8 @@ namespace SEWorkshop.Models
             Name = name;
             Policy = new Policy();
             Purchases = new List<Purchase>();
-
+            Owns owns = new Owns(owner, this);
+            owner.Owns.Add(owns);
             Owners.Add(owner, new LoggedInUser("DEMO", new Byte[0]));
         }
 

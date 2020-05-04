@@ -46,7 +46,8 @@ namespace SEWorkshop.Facades
             }
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
-            owner.Owns.Add(newStore);
+            Owns newOwnership = new Owns(owner, newStore);
+            owner.Owns.Add(newOwnership);
             log.Info(string.Format("User {0} created a store with name {1}",
                     owner.Username, storeName));
             return newStore;
