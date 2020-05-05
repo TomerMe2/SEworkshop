@@ -122,9 +122,11 @@ namespace SEWorkshop.UnitTests
 		public void Test_2_8()
 		{
 			um.AddProductToCart("store1", "bisli", 1);
-			var basket = um.MyCart().First();
-			Assert.That(() => um.Purchase(basket), Throws.Nothing);
-			Assert.Throws<BasketNotInSystemException>(delegate { um.Purchase(basket); });
+            string creditCardNumber = "5555";
+			Address address = new Address("Pardes Hanna-Karkur", "Hadarim", "1");
+            var basket = um.MyCart().First();
+			Assert.That(() => um.Purchase(basket, creditCardNumber, address), Throws.Nothing);
+			Assert.Throws<BasketNotInSystemException>(delegate { um.Purchase(basket, creditCardNumber, address); });
 		}
 
 		[Test, Order(30)]

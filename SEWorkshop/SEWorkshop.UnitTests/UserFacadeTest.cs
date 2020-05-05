@@ -6,7 +6,6 @@ using SEWorkshop.Facades;
 using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
-using SEWorkshop.ServiceLayer;
 
 namespace SEWorkshop.UnitTests
 {
@@ -380,9 +379,11 @@ namespace SEWorkshop.UnitTests
             LoggedInUser peb_user1 = UsrFacade.Register("peb_user1", securityAdaprer.Encrypt("1111"));
             UsrFacade.Login("peb_user1", securityAdaprer.Encrypt("1111"));
             Store peb_store1 = new Store(peb_user1, "peb_store1");
+            string peb_creditCardNumber = "1234";
+            Address peb_address1 = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
             try
             {
-                UsrFacade.Purchase(peb_user1, new Basket(peb_store1));
+                UsrFacade.Purchase(peb_user1, new Basket(peb_store1), peb_creditCardNumber, peb_address1);
                 Assert.Fail();
             }
             catch (BasketIsEmptyException)
@@ -411,7 +412,9 @@ namespace SEWorkshop.UnitTests
             Product php_product1 = php_store1.Products.First(product => product.Name.Equals("php_product1"));
             UsrFacade.AddProductToCart(php_user1, php_product1, 1);
             Purchase p = new Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0));
-            UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0));
+            string peb_creditCardNumber = "1234";
+            Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
             /*userFacade.RemoveProductFromCart(php_user1, php_product1, 1);*/
 
             foreach (var purchase in UsrFacade.PurchaseHistory(php_user1))
@@ -473,7 +476,9 @@ namespace SEWorkshop.UnitTests
             UsrFacade.AddProductToCart(phue_user1, phue_product1, 1);
             UsrFacade.AddProductToCart(phue_user1, phue_product2, 1);
             Purchase p = new Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0));
-            UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0));
+            string peb_creditCardNumber = "1234";
+            Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
             var result = UsrFacade.PurchaseHistory(phue_user1);
 
             Assert.That(result.ElementAt(0).User, Is.EqualTo(p.User));
@@ -523,7 +528,9 @@ namespace SEWorkshop.UnitTests
             Product uphria_product2 = uphria_store1.Products.First(product => product.Name.Equals("uphria_product2"));
             UsrFacade.AddProductToCart(uphria_user1, uphria_product1, 1);
             UsrFacade.AddProductToCart(uphria_user1, uphria_product2, 1);
-            UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0));
+            string peb_creditCardNumber = "1234";
+            Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
             UsrFacade.Logout();
             
             LoggedInUser uphria_admin1 = UsrFacade.Login("admin", securityAdaprer.Encrypt("sadnaTeam"));
