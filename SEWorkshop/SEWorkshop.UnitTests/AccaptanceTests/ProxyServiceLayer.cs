@@ -100,9 +100,9 @@ namespace SEWorkshop.Tests.AccaptanceTests
             return userManager.PurchaseHistory();
         }
 
-        public override void Purchase(DataBasket basket)
+        public override void Purchase(DataBasket basket, string creditCardNumber, Address address)
         {
-            userManager.Purchase(basket, "555", new Address("Beer Sheva", "Ben Gurion", "99"));
+            userManager.Purchase(basket, creditCardNumber, address);
         }
 
         public override void Register(string username, string password)

@@ -13,7 +13,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public abstract void Logout();
         public abstract IEnumerable<DataBasket> MyCart();
         public abstract void OpenStore(string storeName);
-        public abstract void Purchase(DataBasket basket);
+        public abstract void Purchase(DataBasket basket, string creditCardNumber, Address address);
         public abstract void Register(string username, string password);
         public abstract void RemoveProductFromCart(string storeName, string productName, int quantity);
         public abstract IEnumerable<DataProduct> SearchProductsByName(ref string input);
