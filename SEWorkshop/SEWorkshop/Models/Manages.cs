@@ -16,6 +16,8 @@ namespace SEWorkshop.Models
 
         public Manages(LoggedInUser loggedInUser, Store store)
         {
+            AuthoriztionsOfUser=new List<Authorizations>();
+            AuthoriztionsOfUser.Add(Authorizations.Manager);
             LoggedInUser = loggedInUser;
             Store = store;
     

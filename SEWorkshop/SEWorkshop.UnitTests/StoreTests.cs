@@ -38,8 +38,6 @@ namespace SEWorkshop.Tests
         {
             LoggedInUser sp_user2 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             Store sp_store2 = new Store(sp_user2, "sp_store2");
-            sp_user2.Manage.Add(new Manages(sp_user2, sp_store2));
-            //sp_user2.Manage.ElementAt(0).SetPermissionsOfManager(sp_user2, Authorizations.Products);
             sp_user2.AddProduct(sp_store2,"sp_prod2", "ninini", "cat1", 11.11, 1);
             var result = sp_store2.SearchProducts(product => product.Name.Contains("2"));
             Assert.That(result, Is.Not.Empty);
