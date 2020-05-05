@@ -1,4 +1,5 @@
-﻿using SEWorkshop.Models;
+﻿using SEWorkshop.DataModels;
+using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
     class ProxyServiceLayer : Bridge
     {
         private UserManager userManager = new UserManager();
-        public override Product AddProduct(string storeNm, string productName, string description, string category, double price, int quantity)
+        public override DataProduct AddProduct(string storeNm, string productName, string description, string category, double price, int quantity)
         {
             return userManager.AddProduct(storeNm, productName, description, category, price, quantity);
         }
@@ -29,7 +30,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.AddStoreOwner(storeNm, username);
         }
 
-        public override IEnumerable<Store> BrowseStores()
+        public override IEnumerable<DataStore> BrowseStores()
         {
             return userManager.BrowseStores();
         }
@@ -59,7 +60,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.EditProductQuantity(storeName, productName, quantity);
         }
 
-        public override IEnumerable<Product> FilterProducts(ICollection<Product> products, Func<Product, bool> pred)
+        public override IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
             return FilterProducts(products, pred);
         }
@@ -74,17 +75,17 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.Logout();
         }
 
-        public override IEnumerable<Purchase> ManagingPurchaseHistory(string storeNm)
+        public override IEnumerable<DataPurchase> ManagingPurchaseHistory(string storeNm)
         {
             return userManager.ManagingPurchaseHistory(storeNm);
         }
 
-        public override Message MessageReply(Message message, string storeNm, string description)
+        public override DataMessage MessageReply(DataMessage message, string storeNm, string description)
         {
             return userManager.MessageReply(message, storeNm, description);
         }
 
-        public override IEnumerable<Basket> MyCart()
+        public override IEnumerable<DataBasket> MyCart()
         {
             return userManager.MyCart();
         }
@@ -94,12 +95,12 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.OpenStore(storeName);
         }
 
-        public override IEnumerable<Purchase> PurcahseHistory()
+        public override IEnumerable<DataPurchase> PurchaseHistory()
         {
-            return userManager.PurcahseHistory();
+            return userManager.PurchaseHistory();
         }
 
-        public override void Purchase(Basket basket)
+        public override void Purchase(DataBasket basket)
         {
             userManager.Purchase(basket);
         }
@@ -124,17 +125,17 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.RemoveStoreManager(storeNm, username);
         }
 
-        public override IEnumerable<Product> SearchProductsByCategory(ref string input)
+        public override IEnumerable<DataProduct> SearchProductsByCategory(ref string input)
         {
             return userManager.SearchProductsByCategory(ref input);
         }
 
-        public override IEnumerable<Product> SearchProductsByKeywords(ref string input)
+        public override IEnumerable<DataProduct> SearchProductsByKeywords(ref string input)
         {
             return userManager.SearchProductsByKeywords(ref input);
         }
 
-        public override IEnumerable<Product> SearchProductsByName(ref string input)
+        public override IEnumerable<DataProduct> SearchProductsByName(ref string input)
         {
             return userManager.SearchProductsByName(ref input);
         }
@@ -144,17 +145,17 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.SetPermissionsOfManager(storeNm, username, authorization);
         }
 
-        public override IEnumerable<Purchase> StorePurchaseHistory(string storeNm)
+        public override IEnumerable<DataPurchase> StorePurchaseHistory(string storeNm)
         {
             return userManager.StorePurchaseHistory(storeNm);
         }
 
-        public override IEnumerable<Purchase> UserPurchaseHistory(string userNm)
+        public override IEnumerable<DataPurchase> UserPurchaseHistory(string userNm)
         {
             return userManager.UserPurchaseHistory(userNm);
         }
 
-        public override IEnumerable<Message> ViewMessage(string storeNm)
+        public override IEnumerable<DataMessage> ViewMessage(string storeNm)
         {
             return userManager.ViewMessage(storeNm);
         }

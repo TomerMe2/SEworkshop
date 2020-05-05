@@ -6,13 +6,13 @@ using SEWorkshop.Models;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
+using SEWorkshop.DataModels;
 
 namespace SEWorkshop.UnitTests
 {
 	[TestFixture]
 	public class AcceptanceTests
 	{
-		private UserManager um = new UserManager();
 		private Bridge bridge = new ProxyServiceLayer();
 
 		[Test, Order(1)]
@@ -76,9 +76,11 @@ namespace SEWorkshop.UnitTests
 		public void Test_2_5_4()
 		{
 			string food = "food";
-			ICollection<Product> products = (ICollection<Product>)bridge.SearchProductsByCategory(ref food);
-			Assert.That(() => bridge.FilterProducts(products, (x) => x.Name.Equals("bisli")), Throws.Nothing);
-			Assert.AreEqual((bridge.FilterProducts(products, (x) => x.Name.Equals("bisli"))).Count(), 1);
+			string bisli = "bisli";
+			var products = bridge.SearchProductsByCategory(ref food).ToList();
+			bridge.SearchProductsByName(ref bisli);
+			Assert.That(() => bridge.SearchProductsByName(ref bisli), Throws.Nothing);
+			Assert.AreEqual(bridge.SearchProductsByName(ref bisli).Count(), 1);
 		}
 
 		[Test, Order(11)]
@@ -129,10 +131,9 @@ namespace SEWorkshop.UnitTests
 		public void Test_2_8()
 		{
 			bridge.AddProductToCart("store1", "bisli", 1);
-			Basket basket = bridge.MyCart().First();
+			var basket = bridge.MyCart().First();
 			Assert.That(() => bridge.Purchase(basket), Throws.Nothing);
-			basket.Products.Clear();
-			Assert.Throws<BasketIsEmptyException>(delegate { bridge.Purchase(basket); });
+			Assert.Throws<BasketNotInSystemException>(delegate { bridge.Purchase(basket); });
 		}
 
 		[Test, Order(30)]
@@ -174,10 +175,10 @@ namespace SEWorkshop.UnitTests
 		[Test, Order(22)]
 		public void Test_3_7()
 		{
-			Assert.That(() => bridge.PurcahseHistory(), Throws.Nothing);
-			Assert.NotNull(bridge.PurcahseHistory());
+			Assert.That(() => bridge.PurchaseHistory(), Throws.Nothing);
+			Assert.NotNull(bridge.PurchaseHistory());
 			bridge.Logout();
-			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.PurcahseHistory(); });
+			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.PurchaseHistory(); });
 		}
 
 		[Test, Order(4)]
@@ -206,7 +207,7 @@ namespace SEWorkshop.UnitTests
 		{
 			string bamba = "bamba";
 			string bamba2 = "bamba2";
-			Product bamb = bridge.SearchProductsByName(ref bamba).First();
+			var bamb = bridge.SearchProductsByName(ref bamba).First();
 			Assert.That(() => bridge.EditProductName("store1", "bamba", "bamba2"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductCategory("store1", "bamba2", "electronics"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductPrice("store1", "bamba2", 215), Throws.Nothing);
@@ -272,7 +273,7 @@ namespace SEWorkshop.UnitTests
 		public void Test_4_9()
 		{
 			Assert.That(() => bridge.ViewMessage("store1"), Throws.Nothing);
-			Message m = bridge.ViewMessage("store1").Last();
+			var m = bridge.ViewMessage("store1").Last();
 			Assert.That(() => bridge.MessageReply(m, "store1", "thank you"), Throws.Nothing);
 			bridge.Logout();
 			bridge.Login("managerSecondOwner", "1234");
@@ -294,7 +295,7 @@ namespace SEWorkshop.UnitTests
 		[Test, Order(27)]
 		public void Test_5_1()
 		{
-			Message m = bridge.ViewMessage("store1").Last();
+			var m = bridge.ViewMessage("store1").Last();
 			Assert.That(() => bridge.AddProduct("store1", "chair", "with wheels", "furniture", 350, 1), Throws.Nothing);
 			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.AddStoreManager("store1", "notManager"); });
 			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.MessageReply(m, "store1", "not thank you"); });
