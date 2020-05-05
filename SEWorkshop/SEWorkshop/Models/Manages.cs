@@ -11,7 +11,6 @@ namespace SEWorkshop.Models
     {
         public LoggedInUser LoggedInUser { get; set; }
         public Store Store { get; set; }
-        public  ICollection<Authorizations> AuthoriztionsOfUser { get; private set; }
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
 
@@ -19,7 +18,7 @@ namespace SEWorkshop.Models
         {
             LoggedInUser = loggedInUser;
             Store = store;
-            AuthoriztionsOfUser = new List<Authorizations>();
+    
         }
 
      

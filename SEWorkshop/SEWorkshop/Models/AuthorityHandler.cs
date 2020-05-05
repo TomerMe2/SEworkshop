@@ -11,7 +11,7 @@ namespace SEWorkshop.Models
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public ICollection<Authorizations> AuthoriztionsOfUser { get; private set; }
+       public ICollection<Authorizations> AuthoriztionsOfUser { get; private set; }
 
         public abstract void AddStoreManager(LoggedInUser newManager);
 
