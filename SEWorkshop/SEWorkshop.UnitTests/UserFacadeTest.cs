@@ -417,7 +417,7 @@ namespace SEWorkshop.UnitTests
             UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
             /*userFacade.RemoveProductFromCart(php_user1, php_product1, 1);*/
 
-            foreach (var purchase in UsrFacade.PurcahseHistory(php_user1))
+            foreach (var purchase in UsrFacade.PurchaseHistory(php_user1))
             {
                 if (purchase.Basket.Store.Name.Equals(p.Basket.Store.Name))
                 {
@@ -438,7 +438,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser phnp_user1 = UsrFacade.Register("phnp_user1", securityAdaprer.Encrypt("1111"));
             try
             {
-                UsrFacade.PurcahseHistory(phnp_user1);
+                UsrFacade.PurchaseHistory(phnp_user1);
                 Assert.Fail();
             }
             catch (UserHasNoPermissionException)
@@ -454,7 +454,7 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void PurchaseHistory_UserNotExists_ReturnEmptyList()
         {
-            var result = UsrFacade.PurcahseHistory(new LoggedInUser("phune_user1", securityAdaprer.Encrypt("5555")));
+            var result = UsrFacade.PurchaseHistory(new LoggedInUser("phune_user1", securityAdaprer.Encrypt("5555")));
             Assert.That(result, Is.Empty);
         }
         
@@ -539,7 +539,7 @@ namespace SEWorkshop.UnitTests
             
             UsrFacade.Login("uphria_user1", securityAdaprer.Encrypt("1111"));
             
-            CollectionAssert.AreEqual(UsrFacade.PurcahseHistory(uphria_user1), result);
+            CollectionAssert.AreEqual(UsrFacade.PurchaseHistory(uphria_user1), result);
         }
         
         //public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)

@@ -127,7 +127,7 @@ namespace SEWorkshop.UnitTests
 
             string keywordsNotGood = "yumi POERHOUSE";
             res = Manager.SearchProductsByKeywords(ref keywordsNotGood);
-            Assert.AreEqual("yummi powerhouse", keywordsNotGood);
+            Assert.AreEqual("yummi powerhouse", keywordsNotGood.ToLower());
             Assert.IsTrue(res.Count() > 1);
             Assert.IsTrue(res.Where(prod => prod.Name.Equals("bamba")).Count() > 0);
             Assert.IsTrue(res.Where(prod => prod.Name.Equals("bisli")).Count() == 0);
@@ -288,7 +288,7 @@ namespace SEWorkshop.UnitTests
             Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.ManagingPurchaseHistory("ManagingPurchaseHistory_store1");
-            Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
+            Assert.That(result.First().Basket, Is.EqualTo(basket));
         }
 
         [Test]
@@ -300,7 +300,7 @@ namespace SEWorkshop.UnitTests
             Manager.AddProduct("AddProductStr", "Wakanda", "forever", "lol", 111111111, 1);
             var searchStr = "Wakanda";
             Assert.IsTrue(Manager.SearchProductsByName(ref searchStr).Any());
-            Assert.AreEqual(searchStr, "Wakanda");
+            Assert.AreEqual(searchStr, "wakanda");
             bool exceptionWasThrown = false;
             try
             {
@@ -397,7 +397,7 @@ namespace SEWorkshop.UnitTests
             Manager.Logout();
             Manager.Login("MessageReplyUser2", "1111");
             Manager.WriteMessage("MessageReplyStore1", "Hello");
-            var message = Manager.ViewMessage("MessageReplyStore1").ElementAt(0);
+            var message = Manager.ViewMessage("MessageReplyStore1").First();
             Manager.MessageReply(message, "MessageReplyStore1", "reply message");
             var reply = message.Next;
             Assert.That(reply.Description, Is.EqualTo("reply message"));
@@ -435,7 +435,7 @@ namespace SEWorkshop.UnitTests
             Manager.Login("EditProductCategoryUser2", "1111");
             Manager.AddProduct("EditProductCategoryStore1", "epc_prod1", "old", "cat1", 11.11, 1);
             Manager.EditProductCategory("EditProductCategoryStore1", "epc_prod1", "newCat");
-            string searchStr = "epp_prod1";
+            string searchStr = "epp_prod1";    // theres a typo here
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Category, Is.EqualTo("newCat"));
             Assert.That(res.Category, Is.Not.EqualTo("cat1"));

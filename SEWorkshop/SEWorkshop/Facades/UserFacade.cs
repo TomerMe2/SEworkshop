@@ -265,7 +265,7 @@ namespace SEWorkshop.Facades
             }
         }
 
-        public IEnumerable<Purchase> PurcahseHistory(User user)
+        public IEnumerable<Purchase> PurchaseHistory(User user)
         {
             log.Info("User tries to seek its purchase history");
             if(!HasPermission)
@@ -300,7 +300,7 @@ namespace SEWorkshop.Facades
                 throw new UserDoesNotExistException();
             }
             log.Info("Data has been fetched successfully");
-            return PurcahseHistory(user);
+            return PurchaseHistory(user);
         }
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
@@ -314,7 +314,7 @@ namespace SEWorkshop.Facades
             ICollection<Purchase> purchaseHistory = new List<Purchase>();
             foreach (var user in Users)
             {
-                foreach (var purchase in PurcahseHistory(user))
+                foreach (var purchase in PurchaseHistory(user))
                 {
                     if (purchase.Basket.Store.Equals(store))
                     {
@@ -344,6 +344,7 @@ namespace SEWorkshop.Facades
             ((LoggedInUser) user).Reviews.Add(review);
             log.Info("The review has been published successfully");
         }
+
         public void WriteMessage(User user, Store store, string description)
         {
             log.Info("User tries to write a message");
@@ -358,7 +359,7 @@ namespace SEWorkshop.Facades
                 throw new MessageIsEmptyException();
             }
             Message message = new Message(user, description);
-            store.Messages.Add(new Message(user, description));
+            store.Messages.Add(message);
             ((LoggedInUser) user).Messages.Add(message);
             log.Info("The message has been published successfully");
         }
