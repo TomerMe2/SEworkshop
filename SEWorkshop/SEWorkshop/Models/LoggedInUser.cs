@@ -286,6 +286,7 @@ namespace SEWorkshop.Models
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
+            Facade.AddPurchaseToList(purchase);
             // TODO when to add purchase to loggedin user purchase history
         }
 

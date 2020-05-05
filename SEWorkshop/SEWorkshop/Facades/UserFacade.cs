@@ -37,6 +37,11 @@ namespace SEWorkshop.Facades
             HasPermission = false;
         }
 
+        public void AddPurchaseToList(Purchase p)
+        {
+            Purchases.Add(p);
+        }
+
         public LoggedInUser GetUser(string username)
         {
             foreach(var user in Users)
@@ -165,15 +170,7 @@ namespace SEWorkshop.Facades
         }
         public void Purchase(User user, Basket basket)
         {
-            try
-            {
-                user.Purchase(basket);
-                Purchases.Add(new Purchase(user, basket));
-            }
-            catch (Exception e)
-            {
-                
-            }
+            user.Purchase(basket);
         }
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {

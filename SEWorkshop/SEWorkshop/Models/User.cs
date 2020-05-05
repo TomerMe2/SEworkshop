@@ -12,11 +12,19 @@ namespace SEWorkshop.Models
     {
         public Cart Cart { get; set; }
         public bool HasPermission { get; private set; }
+        public UserFacade Facade { get; private set; }
 
         public User()
         {
             Cart = new Cart();
             HasPermission = false;
+        }
+
+        public User(UserFacade facade)
+        {
+            Cart = new Cart();
+            HasPermission = false;
+            Facade = facade;
         }
 
 
