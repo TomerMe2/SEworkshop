@@ -225,6 +225,39 @@ namespace SEWorkshop.Models
                 return;
 
         }
+        
+        public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
+        {
+            if (!HasAuthorization(Authorizations.Authorizing))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
+            if (!IsUserStoreOwner(manager, Store))
+            {
+                if (Store.Managers[manager] != this.LoggedInUser)
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+
+                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
+                if (authorizations.Contains(authorization))
+                {
+                    log.Info("Permission has been taken away successfully");
+                    //authorizations.Remove(authorization);
+                }
+                else
+                {
+                    log.Info("Permission has been granted successfully");
+                    authorizations.Add(authorization);
+                }
+                return;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
     }
     public enum Authorizations
     {

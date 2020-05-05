@@ -93,7 +93,7 @@ namespace SEWorkshop.Models
                 if (authorizations.Contains(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
-                   // authorizations.Remove(authorization);
+                    //authorizations.Remove(authorization);
                 }
                 else
                 {

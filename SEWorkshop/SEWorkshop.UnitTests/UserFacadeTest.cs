@@ -463,7 +463,8 @@ namespace SEWorkshop.UnitTests
             Product phue_product2 = phue_store1.Products.First(product => product.Name.Equals("phue_product2"));
             userFacade.AddProductToCart(phue_user1, phue_product1, 1);
             userFacade.AddProductToCart(phue_user1, phue_product2, 1);
-            Purchase p = new Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0));
+            var basket = phue_user1.Cart.Baskets.ElementAt(0);
+            Purchase p = new Purchase(phue_user1, basket);
             userFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0));
             var result = userFacade.PurcahseHistory(phue_user1);
 

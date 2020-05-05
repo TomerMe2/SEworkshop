@@ -165,7 +165,15 @@ namespace SEWorkshop.Facades
         }
         public void Purchase(User user, Basket basket)
         {
-           user.Purchase(basket);
+            try
+            {
+                user.Purchase(basket);
+                Purchases.Add(new Purchase(user, basket));
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {

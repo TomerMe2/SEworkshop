@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SEWorkshop.Models
 {
-    public class User
+    public abstract class User
     {
         public Cart Cart { get; set; }
         public bool HasPermission { get; private set; }
@@ -89,8 +89,8 @@ namespace SEWorkshop.Models
             throw new ProductIsNotInCartException();
         }
 
-        public void Purchase(Basket basket)
-        {
+        public abstract void Purchase(Basket basket);
+        /*{
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
@@ -111,6 +111,6 @@ namespace SEWorkshop.Models
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             // TODO when to add purchase to loggedin user purchase history
-        }
+        }*/
     }
 }
