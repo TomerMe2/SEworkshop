@@ -102,10 +102,10 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.OpenStore(storeName);
         }
 
-        public void Purchase(DataBasket basket)
+        public void Purchase(DataBasket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            FacadesBridge.Purchase(basket);
+            FacadesBridge.Purchase(basket, creditCardNumber, address);
         }
 
         public void Register(string username, string password)

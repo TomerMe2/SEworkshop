@@ -247,14 +247,14 @@ namespace SEWorkshop.Facades
             return UserFacade.PurchaseHistory(CurrUser).Select(prchs => new DataPurchase(prchs));
         }
 
-        public void Purchase(DataBasket basket)
+        public void Purchase(DataBasket basket, string creditCardNum, Address address)
         {
             Basket? trueBasket = CurrUser.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
             if (trueBasket is null)
             {
                 throw new BasketNotInSystemException();
             }
-            UserFacade.Purchase(CurrUser, trueBasket);
+            UserFacade.Purchase(CurrUser, trueBasket, creditCardNum, address);
         }
 
         public void Register(string username, byte[] password)
