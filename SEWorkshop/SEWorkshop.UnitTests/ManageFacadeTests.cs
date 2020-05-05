@@ -209,8 +209,8 @@ namespace SEWorkshop.UnitTests
             Store store = new Store(usr, STORE_NAME);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
-            Facade.EditProductPrice(usr, store, product, 0.00);
-            Assert.IsTrue(product.Price == 0);
+            Facade.EditProductPrice(usr, store, product, 1.00);
+            Assert.IsTrue(product.Price == 1);
         }
 
         [Test]

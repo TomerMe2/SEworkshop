@@ -174,6 +174,7 @@ namespace SEWorkshop.Models
                 ownership.SetPermissionsOfManager(manager, authorization); 
                 //store.Managers.Add(manager,manager);
             }
+          
 
         }
 

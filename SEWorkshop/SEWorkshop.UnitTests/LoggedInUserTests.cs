@@ -162,18 +162,7 @@ namespace SEWorkshop.Tests
 
         }
 
-        [Test]
-        public void SetPermissionsOfManagerTestManager()
-        {
-            const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
-            usr.AddStoreManager(store, newManager);
-            usr.SetPermissionsOfManager(store, newManager, Authorizations.Manager);
-            Assert.IsTrue(store.Managers[usr] == newManager);
-        }
-
+        
 
         [Test]
         public void SetPermissionsOfManagerTestReplying()
