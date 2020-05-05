@@ -39,23 +39,12 @@ namespace SEWorkshop.Facades
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
             log.Info("User tries to add a new product to store");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                Product newProduct = new Product(store, name, description, category, price, quantity);
-                if (!StoreContainsProduct(store, newProduct))
-                {
-                    store.Products.Add(newProduct);
-                    log.Info("Product has been added to store successfully");
-                    return newProduct;
-                }
-                else
-                {
-                    log.Info("Product is already exists in store");
-                    throw new ProductAlreadyExistException();
-                }
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+          //  if (UserHasPermission(loggedInUser, store, Authorizations.Products))
+            //{
+               return  loggedInUser.AddProduct(store, name, description, category, price, quantity);
+           // }
+           // log.Info("User has no permission for that action");
+            //throw new UserHasNoPermissionException();
         }
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
@@ -196,103 +185,25 @@ namespace SEWorkshop.Facades
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-            log.Info("User tries to add a new manager {0} to store", newManager.Username);
-            if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (IsUserStoreManager(newManager, store) || IsUserStoreOwner(newManager, store))
-            {
-                log.Info("The requested user is already a store manager or owner");
-                throw new UserIsAlreadyStoreManagerException();
-            }
-            store.Managers.Add(newManager, loggedInUser);
-            Manages managementToAdd = new Manages(newManager, store);
-            var ownership = loggedInUser.Owns.FirstOrDefault(man => man.Store.Equals(store));
-
-            ownership.SetPermissionsOfManager(loggedInUser, Authorizations.Watching);
-            newManager.Manage.Add(managementToAdd);
+           loggedInUser.AddStoreManager(store, newManager);
+          
             log.Info("A new manager has been added successfully");
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
-            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
-            if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
-                && !IsUserStoreOwner(manager, store))
-            {
-                if ((manager.Manage.FirstOrDefault(man => man.Store.Equals(store)) == default)
-                    || store.Managers[manager] != loggedInUser)
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(store));
-
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-
-                if (authorizations.Contains(authorization))
-                {
-                    log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
-                }
-                else
-                {
-                    log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);
-                }
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.SetPermissionsOfManager(store, manager,authorization);
         }
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-            log.Info("User tries to remove the manager {0} from store", managerToRemove.Username);
-            bool isStoreManager = IsUserStoreManager(managerToRemove, store);
-            if (!isStoreManager)
-            {
-                log.Info("The requested manager is not a store manager");
-                throw new UserIsNotMangerOfTheStoreException();
-            }
-            if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && IsUserStoreManager(managerToRemove, store))
-            {
-                if (!store.Managers.ContainsKey(managerToRemove))
-                {
-                    log.Info("The requested manager is not a store manager");
-                    throw new UserIsNotMangerOfTheStoreException();
-                }
-                LoggedInUser appointer = store.Managers[managerToRemove];
-                if(appointer != loggedInUser)
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-                store.Managers.Remove(managerToRemove);
-                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(store));
-                managerToRemove.Manage.Remove(management); log.Info("The manager has been removed successfully");
-                return;
-            }
-            else
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
+           loggedInUser.RemoveStoreManager(store, managerToRemove);
+            
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-            log.Info("User tries to view messages of store {0}", store.Name);
-            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
-            {
-                log.Info("Data has been fetched successfully");
-                return store.Messages;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+           return  loggedInUser.getMessage(store);
         }
 
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)

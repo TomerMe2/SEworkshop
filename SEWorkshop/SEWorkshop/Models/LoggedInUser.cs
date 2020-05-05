@@ -63,7 +63,7 @@ namespace SEWorkshop.Models
         {
             var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));  
-            if(management == default)
+            if(management == null)
             {
                 return ownership.AddProduct(name, description, category, price, quantity);
 
@@ -131,7 +131,10 @@ namespace SEWorkshop.Models
                 ownership.EditProductPrice(product, price);
                 return;
             }
-            management.EditProductPrice(product, price);
+            else
+            {
+                management.EditProductPrice(product, price);
+            }
         }
         
         public void EditProductQuantity(Store store, Product product, int quantity)
@@ -152,9 +155,10 @@ namespace SEWorkshop.Models
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
            // ownership.SetPermissionsOfManager(manager, authorization);
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
-            if (management == default)
+            if (management == null)
             {
-                ownership.SetPermissionsOfManager(manager, authorization); ;
+                ownership.SetPermissionsOfManager(manager, authorization); 
+                store.Managers.Add(this,manager);
                 return;
             }
 

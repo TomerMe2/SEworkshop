@@ -128,8 +128,8 @@ namespace SEWorkshop.Tests
             Store store = new Store(usr, STORE_NAME);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
-            usr.EditProductPrice(store, product, 0.00);
-            Assert.IsTrue(product.Price == 0);
+            usr.EditProductPrice(store, product, 1.00);
+            Assert.IsTrue(product.Price == 1.00);
 
 
         }
@@ -154,7 +154,10 @@ namespace SEWorkshop.Tests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
-            usr.SetPermissionsOfManager(store, newManager, Authorizations.Products);
+            usr.SetPermissionsOfManager(store, newManager, Authorizations.Replying);
+            var management = newManager.Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+
+            Assert.IsTrue(management.HasAuthorization(Authorizations.Replying));
 
 
         }
@@ -168,7 +171,7 @@ namespace SEWorkshop.Tests
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Manager);
-            Assert.IsTrue(store.Managers[newManager] == newManager);
+            Assert.IsTrue(store.Managers[usr] == newManager);
         }
 
 

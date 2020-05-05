@@ -16,6 +16,10 @@ namespace SEWorkshop.Models
 
         public Owns(LoggedInUser loggedInUser, Store store)
         {
+            AuthoriztionsOfUser= new List<Authorizations>();
+            AuthoriztionsOfUser.Add(Authorizations.Authorizing);
+            AuthoriztionsOfUser.Add(Authorizations.Manager);
+            AuthoriztionsOfUser.Add(Authorizations.Owner);
             LoggedInUser = loggedInUser;
             Store = store;
         }
@@ -26,6 +30,7 @@ namespace SEWorkshop.Models
             Store.Owners.Add(newOwner, LoggedInUser);
             Owns ownership = new Owns(newOwner, Store);
             newOwner.Owns.Add(ownership);
+
             log.Info("A new owner has been added successfully");
         }
 
@@ -184,7 +189,7 @@ namespace SEWorkshop.Models
         override public void EditProductPrice(Product product, double price)
         {
             log.Info("User tries to modify product's price");
-            if (price < 0)
+            if (price > 0.00)
             {
                 if (!StoreContainsProduct(product, Store))
                 {

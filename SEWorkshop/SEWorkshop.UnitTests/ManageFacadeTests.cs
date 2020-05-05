@@ -360,6 +360,7 @@ namespace SEWorkshop.UnitTests
             newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             LoggedInUser managerToTest1 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
+            managerToTest1.AddStoreManager(store, newManager);
             store.Managers.Add(managerToTest1, newManager);
             Manages management1 = new Manages(managerToTest1, store);
             managerToTest1.Manage.Add(management1);
@@ -373,7 +374,7 @@ namespace SEWorkshop.UnitTests
                 success = false;
             }
             var manage = managerToTest1.Manage.FirstOrDefault(man => man.Store.Equals(store));
-            Assert.IsTrue(success && manage.AuthoriztionsOfUser.Contains(Authorizations.Products));
+            Assert.IsTrue(success && manage.AuthoriztionsOfUser.Contains(Authorizations.Manager));
             
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             try
