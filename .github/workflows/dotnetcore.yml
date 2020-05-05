@@ -25,4 +25,4 @@ jobs:
       working-directory: SEWorkshop
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-      working-directory: SEWorkshop
+      working-directory: SEWorkshop/SEWorkshop.UnitTests
