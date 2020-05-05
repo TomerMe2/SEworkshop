@@ -79,6 +79,10 @@ namespace SEWorkshop.Models
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));  
             if(management == null)
             {
+                if (ownership == null)
+                {
+                    throw new UserHasNoPermissionException();
+                }
                 return ownership.AddProduct(name, description, category, price, quantity);
 
             }

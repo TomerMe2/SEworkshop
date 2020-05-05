@@ -170,7 +170,7 @@ namespace SEWorkshop.Models
         public override void EditProductPrice(Product product, double price)
         {
             log.Info("User tries to modify product's price");
-            if (price < 0 || !HasAuthorization(Authorizations.Products))
+            if (price < 0 || HasAuthorization(Authorizations.Products))
             {
                 if (!StoreContainsProduct(product, Store))
                 {
@@ -197,7 +197,10 @@ namespace SEWorkshop.Models
                 log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
             }
-            throw new UserHasNoPermissionException();
+            else
+            {
+                throw new UserHasNoPermissionException();
+            }
         }
     
      public bool HasAuthorization(Authorizations autho)
