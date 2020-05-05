@@ -225,7 +225,9 @@ namespace SEWorkshop.Models
                 return;
 
         }
-        
+
+     
+
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
             if (!HasAuthorization(Authorizations.Authorizing))
@@ -235,7 +237,7 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager] != this.LoggedInUser)
+                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();

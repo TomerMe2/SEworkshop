@@ -37,12 +37,7 @@ namespace SEWorkshop.Facades
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
-          //  if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            //{
-               return  loggedInUser.AddProduct(store, name, description, category, price, quantity);
-           // }
-           // log.Info("User has no permission for that action");
-            //throw new UserHasNoPermissionException();
+            return loggedInUser.AddProduct(store, name, description, category, price, quantity);
         }
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)

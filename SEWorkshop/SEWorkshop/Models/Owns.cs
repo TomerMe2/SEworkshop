@@ -87,7 +87,7 @@ namespace SEWorkshop.Models
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+                var man = manager.Manage.FirstOrDefault(man => man.Store==(Store));
 
                 ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
                 if (authorizations.Contains(authorization))

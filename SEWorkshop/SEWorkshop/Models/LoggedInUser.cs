@@ -173,9 +173,10 @@ namespace SEWorkshop.Models
             {
                 ownership.SetPermissionsOfManager(manager, authorization); 
                 //store.Managers.Add(manager,manager);
+                return;
             }
-          
 
+            management.SetPermissionsOfManager(manager,authorization);
         }
 
         public void AddStoreOwner(Store store, LoggedInUser newOwner)

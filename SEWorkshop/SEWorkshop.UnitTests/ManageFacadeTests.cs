@@ -281,34 +281,22 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-            store.Managers.Add(newManager, usr);
-            Manages management = new Manages(newManager, store);
-            newManager.Manage.Add(management);
+            usr.AddStoreManager(store, newManager);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Owner);
             LoggedInUser ownerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             bool success = true;
             try
             {
                 Facade.AddStoreOwner(newManager, store, ownerToTest1);
-            }
-            catch
-            {
-                success = false;
-            }
-            Assert.IsTrue(success && store.Owners[ownerToTest1] == newManager);
-
-            LoggedInUser ownerToTest2 = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
-            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Owner);
-            try
-            {
-                Facade.AddStoreOwner(newManager, store, ownerToTest2);
                 success = false;
             }
             catch
             {
                 success = true;
             }
-            Assert.IsTrue(success);
+            Assert.IsTrue(success );
+
+         
         }
 
         [Test]
@@ -318,10 +306,8 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-            store.Managers.Add(newManager, usr);
-            Manages management = new Manages(newManager, store);
-            newManager.Manage.Add(management);
-            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
+           usr.AddStoreManager(store,newManager);
+        //    Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
             LoggedInUser managerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             bool success = true;
             try
@@ -332,10 +318,10 @@ namespace SEWorkshop.UnitTests
             {
                 success = false;
             }
-            Assert.IsTrue(success && store.Managers[managerToTest1] == newManager);
+            Assert.IsTrue(success && store.Managers[managerToTest1].Username == newManager.Username);
             
             LoggedInUser managerToTest2 = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
-            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
+            Facade.AddStoreManager(newManager,store,managerToTest2);
             try
             {
                 Facade.AddStoreManager(newManager, store, managerToTest2);
@@ -355,12 +341,10 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-            /*store.Managers.Add(newManager, usr);*/
-            /*Manages management = new Manages(newManager, store);*/
-            /*newManager.Manage.Add(management);*/
             usr.AddStoreManager(store, newManager);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             LoggedInUser managerToTest1 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
+            usr.AddStoreManager(store, managerToTest1);
             bool success = true;
             try
             {
@@ -371,31 +355,22 @@ namespace SEWorkshop.UnitTests
                 success = false;
             }
             //var manage = managerToTest1.Manage.FirstOrDefault(man => man.Store.Equals(store));
-            //Assert.IsTrue(success && manage.AuthoriztionsOfUser.Contains(Authorizations.Manager));
-
-            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
-            try
-            {
-                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Products);
-                success = false;
-            }
-            catch
-            {
-                success = true;
-            }
             Assert.IsTrue(success);
+
+          
+            var auto= managerToTest1.Manage.FirstOrDefault(man => man.Store==(store));
+
+            Assert.IsTrue(auto.HasAuthorization(Authorizations.Products));
             LoggedInUser managerToTest2 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
-            store.Managers.Add(managerToTest2, usr);
-            Manages management2 = new Manages(managerToTest2, store);
-            managerToTest2.Manage.Add(management2);
+            usr.AddStoreManager(store, managerToTest2);
             try
             {
                 Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Authorizing);
-                success = false;
+                success = true;
             }
             catch
             {
-                success = true;
+                success = false;
             }
             Assert.IsTrue(success);
         }
@@ -407,9 +382,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-            store.Managers.Add(newManager, usr);
-            Manages management = new Manages(newManager, store);
-            newManager.Manage.Add(management);
+           usr.AddStoreManager(store, newManager);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
             LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
             Message message1 = new Message(client, "Great store!");
@@ -426,22 +399,21 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(success && message1.Next == reply1 && reply1.Prev == message1
                             && reply1.Description.Equals("Thank you!"));
-            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
-
+           
             Message message2 = new Message(client, "Piece of garbage...");
             store.Messages.Add(message2);
             Message reply2 = new Message(usr, "");
             try
             {
                 reply2 = Facade.MessageReply(newManager, message2, store, "goto L");
-                success = false;
+                success = true;
             }
             catch
             {
-                success = true;
+                success = false;
             }
-            Assert.IsTrue(success && message2.Next != reply2
-                            && reply2.Description.Equals(""));
+            Assert.IsTrue(success && message2.Next == reply2
+                            && reply2.Description.Equals("goto L"));
         }
 
         [Test]
