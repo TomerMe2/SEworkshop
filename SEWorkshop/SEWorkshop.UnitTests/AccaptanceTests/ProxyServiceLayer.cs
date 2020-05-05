@@ -102,7 +102,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
 
         public override void Purchase(DataBasket basket)
         {
-            userManager.Purchase(basket);
+            userManager.Purchase(basket, "555", new Address("Beer Sheva", "Ben Gurion", "99"));
         }
 
         public override void Register(string username, string password)
