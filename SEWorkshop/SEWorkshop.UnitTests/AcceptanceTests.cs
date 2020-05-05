@@ -126,7 +126,7 @@ namespace SEWorkshop.UnitTests
 			Address address = new Address("Pardes Hanna-Karkur", "Hadarim", "1");
             var basket = um.MyCart().First();
 			Assert.That(() => um.Purchase(basket, creditCardNumber, address), Throws.Nothing);
-			Assert.Throws<BasketNotInSystemException>(delegate { um.Purchase(basket); });
+			Assert.Throws<BasketNotInSystemException>(delegate { um.Purchase(basket, creditCardNumber, address); });
 		}
 
 		[Test, Order(30)]

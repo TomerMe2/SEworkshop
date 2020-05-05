@@ -479,7 +479,7 @@ namespace SEWorkshop.UnitTests
             string peb_creditCardNumber = "1234";
             Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
             UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
-            var result = UsrFacade.PurcahseHistory(phue_user1);
+            var result = UsrFacade.PurchaseHistory(phue_user1);
 
             Assert.That(result.ElementAt(0).User, Is.EqualTo(p.User));
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(p.Basket));

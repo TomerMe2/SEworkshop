@@ -105,7 +105,7 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(DataBasket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            UsrFacade.Purchase(CurrUser, basket, creditCardNumber, address);
+            FacadesBridge.Purchase(basket, creditCardNumber, address);
         }
 
         public void Register(string username, string password)

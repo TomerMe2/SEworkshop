@@ -220,7 +220,7 @@ namespace SEWorkshop.UnitTests
             string creditCardNumber = "1234";
             Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
-            var result = Manager.PurcahseHistory();
+            var result = Manager.PurchaseHistory();
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
         }
 
@@ -262,7 +262,7 @@ namespace SEWorkshop.UnitTests
             string creditCardNumber = "1234";
             Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
-            var result = Manager.PurcahseHistory();
+            var result = Manager.PurchaseHistory();
             Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
         }
 

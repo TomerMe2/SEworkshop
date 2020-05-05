@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SEWorkshop.Models
+namespace SEWorkshop
 {
     public class Address
     {
