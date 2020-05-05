@@ -2,6 +2,7 @@
 using SEWorkshop.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
+using SEWorkshop.Facades;
 
 namespace SEWorkshop.Models
 {
@@ -16,6 +17,7 @@ namespace SEWorkshop.Models
         private ICollection<Purchase> Purchases { get; set; }
         private ICollection<LoggedInUser> Administrators { get; set; }
         private ICollection<LoggedInUser> Users { get; set; }
+        private UserFacade Facade { get; set; }
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public LoggedInUser(string username, byte[] password)
@@ -27,6 +29,18 @@ namespace SEWorkshop.Models
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
+        }
+        
+        public LoggedInUser(string username, byte[] password, UserFacade facade)
+        {
+            Username = username;
+            Password = password;
+            Owns = new List<Owns>();
+            Manage = new List<Manages>();
+            Reviews = new List<Review>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Facade = facade;
         }
 
         public void WriteReview(Product product, string description)

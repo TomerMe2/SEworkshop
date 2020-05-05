@@ -81,7 +81,7 @@ namespace SEWorkshop.Facades
                     throw new UserAlreadyExistsException();
                 }
             }
-            LoggedInUser newUser = new LoggedInUser(username, password);
+            LoggedInUser newUser = new LoggedInUser(username, password, this);
             Users.Add(newUser);
             log.Info("Registration has been completed successfully");
             return newUser;
@@ -106,6 +106,7 @@ namespace SEWorkshop.Facades
                     {
                         log.Info("Logging in has been completed successfully");
                         HasPermission = true;
+                        user.HasPermission = true;
                         return user;
                     }
                     break;
