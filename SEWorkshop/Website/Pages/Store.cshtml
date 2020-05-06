@@ -1,0 +1,16 @@
+﻿@page
+@model Website.Pages.StoreModel
+@{
+    ViewData["Title"] = "Store";
+}
+@using SEWorkshop.DataModels;
+@using SEWorkshop.Models;
+
+<h1>Store</h1>
+@{
+    Product prod = new Product(new Store(new LoggedInUser("wello", new byte[1] { 0 }), "store_name"), "prod_name", "looooonnnnggg deSCRIPTION", "category", 123.7, 99);
+    DataProduct dtProd = new DataProduct(prod);
+    ProductViewModel vm = new ProductViewModel(dtProd);
+    await Html.RenderPartialAsync("ProductView", vm);
+}
+
