@@ -248,7 +248,7 @@ namespace SEWorkshop.Models
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
-            if (management == default)
+            if (management == null)
             {
                 return ownership.ViewPurchaseHistory(this, store);
             }

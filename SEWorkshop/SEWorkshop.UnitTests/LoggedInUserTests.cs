@@ -27,7 +27,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void AddProductTest()
+        public void AddProductTest_storeManagerAddsAProductToStore_productIsAddedToStore()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -49,7 +49,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void RemoveProduct()
+        public void RemoveProduct_StoreOwnerRemovesAnExistingProduct_ProductIsRemovedFromStore()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -70,7 +70,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void EditProductDescription()
+        public void EditProductDescription_StoreOwnerEditsDescription_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -83,7 +83,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void EditProductCategory()
+        public void EditProductCategory_StoreOwnerEditsCategory_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -96,7 +96,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void EditProductName()
+        public void EditProductName_StoreOwnerEditName_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -121,7 +121,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void EditProductPrice()
+        public void EditProductPrice_StoreOwnerEditsPrice_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -135,7 +135,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void EditProductQuantity()
+        public void EditProductQuantity_StoreOwnerEditsQuantity_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -147,7 +147,7 @@ namespace SEWorkshop.Tests
 
         }
         [Test]
-        public void SetPermissionsOfManagerTestOwner()
+        public void SetPermissionsOfManager_setPermissionOfStoreManagerToSetPermission_PermissionIsAdded()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -165,7 +165,7 @@ namespace SEWorkshop.Tests
         
 
         [Test]
-        public void SetPermissionsOfManagerTestReplying()
+        public void SetPermissionsOfManager_SetPermissionsOfManagerReplying_repliyngAddedToManger()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -184,7 +184,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void SetPermissionsOfManagerTestWatching()
+        public void SetPermissionsOfManager_PermissionsOfManagerWatching_ManagercanWatch()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -201,7 +201,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void SetPermissionsOfManagerTestProducts()
+        public void SetPermissionsOfManager_SetPermissionsOfManagerTestProducts_managerHasPermission()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -216,7 +216,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void AddStoreOwnerTest()
+        public void AddStoreOwner_storeOwnerAddAnotherLoggeinUserTbeStoreOwner_OwnerIsAdded()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -230,7 +230,7 @@ namespace SEWorkshop.Tests
 
 
         [Test]
-        public void AddStoreManagerTest()
+        public void AddStoreManagerTest_StoreownerAddsAManagerToStore_ManagerIsAdded()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -253,7 +253,7 @@ namespace SEWorkshop.Tests
 
 
         [Test]
-        public void RemoveStoreManager()
+        public void RemoveStoreManager_storeOwnerRemovesStoreManager_MangerIsRemoved()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -275,7 +275,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void MessageReply()
+        public void MessageReply_StoreOwnerReplyStoresMessage_replyhasbeenAdded()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
@@ -289,7 +289,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void getMassage()
+        public void getMassage_storeOwnerViewsaMessageOfStore_UserGetsMessage()
         {
             const string STORE_NAME = "Google Play";
 
@@ -308,7 +308,7 @@ namespace SEWorkshop.Tests
         }
 
         [Test]
-        public void ViewPurchaseHistory()
+        public void ViewPurchaseHistory_storeOwnerviewPurchaseHistory_success()
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
