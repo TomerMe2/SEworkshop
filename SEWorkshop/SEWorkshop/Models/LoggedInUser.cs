@@ -185,12 +185,15 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+
+
             if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
             {
                 throw new UserIsAlreadyStoreManagerException();
             }
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            ownership.AddStoreOwner(newOwner);
+
+              ownership.AddStoreOwner(newOwner);
             
         }
         

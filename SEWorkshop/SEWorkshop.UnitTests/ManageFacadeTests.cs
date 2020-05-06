@@ -72,16 +72,16 @@ namespace SEWorkshop.UnitTests
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
             Assert.IsTrue(store.Owners.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newOwner, usr)));
-            bool catched = false;
+            bool success = true;
             try
             {
                 Facade.AddStoreOwner(usr, store, newOwner);
             }
             catch
             {
-                catched = true;
+                success = false;
             }
-            Assert.IsTrue(catched);
+            Assert.IsTrue(success);
         }
 
         [Test]

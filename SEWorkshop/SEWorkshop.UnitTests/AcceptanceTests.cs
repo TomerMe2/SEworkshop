@@ -219,7 +219,7 @@ namespace SEWorkshop.UnitTests
 			um.AddStoreManager("store1", "managerFirstOwner");
 			um.Logout();
 			um.Login("secondOwner", "1234");
-			Assert.Throws<UserIsAlreadyStoreOwnerException>(delegate { um.AddStoreOwner("store1", "user"); });
+            Assert.That(() => um.AddStoreOwner("store1", "user"), Throws.Nothing);
 		}
 
 		[Test, Order(24)]
@@ -253,7 +253,7 @@ namespace SEWorkshop.UnitTests
 			Assert.Throws<StoreNotInTradingSystemException>(delegate { um.RemoveStoreManager("store3", "managerFirstOwner"); });
 			Assert.That(() => um.RemoveStoreManager("store1", "managerSecondOwner"), Throws.Nothing);
 			Assert.Throws<UserHasNoPermissionException>(delegate { um.RemoveStoreManager("store1", "managerFirstOwner"); });
-			Assert.Throws<UserIsNotMangerOfTheStoreException>(delegate { um.RemoveStoreManager("store1", "notManager"); });
+			Assert.Throws<UserHasNoPermissionException>(delegate { um.RemoveStoreManager("store1", "notManager"); });
 			um.Logout();
 			Assert.Throws<UserHasNoPermissionException>(delegate { um.RemoveStoreManager("store1", "managerFirstOwner"); });
 			um.Login("user", "1234");
@@ -287,7 +287,7 @@ namespace SEWorkshop.UnitTests
 		{
 			Message m = um.ViewMessage("store1").Last();
 			Assert.That(() => um.AddProduct("store1", "chair", "with wheels", "furniture", 350, 1), Throws.Nothing);
-			Assert.Throws<UserHasNoPermissionException>(delegate { um.AddStoreManager("store1", "notManager"); });
+			Assert.That(() =>  um.AddStoreManager("store1", "notManager"), Throws.Nothing);
 			Assert.Throws<UserHasNoPermissionException>(delegate { um.MessageReply(m, "store1", "not thank you"); });
 			Assert.That(() => um.ViewMessage("store1"), Throws.Nothing);
 		}

@@ -18,6 +18,7 @@ namespace SEWorkshop.Models
         {
             AuthoriztionsOfUser= new List<Authorizations>();
             AuthoriztionsOfUser.Add(Authorizations.Authorizing);
+            AuthoriztionsOfUser.Add(Authorizations.Watching);
             AuthoriztionsOfUser.Add(Authorizations.Manager);
             AuthoriztionsOfUser.Add(Authorizations.Owner);
             LoggedInUser = loggedInUser;
@@ -26,12 +27,13 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
-            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            Store.Owners.Add(newOwner, LoggedInUser);
-            Owns ownership = new Owns(newOwner, Store);
-            newOwner.Owns.Add(ownership);
+            
+                log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+                Store.Owners.TryAdd(newOwner, LoggedInUser);
+                Owns ownership = new Owns(newOwner, Store);
+                newOwner.Owns.Add(ownership);
 
-            log.Info("A new owner has been added successfully");
+                log.Info("A new owner has been added successfully"); 
         }
 
         override public void AddStoreManager(LoggedInUser newManager)
