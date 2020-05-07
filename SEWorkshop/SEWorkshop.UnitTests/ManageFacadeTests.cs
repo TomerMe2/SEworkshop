@@ -449,13 +449,13 @@ namespace SEWorkshop.UnitTests
             try
             {
                 output2 = Facade.ViewPurchaseHistory(newManager, store);
-                success = false;
+                success = true;
             }
             catch
             {
-                success = true;
+                success = false;
             }
-            Assert.IsTrue(success && !output2.Contains(purchase));
+            Assert.IsTrue(success && output2.Contains(purchase));
         }
     }
 }
