@@ -20,11 +20,11 @@ namespace SEWorkshop.Models
         public Policy Policy { get; private set; }
         public ICollection<Purchase> Purchases {get; private set; }
         
-        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
-        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
-        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
+        private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
+        private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public Store(LoggedInUser owner, string name)
         {

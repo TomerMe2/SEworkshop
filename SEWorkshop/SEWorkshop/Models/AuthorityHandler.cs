@@ -9,7 +9,7 @@ namespace SEWorkshop.Models
 
     public abstract class AuthorityHandler
     {
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public ICollection<Authorizations> AuthoriztionsOfUser { get; set; }
 

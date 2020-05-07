@@ -14,22 +14,14 @@ namespace SEWorkshop.Facades
         private ICollection<LoggedInUser> Administrators {get; set;}
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
-        private static UserFacade? Instance = null;
 
-        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
-        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
-        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
+        private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
+        private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public static UserFacade GetInstance()
-        {
-            if (Instance == null)
-                Instance = new UserFacade();
-            return Instance;
-        }
-
-        private UserFacade()
+        public UserFacade()
         {
             Users = new List<LoggedInUser>();
             Purchases = new List<Purchase>();

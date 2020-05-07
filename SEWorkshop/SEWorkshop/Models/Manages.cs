@@ -11,7 +11,7 @@ namespace SEWorkshop.Models
     {
         public LoggedInUser LoggedInUser { get; set; }
         public Store Store { get; set; }
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
 
         public Manages(LoggedInUser loggedInUser, Store store)

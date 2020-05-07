@@ -10,23 +10,12 @@ namespace SEWorkshop.Facades
 {
     public class StoreFacade : IStoreFacade
     {
-        private static StoreFacade? Instance { get; set; } = null;
         private ICollection<Store> Stores { get; set; }
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        private StoreFacade()
+        public StoreFacade()
         {
             Stores = new List<Store>();
-        }
-
-        public static StoreFacade GetInstance()
-        {
-            if (Instance is null)
-            {
-                Instance = new StoreFacade();
-                log.Info("StoreFacade instance was created");
-            }
-            return Instance;
         }
 
         /// <summary>

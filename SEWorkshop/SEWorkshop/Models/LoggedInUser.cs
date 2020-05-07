@@ -18,7 +18,7 @@ namespace SEWorkshop.Models
         private ICollection<LoggedInUser> Administrators { get; set; }
         private ICollection<LoggedInUser> Users { get; set; }
         private UserFacade Facade { get; set; }
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public LoggedInUser(string username, byte[] password)
         {

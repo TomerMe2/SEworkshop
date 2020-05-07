@@ -17,7 +17,7 @@ namespace SEWorkshop.ServiceLayer
         ManageFacade ManageFacadeInstance = ManageFacade.GetInstance();
         UserFacade UserFacadeInstance = UserFacade.GetInstance();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private readonly Logger Log = LogManager.GetCurrentClassLogger();
         private const string EVENT_LOG_NM = "event_log.txt";
         private const string ERROR_LOG_NM = "error_log.txt";
 
