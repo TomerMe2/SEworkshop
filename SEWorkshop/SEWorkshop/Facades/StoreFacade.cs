@@ -16,6 +16,7 @@ namespace SEWorkshop.Facades
         public StoreFacade()
         {
             Stores = new List<Store>();
+            log.Info("StoreFacade created");
         }
 
         /// <summary>

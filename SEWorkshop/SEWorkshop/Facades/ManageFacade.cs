@@ -13,6 +13,7 @@ namespace SEWorkshop.Facades
 
         public ManageFacade()
         {
+            log.Info("ManageFacade created");
         }
 
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
