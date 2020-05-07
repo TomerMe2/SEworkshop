@@ -17,6 +17,9 @@ namespace Website.Pages
             _logger = logger;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public string Username { get; set; }
+
         public void OnGet()
         {
 
