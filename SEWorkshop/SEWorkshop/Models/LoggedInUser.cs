@@ -15,7 +15,6 @@ namespace SEWorkshop.Models
         public string Username { get; private set; }
         public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
         private ICollection<Purchase> Purchases { get; set; }
-        private UserFacade Facade { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public LoggedInUser(string username, byte[] password)
