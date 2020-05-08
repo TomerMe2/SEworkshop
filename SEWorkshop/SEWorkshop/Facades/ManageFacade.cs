@@ -116,5 +116,10 @@ namespace SEWorkshop.Facades
         public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products
                                                                             where pr.Name == product.Name
                                                                             select product).ToList().Count() > 0);
+
+        public void RemovePermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
+        {
+            loggedInUser.RemovePermissionsOfManager(store, manager,authorization);
+        }
     }
 }

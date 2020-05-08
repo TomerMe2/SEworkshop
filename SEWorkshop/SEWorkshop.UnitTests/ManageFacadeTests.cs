@@ -6,6 +6,7 @@ using SEWorkshop.Facades;
 using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using System.Linq;
+using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.UnitTests
 {
@@ -452,6 +453,25 @@ namespace SEWorkshop.UnitTests
                 success = false;
             }
             Assert.IsTrue(success && output2.Contains(purchase));
+        }
+
+        [Test]
+        public void RemovePermissionsOfManager()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
+            store.Managers.Add(newManager, usr);
+            Manages management = new Manages(newManager, store);
+            newManager.Manage.Add(management);
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Products);
+            Assert.That(() => newManager.AddProduct(store, "proddi", "ninini", "cat1", 11.11, 1), Throws.Nothing);
+            Facade.RemovePermissionsOfManager(usr, store, newManager, Authorizations.Products);
+            Assert.Throws<UserHasNoPermissionException>(delegate
+            {
+                newManager.AddProduct(store, "failedProd", "ninini", "cat1", 11.11, 1);
+            });
         }
     }
 }

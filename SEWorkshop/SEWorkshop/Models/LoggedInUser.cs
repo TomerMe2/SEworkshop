@@ -15,8 +15,6 @@ namespace SEWorkshop.Models
         public string Username { get; private set; }
         public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
         private ICollection<Purchase> Purchases { get; set; }
-        private ICollection<LoggedInUser> Administrators { get; set; }
-        private ICollection<LoggedInUser> Users { get; set; }
         private UserFacade Facade { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -29,18 +27,6 @@ namespace SEWorkshop.Models
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
-        }
-        
-        public LoggedInUser(string username, byte[] password, UserFacade facade)
-        {
-            Username = username;
-            Password = password;
-            Owns = new List<Owns>();
-            Manage = new List<Manages>();
-            Reviews = new List<Review>();
-            Messages = new List<Message>();
-            Purchases = new List<Purchase>();
-            Facade = facade;
         }
 
         public void WriteReview(Product product, string description)
@@ -245,7 +231,7 @@ namespace SEWorkshop.Models
             return management.GetMessage(store, this);
         }
 
-        public IEnumerable<Purchase> ViewPurchaseHistory(Store store)
+        public IEnumerable<Purchase> PurchaseHistory(Store store)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
@@ -255,24 +241,6 @@ namespace SEWorkshop.Models
             }
 
             return management.ViewPurchaseHistory(this, store);
-        }
-
-
-        public IEnumerable<Purchase> PurchaseHistory(User user)
-        {
-            if (!HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ICollection<Purchase> userPurchases = new List<Purchase>();
-            foreach (var purchase in Purchases)
-            {
-                if (purchase.User == user)
-                {
-                    userPurchases.Add(purchase);
-                }
-            }
-            return userPurchases;
         }
 
         public bool isManger(Store store)
@@ -285,7 +253,7 @@ namespace SEWorkshop.Models
             return false;
         }
 
-        override public void Purchase(Basket basket, string creditCardNumber, Address address)
+        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -307,9 +275,21 @@ namespace SEWorkshop.Models
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
-            Facade.AddPurchaseToList(purchase);
+            facade.AddPurchaseToList(purchase);
         }
 
 
+        public void RemovePermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
+        {
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            if (management == null)
+            {
+                ownership.RemovePermissionsOfManager(manager, authorization);
+                return;
+            }
+
+            management.RemovePermissionsOfManager(manager,authorization);
+        }
     }
 }

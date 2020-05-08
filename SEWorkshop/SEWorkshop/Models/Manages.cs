@@ -186,10 +186,10 @@ namespace SEWorkshop.Models
             if (HasAuthorization(Authorizations.Products)) 
             {
                 if (!StoreContainsProduct(product, Store))
-                {
+                { 
                     log.Info("Product does not exist in store");
                     throw new ProductNotInTradingSystemException();
-                }       //TODO : update in store class
+                }
                 log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
             }
@@ -199,10 +199,10 @@ namespace SEWorkshop.Models
             }
         }
     
-     public bool HasAuthorization(Authorizations autho)
-    {
+        public bool HasAuthorization(Authorizations autho)
+        {
             return AuthoriztionsOfUser.Contains(autho);
-    }
+        }
 
         public override void AddStoreManager(LoggedInUser newManager)
         {
@@ -244,15 +244,39 @@ namespace SEWorkshop.Models
                 var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
 
                 ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
+                
+                if (!authorizations.Contains(authorization))
+                {
+                    log.Info("Permission has been granted successfully");
+                    authorizations.Add(authorization);   
+                }
+                return;
+            }
+            log.Info("User has no permission for that action");
+            throw new UserHasNoPermissionException();
+        }
+
+        public void RemovePermissionsOfManager(LoggedInUser manager, Authorizations authorization)
+        {
+            if (!HasAuthorization(Authorizations.Authorizing))
+            {
+                throw new UserHasNoPermissionException();
+            }
+            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
+            if (!IsUserStoreOwner(manager, Store))
+            {
+                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+
+                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
                 if (authorizations.Contains(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
-                    //authorizations.Remove(authorization);
-                }
-                else
-                {
-                    log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);
+                    authorizations.Remove(authorization);
                 }
                 return;
             }

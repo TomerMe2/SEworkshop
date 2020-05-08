@@ -75,7 +75,7 @@ namespace SEWorkshop.Facades
                     throw new UserAlreadyExistsException();
                 }
             }
-            LoggedInUser newUser = new LoggedInUser(username, password, this);
+            LoggedInUser newUser = new LoggedInUser(username, password);
             Users.Add(newUser);
             log.Info("Registration has been completed successfully");
             return newUser;
@@ -165,7 +165,7 @@ namespace SEWorkshop.Facades
         }
         public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            user.Purchase(basket, creditCardNumber, address);
+            user.Purchase(basket, creditCardNumber, address, this);
         }
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {

@@ -340,10 +340,12 @@ namespace SEWorkshop.Tests
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
             Purchase purchase = new Purchase(client, new Basket(store));
             store.Purchases.Add(purchase);
-            IEnumerable<Purchase> purchases = usr.ViewPurchaseHistory(store);
+            IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
 
         }
+        
+        
 
     }
 }

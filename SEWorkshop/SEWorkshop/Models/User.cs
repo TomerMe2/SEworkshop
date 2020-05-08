@@ -84,6 +84,6 @@ namespace SEWorkshop.Models
             throw new ProductIsNotInCartException();
         }
 
-        public abstract void Purchase(Basket basket, string creditCardNumber, Address address);
+        public abstract void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade);
     }
 }

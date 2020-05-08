@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Facades;
 
 namespace SEWorkshop.Models
 {
@@ -9,7 +10,7 @@ namespace SEWorkshop.Models
     {
         public GuestUser() : base() { }
         
-        override public void Purchase(Basket basket, string creditCardNumber, Address address)
+        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();

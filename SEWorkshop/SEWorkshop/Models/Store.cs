@@ -73,9 +73,6 @@ namespace SEWorkshop.Models
                 {
                     prod.Quantity = prod.Quantity - purchaseQuantity;
                 }
-                //TODO ask if user is loggedin add it to user purchases
-                // add purchase to store purchase history
-                //Purchases.Add(purchase);
             }
             else
             {
