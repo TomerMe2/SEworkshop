@@ -14,9 +14,8 @@ namespace SEWorkshop.Models
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
 
-        public Owns(LoggedInUser loggedInUser, Store store)
+        public Owns(LoggedInUser loggedInUser, Store store) : base()
         {
-            AuthoriztionsOfUser = new List<Authorizations>();
             AuthoriztionsOfUser.Add(Authorizations.Authorizing);
             AuthoriztionsOfUser.Add(Authorizations.Watching);
             AuthoriztionsOfUser.Add(Authorizations.Manager);
