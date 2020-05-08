@@ -17,7 +17,8 @@ namespace SEWorkshop.Tests
         const string STREET_NAME_STUB = "Shderot Ben Gurion";
         const string HOUSE_NUMBER_STUB = "111";
         Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
-        //public void CloseStore()
+        
+        //Testing CloseStore()
         [Test]
         public void CloseStore_StoreIsOpen_StoreClosed()
         {
@@ -26,6 +27,7 @@ namespace SEWorkshop.Tests
             Assert.That(closeStore1.IsOpen, Is.False);
         }
 
+        //Testing SearchProducts(Func<Product, bool> pred)
         [Test]
         public void SearchProducts_ProductDoesNotExistInStore_ReturnEmptyList()
         {
@@ -37,7 +39,7 @@ namespace SEWorkshop.Tests
         }
         
         [Test]
-        public void GetProduct_ProductsExistsInStore_ReturnListOfProducts()
+        public void SearchProducts_ProductsExistsInStore_ReturnListOfProducts()
         {
             LoggedInUser sp_user2 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             Store sp_store2 = new Store(sp_user2, "sp_store2");
@@ -46,6 +48,7 @@ namespace SEWorkshop.Tests
             Assert.That(result, Is.Not.Empty);
         }
 
+        //Testing PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address)
         [Test]
         public void PurchaseBasket_NegativeInventory_ThrowException()
         {
@@ -59,11 +62,11 @@ namespace SEWorkshop.Tests
                 pb_store1.PurchaseBasket(new List<(Product, int)>() {(pb_prod1, 2)}, CREDIT_CARD_NUMBER_STUB, address);
                 Assert.Fail();
             }
-            catch (NegativeInventoryException e)
+            catch (NegativeInventoryException)
             {
                 Assert.True(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -74,7 +77,6 @@ namespace SEWorkshop.Tests
         {
             LoggedInUser pb_user2 = new LoggedInUser("pb_user2", _securityAdapter.Encrypt("1111"));
             Store pb_store2 = new Store(pb_user2, "pb_store2");
-           // pb_user2.Manage.Add(new Manages(pb_user2, pb_store2));
             pb_user2.AddProduct(pb_store2,"pb_prod2", "ninini", "cat1", 11.111, 1);
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
             pb_store2.PurchaseBasket(new List<(Product, int)>(){(pb_prod2, 1)}, CREDIT_CARD_NUMBER_STUB, address);

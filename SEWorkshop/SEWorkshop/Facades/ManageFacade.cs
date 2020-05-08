@@ -22,7 +22,6 @@ namespace SEWorkshop.Facades
 
             return (IsUserStoreOwner(loggedInUser, store)
                     || (IsUserStoreManager(loggedInUser, store)
-                        /*&& management.AuthoriztionsOfUser.Contains(Authorizations.Authorizing)));*/
                         && management.AuthoriztionsOfUser.Contains(authorization)));
         }
 
@@ -86,7 +85,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-           return  loggedInUser.getMessage(store);
+           return  loggedInUser.GetMessage(store);
         }
 
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)

@@ -244,11 +244,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-            //store.Managers.Add(newManager, usr);
-            //Manages management = new Manages(newManager, store);
-            //newManager.Manage.Add(management);
             usr.AddStoreManager(store, newManager);
-            //Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Products);
             Product product;
             bool success = true;
             try

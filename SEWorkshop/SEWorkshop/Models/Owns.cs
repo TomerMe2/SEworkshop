@@ -63,23 +63,21 @@ namespace SEWorkshop.Models
                 log.Info("The requested manager is not a store manager");
                 throw new UserIsNotMangerOfTheStoreException();
             }
-           if (!Store.Managers.ContainsKey(managerToRemove))
-                {
-                    log.Info("The requested manager is not a store manager");
-                    throw new UserIsNotMangerOfTheStoreException();
-                }
-                LoggedInUser appointer = Store.Managers[managerToRemove];
-                if (appointer != LoggedInUser)
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-                Store.Managers.Remove(managerToRemove);
-                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
-                managerToRemove.Manage.Remove(management);
-                log.Info("The manager has been removed successfully");
-                return;
-          
+            if (!Store.Managers.ContainsKey(managerToRemove))
+            { 
+                log.Info("The requested manager is not a store manager");
+                throw new UserIsNotMangerOfTheStoreException();
+            }
+            LoggedInUser appointer = Store.Managers[managerToRemove];
+            if (appointer != LoggedInUser)
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+            Store.Managers.Remove(managerToRemove);
+            var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+            managerToRemove.Manage.Remove(management);
+            log.Info("The manager has been removed successfully");
         }
 
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
@@ -215,14 +213,14 @@ namespace SEWorkshop.Models
                 {
                     log.Info("Product does not exist in store");
                     throw new ProductNotInTradingSystemException();
-                }       //TODO : update in store class
+                }
                 log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
                 
-            }
-           
         }
-
+           
     }
+
+}
 
 

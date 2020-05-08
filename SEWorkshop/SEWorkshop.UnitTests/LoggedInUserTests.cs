@@ -17,13 +17,37 @@ namespace SEWorkshop.Tests
         [Test]
         public void WriteReview()
         {
-
+            const string STORE_NAME = "writeReviewStore";
+            const string USER_NAME = "WriteReviewUser";
+            const string USER_PASSWORD = "1111";
+            const string PROD_NAME = "writeReviewProd";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 1);
+            //User has np permission - Throw Exception
+            Assert.Throws<UserHasNoPermissionException>(delegate { usr.WriteReview(prod, "baddd"); });
+            //Review is empty - Throw Exception
+            usr.HasPermission = true;
+            Assert.Throws<ReviewIsEmptyException>(delegate { usr.WriteReview(prod, ""); });
+            //Review is not empty and user is logged in - success
+            Assert.That(() => usr.WriteReview(prod, "baddd"), Throws.Nothing);
         }
 
         [Test]
         public void WriteMessage()
         {
-
+            const string STORE_NAME = "writeMessageStore";
+            const string USER_NAME = "WriteMessageUser";
+            const string USER_PASSWORD = "1111";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            //User has np permission - Throw Exception
+            Assert.Throws<UserHasNoPermissionException>(delegate { usr.WriteMessage(str, "baddd"); });
+            //Message is empty - Throw Exception
+            usr.HasPermission = true;
+            Assert.Throws<MessageIsEmptyException>(delegate { usr.WriteMessage(str, ""); });
+            //Message is not empty and user is logged in - success
+            Assert.That(() => usr.WriteMessage(str, "baddd"), Throws.Nothing);
         }
 
         [Test]
@@ -195,7 +219,7 @@ namespace SEWorkshop.Tests
             LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"));
             Message message1 = new Message(client, "Great store!");
             store.Messages.Add(message1);
-            IEnumerable<Message> output1 = newManager.getMessage(store);
+            IEnumerable<Message> output1 = newManager.GetMessage(store);
             Assert.IsTrue(output1.Contains(message1));
 
         }
@@ -301,7 +325,7 @@ namespace SEWorkshop.Tests
             Message message = new Message(client, "Great app");
             store.Messages.Add(message);
 
-            IEnumerable<Message> messages = usr.getMessage(store);
+            IEnumerable<Message> messages = usr.GetMessage(store);
             /*
               Assert.IsTrue(messages.Count() == 1 && messages.First() == message);*/
 

@@ -171,12 +171,10 @@ namespace SEWorkshop.Models
         public void SetPermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-           // ownership.SetPermissionsOfManager(manager, authorization);
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
             if (management == null)
             {
-                ownership.SetPermissionsOfManager(manager, authorization); 
-                //store.Managers.Add(manager,manager);
+                ownership.SetPermissionsOfManager(manager, authorization);
                 return;
             }
 
@@ -207,7 +205,7 @@ namespace SEWorkshop.Models
                 ownership.AddStoreManager(newManager);
                 return;
             }
-                management.AddStoreManager(newManager);
+            management.AddStoreManager(newManager);
         }
         
         public void RemoveStoreManager(Store store, LoggedInUser managerToRemove)
@@ -235,7 +233,7 @@ namespace SEWorkshop.Models
             return management.MessageReply(this,store,message,description);
         }
 
-        public IEnumerable<Message> getMessage(Store store)
+        public IEnumerable<Message> GetMessage(Store store)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
             var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
@@ -256,7 +254,7 @@ namespace SEWorkshop.Models
                 return ownership.ViewPurchaseHistory(this, store);
             }
 
-             return management.ViewPurchaseHistory(this, store);
+            return management.ViewPurchaseHistory(this, store);
         }
 
 
@@ -310,7 +308,6 @@ namespace SEWorkshop.Models
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             Facade.AddPurchaseToList(purchase);
-            // TODO when to add purchase to loggedin user purchase history
         }
 
 

@@ -47,18 +47,6 @@ namespace SEWorkshop.Models
             IsOpen = false;
         }
 
-        public Product GetProduct(string name) //TODO: I think this is a redundant function and we should remove it (Amit)
-        {
-            foreach(var product in Products)
-            {
-                if(product.Name.Equals(name))
-                {
-                    return product;
-                }
-            }
-            throw new ProductNotInTradingSystemException();
-        }
-        
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             log.Info("SearchProducts was invoked");
@@ -69,19 +57,6 @@ namespace SEWorkshop.Models
 
         public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address)
         {
-            /*const string CREDIT_CARD_NUMBER_STUB = "1234";
-            const string CITY_NAME_STUB = "Beer Sheva";
-            const string STREET_NAME_STUB = "Shderot Ben Gurion";
-            const string HOUSE_NUMBER_STUB = "111";
-            Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);*/
-            
-            /*foreach (var (prod, purchaseQuantity) in itemsList)
-            {
-                if (purchaseQuantity <= 0)
-                {
-                    throw new NegativeQuantityException();
-                }
-            }*/
             foreach (var (prod, purchaseQuantity) in itemsList)
             {
                 if (prod.Quantity - purchaseQuantity < 0)

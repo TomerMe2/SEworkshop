@@ -30,7 +30,6 @@ namespace SEWorkshop.Models
             basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
-            // TODO when to add purchase to loggedin user purchase history
         }
     }
 }

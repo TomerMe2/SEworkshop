@@ -17,7 +17,6 @@ namespace SEWorkshop.Models
         public Manages(LoggedInUser loggedInUser, Store store)
         {
             AuthoriztionsOfUser=new List<Authorizations>();
-            //AuthoriztionsOfUser.Add(Authorizations.Manager);
             AuthoriztionsOfUser.Add(Authorizations.Watching);
             LoggedInUser = loggedInUser;
             Store = store;
@@ -60,7 +59,7 @@ namespace SEWorkshop.Models
                 throw new UserHasNoPermissionException();
             }
         
-    }
+        }
 
         public override Product AddProduct(string name, string description, string category, double price, int quantity)
         {
@@ -147,8 +146,6 @@ namespace SEWorkshop.Models
         {
             if (HasAuthorization(Authorizations.Products))
             {
-
-
                 log.Info("User tries to modify product's name");
                 Product demo = new Product(Store, name, "", "", 0, 0);
 
@@ -164,8 +161,6 @@ namespace SEWorkshop.Models
                 }
                 product.Name = name;
                 log.Info("Product's category has been modified successfully");
-                return;
-
             }
         }
         public override void EditProductPrice(Product product, double price)
@@ -265,14 +260,4 @@ namespace SEWorkshop.Models
             throw new UserHasNoPermissionException();
         }
     }
-    /*public enum Authorizations
-    {
-        Products,
-        Owner,
-        Manager,
-        Authorizing,
-        Replying,
-        Watching
-    }*/
-
 }
