@@ -1,6 +1,5 @@
 using SEWorkshop.Models;
 using SEWorkshop.Exceptions;
-using System;
 using NLog;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace SEWorkshop.Facades
 {
     public class ManageFacade : IManageFacade
     {
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public ManageFacade()
         {
@@ -19,278 +18,79 @@ namespace SEWorkshop.Facades
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
         {
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
+            var management = loggedInUser.Manage.FirstOrDefault(man => man.Store.Equals(store));
+
             return (IsUserStoreOwner(loggedInUser, store)
                     || (IsUserStoreManager(loggedInUser, store)
-                        && loggedInUser.Manages[store].Contains(authorization)));
+                        && management.AuthoriztionsOfUser.Contains(authorization)));
         }
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
-            // to add a product it is required that the user who want to add the proudct is a store owner or a manager
-            log.Info("User tries to add a new product to store");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                Product newProduct = new Product(store, name, description, category, price, quantity);
-                if (!StoreContainsProduct(store, newProduct))
-                {
-                    store.Products.Add(newProduct);
-                    log.Info("Product has been added to store successfully");
-                    return newProduct;
-                }
-                else
-                {
-                    log.Info("Product is already exists in store");
-                    throw new ProductAlreadyExistException();
-                }
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            return loggedInUser.AddProduct(store, name, description, category, price, quantity);
         }
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
         {
-            log.Info("User tries to add a new product to store");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                if (StoreContainsProduct(store, productToRemove))
-                {
-                    store.Products.Remove(productToRemove);
-                    log.Info("Product has been removed from store successfully");
-                    return;
-                }
-                else
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTheStoreException();
-                }
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.RemoveProduct(store, productToRemove);
         }
 
         public void EditProductDescription(LoggedInUser loggedInUser, Store store, Product product, string description)
         {
-            log.Info("User tries to modify product's description");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                if (!StoreContainsProduct(store, product))
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTradingSystemException();
-                }
-                product.Description = description;
-                log.Info("Product's description has been modified successfully");
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.EditProductDescription(store, product, description);
         }
 
         public void EditProductCategory(LoggedInUser loggedInUser, Store store, Product product, string category)
         {
-            log.Info("User tries to modify product's category");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                if (!StoreContainsProduct(store, product))
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTradingSystemException();
-                }
-                product.Category = category;
-                log.Info("Product's category has been modified successfully");
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.EditProductCategory(store, product, category);
         }
 
         public void EditProductName(LoggedInUser loggedInUser, Store store, Product product, string name)
         {
-            log.Info("User tries to modify product's name");
-            Product demo = new Product(store, name, "", "", 0, 0);
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                if (!StoreContainsProduct(store, product))
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTradingSystemException();
-                }
-                if (StoreContainsProduct(store, demo))
-                {
-                    log.Info("Product name is already taken in store");
-                    throw new StoreWithThisNameAlreadyExistsException();
-                }
-                product.Name = name;
-                log.Info("Product's category has been modified successfully");
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.EditProductName(store, product, name);
         }
 
         public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price)
         {
-            log.Info("User tries to modify product's price");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products)|| price<0)
-            {
-                if (!StoreContainsProduct(store, product))
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTradingSystemException();
-                }
-                product.Price = price;
-                log.Info("Product's price has been modified successfully");
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.EditProductPrice(store, product, price);
         }
 
         public void EditProductQuantity(LoggedInUser loggedInUser, Store store, Product product, int quantity)
         {
-            log.Info("User tries to modify product's quantity");
-            if (UserHasPermission(loggedInUser, store, Authorizations.Products))
-            {
-                if (!StoreContainsProduct(store, product))
-                {
-                    log.Info("Product does not exist in store");
-                    throw new ProductNotInTradingSystemException();
-                }
-                log.Info("Product's quantity has been modified successfully");
-                product.Quantity = quantity;
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+           loggedInUser.EditProductQuantity(store, product, quantity);
         }
 
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
-            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!UserHasPermission(loggedInUser, store, Authorizations.Owner))
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (IsUserStoreOwner(newOwner, store))
-            {
-                log.Info("The requested user is already a store owner");
-                throw new UserIsAlreadyStoreOwnerException();
-            }
-            store.Owners.Add(newOwner, loggedInUser);
-            newOwner.Owns.Add(store);
-            log.Info("A new owner has been added successfully");
+            loggedInUser.AddStoreOwner(store, newOwner);
         }
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-            log.Info("User tries to add a new manager {0} to store", newManager.Username);
-            if (!UserHasPermission(loggedInUser, store, Authorizations.Manager))
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (IsUserStoreManager(newManager, store) || IsUserStoreOwner(newManager, store))
-            {
-                log.Info("The requested user is already a store manager or owner");
-                throw new UserIsAlreadyStoreManagerException();
-            }
-            store.Managers.Add(newManager, loggedInUser);
-            newManager.Manages.Add(store, new List<Authorizations>()
-            {
-                Authorizations.Watching
-            });
-            log.Info("A new manager has been added successfully");
+           loggedInUser.AddStoreManager(store, newManager);
+          
+           
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
-            log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
-            if (UserHasPermission(loggedInUser, store, Authorizations.Authorizing)
-                && !IsUserStoreOwner(manager, store))
-            {
-                if (!manager.Manages.ContainsKey(store)
-                    || store.Managers[manager] != loggedInUser)
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-                ICollection<Authorizations> authorizations = manager.Manages[store];
-                if (authorizations.Contains(authorization))
-                {
-                    log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
-                }
-                else
-                {
-                    log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);
-                }
-                return;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            loggedInUser.SetPermissionsOfManager(store, manager,authorization);
         }
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-            log.Info("User tries to remove the manager {0} from store", managerToRemove.Username);
-            bool isStoreManager = IsUserStoreManager(managerToRemove, store);
-            if (!isStoreManager)
-            {
-                log.Info("The requested manager is not a store manager");
-                throw new UserIsNotMangerOfTheStoreException();
-            }
-            if (UserHasPermission(loggedInUser, store, Authorizations.Manager)
-                && IsUserStoreManager(managerToRemove, store))
-            {
-                if (!store.Managers.ContainsKey(managerToRemove))
-                {
-                    log.Info("The requested manager is not a store manager");
-                    throw new UserIsNotMangerOfTheStoreException();
-                }
-                LoggedInUser appointer = store.Managers[managerToRemove];
-                if(appointer != loggedInUser)
-                {
-                    log.Info("User has no permission for that action");
-                    throw new UserHasNoPermissionException();
-                }
-                store.Managers.Remove(managerToRemove);
-                managerToRemove.Manages.Remove(store);
-                log.Info("The manager has been removed successfully");
-                return;
-            }
-            else
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
+           loggedInUser.RemoveStoreManager(store, managerToRemove);
+            
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-            log.Info("User tries to view messages of store {0}", store.Name);
-            if(UserHasPermission(loggedInUser, store, Authorizations.Watching))
-            {
-                log.Info("Data has been fetched successfully");
-                return store.Messages;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+           return  loggedInUser.GetMessage(store);
         }
 
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            log.Info("User tries to reply to a message");
-            if(UserHasPermission(loggedInUser, store, Authorizations.Replying))
-            {
-                Message reply = new Message(loggedInUser, description, message);
-                message.Next = reply;
-                log.Info("Reply has been published successfully");
-                return reply;
-            }
-            log.Info("User has no permission for that action");
-            throw new UserHasNoPermissionException();
+            return loggedInUser.MessageReply(message, store, description);
         }
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
@@ -316,5 +116,10 @@ namespace SEWorkshop.Facades
         public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products
                                                                             where pr.Name == product.Name
                                                                             select product).ToList().Count() > 0);
+
+        public void RemovePermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
+        {
+            loggedInUser.RemovePermissionsOfManager(store, manager,authorization);
+        }
     }
 }

@@ -52,5 +52,6 @@ namespace SEWorkshop.Facades
         public void EditProductPrice(string storeName, string productName, double price);
         public void EditProductQuantity(string storeName, string productName, int quantity);
         public void EditProductDescription(string storeName, string productName, string description);
+        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization);
     }
 }
