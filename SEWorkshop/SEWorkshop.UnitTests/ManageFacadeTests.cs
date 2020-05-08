@@ -72,14 +72,14 @@ namespace SEWorkshop.UnitTests
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
             Assert.IsTrue(store.Owners.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newOwner, usr)));
-            bool success = true;
+            bool success = false;
             try
             {
                 Facade.AddStoreOwner(usr, store, newOwner);
             }
             catch
             {
-                success = false;
+                success = true;
             }
             Assert.IsTrue(success);
         }
@@ -306,8 +306,8 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-           usr.AddStoreManager(store,newManager);
-        //    Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
+            usr.AddStoreManager(store,newManager);
+            Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Manager);
             LoggedInUser managerToTest1 = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             bool success = true;
             try
