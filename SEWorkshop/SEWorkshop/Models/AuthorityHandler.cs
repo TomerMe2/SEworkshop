@@ -13,27 +13,29 @@ namespace SEWorkshop.Models
 
         public ICollection<Authorizations> AuthoriztionsOfUser { get; set; }
 
+        public AuthorityHandler()
+        {
+            AuthoriztionsOfUser = new List<Authorizations>();
+        }
+
         public abstract void AddStoreManager(LoggedInUser newManager);
-
         public abstract void RemoveStoreManager(LoggedInUser newManager);
-
         abstract public Product AddProduct(string name, string description, string category, double price, int quantity);
-
         abstract public void RemoveProduct(Product productToRemove);
-
         abstract public void EditProductDescription(Product product, string description);
         abstract public void EditProductCategory(Product product, string category);
         abstract public void EditProductName(Product product, string name);
         abstract public void EditProductPrice(Product product, double price);
         abstract public void EditProductQuantity(Product product, int quantity);
-        
+
         public bool IsUserStoreOwner(LoggedInUser loggedInUser, Store store) => ((from owner in store.Owners
                                                                      where owner.Key == loggedInUser
                                                                      select owner).ToList().Count() > 0);
-      
+
         public bool IsUserStoreManager(LoggedInUser loggedInUser, Store store) => ((from manager in store.Managers
                                                                        where manager.Key == loggedInUser
                                                                        select manager).ToList().Count() > 0);
+
         public bool StoreContainsProduct(Product product, Store store) => ((from pr in store.Products
                                                                where pr.Name == product.Name
                                                                select product).ToList().Count() > 0);
@@ -47,7 +49,8 @@ namespace SEWorkshop.Models
                     || (IsUserStoreManager(loggedInUser, store)
                         && management.HasAuthorization(authorization)));
         }
-     public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
+
+        public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
             log.Info("User tries to view purchase history of store {0}", store.Name);
             if (UserHasPermission(store, loggedInUser ,Authorizations.Watching))
@@ -57,7 +60,6 @@ namespace SEWorkshop.Models
             }
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
-
         }
 
         public IEnumerable<Message> GetMessage(Store store, LoggedInUser loggedInUser)
@@ -85,8 +87,5 @@ namespace SEWorkshop.Models
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
-
-
-
     }
 }
