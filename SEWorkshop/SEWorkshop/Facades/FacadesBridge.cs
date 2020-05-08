@@ -18,7 +18,6 @@ namespace SEWorkshop.Facades
 
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-
         public FacadesBridge()
         {
             ManageFacade = new ManageFacade();
@@ -39,7 +38,6 @@ namespace SEWorkshop.Facades
                                                           productName, description, category, price, quantity);
 
             return new DataProduct(product);
-
         }
 
         public LoggedInUser GetUser(string userName)

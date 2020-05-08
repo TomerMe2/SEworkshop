@@ -69,3 +69,47 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.login {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.loginform {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border: 3px solid #242c3c;
+    border-radius: 0.25rem;
+    width: 40%;
+    height: 300px;
+    padding-top: 10px;
+}
+
+.input {
+    background: transparent;
+    border: 3px solid #242c3c;
+    font: 20px #242c3c;
+    width: 60%;
+    height: 60px;
+    line-height: 50px;
+}
+
+input::-moz-focus-inner {
+    border: 0;
+}
+
+.submit {
+    color: #707075;
+    transition: color 300ms;
+    border: 3px solid #242c3c;
+    width: 60%;
+    height: 25%;
+}
+
+    .submit:focus {
+        color: #f2f2f2;
+        background-color: #242c3c;
+    }

@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
+using System;
 
 namespace Website.Pages
 {
     public class LoginModel : PageModel
     {
-        public IUserManager UserManager = new UserManager();
+        public UserManager UserManager = UserManager.GetInstance();
 
         [BindProperty (SupportsGet = true)]
         public string Username { get; set; }
@@ -17,11 +18,11 @@ namespace Website.Pages
         public string Password { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public bool IsValid { get; set; }
+        public string Error { get; set; }
 
         public void OnGet()
         {
-            IsValid = true;
+            Error = "";
         }
 
         public IActionResult OnPost()
@@ -32,7 +33,17 @@ namespace Website.Pages
             }
             catch (UserDoesNotExistException)
             {
-                IsValid = false;
+                Error = "Username or password are incorrect";
+                return new PageResult();
+            }
+            catch(ArgumentException e)
+            {
+                Error = e.Message;
+                return new PageResult();
+            }
+            catch(UserAlreadyLoggedInException)
+            {
+                Error = "You are already logged in";
                 return new PageResult();
             }
             return RedirectToPage("./Index", new { Username = Username });
