@@ -394,6 +394,7 @@ namespace SEWorkshop.UnitTests
             Manager.OpenStore("MessageReplyStore1");
             Manager.AddStoreManager("MessageReplyStore1", "MessageReplyUser2");
             Manager.SetPermissionsOfManager("MessageReplyStore1", "MessageReplyUser2", "Replying");
+            Manager.SetPermissionsOfManager("MessageReplyStore1", "MessageReplyUser2", "Watching");
             Manager.Logout();
             Manager.Login("MessageReplyUser2", "1111");
             Manager.WriteMessage("MessageReplyStore1", "Hello");

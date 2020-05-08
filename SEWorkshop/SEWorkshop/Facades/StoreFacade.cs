@@ -11,7 +11,7 @@ namespace SEWorkshop.Facades
     public class StoreFacade : IStoreFacade
     {
         private ICollection<Store> Stores { get; set; }
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public StoreFacade()
         {
@@ -36,7 +36,8 @@ namespace SEWorkshop.Facades
             }
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
-            owner.Owns.Add(newStore);
+            Owns newOwnership = new Owns(owner, newStore);
+            owner.Owns.Add(newOwnership);
             log.Info(string.Format("User {0} created a store with name {1}",
                     owner.Username, storeName));
             return newStore;
@@ -81,6 +82,14 @@ namespace SEWorkshop.Facades
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             log.Info("SearchProducts was invoked");
+            ICollection<Product> searchResult = new List<Product>();
+            foreach (var store in Stores)
+            {
+                foreach (var prod in store.SearchProducts(pred))
+                {
+                    searchResult.Add(prod);
+                }
+            }
             return (from product in AllActiveProducts()
                     where pred(product)
                     select product).ToList();

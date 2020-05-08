@@ -26,5 +26,6 @@ namespace SEWorkshop.Facades
         public bool IsUserStoreManager(LoggedInUser user, Store store);
         public bool StoreContainsProduct(Store store, Product product);
 
+        public void RemovePermissionsOfManager(LoggedInUser currUser, Store getStore, LoggedInUser getUser, Authorizations authorization);
     }
 }
