@@ -39,7 +39,11 @@ namespace SEWorkshop.Facades
                                                           productName, description, category, price, quantity);
 
             return new DataProduct(product);
+        }
 
+        public DataStore SearchStore(string storeName)
+        {
+            return new DataStore(GetStore(storeName));
         }
 
         public LoggedInUser GetUser(string userName)

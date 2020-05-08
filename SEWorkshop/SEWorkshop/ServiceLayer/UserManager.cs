@@ -68,6 +68,13 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.BrowseStores();
         }
 
+        public DataStore SearchStore(string storeName)
+        {
+            Log.Info("BrowseStores was invoked");
+            return FacadesBridge.SearchStore(storeName);
+        }
+
+
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
             Log.Info("FilterProducts was invoked");
