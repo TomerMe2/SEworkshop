@@ -20,15 +20,6 @@ namespace Website.Pages
         {
             UserManager = userManager;
             ErrorMsg = "";
-            try
-            {
-                userManager.Register("wello", "1234");
-                userManager.Login("wello", "1234");
-                userManager.OpenStore("nini");
-                userManager.AddProduct("nini", "prod1", "some description1", "cat1", 123.7, 7);
-                userManager.AddProduct("nini", "prod2", "some LONGGGGGGGGGGGGGGGGGGGGGGGGG descriptionnnnnnnnnnnnnnn2", "cat2", 999999, 1);
-            }
-            catch { }
         }
 
         public void OnGet(string storeName)
