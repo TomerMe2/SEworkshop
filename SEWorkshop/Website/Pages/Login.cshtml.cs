@@ -9,7 +9,7 @@ namespace Website.Pages
 {
     public class LoginModel : PageModel
     {
-        public UserManager UserManager = UserManager.GetInstance();
+        public IUserManager UserManager = new UserManager();
 
         [BindProperty (SupportsGet = true)]
         public string Username { get; set; }
@@ -23,6 +23,7 @@ namespace Website.Pages
         public void OnGet()
         {
             Error = "";
+            UserManager.Register("Noa Kirel", "1234");
         }
 
         public IActionResult OnPost()

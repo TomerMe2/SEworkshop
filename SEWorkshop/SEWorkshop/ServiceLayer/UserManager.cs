@@ -12,7 +12,6 @@ namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        private static UserManager Instance = null;
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         private const string EVENT_LOG_NM = "event_log.txt";
         private const string ERROR_LOG_NM = "error_log.txt";
@@ -23,7 +22,7 @@ namespace SEWorkshop.ServiceLayer
         private ITyposFixerProxy TyposFixerKeywords { get; }
         private ISecurityAdapter SecurityAdapter { get; }
 
-        private UserManager()
+        public UserManager()
         {
             ConfigLog();
             TyposFixerNames = new TyposFixer(new List<string>());
@@ -31,13 +30,6 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerKeywords = new TyposFixer(new List<string>());
             SecurityAdapter = new SecurityAdapter();
             FacadesBridge = new FacadesBridge();
-        }
-
-        public static UserManager GetInstance()
-        {
-            if (Instance == null)
-                Instance = new UserManager();
-            return Instance;
         }
 
         public UserManager(IFacadesBridge facadesBridge)
