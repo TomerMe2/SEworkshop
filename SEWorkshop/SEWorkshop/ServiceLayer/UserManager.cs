@@ -74,7 +74,6 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.SearchStore(storeName);
         }
 
-
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
             Log.Info("FilterProducts was invoked");
