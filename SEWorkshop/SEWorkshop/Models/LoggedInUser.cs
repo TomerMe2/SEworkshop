@@ -193,7 +193,7 @@ namespace SEWorkshop.Models
                 throw new UserIsAlreadyStoreManagerException();
             }
 
-              ownership.AddStoreOwner(newOwner);
+            ownership.AddStoreOwner(newOwner);
             
         }
         
@@ -287,7 +287,7 @@ namespace SEWorkshop.Models
             return false;
         }
 
-        override public void Purchase(Basket basket)
+        override public void Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -305,7 +305,7 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase);
+            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);

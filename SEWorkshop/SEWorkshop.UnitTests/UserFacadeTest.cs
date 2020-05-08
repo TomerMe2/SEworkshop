@@ -17,6 +17,12 @@ namespace SEWorkshop.UnitTests
         private IStoreFacade StrFacade { get; set; }
 
         private ISecurityAdapter securityAdaprer = new SecurityAdapter();
+        
+        const string CREDIT_CARD_NUMBER_STUB = "1234";
+        const string CITY_NAME_STUB = "Beer Sheva";
+        const string STREET_NAME_STUB = "Shderot Ben Gurion";
+        const string HOUSE_NUMBER_STUB = "111";
+        Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
 
         [OneTimeSetUp]
         public void SetUp()
@@ -473,12 +479,12 @@ namespace SEWorkshop.UnitTests
             Product phue_product1 = phue_store1.Products.First(product => product.Name.Equals("phue_product1"));
             MngrFacade.AddProduct(phue_user1, phue_store1, "phue_product2", "blablabla", "cat1", 11.11, 1);
             Product phue_product2 = phue_store1.Products.First(product => product.Name.Equals("phue_product2"));
-            userFacade.AddProductToCart(phue_user1, phue_product1, 1);
-            userFacade.AddProductToCart(phue_user1, phue_product2, 1);
+            UsrFacade.AddProductToCart(phue_user1, phue_product1, 1);
+            UsrFacade.AddProductToCart(phue_user1, phue_product2, 1);
             var basket = phue_user1.Cart.Baskets.ElementAt(0);
             Purchase p = new Purchase(phue_user1, basket);
-            userFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0));
-            var result = userFacade.PurcahseHistory(phue_user1);
+            UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), CREDIT_CARD_NUMBER_STUB, address);
+            var result = UsrFacade.PurchaseHistory(phue_user1);
 
             Assert.That(result.ElementAt(0).User, Is.EqualTo(p.User));
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(p.Basket));

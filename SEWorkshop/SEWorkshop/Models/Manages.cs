@@ -265,7 +265,7 @@ namespace SEWorkshop.Models
             throw new UserHasNoPermissionException();
         }
     }
-    public enum Authorizations
+    /*public enum Authorizations
     {
         Products,
         Owner,
@@ -273,6 +273,6 @@ namespace SEWorkshop.Models
         Authorizing,
         Replying,
         Watching
-    }
+    }*/
 
 }

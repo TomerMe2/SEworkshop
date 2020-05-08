@@ -9,7 +9,7 @@ namespace SEWorkshop.Models
     {
         public GuestUser() : base() { }
         
-        override public void Purchase(Basket basket)
+        override public void Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -27,7 +27,7 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase);
+            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             // TODO when to add purchase to loggedin user purchase history

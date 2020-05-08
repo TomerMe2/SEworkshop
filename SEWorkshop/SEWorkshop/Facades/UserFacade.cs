@@ -143,7 +143,7 @@ namespace SEWorkshop.Facades
         
       
       
-        public IEnumerable<Purchase> PurcahseHistory(User user)
+        public IEnumerable<Purchase> PurchaseHistory(User user)
         {
 
             log.Info("User tries to seek its purchase history");
@@ -163,9 +163,9 @@ namespace SEWorkshop.Facades
             log.Info("Purchase history seek has been completed successfully");
             return userPurchases;
         }
-        public void Purchase(User user, Basket basket)
+        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            user.Purchase(basket);
+            user.Purchase(basket, creditCardNumber, address);
         }
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
@@ -182,14 +182,27 @@ namespace SEWorkshop.Facades
                 throw new UserDoesNotExistException();
             }
             log.Info("Data has been fetched successfully");
-            return PurcahseHistory(user);
+            return PurchaseHistory(user);
         }
         public void AddProductToCart(User user, Product product, int quantity)
         {
+            if (!StoreFacade.IsProductExists(product))
+            {
+                throw new ProductNotInTradingSystemException();
+            }
             user.AddProductToCart(product, quantity);
         }
 
-        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        public void RemoveProductFromCart(User user, Product product, int quantity)
+        {
+            if (!StoreFacade.IsProductExists(product))
+            {
+                throw new ProductNotInTradingSystemException();
+            }
+            user.RemoveProductFromCart(user, product, quantity);
+        }
+
+        /*public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
             log.Info("User tries to purchase a basket");
             if (basket.Products.Count == 0)
@@ -197,7 +210,7 @@ namespace SEWorkshop.Facades
                 log.Info("User tried to purchase an empty basket");
                 throw new BasketIsEmptyException();
             }
-             Purchase purchase;
+            Purchase purchase;
             if (HasPermission)
                 purchase = new Purchase(user, basket);
             else
@@ -237,9 +250,9 @@ namespace SEWorkshop.Facades
                 log.Info("Purchase has failed");
                 throw new PurchaseFailedException();
             }
-        }
+        }*/
 
-        public IEnumerable<Purchase> PurcahseHistory(User user)
+        /*public IEnumerable<Purchase> PurcahseHistory(User user)
         {
             if (!HasPermission)
             {
@@ -252,7 +265,7 @@ namespace SEWorkshop.Facades
             Message message = new Message(loggedInUser, description);
             store.Messages.Add(message);
             ((LoggedInUser)loggedInUser).Messages.Add(message);
-        }
+        }*/
         public IEnumerable<Purchase> UserPurchaseHistory(User LoggedInUser, string userNmToView)
         {
             if (!Administrators.Contains(LoggedInUser))

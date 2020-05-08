@@ -12,6 +12,11 @@ namespace SEWorkshop.Tests
     public class StoreTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
+        const string CREDIT_CARD_NUMBER_STUB = "1234";
+        const string CITY_NAME_STUB = "Beer Sheva";
+        const string STREET_NAME_STUB = "Shderot Ben Gurion";
+        const string HOUSE_NUMBER_STUB = "111";
+        Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
         //public void CloseStore()
         [Test]
         public void CloseStore_StoreIsOpen_StoreClosed()
@@ -51,7 +56,7 @@ namespace SEWorkshop.Tests
             var pb_prod1 = pb_store1.SearchProducts(product => product.Name.Equals("pb_prod1")).ElementAt(0);
             try
             {
-                pb_store1.PurchaseBasket(new List<(Product, int)>() {(pb_prod1, 2)});
+                pb_store1.PurchaseBasket(new List<(Product, int)>() {(pb_prod1, 2)}, CREDIT_CARD_NUMBER_STUB, address);
                 Assert.Fail();
             }
             catch (NegativeInventoryException e)
@@ -72,7 +77,7 @@ namespace SEWorkshop.Tests
            // pb_user2.Manage.Add(new Manages(pb_user2, pb_store2));
             pb_user2.AddProduct(pb_store2,"pb_prod2", "ninini", "cat1", 11.111, 1);
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
-            pb_store2.PurchaseBasket(new List<(Product, int)>(){(pb_prod2, 1)});
+            pb_store2.PurchaseBasket(new List<(Product, int)>(){(pb_prod2, 1)}, CREDIT_CARD_NUMBER_STUB, address);
             Assert.That(pb_prod2.Quantity, Is.EqualTo(0));
         }
     }

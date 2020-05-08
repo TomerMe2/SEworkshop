@@ -29,7 +29,10 @@ namespace SEWorkshop.Models
         {
             
                 log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-                Store.Owners.TryAdd(newOwner, LoggedInUser);
+                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                {
+                    throw new UserIsAlreadyStoreOwnerException();
+                }
                 Owns ownership = new Owns(newOwner, Store);
                 newOwner.Owns.Add(ownership);
 

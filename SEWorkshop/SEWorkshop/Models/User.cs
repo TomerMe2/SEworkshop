@@ -23,10 +23,6 @@ namespace SEWorkshop.Models
         public void AddProductToCart(Product product, int quantity)
         {
             //TODO ask amit about store products
-            if (!StoreFacade.GetInstance().IsProductExists(product))
-            {
-                throw new ProductNotInTradingSystemException();
-            }
             if (quantity < 1)
             {
                 throw new NegativeQuantityException();
@@ -89,7 +85,7 @@ namespace SEWorkshop.Models
             throw new ProductIsNotInCartException();
         }
 
-        public abstract void Purchase(Basket basket);
+        public abstract void Purchase(Basket basket, string creditCardNumber, Address address);
         /*{
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();

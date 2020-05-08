@@ -67,12 +67,14 @@ namespace SEWorkshop.Models
                 select product).ToList();
         }
 
-        public void PurchaseBasket(ICollection<(Product, int)> itemsList)
+        public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address)
         {
-            const string CREDIT_CARD_NUMBER_STUB = "1234";
+            /*const string CREDIT_CARD_NUMBER_STUB = "1234";
             const string CITY_NAME_STUB = "Beer Sheva";
             const string STREET_NAME_STUB = "Shderot Ben Gurion";
             const string HOUSE_NUMBER_STUB = "111";
+            Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);*/
+            
             /*foreach (var (prod, purchaseQuantity) in itemsList)
             {
                 if (purchaseQuantity <= 0)
@@ -87,10 +89,10 @@ namespace SEWorkshop.Models
                     throw new NegativeInventoryException();
                 }
             }
-            if (supplyAdapter.CanSupply(itemsList, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB)
-                && billingAdapter.Bill(itemsList, CREDIT_CARD_NUMBER_STUB))
+            if (supplyAdapter.CanSupply(itemsList, address)
+                && billingAdapter.Bill(itemsList, creditCardNumber))
             {
-                supplyAdapter.Supply(itemsList, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+                supplyAdapter.Supply(itemsList, address);
                 // Update the quantity in the product itself
                 foreach (var (prod, purchaseQuantity) in itemsList)
                 {
