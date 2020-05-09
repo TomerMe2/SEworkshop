@@ -26,10 +26,10 @@ namespace Website.Pages
             SearchResult = new List<DataProduct>();
         }
 
-        public void OnPost()
+        public void OnPost(string searchText, string searchCategory)
         {
-            RequestedSearchString = Request.Form["searchText"];
-            SearchCategory = Request.Form["searchCategory"];
+            RequestedSearchString = searchText;
+            SearchCategory = searchCategory;
             string searchString = RequestedSearchString;
             SearchResult = SearchCategory switch
             {
