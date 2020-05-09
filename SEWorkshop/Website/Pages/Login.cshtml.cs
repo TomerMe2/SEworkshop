@@ -9,7 +9,7 @@ namespace Website.Pages
 {
     public class LoginModel : PageModel
     {
-        public IUserManager UserManager = new UserManager();
+        private IUserManager UserManager;
 
         [BindProperty (SupportsGet = true)]
         public string Username { get; set; }
@@ -20,10 +20,13 @@ namespace Website.Pages
         [BindProperty(SupportsGet = true)]
         public string Error { get; set; }
 
+        public LoginModel(IUserManager userManager)
+        {
+            UserManager = userManager;
+        }
         public void OnGet()
         {
             Error = "";
-            UserManager.Register("Noa Kirel", "1234");
         }
 
         public IActionResult OnPost()
@@ -32,14 +35,14 @@ namespace Website.Pages
             {
                 UserManager.Login(Username, Password);
             }
+            catch (ArgumentException e)
+            {
+                Error = e.Message;
+                return new PageResult();
+            }
             catch (UserDoesNotExistException)
             {
                 Error = "Username or password are incorrect";
-                return new PageResult();
-            }
-            catch(ArgumentException e)
-            {
-                Error = e.Message;
                 return new PageResult();
             }
             catch(UserAlreadyLoggedInException)
