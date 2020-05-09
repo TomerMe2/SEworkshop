@@ -1,0 +1,13 @@
+﻿@page
+@model Website.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+    <div class="allpage">
+        <form class="loginform" method="post">
+            <input class="input" type="text" asp-for="Username" placeholder="Username" />
+            <input class="input" type="text" asp-for="Password" placeholder="Password" />
+            <button class="submit" type="submit" id="submit">Login</button>
+            <text class="alert-danger">@Model.Error</text>
+        </form>
+    </div>

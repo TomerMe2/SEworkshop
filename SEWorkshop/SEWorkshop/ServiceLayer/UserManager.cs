@@ -79,7 +79,7 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("Login was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("username or password are empty");
+                throw new ArgumentException("Username or password are empty");
             }
             FacadesBridge.Login(username, SecurityAdapter.Encrypt(password));
         }
