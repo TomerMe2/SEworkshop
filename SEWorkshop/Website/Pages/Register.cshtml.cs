@@ -24,6 +24,9 @@ namespace Website.Pages
         public RegisterModel(IUserManager userManager)
         {
             UserManager = userManager;
+            Username = "";
+            Password = "";
+            Error = "";
         }
         public void OnGet()
         {
