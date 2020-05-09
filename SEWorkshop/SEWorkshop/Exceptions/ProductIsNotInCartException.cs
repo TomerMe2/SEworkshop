@@ -9,5 +9,6 @@ namespace SEWorkshop.Exceptions
         protected ProductIsNotInCartException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "Product is not in the cart";
     }
 }

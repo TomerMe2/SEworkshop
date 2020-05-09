@@ -35,19 +35,9 @@ namespace Website.Pages
             {
                 UserManager.Login(Username, Password);
             }
-            catch (ArgumentException e)
+            catch (Exception e)
             {
-                Error = e.Message;
-                return new PageResult();
-            }
-            catch (UserDoesNotExistException)
-            {
-                Error = "Username or password are incorrect";
-                return new PageResult();
-            }
-            catch(UserAlreadyLoggedInException)
-            {
-                Error = "You are already logged in";
+                Error = e.ToString();
                 return new PageResult();
             }
             return RedirectToPage("./Index", new { Username = Username });

@@ -384,8 +384,6 @@ namespace SEWorkshop.Facades
                 throw new UserHasNoPermissionException();
             }
             return UserFacade.UserPurchaseHistory((LoggedInUser)CurrUser, userNm).Select(prchs => new DataPurchase(prchs));
-
-
         }
 
         public IEnumerable<DataMessage> ViewMessage(string storeName)
