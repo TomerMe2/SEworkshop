@@ -12,5 +12,6 @@ namespace SEWorkshop.Exceptions
         protected BasketNotInSystemException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "Basket does not exist in the system";
     }
 }

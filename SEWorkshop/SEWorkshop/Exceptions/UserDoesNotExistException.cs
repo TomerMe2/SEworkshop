@@ -9,5 +9,6 @@ namespace SEWorkshop.Exceptions
         protected UserDoesNotExistException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "Username or password are incorrect";
     }
 }

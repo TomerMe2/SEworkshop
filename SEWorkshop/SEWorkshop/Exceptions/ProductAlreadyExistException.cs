@@ -12,5 +12,6 @@ namespace SEWorkshop.Exceptions
         protected ProductAlreadyExistException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "Product already exists";
     }
 }
