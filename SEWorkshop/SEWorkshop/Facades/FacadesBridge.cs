@@ -40,6 +40,11 @@ namespace SEWorkshop.Facades
             return new DataProduct(product);
         }
 
+        public DataStore SearchStore(string storeName)
+        {
+            return new DataStore(GetStore(storeName));
+        }
+
         public LoggedInUser GetUser(string userName)
         {
             return UserFacade.GetUser(userName);
