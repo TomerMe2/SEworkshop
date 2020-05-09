@@ -85,7 +85,7 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("Login was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("username or password are empty");
+                throw new UsernameOrPasswordAreEmpty();
             }
             FacadesBridge.Login(username, SecurityAdapter.Encrypt(password));
         }
@@ -119,7 +119,7 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("Register was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("username or password are empty");
+                throw new UsernameOrPasswordAreEmpty();
             }
             FacadesBridge.Register(username, SecurityAdapter.Encrypt(password));
         }

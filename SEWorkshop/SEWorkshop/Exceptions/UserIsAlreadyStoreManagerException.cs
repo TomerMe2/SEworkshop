@@ -9,5 +9,6 @@
         protected UserIsAlreadyStoreManagerException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "This user is already manager of this store";
     }
 }
