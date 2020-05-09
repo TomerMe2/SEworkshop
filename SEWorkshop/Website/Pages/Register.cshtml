@@ -1,14 +1,14 @@
 ﻿@page
-@model Website.Pages.LoginModel
+@model Website.Pages.RegisterModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
     <div class="allpage">
-        <h1 class="display-4">Login</h1>
+        <h1 class="display-4">Register</h1>
         <form class="loginform" method="post">
             <input class="input" type="text" asp-for="Username" placeholder="Username" />
             <input class="input" type="text" asp-for="Password" placeholder="Password" />
-            <button class="submit" type="submit" id="submit">Login</button>
+            <button class="submit" type="submit" id="submit">Register</button>
             <text class="alert-danger">@Model.Error</text>
         </form>
     </div>
