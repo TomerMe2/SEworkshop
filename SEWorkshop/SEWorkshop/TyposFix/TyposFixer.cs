@@ -13,7 +13,7 @@ namespace SEWorkshop.TyposFix
 	public class TyposFixer : ITyposFixerProxy
 	{
 		private readonly Dictionary<String, int> _dictionary = new Dictionary<String, int>();
-		private static readonly Regex _wordRegex = new Regex("[a-z]+", RegexOptions.Compiled);
+		private readonly Regex _wordRegex = new Regex("[a-z]+", RegexOptions.Compiled);
 
 		public TyposFixer(List<string> wordList)
 		{

@@ -129,6 +129,16 @@ namespace SEWorkshop.Facades
             ManageFacade.EditProductDescription((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), description);
         }
 
+        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization)
+        {
+            if (!UserFacade.HasPermission)
+            {
+                Log.Info("user has no permission");
+                throw new UserHasNoPermissionException();
+            }
+            ManageFacade.RemovePermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
+        }
+
         public void EditProductName(string storeName, string productName, string name)
         {
             if (!UserFacade.HasPermission)
