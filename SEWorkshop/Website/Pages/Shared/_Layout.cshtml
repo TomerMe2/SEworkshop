@@ -30,6 +30,9 @@
         </nav>
     </header>
     <div class="container">
+        <div>
+            @{ await Html.RenderPartialAsync("SearchBar", new SearchBarModel()); }
+        </div>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

@@ -1,0 +1,23 @@
+﻿@page
+@model Website.Pages.SearchResultModel
+@{
+    ViewData["Title"] = "SearchResult";
+}
+
+@{
+    if(!Model.ActualSearchString.Equals(Model.RequestedSearchString))
+    {
+        @:<h6>Got no results for @Model.RequestedSearchString, Show results for @Model.ActualSearchString</h6>
+    }
+    if (!Model.SearchResult.Any())
+    {
+        @:<h3>No results</h3>
+    }
+    else
+    {
+        foreach(var product in Model.SearchResult)
+        {
+            await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+        }
+    }
+}
