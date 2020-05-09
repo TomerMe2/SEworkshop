@@ -25,7 +25,7 @@ namespace SEWorkshop.Facades
             UserFacade = new UserFacade(StoreFacade);
             CurrUser = new GuestUser();
         }
-        public DataProduct AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
+        public DataProduct AddProduct(DataUser user, string storeName, string productName, string description, string category, double price, int quantity)
         {
             Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
                 " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
@@ -45,7 +45,7 @@ namespace SEWorkshop.Facades
             return new DataStore(GetStore(storeName));
         }
 
-        public LoggedInUser GetUser(string userName)
+        private LoggedInUser GetUser(string userName)
         {
             return UserFacade.GetUser(userName);
         }
@@ -71,7 +71,7 @@ namespace SEWorkshop.Facades
             return product;
         }
 
-        public void AddProductToCart(string storeName, string productName, int quantity)
+        public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
@@ -84,7 +84,7 @@ namespace SEWorkshop.Facades
             UserFacade.AddProductToCart(CurrUser, GetProduct(storeName, productName), quantity);
         }
 
-        public void AddStoreManager(string storeName, string newManagerUserName)
+        public void AddStoreManager(DataUser user, string storeName, string newManagerUserName)
         {
             Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
                storeName, newManagerUserName));
@@ -99,7 +99,7 @@ namespace SEWorkshop.Facades
             }
         }
 
-        public void AddStoreOwner(string storeName, string newOwnerUserName)
+        public void AddStoreOwner(DataUser user, string storeName, string newOwnerUserName)
         {
             Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}",
                storeName, newOwnerUserName));
@@ -116,7 +116,7 @@ namespace SEWorkshop.Facades
             return StoreFacade.BrowseStores().Select(store => new DataStore(store));
         }
 
-        public void EditProductCategory(string storeName, string productName, string category)
+        public void EditProductCategory(DataUser user, string storeName, string productName, string category)
         {
             if (!UserFacade.HasPermission)
             {
@@ -125,7 +125,7 @@ namespace SEWorkshop.Facades
             ManageFacade.EditProductCategory((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), category);
         }
 
-        public void EditProductDescription(string storeName, string productName, string description)
+        public void EditProductDescription(DataUser user, string storeName, string productName, string description)
         {
             if (!UserFacade.HasPermission)
             {
@@ -134,7 +134,7 @@ namespace SEWorkshop.Facades
             ManageFacade.EditProductDescription((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), description);
         }
 
-        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization)
+        public void RemovePermissionsOfManager(DataUser user, string storeName, string username, Authorizations authorization)
         {
             if (!UserFacade.HasPermission)
             {
@@ -144,7 +144,7 @@ namespace SEWorkshop.Facades
             ManageFacade.RemovePermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
         }
 
-        public void EditProductName(string storeName, string productName, string name)
+        public void EditProductName(DataUser user, string storeName, string productName, string name)
         {
             if (!UserFacade.HasPermission)
             {
@@ -153,7 +153,7 @@ namespace SEWorkshop.Facades
             ManageFacade.EditProductName((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), name);
         }
 
-        public void EditProductPrice(string storeName, string productName, double price)
+        public void EditProductPrice(DataUser user, string storeName, string productName, double price)
         {
             if (!UserFacade.HasPermission)
             {
@@ -162,7 +162,7 @@ namespace SEWorkshop.Facades
             ManageFacade.EditProductPrice((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), price);
         }
 
-        public void EditProductQuantity(string storeName, string productName, int quantity)
+        public void EditProductQuantity(DataUser user, string storeName, string productName, int quantity)
         {
             if (!UserFacade.HasPermission)
             {
@@ -193,7 +193,7 @@ namespace SEWorkshop.Facades
             CurrUser = new GuestUser();
         }
 
-        public IEnumerable<DataPurchase> ManagingPurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataUser user, string storeName)
         {
             Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
             if (!UserFacade.HasPermission)
@@ -204,7 +204,7 @@ namespace SEWorkshop.Facades
             return ManageFacade.ViewPurchaseHistory((LoggedInUser)CurrUser, GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
         }
 
-        public DataMessage MessageReply(DataMessage message, string storeName, string description)
+        public DataMessage MessageReply(DataUser user, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
             if (!UserFacade.HasPermission)
@@ -239,12 +239,12 @@ namespace SEWorkshop.Facades
             return new DataMessage(ManageFacade.MessageReply((LoggedInUser)CurrUser, toAnswerOn, GetStore(storeName), description));
         }
 
-        public IEnumerable<DataBasket> MyCart()
+        public IEnumerable<DataBasket> MyCart(DataUser user)
         {
             return CurrUser.Cart.Baskets.Select(bskt => new DataBasket(bskt));
         }
 
-        public void OpenStore(string storeName)
+        public void OpenStore(DataUser user, string storeName)
         {
             Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
             if (CurrUser is GuestUser)
@@ -255,12 +255,12 @@ namespace SEWorkshop.Facades
             StoreFacade.CreateStore((LoggedInUser)CurrUser, storeName);
         }
 
-        public IEnumerable<DataPurchase> PurchaseHistory()
+        public IEnumerable<DataPurchase> PurchaseHistory(DataUser user)
         {
             return UserFacade.PurchaseHistory(CurrUser).Select(prchs => new DataPurchase(prchs));
         }
 
-        public void Purchase(DataBasket basket, string creditCardNum, Address address)
+        public void Purchase(DataUser user, DataBasket basket, string creditCardNum, Address address)
         {
             Basket? trueBasket = CurrUser.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
             if (trueBasket is null)
@@ -275,7 +275,7 @@ namespace SEWorkshop.Facades
             UserFacade.Register(username, password);
         }
 
-        public void RemoveProduct(string storeName, string productName)
+        public void RemoveProduct(DataUser user, string storeName, string productName)
         {
             Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
             if (!UserFacade.HasPermission)
@@ -288,7 +288,7 @@ namespace SEWorkshop.Facades
             ManageFacade.RemoveProduct((LoggedInUser)CurrUser, store, product);
         }
 
-        public void RemoveProductFromCart(string storeName, string productName, int quantity)
+        public void RemoveProductFromCart(DataUser user, string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("RemoveProductFromCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
@@ -301,7 +301,7 @@ namespace SEWorkshop.Facades
             UserFacade.RemoveProductFromCart(CurrUser, GetProduct(storeName, productName), quantity);
         }
 
-        public void RemoveStoreManager(string storeName, string username)
+        public void RemoveStoreManager(DataUser user, string storeName, string username)
         {
             Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
                storeName, username));
@@ -358,7 +358,7 @@ namespace SEWorkshop.Facades
             return SearchProducts(product => product.Name.ToLower().Replace('_', ' ').Equals(localInput)).Select(prod => new DataProduct(prod));
         }
 
-        public void SetPermissionsOfManager(string storeName, string username, Authorizations authorization)
+        public void SetPermissionsOfManager(DataUser user, string storeName, string username, Authorizations authorization)
         {
             if (!UserFacade.HasPermission)
             {
@@ -368,7 +368,7 @@ namespace SEWorkshop.Facades
             ManageFacade.SetPermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
         }
 
-        public IEnumerable<DataPurchase> StorePurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> StorePurchaseHistory(DataUser user, string storeName)
         {
             Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
             if (!UserFacade.HasPermission)
@@ -380,7 +380,7 @@ namespace SEWorkshop.Facades
 
         }
 
-        public IEnumerable<DataPurchase> UserPurchaseHistory(string userNm)
+        public IEnumerable<DataPurchase> UserPurchaseHistory(DataUser user, string userNm)
         {
             Log.Info(string.Format("WriteReview was invoked with userName {0}", userNm));
             if (!UserFacade.HasPermission)
@@ -391,7 +391,7 @@ namespace SEWorkshop.Facades
             return UserFacade.UserPurchaseHistory((LoggedInUser)CurrUser, userNm).Select(prchs => new DataPurchase(prchs));
         }
 
-        public IEnumerable<DataMessage> ViewMessage(string storeName)
+        public IEnumerable<DataMessage> ViewMessage(DataUser user, string storeName)
         {
             Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
             if (!UserFacade.HasPermission)
@@ -402,14 +402,14 @@ namespace SEWorkshop.Facades
             return ManageFacade.ViewMessage((LoggedInUser)CurrUser, GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
-        public void WriteMessage(string storeName, string description)
+        public void WriteMessage(DataUser user, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
             UserFacade.WriteMessage(CurrUser, GetStore(storeName), description);
         }
 
-        public void WriteReview(string storeName, string productName, string description)
+        public void WriteReview(DataUser user, string storeName, string productName, string description)
         {
             Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
                 storeName, productName, description));
