@@ -23,6 +23,9 @@ namespace Website.Pages
         public LoginModel(IUserManager userManager)
         {
             UserManager = userManager;
+            Username = "";
+            Password = "";
+            Error = "";
         }
         public void OnGet()
         {
@@ -33,6 +36,7 @@ namespace Website.Pages
         {
             try
             {
+                UserManager.Register(Username, Password);
                 UserManager.Login(Username, Password);
             }
             catch (Exception e)
