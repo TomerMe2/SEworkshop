@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEWorkshop", "SEWorkshop\SE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEWorkshop.Tests", "SEWorkshop.UnitTests\SEWorkshop.Tests.csproj", "{865BDA36-9381-481F-BF3C-382A73A40817}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{481F1097-437A-4E44-B896-F84769C40C83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Website", "Website\Website.csproj", "{481F1097-437A-4E44-B896-F84769C40C83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

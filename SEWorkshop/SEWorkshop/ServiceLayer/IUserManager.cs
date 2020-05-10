@@ -9,6 +9,7 @@ namespace SEWorkshop.ServiceLayer
     {
         public void AddProductToCart(string storeName, string productName, int quantity);
         public IEnumerable<DataStore> BrowseStores();
+        public DataStore SearchStore(string storeName);
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred);
         public void Login(string username, string password);
         public void Logout();

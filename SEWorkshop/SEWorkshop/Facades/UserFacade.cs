@@ -16,9 +16,9 @@ namespace SEWorkshop.Facades
         private ICollection<Purchase> Purchases {get; set;}
         public bool HasPermission {get; private set;}
 
-        private static readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
-        private static readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
-        private static readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
+        private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
+        private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
+        private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -29,6 +29,11 @@ namespace SEWorkshop.Facades
             Purchases = new List<Purchase>();
             Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
             HasPermission = false;
+        }
+
+        public void AddPurchaseToList(Purchase p)
+        {
+            Purchases.Add(p);
         }
 
         public LoggedInUser GetUser(string username)
@@ -95,6 +100,7 @@ namespace SEWorkshop.Facades
                     {
                         log.Info("Logging in has been completed successfully");
                         HasPermission = true;
+                        user.HasPermission = true;
                         return user;
                     }
                     break;
@@ -135,87 +141,68 @@ namespace SEWorkshop.Facades
             return user.Cart.Baskets;
         }
         
-        public void AddProductToCart(User user, Product product, int quantity)
+      
+      
+        public IEnumerable<Purchase> PurchaseHistory(User user)
         {
-            log.Info("User tries to add a product to cart");
-            if (!StoreFacade.IsProductExists(product))
+
+            log.Info("User tries to seek its purchase history");
+            if(!HasPermission)
             {
-                log.Info("User tried to add an unexisting product to cart");
-                throw new ProductNotInTradingSystemException();
+                log.Info("An unsigned in user cannot have permission for that action");
+                throw new UserHasNoPermissionException();
             }
-            if (quantity < 1)
+            ICollection<Purchase> userPurchases = new List<Purchase>();
+            foreach(var purchase in Purchases)
             {
-                log.Info("User tried to add a product with no quantity to cart");
-                throw new NegativeQuantityException();
-            }
-            if (product.Quantity - quantity < 0)
-            {
-                log.Info("User tried to add a product with unavailable amount to cart");
-                throw new NegativeInventoryException();
-            }
-            Cart cart = user.Cart;
-            foreach(var basket in cart.Baskets)
-            {
-                if(product.Store == basket.Store)
+                if(purchase.User == user)
                 {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (!(recordProd is null))
-                    {
-                        quantity = quantity + recordQuan;
-                        // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
-                        basket.Products.Remove((recordProd, recordQuan));  //so we can add it later :)
-                    }
-                    basket.Products.Add((product, quantity));
-                    log.Info("Product has been added to cart successfully");
-                    return;  // basket found and updated. Nothing more to do here...
+                    userPurchases.Add(purchase);
                 }
             }
-            // if we got here, the correct basket doesn't exists now, so we should create it!
-            log.Info("Product has been added to a new basket in cart");
-            Basket newBasket = new Basket(product.Store);
-            user.Cart.Baskets.Add(newBasket);
-            newBasket.Products.Add((product, quantity));
+            log.Info("Purchase history seek has been completed successfully");
+            return userPurchases;
+        }
+        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        {
+            user.Purchase(basket, creditCardNumber, address, this);
+        }
+        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
+        {
+            log.Info("Admin tries to seek {0}'s purchase history", userNmToView);
+            if (!Administrators.Contains(requesting))
+            {
+                log.Info("A unauthorized user tried to fetch data without permission");
+                throw new UserHasNoPermissionException();
+            }
+            var user = Users.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
+            if(user is null)
+            {
+                log.Info("User does not exist");
+                throw new UserDoesNotExistException();
+            }
+            log.Info("Data has been fetched successfully");
+            return PurchaseHistory(user);
+        }
+        public void AddProductToCart(User user, Product product, int quantity)
+        {
+            if (!StoreFacade.IsProductExists(product))
+            {
+                throw new ProductNotInTradingSystemException();
+            }
+            user.AddProductToCart(product, quantity);
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
         {
-            log.Info("User tries to remove a product from cart");
-            if (quantity < 1)
+            if (!StoreFacade.IsProductExists(product))
             {
-                log.Info("User tried to remove a product with no quantity from cart");
-                throw new NegativeQuantityException();
+                throw new ProductNotInTradingSystemException();
             }
-            foreach (var basket in user.Cart.Baskets)
-            {
-                if(product.Store == basket.Store)
-                {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (recordProd is null)
-                    {
-                        log.Info("User tried to remove a product that is not in the cart");
-                        throw new ProductIsNotInCartException();
-                    }
-                    int quantityDelta = recordQuan - quantity;
-                    if (quantityDelta < 0)
-                    {
-                        log.Info("User tried to remove too much of this product");
-                        throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
-                    }
-                    basket.Products.Remove((recordProd, recordQuan));
-                    if (quantityDelta > 0)
-                    {
-                        // The item should still be in the basket because it still has a positive quantity
-                        basket.Products.Add((product, quantityDelta));
-                    }
-                    log.Info("Product has been removed from cart successfully");
-                    return;
-                }
-            }
-            log.Info("User tried to remove a product that is not in the cart");
-            throw new ProductIsNotInCartException();
+            user.RemoveProductFromCart(user, product, quantity);
         }
 
-        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        /*public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
             log.Info("User tries to purchase a basket");
             if (basket.Products.Count == 0)
@@ -263,45 +250,37 @@ namespace SEWorkshop.Facades
                 log.Info("Purchase has failed");
                 throw new PurchaseFailedException();
             }
-        }
+        }*/
 
-        public IEnumerable<Purchase> PurchaseHistory(User user)
+        /*public IEnumerable<Purchase> PurcahseHistory(User user)
         {
-            log.Info("User tries to seek its purchase history");
-            if(!HasPermission)
+            if (!HasPermission)
             {
-                log.Info("An unsigned in user cannot have permission for that action");
                 throw new UserHasNoPermissionException();
             }
-            ICollection<Purchase> userPurchases = new List<Purchase>();
-            foreach(var purchase in Purchases)
+            if (description.Length == 0)
             {
-                if(purchase.User == user)
-                {
-                    userPurchases.Add(purchase);
-                }
+                throw new MessageIsEmptyException();
             }
-            log.Info("Purchase history seek has been completed successfully");
-            return userPurchases;
-        }
-
-        public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
+            Message message = new Message(loggedInUser, description);
+            store.Messages.Add(message);
+            ((LoggedInUser)loggedInUser).Messages.Add(message);
+        }*/
+        public IEnumerable<Purchase> UserPurchaseHistory(User LoggedInUser, string userNmToView)
         {
-            log.Info("Admin tries to seek {0}'s purchase history", userNmToView);
-            if (!Administrators.Contains(requesting))
+            if (!Administrators.Contains(LoggedInUser))
             {
-                log.Info("A unauthorized user tried to fetch data without permission");
                 throw new UserHasNoPermissionException();
             }
             var user = Users.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
-            if(user is null)
+            if (user is null)
             {
-                log.Info("User does not exist");
                 throw new UserDoesNotExistException();
             }
             log.Info("Data has been fetched successfully");
             return PurchaseHistory(user);
         }
+
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {

@@ -12,7 +12,7 @@ namespace SEWorkshop.ServiceLayer
 {
     public class UserManager : IUserManager
     {
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+        private readonly Logger Log = LogManager.GetCurrentClassLogger();
         private const string EVENT_LOG_NM = "event_log.txt";
         private const string ERROR_LOG_NM = "error_log.txt";
 
@@ -68,6 +68,12 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.BrowseStores();
         }
 
+        public DataStore SearchStore(string storeName)
+        {
+            Log.Info("BrowseStores was invoked");
+            return FacadesBridge.SearchStore(storeName);
+        }
+
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
             Log.Info("FilterProducts was invoked");
@@ -79,7 +85,7 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("Login was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("username or password are empty");
+                throw new UsernameOrPasswordAreEmpty();
             }
             FacadesBridge.Login(username, SecurityAdapter.Encrypt(password));
         }
@@ -113,7 +119,7 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("Register was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("username or password are empty");
+                throw new UsernameOrPasswordAreEmpty();
             }
             FacadesBridge.Register(username, SecurityAdapter.Encrypt(password));
         }
@@ -298,6 +304,24 @@ namespace SEWorkshop.ServiceLayer
                 _ => throw new AuthorizationDoesNotExistException(),
             };
             FacadesBridge.SetPermissionsOfManager(storeName, username, authorization);
+          
+        }
+        
+        public void RemovePermissionsOfManager(string storeName, string username, string auth)
+        {
+            Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
+                storeName, username, auth));
+            var authorization = auth switch
+            {
+                "Products" => Authorizations.Products,
+                "Owner" => Authorizations.Owner,
+                "Manager" => Authorizations.Manager,
+                "Authorizing" => Authorizations.Authorizing,
+                "Replying" => Authorizations.Replying,
+                "Watching" => Authorizations.Watching,
+                _ => throw new AuthorizationDoesNotExistException(),
+            };
+            FacadesBridge.RemovePermissionsOfManager(storeName, username, authorization);
           
         }
 

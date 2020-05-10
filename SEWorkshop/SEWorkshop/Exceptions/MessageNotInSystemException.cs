@@ -12,5 +12,6 @@ namespace SEWorkshop.Exceptions
         protected MessageNotInSystemException(
             System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public override string ToString() => "Message does not exist in the system";
     }
 }

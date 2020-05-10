@@ -9,6 +9,7 @@ namespace SEWorkshop.Facades
     {
         public void AddProductToCart(string storeName, string productName, int quantity);
         public IEnumerable<DataStore> BrowseStores();
+        public DataStore SearchStore(string storeName);
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred);
         public void Login(string username, byte[] password);
         public void Logout();
@@ -52,5 +53,6 @@ namespace SEWorkshop.Facades
         public void EditProductPrice(string storeName, string productName, double price);
         public void EditProductQuantity(string storeName, string productName, int quantity);
         public void EditProductDescription(string storeName, string productName, string description);
+        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization);
     }
 }

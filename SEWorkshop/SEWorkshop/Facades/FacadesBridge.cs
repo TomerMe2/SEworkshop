@@ -18,7 +18,6 @@ namespace SEWorkshop.Facades
 
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-
         public FacadesBridge()
         {
             ManageFacade = new ManageFacade();
@@ -39,7 +38,11 @@ namespace SEWorkshop.Facades
                                                           productName, description, category, price, quantity);
 
             return new DataProduct(product);
+        }
 
+        public DataStore SearchStore(string storeName)
+        {
+            return new DataStore(GetStore(storeName));
         }
 
         public LoggedInUser GetUser(string userName)
@@ -129,6 +132,16 @@ namespace SEWorkshop.Facades
                 throw new UserHasNoPermissionException();
             }
             ManageFacade.EditProductDescription((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), description);
+        }
+
+        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization)
+        {
+            if (!UserFacade.HasPermission)
+            {
+                Log.Info("user has no permission");
+                throw new UserHasNoPermissionException();
+            }
+            ManageFacade.RemovePermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
         }
 
         public void EditProductName(string storeName, string productName, string name)
@@ -376,8 +389,6 @@ namespace SEWorkshop.Facades
                 throw new UserHasNoPermissionException();
             }
             return UserFacade.UserPurchaseHistory((LoggedInUser)CurrUser, userNm).Select(prchs => new DataPurchase(prchs));
-
-
         }
 
         public IEnumerable<DataMessage> ViewMessage(string storeName)
