@@ -17,7 +17,7 @@ namespace SEWorkshop.Models
         public ICollection<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
         public string Name { get; private set; }
-        public Policy Policy { get; private set; }
+        //public Policy Policy { get; private set; }
         public ICollection<Purchase> Purchases {get; private set; }
         
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
@@ -35,7 +35,7 @@ namespace SEWorkshop.Models
             IsOpen = true;
             Discounts = new List<Discount>();
             Name = name;
-            Policy = new Policy();
+            //Policy = new Policy();
             Purchases = new List<Purchase>();
             Owns owns = new Owns(owner, this);
             owner.Owns.Add(owns);

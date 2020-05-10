@@ -1,52 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace SEWorkshop.Models
 {
-    public class Policy
+    public enum Operator
     {
-        public ICollection<Rule> Rules { get; private set; }
-        public ICollection<Product> Products { get; private set; }
+        And,
+        Or,
+        Xor
+    }
+
+    public abstract class Policy
+    {
+        public (Policy, Operator)? InnerPolicy { get; set; }
         
-        public Policy()
+        public Store Store { get; }
+        
+        public Policy(Store store)
         {
-            Products = new List<Product>();
-            Rules = new List<Rule>();
+            Store = store;
         }
 
-        public override string ToString()
+        protected Basket? GetBasket(User user)
         {
-            string output = "Rules:\n";
-            foreach (var Rule in Rules)
-            {
-                output += Rule.ToString() + "\n";
-            }
-            return output;
+            return user.Cart.Baskets.FirstOrDefault(bskt => bskt.Store == Store);
         }
 
-        public class Rule
+        protected abstract bool IsThisPolicySatisfied(User user);
+
+        public bool CanPurchase(User user)
         {
-            public int Number { get; private set; }
-            public string Description { get; private set;}
-            public ICollection<Rule> References { get; private set;}
-
-            public Rule(int number, string description)
+            if (InnerPolicy is null)
             {
-                Number = number;
-                Description = description;
-                References = new List<Rule>();
+                return IsThisPolicySatisfied(user);
             }
-
-            public override string ToString()
+            Policy other = InnerPolicy.Value.Item1;
+            return InnerPolicy.Value.Item2 switch
             {
-                string referencesDescription = "";
-                foreach (var Rule in References)
-                {
-                    referencesDescription += Rule.Number + "\n";
-                }
-                return "Number: " + Number + "\nDescription: " + Description + "\nReferences: " + referencesDescription;
-            }
+                Operator.And => IsThisPolicySatisfied(user) && other.CanPurchase(user),
+                Operator.Or => IsThisPolicySatisfied(user) || other.CanPurchase(user),
+                Operator.Xor => IsThisPolicySatisfied(user) ^ other.CanPurchase(user),
+                _ => false,  //should never get here
+            };
         }
+
     }
 }

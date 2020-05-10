@@ -23,4 +23,5 @@ namespace SEWorkshop.DataModels
             public DataRule(Rule rule) : base(rule) { }
         }
     }
+
 }
