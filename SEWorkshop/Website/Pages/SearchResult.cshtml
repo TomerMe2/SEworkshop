@@ -8,16 +8,17 @@
     @{ await Html.RenderPartialAsync("Filter", new FilterModel()); }
 </div>
 <text class="alert-danger">@Model.Error</text>
+<input id="invis" name="invis" class="form-control" type="text" placeholder="Optional" aria-label="Search" style="width: 8%" value=@Model.RequestedSearchString>
 
 @{
     if (!Model.ActualSearchString.Equals(Model.RequestedSearchString))
     {
         @:<h6>Got no results for @Model.RequestedSearchString, Show results for @Model.ActualSearchString</h6>
     }
-    if (!Model.SearchResult.Any())
+    if (!Model.SearchResult.Any() && !Model.FilteredSearchResult.Any())
     {
         @:<h3>No results</h3>
-    }
+    }  
     else
     {
         if (Model.Filter)

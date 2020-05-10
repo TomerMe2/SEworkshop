@@ -20,6 +20,7 @@ namespace Website.Pages
         public string CategoryFilter { get; private set; }
         public string Error { get; private set; }
         public bool Filter { get; private set; }
+        public static string remember { get; private set; }
         public IEnumerable<DataProduct> SearchResult { get; private set; }
         public IEnumerable<DataProduct> FilteredSearchResult { get; private set; }
         public ICollection<DataProduct> CurrSearchResult { get; private set; }
@@ -50,7 +51,7 @@ namespace Website.Pages
             catch { }
         }
 
-        public void OnPost(string searchText, string searchCategory)
+        public void OnPost(string searchText, string searchCategory, string minPriceText, string maxPriceText, string filterCategoryText)
         { 
             Filter = false;
             Error = "";
@@ -67,11 +68,11 @@ namespace Website.Pages
                 "product_keywords" => UserManager.SearchProductsByKeywords(ref searchString),
                 _ => new List<DataProduct>()
             };
+            remember = searchString;
             Deep_Copy();
-            ActualSearchString = searchString;
         }
 
-        public void OnPostEdit(string minPriceText, string maxPriceText, string filterCategoryText)
+        public void OnPostEdit(string minPriceText, string maxPriceText, string categoryFilterText)
         {
             try
             {
@@ -83,10 +84,10 @@ namespace Website.Pages
                     PriceMax = -1;
                 else
                     PriceMax = Int32.Parse(maxPriceText);
-                if (filterCategoryText == null)
+                if (categoryFilterText == null)
                     CategoryFilter = "";
                 else
-                    CategoryFilter = filterCategoryText;
+                    CategoryFilter = categoryFilterText;
                 if (PriceMax < PriceMin && PriceMax != -1)
                     throw new Exception();
                 FilteredSearchResult = UserManager.FilterProducts(CurrSearchResult, (x) =>
