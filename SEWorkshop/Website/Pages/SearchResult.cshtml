@@ -4,8 +4,13 @@
     ViewData["Title"] = "SearchResult";
 }
 
+<div>
+    @{ await Html.RenderPartialAsync("Filter", new FilterModel()); }
+</div>
+<text class="alert-danger">@Model.Error</text>
+
 @{
-    if(!Model.ActualSearchString.Equals(Model.RequestedSearchString))
+    if (!Model.ActualSearchString.Equals(Model.RequestedSearchString))
     {
         @:<h6>Got no results for @Model.RequestedSearchString, Show results for @Model.ActualSearchString</h6>
     }
@@ -15,9 +20,26 @@
     }
     else
     {
-        foreach(var product in Model.SearchResult)
+        if (Model.Filter)
         {
-            await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+            if (!Model.FilteredSearchResult.Any())
+            {
+            @:<h3>No results</h3>
+        }
+                else
+                {
+                    foreach (var product in Model.FilteredSearchResult)
+                    {
+                        await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+                    }
+                }
+            }
+            else
+            {
+                foreach (var product in Model.SearchResult)
+                {
+                    await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+                }
+            }
         }
     }
-}
