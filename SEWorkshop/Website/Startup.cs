@@ -24,6 +24,15 @@ namespace Website
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(15);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddRazorPages();
             services.AddSingleton<IUserManager, UserManager>();
         }
@@ -48,6 +57,16 @@ namespace Website
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
+
+            app.Use((httpContext, nextMiddleware) =>
+            {
+                httpContext.Session.Set("JustHoldSomething", new byte[] { 0, 2, 3});
+
+                return nextMiddleware();
+            });
+
 
             app.UseEndpoints(endpoints =>
             {

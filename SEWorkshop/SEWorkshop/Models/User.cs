@@ -11,12 +11,10 @@ namespace SEWorkshop.Models
     public abstract class User
     {
         public Cart Cart { get; set; }
-        public bool HasPermission { get; set; }
 
         public User()
         {
             Cart = new Cart();
-            HasPermission = false;
         }
 
 
