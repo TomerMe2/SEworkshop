@@ -3,44 +3,70 @@
 @{
     ViewData["Title"] = "SearchResult";
 }
+<script>
+   document.getElementById("searchForm").style.visibility = "hidden";
+</script>
 
-<div>
-    @{ await Html.RenderPartialAsync("Filter", new FilterModel()); }
-</div>
 <text class="alert-danger">@Model.Error</text>
-<input id="invis" name="invis" class="form-control" type="text" placeholder="Optional" aria-label="Search" style="width: 8%" value=@Model.RequestedSearchString>
+<form asp-page="/SearchResult" method="post">
+    <div class="form-inline">
+        <input id="searchText" name="searchText" class="form-control" value="@Model.ActualSearchString" type="text" style="width: 65%">
+        <select id="searchCategory" name="searchCategory" value="product_category" class="form-control mdb-select colorful-select dropdown-primary" style="width: 17%">
+            @{
+                if (Model.SearchCategory.Equals("product_name"))
+                {
+                    @:<option value="product_name" selected>Product Name</option>
+                }
+                else
+                {
+                    @:<option value="product_name">Product Name</option>
+                }
+                if (Model.SearchCategory.Equals("product_category"))
+                {
+                    @:<option value="product_category" selected>Product Category</option>
+                }
+                else
+                {
+                    @:<option value="product_category">Product Category</option>
+                }
+                if (Model.SearchCategory.Equals("product_keywords"))
+                {
+                    @:<option value="product_keywords" selected>Product Keywords</option>
+                }
+                else
+                {
+                    @:<option value="product_keywords">Product Keywords</option>
+                }
+            }
+        </select>
+        <button type="submit" class="form-control btn btn-primary" style="width: 18%">Filter & Search</button>
+    </div>
+    <div class="form-inline">
+        <br>
+        <label for="minPriceText" style="padding-right:15px">Minimum Price:  </label>
+        <input id="minPriceText" name="minPriceText" value="@Model.PriceMin" class="form-control" type="text" placeholder="Optional" aria-label="Search" style="width: 8%">
+        <label for="maxPriceText" style="padding-right:15px;padding-left:15px">  Maximum Price:  </label>
+        <input id="maxPriceText" name="maxPriceText" value="@Model.PriceMax" class="form-control" type="text" placeholder="Optional" aria-label="Search" style="width: 8%">
+        <label for="categoryFilterText" style="padding-right:15px;padding-left:15px">  Category:  </label>
+        <input id="categoryFilterText" name="categoryFilterText" value="@Model.CategoryFilter" class="form-control" type="text" placeholder="Optional" aria-label="Search" style="width: 15%">
+        <label style="padding-left:25px"></label>
+    </div>
+</form>
 
 @{
-    if (!Model.ActualSearchString.Equals(Model.RequestedSearchString))
+    if (!Model.SearchResult.Any())
+    {
+        @:<h3>No results</h3>
+    }
+    else if (!Model.ActualSearchString.Equals(Model.RequestedSearchString))
     {
         @:<h6>Got no results for @Model.RequestedSearchString, Show results for @Model.ActualSearchString</h6>
     }
-    if (!Model.SearchResult.Any() && !Model.FilteredSearchResult.Any())
-    {
-        @:<h3>No results</h3>
-    }  
     else
     {
-        if (Model.Filter)
+        foreach (var product in Model.SearchResult)
         {
-            if (!Model.FilteredSearchResult.Any())
-            {
-            @:<h3>No results</h3>
-        }
-                else
-                {
-                    foreach (var product in Model.FilteredSearchResult)
-                    {
-                        await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
-                    }
-                }
-            }
-            else
-            {
-                foreach (var product in Model.SearchResult)
-                {
-                    await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
-                }
-            }
+            await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
         }
     }
+}
