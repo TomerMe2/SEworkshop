@@ -14,14 +14,16 @@ namespace Website.Pages
     {
         private IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
+        public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
 
         public StoreModel(IUserManager userManager)
         {
             UserManager = userManager;
+            StoreName = "";
             ErrorMsg = "";
         }
-
+        
         public void OnGet(string storeName)
         {
             try
@@ -32,6 +34,23 @@ namespace Website.Pages
             {
                 ErrorMsg = e.ToString();
             }
+        }
+        public IActionResult OnPost(string storeName)
+        {
+            try
+            {
+                UserManager.OpenStore(storeName);
+            }
+            catch(UserIsNotLoggedInException e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            catch(StoreNotInTradingSystemException e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            StoreName = storeName;
+            return RedirectToPage("./Store/"+storeName);
         }
     }
 }
