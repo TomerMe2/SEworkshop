@@ -27,5 +27,22 @@ namespace Website.Pages
         {
             ErrorMsg = "";
         }
+        public IActionResult OnPost(string storeName)
+        {
+            try
+            {
+                UserManager.OpenStore(storeName);
+            }
+            catch(UserIsNotLoggedInException e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            catch(StoreNotInTradingSystemException e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            StoreName = storeName;
+            return RedirectToPage("./Store", new { storeName = storeName });
+        }
     }
 }

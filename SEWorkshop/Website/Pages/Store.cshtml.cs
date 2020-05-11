@@ -12,6 +12,7 @@ namespace Website.Pages
 {
     public class StoreModel : PageModel
     {
+        [BindProperty(SupportsGet = true)]
         private IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
@@ -28,29 +29,13 @@ namespace Website.Pages
         {
             try
             {
-                Store = UserManager.SearchStore(storeName);
+                StoreName = storeName;
+                Store = UserManager.SearchStore(StoreName);
             }
             catch(StoreNotInTradingSystemException e)
             {
                 ErrorMsg = e.ToString();
             }
-        }
-        public IActionResult OnPost(string storeName)
-        {
-            try
-            {
-                UserManager.OpenStore(storeName);
-            }
-            catch(UserIsNotLoggedInException e)
-            {
-                ErrorMsg = e.ToString();
-            }
-            catch(StoreNotInTradingSystemException e)
-            {
-                ErrorMsg = e.ToString();
-            }
-            StoreName = storeName;
-            return RedirectToPage("./Store/"+storeName);
         }
     }
 }
