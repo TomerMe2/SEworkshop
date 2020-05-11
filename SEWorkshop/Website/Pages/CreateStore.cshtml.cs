@@ -10,14 +10,14 @@ using SEWorkshop.Exceptions;
 
 namespace Website.Pages
 {
-    public class CreateStore : PageModel
+    public class CreateStoreModel : PageModel
     {
         private IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
 
-        public CreateStore(IUserManager userManager)
+        public CreateStoreModel(IUserManager userManager)
         {
             UserManager = userManager;
             StoreName = "";
