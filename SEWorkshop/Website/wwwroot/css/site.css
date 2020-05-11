@@ -114,3 +114,8 @@ input::-moz-focus-inner {
         color: #f2f2f2;
         background-color: #242c3c;
     }
+
+    .submit:hover {
+      color: #f2f2f2;
+      background-color: #242c3c;
+  }
