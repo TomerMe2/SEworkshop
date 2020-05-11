@@ -83,42 +83,5 @@ namespace Website.Pages
                 SearchResult = UserManager.FilterProducts(SearchResult.ToList(), prod => prod.Category.Equals(CategoryFilter));
             }
         }
-
-        /*
-
-        public void OnPostEdit(string minPriceText, string maxPriceText, string categoryFilterText)
-        {
-            try
-            {
-                if (minPriceText == null)
-                    PriceMin = -1;
-                else
-                    PriceMin = Int32.Parse(minPriceText);
-                if (maxPriceText == null)
-                    PriceMax = -1;
-                else
-                    PriceMax = Int32.Parse(maxPriceText);
-                if (categoryFilterText == null)
-                    CategoryFilter = "";
-                else
-                    CategoryFilter = categoryFilterText;
-                if (PriceMax < PriceMin && PriceMax != -1)
-                    throw new Exception();
-                FilteredSearchResult = UserManager.FilterProducts(CurrSearchResult, (x) =>
-                {
-                    bool low = true, high = true, category = true;
-                    if (PriceMin >= 0) low = x.Price >= PriceMin;
-                    if (PriceMax >= 0) high = x.Price <= PriceMax;
-                    if (!CategoryFilter.Equals("")) category = x.Category.Equals(CategoryFilter);
-                    return low && high && category;
-                });
-                Filter = true;
-            }
-            catch (Exception)
-            {
-                Error = "Invalid Price Range";
-            }
-        }
-        */
     }
 }
