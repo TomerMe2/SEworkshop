@@ -7,7 +7,6 @@
    document.getElementById("searchForm").style.visibility = "hidden";
 </script>
 
-<text class="alert-danger">@Model.Error</text>
 <form asp-page="/SearchResult" method="post">
     <div class="form-inline">
         <input id="searchText" name="searchText" class="form-control" value="@Model.ActualSearchString" type="text" style="width: 65%">
@@ -52,6 +51,7 @@
         <label style="padding-left:25px"></label>
     </div>
 </form>
+<text class="alert-danger">@Model.Error</text>
 
 @{
     if (!Model.SearchResult.Any())

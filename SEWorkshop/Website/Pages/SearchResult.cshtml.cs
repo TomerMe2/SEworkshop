@@ -33,6 +33,7 @@ namespace Website.Pages
 
         public void OnPost(string searchText, string searchCategory, string minPriceText, string maxPriceText, string categoryFilterText)
         {
+            bool low = false, high = false;
             if (!string.IsNullOrEmpty(categoryFilterText))
             {
                 CategoryFilter = categoryFilterText;
@@ -41,16 +42,24 @@ namespace Website.Pages
             {
                 if (!string.IsNullOrEmpty(minPriceText))
                 {
+                    if (int.Parse(minPriceText) < 0)
+                        throw new ArgumentException();
                     PriceMin = int.Parse(minPriceText);
+                    low = true;
                 }
                 if (!string.IsNullOrEmpty(maxPriceText))
                 {
+                    if (int.Parse(maxPriceText) < 0)
+                        throw new ArgumentException();
                     PriceMax = int.Parse(maxPriceText);
+                    high = true;
                 }
+                if ((low && high) && PriceMin > PriceMax)
+                    throw new ArgumentException();
             }
             catch
             {
-                Error = "Min price or max price contained non numbers";
+                Error = "Invalid Price Range";
             }
 
 
