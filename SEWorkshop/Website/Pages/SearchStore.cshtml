@@ -1,0 +1,17 @@
+﻿@page
+@model Website.Pages.SearchStoreModel
+
+@{
+    ViewData["Title"] = "SearchStore";
+}
+
+    <div class="allpage">
+        <h1 class="display-4">Search</h1>
+        <form asp-page="SearchStore" method="post">
+            <div class="form-inline">
+                <input id="searchText" name="searchText" class="form-control" type="text" placeholder="StoreName" aria-label="Search" style="width: 70%"/>
+                <button class="form-control btn btn-primary" type="submit" style="width: 50%">Search</button>
+                <text class="alert-danger">@Model.Error</text>
+            </div>
+        </form>
+    </div>
