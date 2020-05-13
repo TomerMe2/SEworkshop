@@ -22,7 +22,7 @@ namespace SEWorkshop.ServiceLayer
         private ITyposFixerProxy TyposFixerKeywords { get; }
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
-
+        private object UserDictLock { get; }
 
         public UserManager()
         {
@@ -33,6 +33,7 @@ namespace SEWorkshop.ServiceLayer
             SecurityAdapter = new SecurityAdapter();
             FacadesBridge = new FacadesBridge();
             UsersDict = new Dictionary<string, DataUser>();
+            UserDictLock = new object();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -44,6 +45,8 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge = facadesBridge;
             SecurityAdapter = new SecurityAdapter();
             UsersDict = new Dictionary<string, DataUser>();
+            UserDictLock = new object();
+
         }
 
         private static void ConfigLog()
@@ -63,13 +66,16 @@ namespace SEWorkshop.ServiceLayer
 
         public DataUser GetUser(string sessionId)
         {
-            if (UsersDict.ContainsKey(sessionId))
+            lock(UserDictLock)
             {
-                return UsersDict[sessionId];
+                if (UsersDict.ContainsKey(sessionId))
+                {
+                    return UsersDict[sessionId];
+                }
+                var usr = FacadesBridge.CreateGuest();
+                UsersDict[sessionId] = usr;
+                return usr;
             }
-            var usr = FacadesBridge.CreateGuest();
-            UsersDict[sessionId] = usr;
-            return usr;
         }
 
         private DataLoggedInUser GetLoggedInUser(string sessionId)
@@ -78,6 +84,16 @@ namespace SEWorkshop.ServiceLayer
             if (usr is DataLoggedInUser)
             {
                 return (DataLoggedInUser)usr;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        private DataAdministrator GetAdmin(string sessionId)
+        {
+            var usr = GetUser(sessionId);
+            if (usr is DataAdministrator)
+            {
+                return (DataAdministrator)usr;
             }
             throw new UserHasNoPermissionException();
         }
@@ -384,6 +400,32 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
             return FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+        }
+
+        public bool IsLoggedIn(string sessionId)
+        {
+            try
+            {
+                GetLoggedInUser(sessionId);
+                return true;
+            }
+            catch(UserHasNoPermissionException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsAdministrator(string sessionId)
+        {
+            try
+            {
+                GetAdmin(sessionId);
+                return true;
+            }
+            catch (UserHasNoPermissionException)
+            {
+                return false;
+            }
         }
     }
 }

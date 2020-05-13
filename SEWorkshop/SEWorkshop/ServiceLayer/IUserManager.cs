@@ -54,5 +54,7 @@ namespace SEWorkshop.ServiceLayer
         public void EditProductPrice(string sessionId, string storeName, string productName, double price);
         public void EditProductQuantity(string sessionId, string storeName, string productName, int quantity);
         public void EditProductDescription(string sessionId, string storeName, string productName, string description);
+        public bool IsLoggedIn(string sessionId);
+        public bool IsAdministrator(string sessionId);
     }
 }
