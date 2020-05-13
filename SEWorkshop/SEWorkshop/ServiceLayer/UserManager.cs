@@ -21,6 +21,8 @@ namespace SEWorkshop.ServiceLayer
         private ITyposFixerProxy TyposFixerCategories { get; }
         private ITyposFixerProxy TyposFixerKeywords { get; }
         private ISecurityAdapter SecurityAdapter { get; }
+        private IDictionary<string, DataUser> UsersDict { get; }
+        private object UserDictLock { get; }
 
         public UserManager()
         {
@@ -30,6 +32,8 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerKeywords = new TyposFixer(new List<string>());
             SecurityAdapter = new SecurityAdapter();
             FacadesBridge = new FacadesBridge();
+            UsersDict = new Dictionary<string, DataUser>();
+            UserDictLock = new object();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -40,6 +44,9 @@ namespace SEWorkshop.ServiceLayer
             TyposFixerKeywords = new TyposFixer(new List<string>());
             FacadesBridge = facadesBridge;
             SecurityAdapter = new SecurityAdapter();
+            UsersDict = new Dictionary<string, DataUser>();
+            UserDictLock = new object();
+
         }
 
         private static void ConfigLog()
@@ -57,9 +64,43 @@ namespace SEWorkshop.ServiceLayer
             LogManager.Configuration = config;
         }
 
-        public void AddProductToCart(string storeName, string productName, int quantity)
+        public DataUser GetUser(string sessionId)
         {
-            FacadesBridge.AddProductToCart(storeName, productName, quantity);
+            lock(UserDictLock)
+            {
+                if (UsersDict.ContainsKey(sessionId))
+                {
+                    return UsersDict[sessionId];
+                }
+                var usr = FacadesBridge.CreateGuest();
+                UsersDict[sessionId] = usr;
+                return usr;
+            }
+        }
+
+        private DataLoggedInUser GetLoggedInUser(string sessionId)
+        {
+            var usr = GetUser(sessionId);
+            if (usr is DataLoggedInUser)
+            {
+                return (DataLoggedInUser)usr;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        private DataAdministrator GetAdmin(string sessionId)
+        {
+            var usr = GetUser(sessionId);
+            if (usr is DataAdministrator)
+            {
+                return (DataAdministrator)usr;
+            }
+            throw new UserHasNoPermissionException();
+        }
+
+        public void AddProductToCart(string sessionId, string storeName, string productName, int quantity)
+        {
+            FacadesBridge.AddProductToCart(GetUser(sessionId), storeName, productName, quantity);
         }
 
         public IEnumerable<DataStore> BrowseStores()
@@ -80,53 +121,69 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.FilterProducts(products, pred);
         }
 
-        public void Login(string username, string password)
+        public void Login(string sessionId, string username, string password)
         {
             Log.Info(string.Format("Login was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
-            FacadesBridge.Login(username, SecurityAdapter.Encrypt(password));
+            DataGuestUser guest = GetUser(sessionId) switch
+            {
+                DataGuestUser gst => gst,
+                _ => throw new UserAlreadyLoggedInException(),
+            };
+            var usr = FacadesBridge.GetLoggedInUserAndApplyCart(username, SecurityAdapter.Encrypt(password), guest);
+            UsersDict[sessionId] = usr;
         }
 
-        public void Logout()
+        public void Logout(string sessionId)
         {
             Log.Info("Logout was invoked");
-            FacadesBridge.Logout();
+            var user = GetUser(sessionId);
+            if (user is DataGuestUser)
+            {
+                throw new UserHasNoPermissionException();
+            }
+            UsersDict[sessionId] = FacadesBridge.CreateGuest();
         }
 
-        public IEnumerable<DataBasket> MyCart()
+        public IEnumerable<DataBasket> MyCart(string sessionId)
         {
             Log.Info("MyCart was invoked");
-            return FacadesBridge.MyCart();
+            return FacadesBridge.MyCart(GetUser(sessionId));
         }
 
-        public void OpenStore(string storeName)
+        public void OpenStore(string sessionId, string storeName)
         {
             Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
-            FacadesBridge.OpenStore(storeName);
+            FacadesBridge.OpenStore(GetLoggedInUser(sessionId), storeName);
         }
 
-        public void Purchase(DataBasket basket, string creditCardNumber, Address address)
+        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            FacadesBridge.Purchase(basket, creditCardNumber, address);
+            FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
         }
 
-        public void Register(string username, string password)
+        public void Register(string sessionId, string username, string password)
         {
             Log.Info(string.Format("Register was invoked with username {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
+            var user = GetUser(sessionId);
+            if (!(user is DataGuestUser))
+            {
+                throw new UserAlreadyLoggedInException();
+            }
             FacadesBridge.Register(username, SecurityAdapter.Encrypt(password));
         }
 
-        public void RemoveProductFromCart(string storeName, string productName, int quantity)
+        public void RemoveProductFromCart(string sessionId, string storeName, string productName, int quantity)
         {
-            FacadesBridge.RemoveProductFromCart(storeName, productName, quantity);
+            FacadesBridge.RemoveProductFromCart(GetUser(sessionId), storeName, productName, quantity);
         }
 
         public IEnumerable<DataProduct> SearchProductsByName(ref string input)
@@ -170,49 +227,50 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.SearchProductsByKeywords(correctedStr);
         }
 
-        public IEnumerable<DataPurchase> PurchaseHistory()
+        public IEnumerable<DataPurchase> PurchaseHistory(string sessionId)
         {
             Log.Info("PurchaseHistory was invoked");
-            return FacadesBridge.PurchaseHistory();
+            return FacadesBridge.PurchaseHistory(GetLoggedInUser(sessionId));
         }
 
-        public void WriteReview(string storeName, string productName, string description)
+        public void WriteReview(string sessionId, string storeName, string productName, string description)
         {
             Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
                 storeName, productName, description));
-            FacadesBridge.WriteReview(storeName, productName, description);
+            FacadesBridge.WriteReview(GetLoggedInUser(sessionId), storeName, productName, description);
         }
 
-        public void WriteMessage(string storeName, string description)
+        public void WriteMessage(string sessionId, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            FacadesBridge.WriteMessage(storeName, description);
+            FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
         }
 
-        public IEnumerable<DataPurchase> UserPurchaseHistory(string userNm)
+        public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
         {
             Log.Info(string.Format("WriteReview was invoked with userName {0}", userNm));
-            return FacadesBridge.UserPurchaseHistory(userNm);
+            return FacadesBridge.UserPurchaseHistory(GetLoggedInUser(sessionId), userNm);
         }
 
-        public IEnumerable<DataPurchase> StorePurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> StorePurchaseHistory(string sessionId, string storeName)
         {
             Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
-            return FacadesBridge.StorePurchaseHistory(storeName);
+            return FacadesBridge.StorePurchaseHistory(GetLoggedInUser(sessionId), storeName);
         }
 
-        public IEnumerable<DataPurchase> ManagingPurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> ManagingPurchaseHistory(string sessionId, string storeName)
         {
             Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
-            return FacadesBridge.ManagingPurchaseHistory(storeName);
+            return FacadesBridge.ManagingPurchaseHistory(GetLoggedInUser(sessionId), storeName);
         }
 
-        public DataProduct AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
+        public DataProduct AddProduct(string sessionId, string storeName, string productName, string description,
+                                        string category, double price, int quantity)
         {
             Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
                 " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
-            var prod = FacadesBridge.AddProduct(storeName, productName, description, category, price, quantity);
+            var prod = FacadesBridge.AddProduct(GetLoggedInUser(sessionId), storeName, productName, description, category, price, quantity);
             //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
             TyposFixerNames.AddToDictionary(productName);
             TyposFixerCategories.AddToDictionary(category);
@@ -232,64 +290,64 @@ namespace SEWorkshop.ServiceLayer
             return prod;
         }
 
-        public void RemoveProduct(string storeName, string productName)
+        public void RemoveProduct(string sessionId, string storeName, string productName)
         {
             Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
-            FacadesBridge.RemoveProduct(storeName, productName);
+            FacadesBridge.RemoveProduct(GetLoggedInUser(sessionId), storeName, productName);
             // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
             // same applies for category
             TyposFixerNames.RemoveFromDictionary(productName);
 
         }
 
-        public void EditProductDescription(string storeName, string productName, string description)
+        public void EditProductDescription(string sessionId, string storeName, string productName, string description)
         {
             Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}, description {2}",
                 storeName, productName, description));
-            FacadesBridge.EditProductDescription(storeName, productName, description);
+            FacadesBridge.EditProductDescription(GetLoggedInUser(sessionId), storeName, productName, description);
         }
 
-        public void EditProductPrice(string storeName, string productName, double price)
+        public void EditProductPrice(string sessionId, string storeName, string productName, double price)
         {
             Log.Info(string.Format("EditProductPrice was invoked with storeName {0}, productName {1}, price {2}",
                 storeName, productName, price));
-            FacadesBridge.EditProductPrice(storeName, productName, price);
+            FacadesBridge.EditProductPrice(GetLoggedInUser(sessionId), storeName, productName, price);
         }
 
-        public void EditProductCategory(string storeName, string productName, string category)
+        public void EditProductCategory(string sessionId, string storeName, string productName, string category)
         {
             Log.Info(string.Format("EditProductCategory was invoked with storeName {0}, productName {1}, category {2}",
                 storeName, productName, category));
-            FacadesBridge.EditProductCategory(storeName, productName, category);
+            FacadesBridge.EditProductCategory(GetLoggedInUser(sessionId), storeName, productName, category);
         }
 
-        public void EditProductName(string storeName, string productName, string name)
+        public void EditProductName(string sessionId, string storeName, string productName, string name)
         {
             Log.Info(string.Format("EditProductName was invoked with storeName {0}, productName {1}, name {2}",
                 storeName, productName, name));
-            FacadesBridge.EditProductName(storeName, productName, name);
+            FacadesBridge.EditProductName(GetLoggedInUser(sessionId), storeName, productName, name);
         }
 
-        public void EditProductQuantity(string storeName, string productName, int quantity)
+        public void EditProductQuantity(string sessionId, string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("EditProductQuantity was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
-            FacadesBridge.EditProductQuantity(storeName, productName, quantity);
+            FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
-        public void AddStoreOwner(string storeName, string username)
+        public void AddStoreOwner(string sessionId, string storeName, string username)
         {
-            FacadesBridge.AddStoreOwner(storeName, username);
+            FacadesBridge.AddStoreOwner(GetLoggedInUser(sessionId), storeName, username);
         }
 
-        public void AddStoreManager(string storeName, string username)
+        public void AddStoreManager(string sessionId, string storeName, string username)
         {
             Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
                 storeName, username));
-            FacadesBridge.AddStoreManager(storeName, username);
+            FacadesBridge.AddStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
-        public void SetPermissionsOfManager(string storeName, string username, string auth)
+        public void SetPermissionsOfManager(string sessionId, string storeName, string username, string auth)
         {
             Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
                 storeName, username, auth));
@@ -303,11 +361,11 @@ namespace SEWorkshop.ServiceLayer
                 "Watching" => Authorizations.Watching,
                 _ => throw new AuthorizationDoesNotExistException(),
             };
-            FacadesBridge.SetPermissionsOfManager(storeName, username, authorization);
+            FacadesBridge.SetPermissionsOfManager(GetLoggedInUser(sessionId), storeName, username, authorization);
           
         }
-        
-        public void RemovePermissionsOfManager(string storeName, string username, string auth)
+
+        public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth)
         {
             Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
                 storeName, username, auth));
@@ -321,27 +379,53 @@ namespace SEWorkshop.ServiceLayer
                 "Watching" => Authorizations.Watching,
                 _ => throw new AuthorizationDoesNotExistException(),
             };
-            FacadesBridge.RemovePermissionsOfManager(storeName, username, authorization);
+            FacadesBridge.RemovePermissionsOfManager(GetLoggedInUser(sessionId), storeName, username, authorization);
           
         }
 
-        public void RemoveStoreManager(string storeName, string username)
+        public void RemoveStoreManager(string sessionId, string storeName, string username)
         {
             Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
                 storeName, username));
-            FacadesBridge.RemoveStoreManager(storeName, username);
+            FacadesBridge.RemoveStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
-        public IEnumerable<DataMessage> ViewMessage(string storeName)
+        public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeName)
         {
             Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
-            return FacadesBridge.ViewMessage(storeName);
+            return FacadesBridge.ViewMessage(GetLoggedInUser(sessionId), storeName);
         }
 
-        public DataMessage MessageReply(DataMessage message, string storeName, string description)
+        public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            return FacadesBridge.MessageReply(message, storeName, description);
+            return FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+        }
+
+        public bool IsLoggedIn(string sessionId)
+        {
+            try
+            {
+                GetLoggedInUser(sessionId);
+                return true;
+            }
+            catch(UserHasNoPermissionException)
+            {
+                return false;
+            }
+        }
+
+        public bool IsAdministrator(string sessionId)
+        {
+            try
+            {
+                GetAdmin(sessionId);
+                return true;
+            }
+            catch (UserHasNoPermissionException)
+            {
+                return false;
+            }
         }
     }
 }

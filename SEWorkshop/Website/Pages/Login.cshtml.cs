@@ -36,7 +36,7 @@ namespace Website.Pages
         {
             try
             {
-                UserManager.Login(Username, Password);
+                UserManager.Login(HttpContext.Session.Id, Username, Password);
             }
             catch (Exception e)
             {
