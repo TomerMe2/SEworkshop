@@ -24,10 +24,7 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 1);
-            //User has np permission - Throw Exception
-            Assert.Throws<UserHasNoPermissionException>(delegate { usr.WriteReview(prod, "baddd"); });
             //Review is empty - Throw Exception
-            usr.HasPermission = true;
             Assert.Throws<ReviewIsEmptyException>(delegate { usr.WriteReview(prod, ""); });
             //Review is not empty and user is logged in - success
             Assert.That(() => usr.WriteReview(prod, "baddd"), Throws.Nothing);
@@ -41,10 +38,7 @@ namespace SEWorkshop.Tests
             const string USER_PASSWORD = "1111";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
-            //User has np permission - Throw Exception
-            Assert.Throws<UserHasNoPermissionException>(delegate { usr.WriteMessage(str, "baddd"); });
             //Message is empty - Throw Exception
-            usr.HasPermission = true;
             Assert.Throws<MessageIsEmptyException>(delegate { usr.WriteMessage(str, ""); });
             //Message is not empty and user is logged in - success
             Assert.That(() => usr.WriteMessage(str, "baddd"), Throws.Nothing);
@@ -182,11 +176,7 @@ namespace SEWorkshop.Tests
             var management = newManager.Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
 
             Assert.IsTrue(management.HasAuthorization(Authorizations.Replying));
-
-
         }
-
-        
 
         [Test]
         public void SetPermissionsOfManager_SetPermissionsOfManagerReplying_repliyngAddedToManger()
