@@ -2,16 +2,14 @@
 @model Website.Pages.SearchStoreModel
 
 @{
-    ViewData["Title"] = "SearchStore";
+    ViewData["Title"] = "Search Store";
 }
 
     <div class="allpage">
-        <h1 class="display-4">Search</h1>
-        <form asp-page="SearchStore" method="post">
-            <div class="form-inline">
-                <input id="searchText" name="searchText" class="form-control" type="text" placeholder="StoreName" aria-label="Search" style="width: 70%"/>
-                <button class="form-control btn btn-primary" type="submit" style="width: 50%">Search</button>
-                <text class="alert-danger">@Model.Error</text>
-            </div>
+        <h1 class="display-4">Search Store</h1>
+        <form class="loginform" asp-page="SearchStore" method="post">
+            <input class="input" type="text" asp-for="StoreName" placeholder="StoreName" />
+            <button class="submit" type="submit" id="submit">Search Store</button>
+            <text class="alert-danger">@Model.Error</text>
         </form>
     </div>

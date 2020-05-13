@@ -13,7 +13,7 @@ namespace Website.Pages
         [BindProperty(SupportsGet = true)]
         public string StoreName { get; set; }
 
-        public DataStore Store { get; private set; }
+        public DataStore? Store { get; private set; }
         
         [BindProperty(SupportsGet = true)]
         public string Error { get; set; }
@@ -30,17 +30,19 @@ namespace Website.Pages
             Error = "";
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPost(string storeName)
         {
+            StoreName = storeName;
             try
             {
-                Store = UserManager.SearchStore(StoreName);
+                Store = UserManager.SearchStore(storeName);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Error = "No Results";
+                Console.WriteLine(e.ToString());
             }
-            return RedirectToPage("./Store", new { storeName = StoreName });
+            return RedirectToPage("./Store", new { storeName = storeName });
         }
     }
 }
