@@ -1,0 +1,19 @@
+﻿@model Website.Pages.PurchaseViewModel
+@{
+    ViewData["Title"] = "PurchaseView";
+}
+
+<div class="card" style="width: 100%">
+    <div class="card-body">
+        <h3 class="card-title">@Model.Purchase.Basket.Store.Name</h3>
+        @{ foreach (var product in Model.Purchase.Basket.Products)
+            {
+                await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1));
+            @:<h6>  Quantity Purchased: @product.Item2</h6>
+        }
+        }
+        <br />
+        <h5 class="card-subtitle mb-2">Total Purchase Price: @Model.TotalPrice ₪</h5>
+    </div>
+</div>
+

@@ -1,0 +1,20 @@
+﻿@page
+@model Website.Pages.UserPageModel
+@{
+    ViewData["Title"] = "UserPage";
+}
+
+<h1>UserPage</h1>
+
+@{ if (Model.purchases.Count() == 0)
+    {
+@:<h6>No Purchases</h6>
+    }
+    else
+    {
+        foreach (var purchase in Model.purchases)
+        {
+            await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(purchase));
+        }
+    }
+}
