@@ -204,7 +204,7 @@ namespace SEWorkshop.Facades
             log.Info("The review has been published successfully");
         }
 
-        public void WriteMessage(LoggedInUser user, Store store, string description)
+        public Message WriteMessage(LoggedInUser user, Store store, string description)
         {
             log.Info("User tries to write a message");
             if (description.Length == 0)
@@ -214,8 +214,9 @@ namespace SEWorkshop.Facades
             }
             Message message = new Message(user, description);
             store.Messages.Add(message);
-            ((LoggedInUser) user).Messages.Add(message);
+            user.Messages.Add(message);
             log.Info("The message has been published successfully");
+            return message;
         }
 
         public GuestUser CreateGuestUser()

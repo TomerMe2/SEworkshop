@@ -38,7 +38,7 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> PurchaseHistory(string sessionId);
         public void WriteReview(string sessionId, string storeName, string productName, string description);
-        public void WriteMessage(string sessionId, string storeName, string description);
+        public int WriteMessage(string sessionId, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm);
         public IEnumerable<DataPurchase> StorePurchaseHistory(string sessionId, string storeNm);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(string sessionId, string storeNm);
@@ -68,5 +68,6 @@ namespace SEWorkshop.ServiceLayer
         
         //0 based index - first policy is indexed 0
         public void RemovePolicy(string sessionId, string storeName, int indexInChain);
+        public DataLoggedInUser GetDataLoggedInUser(string sessionId);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEWorkshop.DataModels;
@@ -6,10 +8,13 @@ using SEWorkshop.ServiceLayer;
 
 namespace Website.Pages
 {
-    public class SearchStoreModel : PageModel
+    public class StoresModel : PageModel
     {
         private IUserManager UserManager;
-        
+
+        [BindProperty(SupportsGet = true)]
+        public IEnumerable<DataStore> Stores { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public string StoreName { get; set; }
 
@@ -18,31 +23,33 @@ namespace Website.Pages
         [BindProperty(SupportsGet = true)]
         public string Error { get; set; }
 
-        public SearchStoreModel(IUserManager userManager)
+        public StoresModel(IUserManager userManager)
         {
             UserManager = userManager;
             StoreName = "";
             Error = "";
+            Stores = UserManager.BrowseStores();
         }
         
         public void OnGet()
         {
             Error = "";
+            Stores = UserManager.BrowseStores();
         }
 
-        public IActionResult OnPost(string storeName)
+        public IActionResult OnPost()
         {
-            StoreName = storeName;
             try
             {
-                Store = UserManager.SearchStore(storeName);
+                Store = UserManager.SearchStore(StoreName);
             }
             catch (Exception e)
             {
-                Error = "No Results";
-                Console.WriteLine(e.ToString());
+                Error = e.ToString();
+                StoreName = "";
+                return new PageResult();
             }
-            return RedirectToPage("./Store", new { storeName = storeName });
+            return RedirectToPage("./Store", new { storeName = StoreName });
         }
     }
 }

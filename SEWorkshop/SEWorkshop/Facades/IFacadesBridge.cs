@@ -37,7 +37,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataPurchase> PurchaseHistory(DataLoggedInUser user);
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description);
-        public void WriteMessage(DataLoggedInUser user, string storeName, string description);
+        public int WriteMessage(DataLoggedInUser user, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(DataLoggedInUser user, string userName);
         public IEnumerable<DataPurchase> StorePurchaseHistory(DataLoggedInUser user, string storeName);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName);
