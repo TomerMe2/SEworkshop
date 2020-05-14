@@ -164,32 +164,28 @@ namespace SEWorkshop.Facades
 
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description)
         {
+            //message will always be the first message in the talk
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
             var store = GetStore(storeName);
-            DataMessage firstMsgData = message;
-            // this whole manouver is because one can answer on a message that is not in the messages list
-            // for example: answer to an answer.
-            while (firstMsgData.Prev != null)
-            {
-                firstMsgData = firstMsgData.Prev;
-            }
-            Message? firstMsg = store.Messages.FirstOrDefault(msg => firstMsgData.Represents(msg));
+            Message? firstMsg = store.Messages.FirstOrDefault(msg => message.Represents(msg));
             if (firstMsg is null)
             {
                 Log.Info("message is not in the system");
                 throw new MessageNotInSystemException();
             }
             Message toAnswerOn = firstMsg;
-            while (!message.Represents(toAnswerOn) && toAnswerOn.Next != null)
+            while (toAnswerOn.Next != null)
             {
                 toAnswerOn = toAnswerOn.Next;
             }
-            if (!message.Represents(toAnswerOn))
+            var loggedIn = GetLoggedInUsr(user);
+            if(firstMsg.WrittenBy == loggedIn)
             {
-                Log.Info("message is not in the system");
-                throw new MessageNotInSystemException();
+                //It's the first user, and it's the non-manager who initiated the messages
+                return new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
             }
-            return new DataMessage(ManageFacade.MessageReply(GetLoggedInUsr(user), toAnswerOn, GetStore(storeName), description));
+            //It's the manager who should answer it
+            return new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
         }
 
         public IEnumerable<DataBasket> MyCart(DataUser user)
@@ -320,11 +316,11 @@ namespace SEWorkshop.Facades
             return ManageFacade.ViewMessage(GetLoggedInUsr(user), GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
-        public void WriteMessage(DataLoggedInUser user, string storeName, string description)
+        public int WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description);
+            return UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description).Id;
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
