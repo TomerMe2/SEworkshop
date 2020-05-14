@@ -16,22 +16,27 @@ namespace Website.Pages
         public DataStore? Store { get; private set; }
         
         [BindProperty(SupportsGet = true)]
-        public string Error { get; set; }
+        public string ErrorMsg { get; set; }
 
         public SearchStoreModel(IUserManager userManager)
         {
             UserManager = userManager;
             StoreName = "";
-            Error = "";
+            ErrorMsg = "";
         }
         
         public void OnGet()
         {
-            Error = "";
+            ErrorMsg = "";
         }
 
         public IActionResult OnPost(string storeName)
         {
+            if(storeName == null)
+            {
+                ErrorMsg = "Invalid Product Name";
+                return new PageResult();
+            }
             StoreName = storeName;
             try
             {
@@ -39,7 +44,7 @@ namespace Website.Pages
             }
             catch (Exception e)
             {
-                Error = "No Results";
+                ErrorMsg = "No Results";
                 Console.WriteLine(e.ToString());
             }
             return RedirectToPage("./Store", new { storeName = storeName });

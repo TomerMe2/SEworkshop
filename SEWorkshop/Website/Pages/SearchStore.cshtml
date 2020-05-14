@@ -10,6 +10,6 @@
         <form class="loginform" asp-page="SearchStore" method="post">
             <input class="input" type="text" asp-for="StoreName" placeholder="StoreName" />
             <button class="submit" type="submit" id="submit">Search Store</button>
-            <text class="alert-danger">@Model.Error</text>
+            <text class="alert-danger">@Model.ErrorMsg</text>
         </form>
     </div>

@@ -40,6 +40,21 @@ namespace Website.Pages
 
         public IActionResult OnPost(string StoreName, string ProductName, string Quantity)
         {
+            int quantity;
+            try
+            {
+                quantity = int.Parse(Quantity);
+            }
+            catch(Exception)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
+            if(quantity <= 0)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
             try
             {
                 UserManager.AddProductToCart(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
@@ -47,6 +62,7 @@ namespace Website.Pages
             catch(Exception e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
             return RedirectToPage("./Store", new { storeName = StoreName });
         }

@@ -31,6 +31,11 @@ namespace Website.Pages
 
         public IActionResult OnPost(string storeName)
         {
+            if(storeName == null)
+            {
+                ErrorMsg = "Invalid Product Name";
+                return new PageResult();
+            }
             try
             {
                 UserManager.OpenStore(HttpContext.Session.Id, storeName);
@@ -38,10 +43,17 @@ namespace Website.Pages
             catch(UserHasNoPermissionException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
             catch(StoreNotInTradingSystemException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
+            }
+            catch(Exception)
+            {
+                ErrorMsg = "Invalid Store Name";
+                return new PageResult();
             }
             StoreName = storeName;
             return RedirectToPage("./Store", new { storeName = storeName });

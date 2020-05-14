@@ -41,25 +41,48 @@ namespace Website.Pages.Shared
         }
         public IActionResult OnPost(string ProductName, string StoreName,  string ProductDescription, string ProductCategory, string ProductPrice, string ProductQuantity)
         {
+            double price;
+            int quantity;
             try
             {
-                UserManager.AddProduct(HttpContext.Session.Id, StoreName, ProductName, ProductDescription, ProductCategory, double.Parse(ProductPrice), int.Parse(ProductQuantity));
+                price = double.Parse(ProductPrice);
+                quantity = int.Parse(ProductQuantity);
+            }
+            catch(Exception)
+            {
+                ErrorMsg = "Invalid Product Input";
+                return new PageResult();
+            }
+            if(StoreName == null || ProductName == null || ProductDescription == null ||
+            ProductCategory == null || price <= 0  || quantity <= 0)
+            {
+                ErrorMsg = "Invalid Product Input";
+                return new PageResult();
+            }
+            
+            try
+            {
+                UserManager.AddProduct(HttpContext.Session.Id, StoreName, ProductName, ProductDescription, ProductCategory, price, quantity);
             }
             catch (UserHasNoPermissionException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
             catch (ProductAlreadyExistException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
             catch (NegativeQuantityException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
             catch (StoreNotInTradingSystemException e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
          
             this.ProductName = ProductName;
