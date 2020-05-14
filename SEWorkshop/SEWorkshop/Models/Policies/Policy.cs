@@ -2,16 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models.Policies
 {
-    public enum Operator
-    {
-        And,
-        Or,
-        Xor
-    }
-
     public abstract class Policy
     {
         public (Policy, Operator)? InnerPolicy { get; set; }

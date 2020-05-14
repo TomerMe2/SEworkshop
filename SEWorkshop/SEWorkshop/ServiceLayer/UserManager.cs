@@ -7,6 +7,7 @@ using System.Linq;
 using SEWorkshop.Adapters;
 using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -426,6 +427,42 @@ namespace SEWorkshop.ServiceLayer
             {
                 return false;
             }
+        }
+
+        public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op)
+        {
+            FacadesBridge.AddAlwaysTruePolicy(GetLoggedInUser(sessionId), storeName, op);
+        }
+
+        public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            FacadesBridge.AddSingleProductQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, productName, minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            FacadesBridge.AddSystemDayPolicy(GetLoggedInUser(sessionId), storeName, op, cantBuyIn);
+
+        }
+
+        public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity)
+        {
+            FacadesBridge.AddUserCityPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry)
+        {
+            FacadesBridge.AddUserCountryPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            FacadesBridge.AddWholeStoreQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(string sessionId, string storeName, int indexInChain)
+        {
+            FacadesBridge.RemovePolicy(GetLoggedInUser(sessionId), storeName, indexInChain);
         }
     }
 }

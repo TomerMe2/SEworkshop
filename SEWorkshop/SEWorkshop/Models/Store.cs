@@ -18,7 +18,7 @@ namespace SEWorkshop.Models
         public ICollection<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
         public string Name { get; private set; }
-        public Policy Policy { get; private set; }
+        public Policy Policy { get; set; }
         public ICollection<Purchase> Purchases {get; private set; }
         
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();

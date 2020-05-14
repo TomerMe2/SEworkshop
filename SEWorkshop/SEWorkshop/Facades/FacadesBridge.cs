@@ -6,6 +6,7 @@ using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
 using NLog;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades
 {
@@ -338,6 +339,42 @@ namespace SEWorkshop.Facades
         {
             var guestUsr = UserFacade.CreateGuestUser();
             return new DataGuestUser(guestUsr);
+        }
+
+        public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op)
+        {
+            GetLoggedInUsr(user).AddAlwaysTruePolicy(GetStore(storeName), op);
+        }
+
+        public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddSingleProductQuantityPolicy(GetStore(storeName), op,
+                    GetProduct(storeName, productName), minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            GetLoggedInUsr(user).AddSystemDayPolicy(GetStore(storeName), op, cantBuyIn);
+        }
+
+        public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity)
+        {
+            GetLoggedInUsr(user).AddUserCityPolicy(GetStore(storeName), op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry)
+        {
+            GetLoggedInUsr(user).AddUserCountryPolicy(GetStore(storeName), op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddWholeStoreQuantityPolicy(GetStore(storeName), op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain)
+        {
+            GetLoggedInUsr(user).RemovePolicy(GetStore(storeName), indexInChain);
         }
     }
 }

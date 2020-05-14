@@ -5,6 +5,7 @@ using System.Text;
 using System.Linq;
 using SEWorkshop.Models;
 using SEWorkshop.Models.Policies;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Tests
 {
