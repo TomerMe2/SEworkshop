@@ -15,12 +15,13 @@ namespace Website.Pages
         public DataPurchase Purchase { get; private set; }
         public bool CanReview { get; private set; }
         public double TotalPrice { get; private set; }
-        public string Purchaser { get; private set; }
-        public PurchaseViewModel(IUserManager userManager, DataPurchase purchase, bool canReview)
+        public string Session { get; private set; }
+        public PurchaseViewModel(IUserManager userManager, DataPurchase purchase, bool canReview, string session)
         {
             UserManager = userManager;
             Purchase = purchase;
             CanReview = canReview;
+            Session = session;
             TotalPrice = 0;
             foreach(var pair in Purchase.Basket.Products)
             {
@@ -29,7 +30,7 @@ namespace Website.Pages
         }
         public void OnGet()
         {
-
+            
         }
     }
 }

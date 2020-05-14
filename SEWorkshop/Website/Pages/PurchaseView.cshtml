@@ -12,7 +12,8 @@
             @:<h6>  Quantity Purchased: @product.Item2</h6>
             if (Model.CanReview)
                 {
-                    if (product.Item1.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser()).Username)).ToList().Count() == 0)
+                    IEnumerable<SEWorkshop.DataModels.DataReview> reviews = product.Item1.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser(Model.Session)).Username));
+                    if (reviews.Count() == 0)
                     {
                     <form id="messageSend" asp-page="/UserPage" method="post">
                         <div class="form-group">
@@ -26,7 +27,7 @@
                     }
                     else
                     {
-                        <h3>Product Already Reviewed</h3>
+                        <p>Product Already Reviewed: " @reviews.First().Description "</p>
                     }
                 }
             }

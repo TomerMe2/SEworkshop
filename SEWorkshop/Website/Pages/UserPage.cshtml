@@ -14,7 +14,7 @@
     {
         foreach (var purchase in Model.purchases)
         {
-            await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(@Model.UserManager, purchase, true));
+            await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(@Model.UserManager, purchase, true, Model.HttpContext.Session.Id));
         }
     }
 }
