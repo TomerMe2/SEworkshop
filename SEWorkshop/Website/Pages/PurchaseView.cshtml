@@ -3,9 +3,9 @@
     ViewData["Title"] = "PurchaseView";
 }
 
-<div class="card" style="width: 100%">
-    <div class="card-body">
-        <h3 class="card-title">@Model.Purchase.Basket.Store.Name</h3>
+<div style="width: 100%">
+    <div>
+        <h3>Store - @Model.Purchase.Basket.Store.Name</h3>
         @{ foreach (var product in Model.Purchase.Basket.Products)
             {
                 await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1));
@@ -19,7 +19,7 @@
                         <div class="form-group">
                             <input type="hidden" name="storeName" value="@product.Item1.Store.Name">
                             <input type="hidden" name="productName" value="@product.Item1.Name">
-                            <label for="msg_txt_area">Review Product</label>
+                            <label for="msg_txt_area">Write Your Review:</label>
                             <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
                             <button type="submit" class="form-control btn btn-primary">Post Review</button>
                         </div>
@@ -27,7 +27,7 @@
                     }
                     else
                     {
-                        <p>Product Already Reviewed: " @reviews.First().Description "</p>
+                        <p>Review: "@reviews.First().Description"</p>
                     }
                 }
             }

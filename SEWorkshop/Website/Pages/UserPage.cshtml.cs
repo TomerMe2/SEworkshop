@@ -28,6 +28,7 @@ namespace Website.Pages
         {
             string sid = HttpContext.Session.Id;
             UserManager.WriteReview(sid, storeName, productName, content);
+            purchases = UserManager.PurchaseHistory(sid);
         }
 
     }
