@@ -1,0 +1,14 @@
+﻿@page
+@model Website.Pages.Shared.CRUDproductModel
+@{
+    ViewData["Title"] = "CRUD product";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+    <div class="allpage">
+        <h1 class="display-4">Add Product</h1>
+        <form class="loginform" method="post">
+            <input class="input" type="text" asp-for="ProductName" placeholder="StoreName" />
+            <button class="submit" type="submit" id="submit">Create Store</button>
+            <text class="alert-danger">@Model.ErrorMsg</text>
+        </form>
+    </div>
