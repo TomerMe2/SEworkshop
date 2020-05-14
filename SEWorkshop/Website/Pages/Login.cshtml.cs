@@ -9,7 +9,7 @@ namespace Website.Pages
 {
     public class LoginModel : PageModel
     {
-        private IUserManager UserManager;
+        public IUserManager UserManager { get; }
 
         [BindProperty (SupportsGet = true)]
         public string Username { get; set; }

@@ -57,5 +57,7 @@ namespace SEWorkshop.ServiceLayer
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
     }
 }

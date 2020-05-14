@@ -3,12 +3,13 @@
 @{
     ViewData["Title"] = "Login";
 }
-    <div class="allpage">
-        <h1 class="display-4">Login</h1>
-        <form class="loginform" method="post">
-            <input class="input" type="text" asp-for="Username" placeholder="Username" />
-            <input class="input" type="text" asp-for="Password" placeholder="Password" />
-            <button class="submit" type="submit" id="submit">Login</button>
-            <text class="alert-danger">@Model.Error</text>
-        </form>
-    </div>
+
+<div class="allpage">
+    <h1 class="display-4">Login</h1>
+    <form class="loginform" method="post">
+        <input class="input" type="text" asp-for="Username" placeholder="Username" />
+        <input class="input" type="text" asp-for="Password" placeholder="Password" />
+        <button class="submit" type="submit" id="submit">Login</button>
+        <text class="alert-danger">@Model.Error</text>
+    </form>
+</div>

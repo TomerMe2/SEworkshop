@@ -36,7 +36,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataPurchase> PurchaseHistory(DataLoggedInUser user);
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description);
-        public int WriteMessage(DataLoggedInUser user, string storeName, string description);
+        public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(DataLoggedInUser user, string userName);
         public IEnumerable<DataPurchase> StorePurchaseHistory(DataLoggedInUser user, string storeName);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName);
@@ -54,5 +54,6 @@ namespace SEWorkshop.Facades
         public void EditProductQuantity(DataLoggedInUser user, string storeName, string productName, int quantity);
         public void EditProductDescription(DataLoggedInUser user, string storeName, string productName, string description);
         public void RemovePermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
+        public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
     }
 }

@@ -8,7 +8,7 @@ namespace Website.Pages
 {
     public class SearchStoreModel : PageModel
     {
-        private IUserManager UserManager;
+        public IUserManager UserManager;
         
         [BindProperty(SupportsGet = true)]
         public string StoreName { get; set; }

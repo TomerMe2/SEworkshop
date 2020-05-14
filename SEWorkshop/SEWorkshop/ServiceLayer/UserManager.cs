@@ -23,6 +23,7 @@ namespace SEWorkshop.ServiceLayer
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
         private object UserDictLock { get; }
+        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; set; }
 
         public UserManager()
         {
@@ -34,6 +35,7 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge = new FacadesBridge();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -46,7 +48,7 @@ namespace SEWorkshop.ServiceLayer
             SecurityAdapter = new SecurityAdapter();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
-
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         private static void ConfigLog()
@@ -62,6 +64,14 @@ namespace SEWorkshop.ServiceLayer
             
             // Apply config           
             LogManager.Configuration = config;
+        }
+
+        private void NotifyMsgObservers(DataMessage msg)
+        {
+            foreach(var obs in MsgObservers)
+            {
+                obs.Notify(msg);
+            }
         }
 
         public DataUser GetUser(string sessionId)
@@ -244,7 +254,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            return FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            var msg = FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            NotifyMsgObservers(msg);
+            return msg.Id;
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
@@ -399,7 +411,9 @@ namespace SEWorkshop.ServiceLayer
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            return FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            var msg = FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            NotifyMsgObservers(msg);
+            return msg;
         }
 
         public bool IsLoggedIn(string sessionId)
@@ -438,6 +452,14 @@ namespace SEWorkshop.ServiceLayer
             throw new UserIsNotLoggedInException();
         }
 
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv)
+        {
+            MsgObservers.Add(obsrv);
+        }
 
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
+        {
+            FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace Website.Pages
 {
     public class MessageViewModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
 
         public string Error { get; private set; }
         public string CompleteMsg { get; private set; }
@@ -25,6 +25,31 @@ namespace Website.Pages
             UserManager = userManager;
             Error = "";
             CompleteMsg = "";
+        }
+
+        private void FindMessage()
+        {
+            //find message to display
+            var usr = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
+            //find his messages as client
+            MsgToShow = usr.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
+            if (MsgToShow == null)
+            {
+                foreach (var owns in usr.Owns)
+                {
+                    MsgToShow = owns.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
+                }
+                if (MsgToShow == null)
+                {
+                    foreach (var manages in usr.Manages)
+                    {
+                        if (manages.Value.Contains(SEWorkshop.Authorizations.Replying))
+                        {
+                            MsgToShow = manages.Key.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
+                        }
+                    }
+                }
+            }
         }
 
         public IActionResult OnGet(string storeWritingTo, string msgId)
@@ -49,9 +74,8 @@ namespace Website.Pages
             }
             if (MsgId != -1)
             {
-                //find message to display
-                var usr = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
-                MsgToShow = usr.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
+
+                FindMessage();
                 if (MsgToShow == null)
                 {
                     Error = "can't find message to show";
@@ -66,6 +90,10 @@ namespace Website.Pages
             {
                 Error = "No such store";
                 return StatusCode(500);
+            }
+            if (MsgToShow != null && StoreWritingTo != null)
+            {
+                UserManager.MarkAllDiscussionAsRead(HttpContext.Session.Id, StoreWritingTo.Name, MsgToShow);
             }
             return Page();
         }
@@ -107,8 +135,7 @@ namespace Website.Pages
             }
             else
             {
-                var usr = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
-                MsgToShow = usr.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
+                FindMessage();
                 if (MsgToShow == null)
                 {
                     Error = "can't find message to answer on";
@@ -117,7 +144,6 @@ namespace Website.Pages
                 UserManager.MessageReply(HttpContext.Session.Id, MsgToShow, storeWritingTo, content);
                 return Page();
             }
-            //CompleteMsg = "Message was sent!";
         }
     }
 }

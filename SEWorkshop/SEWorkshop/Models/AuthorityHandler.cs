@@ -79,7 +79,7 @@ namespace SEWorkshop.Models
             log.Info("User tries to reply to a message");
             if (UserHasPermission(store, loggedInUser, Authorizations.Replying))
             {
-                Message reply = new Message(loggedInUser, description, message);
+                Message reply = new Message(loggedInUser, store, description, false, message);
                 message.Next = reply;
                 log.Info("Reply has been published successfully");
                 return reply;
