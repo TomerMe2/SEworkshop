@@ -20,6 +20,7 @@ namespace SEWorkshop.DataModels
                                                                                 new DataMessage(message)).ToList().AsReadOnly();
         public string Username => InnerLoggedInUser.Username;
         public byte[] Password => InnerLoggedInUser.Password;
+        public int AmountOfUnreadMessages => InnerLoggedInUser.AmountOfUnReadMessage;
         private LoggedInUser InnerLoggedInUser { get; }
 
         public DataLoggedInUser(LoggedInUser usr) : base(usr)

@@ -30,6 +30,29 @@ namespace SEWorkshop.Models
             Purchases = new List<Purchase>();
         }
 
+        public int AmountOfUnReadMessage
+        {
+            get
+            {
+                int counter = 0;
+                foreach (var msg in Messages)
+                {
+                    //If some message in a message line is unseen, it counts only as one
+                    Message? run = msg;
+                    while (run != null)
+                    {
+                        if (run.ClientSawIt != true)
+                        {
+                            counter++;
+                            continue;
+                        }
+                        run = run.Next;
+                    }
+                }
+                return counter;
+            }
+        }
+
         public void WriteReview(Product product, string description)
         {
             if (description.Length == 0)
@@ -41,13 +64,13 @@ namespace SEWorkshop.Models
             Reviews.Add(review);
         }
        
-        public void WriteMessage(Store store, string description)
+        public void WriteMessage(Store store, string description, bool isClient)
         {
             if (description.Length == 0)
             {
                 throw new MessageIsEmptyException();
             }
-            Message message = new Message(this, description);
+            Message message = new Message(this, store, description, isClient);
             store.Messages.Add(message);
             Messages.Add(message);
         }
@@ -214,7 +237,7 @@ namespace SEWorkshop.Models
 
         public Message MessageReplyAsNotManager(Message message, string description)
         {
-            Message reply = new Message(this, description, message);
+            Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
             log.Info("Reply has been published successfully");
             return reply;

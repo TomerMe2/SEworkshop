@@ -135,7 +135,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", SecurityAdapter.Encrypt("1324"));
-            Message message = new Message(client, "Great app");
+            Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
             IEnumerable<Message> messages = Facade.ViewMessage(usr, store);
             Assert.IsTrue(messages.Count() == 1 && messages.First() == message);
@@ -161,7 +161,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", SecurityAdapter.Encrypt("1324"));
-            Message message = new Message(client, "Great app");
+            Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
             Message reply = Facade.MessageReply(usr, message, store, "Thank you!");
             Assert.IsTrue(reply.Prev == message && message.Next == reply && reply.Description.Equals("Thank you!"));
@@ -379,13 +379,13 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
-           usr.AddStoreManager(store, newManager);
+            usr.AddStoreManager(store, newManager);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Replying);
             LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
-            Message message1 = new Message(client, "Great store!");
+            Message message1 = new Message(client, store, "Great store!", true);
             store.Messages.Add(message1);
             bool success = true;
-            Message reply1 = new Message(usr, "");
+            Message reply1 = new Message(usr, store, "", false);
             try
             {
                 reply1 = Facade.MessageReply(newManager, message1, store, "Thank you!");
@@ -397,9 +397,9 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(success && message1.Next == reply1 && reply1.Prev == message1
                             && reply1.Description.Equals("Thank you!"));
            
-            Message message2 = new Message(client, "Piece of garbage...");
+            Message message2 = new Message(client, store, "Piece of garbage...", true);
             store.Messages.Add(message2);
-            Message reply2 = new Message(usr, "");
+            Message reply2 = new Message(usr, store, "", false);
             try
             {
                 reply2 = Facade.MessageReply(newManager, message2, store, "goto L");
@@ -425,7 +425,7 @@ namespace SEWorkshop.UnitTests
             newManager.Manage.Add(management);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
             LoggedInUser client = new LoggedInUser("client1", SecurityAdapter.Encrypt("1234"));
-            Message message1 = new Message(client, "Great store!");
+            Message message1 = new Message(client, store, "Great store!", false);
             store.Messages.Add(message1);
             IEnumerable<Message> output1 = new List<Message>();
             bool success = true;

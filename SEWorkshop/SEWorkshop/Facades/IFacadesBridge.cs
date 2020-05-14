@@ -37,7 +37,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataPurchase> PurchaseHistory(DataLoggedInUser user);
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description);
-        public int WriteMessage(DataLoggedInUser user, string storeName, string description);
+        public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(DataLoggedInUser user, string userName);
         public IEnumerable<DataPurchase> StorePurchaseHistory(DataLoggedInUser user, string storeName);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName);
@@ -64,5 +64,6 @@ namespace SEWorkshop.Facades
         public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry);
         public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity);
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
+        public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
     }
 }

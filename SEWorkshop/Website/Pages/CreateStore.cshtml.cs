@@ -12,7 +12,7 @@ namespace Website.Pages
 {
     public class CreateStoreModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
 
         [BindProperty(SupportsGet = true)]

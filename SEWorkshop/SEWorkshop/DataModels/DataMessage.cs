@@ -8,6 +8,7 @@ namespace SEWorkshop.DataModels
     public class DataMessage : DataModel<Message>
     {
         public int Id => InnerModel.Id;
+        public DataStore ToStore => new DataStore(InnerModel.ToStore);
         public DataLoggedInUser WrittenBy => new DataLoggedInUser(InnerModel.WrittenBy);
         public string Description => InnerModel.Description;
         public DataMessage? Prev => InnerModel.Prev != null ? new DataMessage(InnerModel.Prev) : null;

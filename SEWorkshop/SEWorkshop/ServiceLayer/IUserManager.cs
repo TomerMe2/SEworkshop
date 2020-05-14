@@ -69,5 +69,7 @@ namespace SEWorkshop.ServiceLayer
         //0 based index - first policy is indexed 0
         public void RemovePolicy(string sessionId, string storeName, int indexInChain);
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
     }
 }

@@ -212,7 +212,7 @@ namespace SEWorkshop.Facades
                 log.Info("The message is empty");
                 throw new MessageIsEmptyException();
             }
-            Message message = new Message(user, description);
+            Message message = new Message(user, store, description, true);
             store.Messages.Add(message);
             user.Messages.Add(message);
             log.Info("The message has been published successfully");
