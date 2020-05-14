@@ -13,10 +13,10 @@
             var sessionId = Model.HttpContext.Session.Id;
             if (Model.UserManager.IsLoggedIn(sessionId))
             {
-                var usr = Model.UserManager.GetDataLoggedInUser(sessionId);
+                var usrUp = Model.UserManager.GetDataLoggedInUser(sessionId);
                 <script src="~/lib/signalr.js"></script>
                 <script src="~/js/MessageNotificationsHubClient.js"></script>
-                <script> ConnectToNotificationsHub('@usr.Username')</script>
+                <script> ConnectToNotificationsHub('@usrUp.Username')</script>
             }
         }
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -31,7 +31,7 @@
                     <ul class="navbar-nav flex-grow-1">
                         @{
                             var isLoggedIn = Model.UserManager.IsLoggedIn(Model.HttpContext.Session.Id);
-                            var usr = isLoggedIn == null ? null : Model.UserManager.GetDataLoggedInUser(sessionId);
+                            var usr = isLoggedIn == false ? null : Model.UserManager.GetDataLoggedInUser(sessionId);
                             if (Model.UserManager.IsLoggedIn(Model.HttpContext.Session.Id))
                             {
                                 <li class="navbar-brand">
@@ -53,11 +53,11 @@
                             <li class="navbar-brand">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/SearchStore">Search Store</a>
                             </li>
-                            if (isLoggedIn)
+                            if (isLoggedIn && usr != null)
                             {
                                 <li class="navbar-brand">
                                     <!-- DO NOT CHANGE THIS UNREAD MESSAGES PATTERN. THINGS WILL BREAK -->
-                                    <span id="pendingMsgs" class="nav-item">@usr.AmountOfUnreadMessages unread messages</span>
+                                    <span id="pendingMsgs" class="nav-item">@usr?.AmountOfUnreadMessages unread messages</span>
                                 </li>
                             }
                         }
