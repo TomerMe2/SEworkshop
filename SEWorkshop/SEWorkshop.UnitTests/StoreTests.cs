@@ -16,7 +16,8 @@ namespace SEWorkshop.Tests
         const string CITY_NAME_STUB = "Beer Sheva";
         const string STREET_NAME_STUB = "Shderot Ben Gurion";
         const string HOUSE_NUMBER_STUB = "111";
-        Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+        const string COUNTRY_STUB = "Israel";
+        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
         
         //Testing CloseStore()
         [Test]

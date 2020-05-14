@@ -218,7 +218,7 @@ namespace SEWorkshop.UnitTests
             Manager.AddProductToCart("PurchaseHistoryy_store1", "ph_prod1", 1);
             var basket = Manager.MyCart().ElementAt(0);
             string creditCardNumber = "1234";
-            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.PurchaseHistory();
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
@@ -260,7 +260,7 @@ namespace SEWorkshop.UnitTests
             Manager.AddProductToCart("UserPurchaseHistory_store1", "uph_prod1", 1);
             var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
             string creditCardNumber = "1234";
-            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.PurchaseHistory();
             Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
@@ -285,7 +285,7 @@ namespace SEWorkshop.UnitTests
             var checkcheck = Manager.MyCart();
             var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("ManagingPurchaseHistory_store1"));
             string creditCardNumber = "1234";
-            Address address = new Address("Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
             Manager.Purchase(basket, creditCardNumber, address);
             var result = Manager.ManagingPurchaseHistory("ManagingPurchaseHistory_store1");
             Assert.That(result.First().Basket, Is.EqualTo(basket));
