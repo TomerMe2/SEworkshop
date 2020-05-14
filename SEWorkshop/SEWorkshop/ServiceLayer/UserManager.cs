@@ -23,7 +23,8 @@ namespace SEWorkshop.ServiceLayer
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
         private object UserDictLock { get; }
-        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; set; }
+        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; }
+        private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
 
         public UserManager()
         {
@@ -36,6 +37,7 @@ namespace SEWorkshop.ServiceLayer
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
+            PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -49,6 +51,7 @@ namespace SEWorkshop.ServiceLayer
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
+            PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
         }
 
         private static void ConfigLog()
@@ -71,6 +74,14 @@ namespace SEWorkshop.ServiceLayer
             foreach(var obs in MsgObservers)
             {
                 obs.Notify(msg);
+            }
+        }
+
+        private void NotifyPrchsObservers(DataPurchase prchs)
+        {
+            foreach(var obs in PurchaseObservers)
+            {
+                obs.Notify(prchs);
             }
         }
 
@@ -173,7 +184,8 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            NotifyPrchsObservers(prchs);
         }
 
         public void Register(string sessionId, string username, string password)
@@ -460,6 +472,11 @@ namespace SEWorkshop.ServiceLayer
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
             FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
+        }
+
+        public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)
+        {
+            PurchaseObservers.Add(obsrv);
         }
     }
 }

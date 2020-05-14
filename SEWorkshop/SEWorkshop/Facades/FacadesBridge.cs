@@ -204,7 +204,7 @@ namespace SEWorkshop.Facades
             return UserFacade.PurchaseHistory(GetLoggedInUsr(user)).Select(prchs => new DataPurchase(prchs));
         }
 
-        public void Purchase(DataUser dataUser, DataBasket basket, string creditCardNum, Address address)
+        public DataPurchase Purchase(DataUser dataUser, DataBasket basket, string creditCardNum, Address address)
         {
             var user = GetUser(dataUser);
             Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
@@ -212,7 +212,7 @@ namespace SEWorkshop.Facades
             {
                 throw new BasketNotInSystemException();
             }
-            UserFacade.Purchase(user, trueBasket, creditCardNum, address);
+            return new DataPurchase(UserFacade.Purchase(user, trueBasket, creditCardNum, address));
         }
 
         public void Register(string username, byte[] password)

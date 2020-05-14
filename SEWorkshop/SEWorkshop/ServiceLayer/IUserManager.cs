@@ -59,5 +59,6 @@ namespace SEWorkshop.ServiceLayer
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
+        public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
     }
 }

@@ -9,13 +9,13 @@ using System.Collections.Concurrent;
 
 namespace Website.Hubs
 {
-    public class NotificationsObserver : IServiceObserver<DataMessage>
+    public class MessagesObserver : IServiceObserver<DataMessage>
     {
-        private IHubContext<NotificationsHub> MsgHub { get; }
+        private IHubContext<MessagesNotificationsHub> MsgHub { get; }
         private ConcurrentDictionary<string, string> ConnectionsDict { get; }
         private IUserManager UserManager { get; }
 
-        public NotificationsObserver(IHubContext<NotificationsHub> hubContext, IUserManager userManager)
+        public MessagesObserver(IHubContext<MessagesNotificationsHub> hubContext, IUserManager userManager)
         {
             MsgHub = hubContext;
             UserManager = userManager;
