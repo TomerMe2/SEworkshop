@@ -10,10 +10,28 @@
             {
                 await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1));
             @:<h6>  Quantity Purchased: @product.Item2</h6>
-        }
-        }
+            if (Model.CanReview)
+                {
+                    if (product.Item1.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser()).Username)).ToList().Count() == 0)
+                    {
+                    <form id="messageSend" asp-page="/UserPage" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value="@product.Item1.Store.Name">
+                            <input type="hidden" name="productName" value="@product.Item1.Name">
+                            <label for="msg_txt_area">Review Product</label>
+                            <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
+                            <button type="submit" class="form-control btn btn-primary">Post Review</button>
+                        </div>
+                    </form>
+                    }
+                    else
+                    {
+                        <h3>Product Already Reviewed</h3>
+                    }
+                }
+            }
+            }
         <br />
         <h5 class="card-subtitle mb-2">Total Purchase Price: @Model.TotalPrice ₪</h5>
     </div>
 </div>
-
