@@ -13,6 +13,7 @@ namespace SEWorkshop.UnitTests
     class UserManagerTests
     {
         private IUserManager Manager { get; set; }
+        private const string DEF_ID = "UserManagerTests";
 
         [OneTimeSetUp]
         public void Init()
@@ -25,7 +26,7 @@ namespace SEWorkshop.UnitTests
         {
             try
             {
-                Manager.Logout();
+                Manager.Logout(DEF_ID);
             }
             catch { }
         }
@@ -34,24 +35,24 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void CartTest()
         {
-            Manager.Register("CartTest1", "CartNINI");
-            Manager.Login("CartTest1", "CartNINI");
-            Manager.OpenStore("CartTestStr");
-            Manager.AddProduct("CartTestStr", "CartTestItm1", "nini", "testCart", 123, 2);
-            Manager.AddProduct("CartTestStr", "CartTestItm2", "nini", "testCart", 123, 7);
-            Manager.AddProduct("CartTestStr", "CartTestItm3", "nini", "testCart", 123, 2);
-            Manager.Logout();
-            Manager.Register("CartTest2", "hi");
+            Manager.Register(DEF_ID, "CartTest1", "CartNINI");
+            Manager.Login(DEF_ID, "CartTest1", "CartNINI");
+            Manager.OpenStore(DEF_ID, "CartTestStr");
+            Manager.AddProduct(DEF_ID, "CartTestStr", "CartTestItm1", "nini", "testCart", 123, 2);
+            Manager.AddProduct(DEF_ID, "CartTestStr", "CartTestItm2", "nini", "testCart", 123, 7);
+            Manager.AddProduct(DEF_ID, "CartTestStr", "CartTestItm3", "nini", "testCart", 123, 2);
+            Manager.Logout(DEF_ID);
+            Manager.Register(DEF_ID, "CartTest2", "hi");
 
-            Manager.AddProductToCart("CartTestStr", "CartTestItm1", 1);
-            var cart = Manager.MyCart();
+            Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
+            var cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1);
             var (prod, quantity) = cart.First().Products.First();
             Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 1);
             bool isExceptionThrown = false;
             try
             {
-                Manager.AddProductToCart("CartTestStr", "CartTestItm3", 3);
+                Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm3", 3);
             }
             catch(NegativeInventoryException)
             {
@@ -59,23 +60,23 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(isExceptionThrown);
 
-            Manager.AddProductToCart("CartTestStr", "CartTestItm1", 1);
-            cart = Manager.MyCart();
+            Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
+            cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
             (prod, quantity) = cart.First().Products.First();
             Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 2);
 
-            Manager.AddProductToCart("CartTestStr", "CartTestItm2", 3);
-            cart = Manager.MyCart();
+            Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm2", 3);
+            cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 2);
 
-            Manager.RemoveProductFromCart("CartTestStr", "CartTestItm2", 2);
-            cart = Manager.MyCart();
+            Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 2);
+            cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 2);
             Assert.IsTrue(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2") && tup.Item2 == 1).Any());
 
-            Manager.RemoveProductFromCart("CartTestStr", "CartTestItm2", 1);
-            cart = Manager.MyCart();
+            Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 1);
+            cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
             Assert.IsFalse(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2")).Any());
         }
@@ -83,11 +84,11 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void BrowseStoresTest()
         {
-            Manager.Register("BrowseStoresTest", "77777");
-            Manager.Login("BrowseStoresTest", "77777");
+            Manager.Register(DEF_ID, "BrowseStoresTest", "77777");
+            Manager.Login(DEF_ID, "BrowseStoresTest", "77777");
             int countBeforeAdd = Manager.BrowseStores().Count();
-            Manager.OpenStore("Browse1");
-            Manager.OpenStore("Browse2");
+            Manager.OpenStore(DEF_ID, "Browse1");
+            Manager.OpenStore(DEF_ID, "Browse2");
             var stores = Manager.BrowseStores();
             Assert.IsTrue(countBeforeAdd + 2 == stores.Count());
             Assert.IsTrue(stores.Where(store => store.Name.Equals("Browse1")).Count() > 0);
@@ -97,12 +98,12 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void SearchAndFilterTest()
         {
-            Manager.Register("SearchAndFilter", "999");
-            Manager.Login("SearchAndFilter", "999");
-            Manager.OpenStore("SearchAndFilterStr");
-            Manager.AddProduct("SearchAndFilterStr", "bamba", "yummi", "snacks", 3.5, 9);
-            Manager.AddProduct("SearchAndFilterStr", "bisli", "yummmmiii", "snacks", 4, 15);
-            Manager.AddProduct("SearchAndFilterStr", "Drill", "POWERHOUSE", "tools", 450, 2);
+            Manager.Register(DEF_ID, "SearchAndFilter", "999");
+            Manager.Login(DEF_ID, "SearchAndFilter", "999");
+            Manager.OpenStore(DEF_ID, "SearchAndFilterStr");
+            Manager.AddProduct(DEF_ID, "SearchAndFilterStr", "bamba", "yummi", "snacks", 3.5, 9);
+            Manager.AddProduct(DEF_ID, "SearchAndFilterStr", "bisli", "yummmmiii", "snacks", 4, 15);
+            Manager.AddProduct(DEF_ID, "SearchAndFilterStr", "Drill", "POWERHOUSE", "tools", 450, 2);
             string cat = "snacks";
             var res = Manager.SearchProductsByCategory(ref cat);
             Assert.IsTrue(res.All(prod => prod.Category.Equals(cat)));
@@ -137,11 +138,11 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void RegisterLoginLogoutTest()
         {
-            Manager.Register("LoginTest", "1234");
+            Manager.Register(DEF_ID, "LoginTest", "1234");
             bool exceptionIsThrown = false;
             try
             {
-                Manager.Login("LoginTestNotInThere", "789");
+                Manager.Login(DEF_ID, "LoginTestNotInThere", "789");
             }
             catch(UserDoesNotExistException)
             {
@@ -151,36 +152,36 @@ namespace SEWorkshop.UnitTests
             exceptionIsThrown = false;
             try
             {
-                Manager.Login("LoginTest", "789");
+                Manager.Login(DEF_ID, "LoginTest", "789");
             }
             catch (UserDoesNotExistException)
             {
                 exceptionIsThrown = true;
             }
             Assert.IsTrue(exceptionIsThrown);
-            Manager.Login("LoginTest", "1234");
+            Manager.Login(DEF_ID, "LoginTest", "1234");
             exceptionIsThrown = false;
             try
             {
-                Manager.Login("LoginTest", "1234");
+                Manager.Login(DEF_ID, "LoginTest", "1234");
             }
             catch (UserAlreadyLoggedInException)
             {
                 exceptionIsThrown = true;
             }
             Assert.IsTrue(exceptionIsThrown);
-            Manager.Logout();
-            Manager.Login("LoginTest", "1234");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "LoginTest", "1234");
         }
 
         [Test]
         public void OpenRemoveStoreTest()
         {
-            Manager.Register("OpenStoreTest", "777");
+            Manager.Register(DEF_ID, "OpenStoreTest", "777");
             bool isExcetionThrown = false;
             try
             {
-                Manager.OpenStore("check");
+                Manager.OpenStore(DEF_ID, "check");
             }
             catch(UserHasNoPermissionException)
             {
@@ -188,11 +189,11 @@ namespace SEWorkshop.UnitTests
             }
             Assert.IsTrue(isExcetionThrown);
             isExcetionThrown = false;
-            Manager.Login("OpenStoreTest", "777");
-            Manager.OpenStore("check");
+            Manager.Login(DEF_ID, "OpenStoreTest", "777");
+            Manager.OpenStore(DEF_ID, "check");
             try
             {
-                Manager.OpenStore("check");
+                Manager.OpenStore(DEF_ID, "check");
             }
             catch (StoreWithThisNameAlreadyExistsException)
             {
@@ -208,35 +209,35 @@ namespace SEWorkshop.UnitTests
 
         public void PurchaseAndPurcahseHistory()
         {
-            Manager.Register("PurcahseHistory_user1", "1111");
-            Manager.Register("PurchaseHistory_user2", "1111");
-            Manager.Login("rPurchaseHistory_user1", "1111");
-            Manager.OpenStore("PurchaseHistory_store1");
-            Manager.AddStoreOwner("PurchaseHistory_store1", "PurchaseHistory_user2");
-            Manager.SetPermissionsOfManager("UserPurchaseHistory_store1", "PurchaseHistory_user2", "Products");
-            Manager.AddProduct("PurchaseHistory_store1", "ph_prod1", "ninini", "cat1", 11, 1);
-            Manager.AddProductToCart("PurchaseHistoryy_store1", "ph_prod1", 1);
-            var basket = Manager.MyCart().ElementAt(0);
+            Manager.Register(DEF_ID, "PurcahseHistory_user1", "1111");
+            Manager.Register(DEF_ID, "PurchaseHistory_user2", "1111");
+            Manager.Login(DEF_ID, "rPurchaseHistory_user1", "1111");
+            Manager.OpenStore(DEF_ID, "PurchaseHistory_store1");
+            Manager.AddStoreOwner(DEF_ID, "PurchaseHistory_store1", "PurchaseHistory_user2");
+            Manager.SetPermissionsOfManager(DEF_ID, "UserPurchaseHistory_store1", "PurchaseHistory_user2", "Products");
+            Manager.AddProduct(DEF_ID, "PurchaseHistory_store1", "ph_prod1", "ninini", "cat1", 11, 1);
+            Manager.AddProductToCart(DEF_ID, "PurchaseHistoryy_store1", "ph_prod1", 1);
+            var basket = Manager.MyCart(DEF_ID).ElementAt(0);
             string creditCardNumber = "1234";
             Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
-            Manager.Purchase(basket, creditCardNumber, address);
-            var result = Manager.PurchaseHistory();
+            Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
+            var result = Manager.PurchaseHistory(DEF_ID);
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
         }
 
         [Test]
         public void WriteReview()
         {
-            Manager.Register("WriteReviewUser1", "1111");
-            Manager.Register("WriteReviewUser2", "1111");
-            Manager.Login("WriteReviewUser1", "1111");
-            Manager.OpenStore("WriteReviewStore1");
-            Manager.AddStoreManager("WriteReviewStore1", "WriteReviewUser2");
-            Manager.SetPermissionsOfManager("WriteReviewStore1", "WriteReviewUser2", "Products");
-            Manager.Logout();
-            Manager.Login("WriteReviewUser2", "1111");
-            Manager.AddProduct("WriteReviewStore1", "wr_prod1", "ninini", "cat1", 11.11, 1);
-            Manager.WriteReview("WriteReviewStore1", "wr_prod1", "bad review");
+            Manager.Register(DEF_ID, "WriteReviewUser1", "1111");
+            Manager.Register(DEF_ID, "WriteReviewUser2", "1111");
+            Manager.Login(DEF_ID, "WriteReviewUser1", "1111");
+            Manager.OpenStore(DEF_ID, "WriteReviewStore1");
+            Manager.AddStoreManager(DEF_ID, "WriteReviewStore1", "WriteReviewUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "WriteReviewStore1", "WriteReviewUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "WriteReviewUser2", "1111");
+            Manager.AddProduct(DEF_ID, "WriteReviewStore1", "wr_prod1", "ninini", "cat1", 11.11, 1);
+            Manager.WriteReview(DEF_ID, "WriteReviewStore1", "wr_prod1", "bad review");
             string searchString = "wr_prod1";
             var review = Manager.SearchProductsByName(ref searchString).ElementAt(0).Reviews.ElementAt(0);
             Assert.That(review.Description, Is.EqualTo("bad review"));
@@ -250,61 +251,56 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void UserPurchaseHistory()
         {
-            Manager.Register("UserPurchaseHistory_user1", "1111");
-            Manager.Register("UserPurchaseHistory_user2", "1111");
-            Manager.Login("UserPurchaseHistory_user1", "1111");
-            Manager.OpenStore("UserPurchaseHistory_store1");
-            Manager.AddStoreManager("UserPurchaseHistory_store1", "UserPurchaseHistory_user2");
-            Manager.SetPermissionsOfManager("UserPurchaseHistory_store1", "UserPurchaseHistory_user2", "Products");
-            Manager.AddProduct("UserPurchaseHistory_store1", "uph_prod1", "ninini", "cat1", 11, 1);
-            Manager.AddProductToCart("UserPurchaseHistory_store1", "uph_prod1", 1);
-            var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
+            Manager.Register(DEF_ID, "UserPurchaseHistory_user1", "1111");
+            Manager.Register(DEF_ID, "UserPurchaseHistory_user2", "1111");
+            Manager.Login(DEF_ID, "UserPurchaseHistory_user1", "1111");
+            Manager.OpenStore(DEF_ID, "UserPurchaseHistory_store1");
+            Manager.AddStoreManager(DEF_ID, "UserPurchaseHistory_store1", "UserPurchaseHistory_user2");
+            Manager.SetPermissionsOfManager(DEF_ID, "UserPurchaseHistory_store1", "UserPurchaseHistory_user2", "Products");
+            Manager.AddProduct(DEF_ID, "UserPurchaseHistory_store1", "uph_prod1", "ninini", "cat1", 11, 1);
+            Manager.AddProductToCart(DEF_ID, "UserPurchaseHistory_store1", "uph_prod1", 1);
+            var basket = Manager.MyCart(DEF_ID).First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
             string creditCardNumber = "1234";
             Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
-            Manager.Purchase(basket, creditCardNumber, address);
-            var result = Manager.PurchaseHistory();
+            Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
+            var result = Manager.PurchaseHistory(DEF_ID);
             Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
-        }
-
-        public void StorePurchaseHistory()
-        {
-            //not sure what is the difference from ManagingPurchaseHistory
         }
 
         [Test]
         public void ManagingPurchaseHistory()
         {
-            Manager.Register("ManagingPurchaseHistory_user1", "1111");
-            Manager.Register("ManagingPurchaseHistory_user2", "1111");
-            Manager.Login("ManagingPurchaseHistory_user1", "1111");
-            Manager.OpenStore("ManagingPurchaseHistory_store1");
-            Manager.AddStoreManager("ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2");
-            Manager.SetPermissionsOfManager("ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2", "Products");
-            Manager.AddProduct("ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", "ninini", "cat1", 11, 1);
-            Manager.AddProductToCart("ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", 1);
-            var checkcheck = Manager.MyCart();
-            var basket = Manager.MyCart().First(bskt => bskt.Store.Name.Equals("ManagingPurchaseHistory_store1"));
+            Manager.Register(DEF_ID, "ManagingPurchaseHistory_user1", "1111");
+            Manager.Register(DEF_ID, "ManagingPurchaseHistory_user2", "1111");
+            Manager.Login(DEF_ID, "ManagingPurchaseHistory_user1", "1111");
+            Manager.OpenStore(DEF_ID, "ManagingPurchaseHistory_store1");
+            Manager.AddStoreManager(DEF_ID, "ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2");
+            Manager.SetPermissionsOfManager(DEF_ID, "ManagingPurchaseHistory_store1", "ManagingPurchaseHistory_user2", "Products");
+            Manager.AddProduct(DEF_ID, "ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", "ninini", "cat1", 11, 1);
+            Manager.AddProductToCart(DEF_ID, "ManagingPurchaseHistory_store1", "productUnoutchedlLolUnique", 1);
+            var checkcheck = Manager.MyCart(DEF_ID);
+            var basket = Manager.MyCart(DEF_ID).First(bskt => bskt.Store.Name.Equals("ManagingPurchaseHistory_store1"));
             string creditCardNumber = "1234";
             Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
-            Manager.Purchase(basket, creditCardNumber, address);
-            var result = Manager.ManagingPurchaseHistory("ManagingPurchaseHistory_store1");
+            Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
+            var result = Manager.ManagingPurchaseHistory(DEF_ID, "ManagingPurchaseHistory_store1");
             Assert.That(result.First().Basket, Is.EqualTo(basket));
         }
 
         [Test]
         public void AddProductTest()
         {
-            Manager.Register("AddProduct", "999");
-            Manager.Login("AddProduct", "999");
-            Manager.OpenStore("AddProductStr");
-            Manager.AddProduct("AddProductStr", "Wakanda", "forever", "lol", 111111111, 1);
+            Manager.Register(DEF_ID, "AddProduct", "999");
+            Manager.Login(DEF_ID, "AddProduct", "999");
+            Manager.OpenStore(DEF_ID, "AddProductStr");
+            Manager.AddProduct(DEF_ID, "AddProductStr", "Wakanda", "forever", "lol", 111111111, 1);
             var searchStr = "Wakanda";
             Assert.IsTrue(Manager.SearchProductsByName(ref searchStr).Any());
             Assert.AreEqual(searchStr, "wakanda");
             bool exceptionWasThrown = false;
             try
             {
-                Manager.AddProduct("AddProductStr", "Wakanda", "forever", "lol", 111111111, 1);
+                Manager.AddProduct(DEF_ID, "AddProductStr", "Wakanda", "forever", "lol", 111111111, 1);
             }
             catch (ProductAlreadyExistException)
             {
@@ -316,11 +312,11 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void RemoveProductTest()
         {
-            Manager.Register("RemoveProduct", "999");
-            Manager.Login("RemoveProduct", "999");
-            Manager.OpenStore("RemoveProductStr");
-            Manager.AddProduct("RemoveProductStr", "RemTestItem", "nini", "nana", 12, 14);
-            Manager.RemoveProduct("RemoveProductStr", "RemTestItem");
+            Manager.Register(DEF_ID, "RemoveProduct", "999");
+            Manager.Login(DEF_ID, "RemoveProduct", "999");
+            Manager.OpenStore(DEF_ID, "RemoveProductStr");
+            Manager.AddProduct(DEF_ID, "RemoveProductStr", "RemTestItem", "nini", "nana", 12, 14);
+            Manager.RemoveProduct(DEF_ID, "RemoveProductStr", "RemTestItem");
             string searchStr = "RemTestItem";
             var res = Manager.SearchProductsByName(ref searchStr);
             Assert.IsTrue(!searchStr.Equals("RemTestItem") || !res.Any());
@@ -329,37 +325,37 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void AddStoreOwner()
         {
-            Manager.Register("AddStoreOwner1", "999");
-            Manager.Register("AddStoreOwner2", "wallak");
-            Manager.Login("AddStoreOwner1", "999");
-            Manager.OpenStore("AddStoreOwnerStr");
-            Manager.AddStoreOwner("AddStoreOwnerStr", "AddStoreOwner2");
-            Manager.Logout();
-            Manager.Login("AddStoreOwner2", "wallak");
-            Manager.AddProduct("AddStoreOwnerStr", "kloom", "hi", "mashoo", 666, 666);
+            Manager.Register(DEF_ID, "AddStoreOwner1", "999");
+            Manager.Register(DEF_ID, "AddStoreOwner2", "wallak");
+            Manager.Login(DEF_ID, "AddStoreOwner1", "999");
+            Manager.OpenStore(DEF_ID, "AddStoreOwnerStr");
+            Manager.AddStoreOwner(DEF_ID, "AddStoreOwnerStr", "AddStoreOwner2");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "AddStoreOwner2", "wallak");
+            Manager.AddProduct(DEF_ID, "AddStoreOwnerStr", "kloom", "hi", "mashoo", 666, 666);
         }
 
         [Test]
         public void AddStoreManagerAndSetPermissionAndRemoveManagerTest()
         {
-            Manager.Register("AddStoreManager1", "999");
-            Manager.Register("AddStoreManager2", "wallak");
-            Manager.Login("AddStoreManager1", "999");
-            Manager.OpenStore("AddStoreManagerStr");
-            Manager.AddStoreManager("AddStoreManagerStr", "AddStoreManager2");
-            Manager.SetPermissionsOfManager("AddStoreManagerStr", "AddStoreManager2", "Products");
-            Manager.Logout();
-            Manager.Login("AddStoreManager2", "wallak");
-            Manager.AddProduct("AddStoreManagerStr", "kloom", "hi", "mashoo", 666, 666);
-            Manager.Logout();
-            Manager.Login("AddStoreManager1", "999");
-            Manager.RemoveStoreManager("AddStoreManagerStr", "AddStoreManager2");
-            Manager.Logout();
-            Manager.Login("AddStoreManager2", "wallak");
+            Manager.Register(DEF_ID, "AddStoreManager1", "999");
+            Manager.Register(DEF_ID, "AddStoreManager2", "wallak");
+            Manager.Login(DEF_ID, "AddStoreManager1", "999");
+            Manager.OpenStore(DEF_ID, "AddStoreManagerStr");
+            Manager.AddStoreManager(DEF_ID, "AddStoreManagerStr", "AddStoreManager2");
+            Manager.SetPermissionsOfManager(DEF_ID, "AddStoreManagerStr", "AddStoreManager2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "AddStoreManager2", "wallak");
+            Manager.AddProduct(DEF_ID, "AddStoreManagerStr", "kloom", "hi", "mashoo", 666, 666);
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "AddStoreManager1", "999");
+            Manager.RemoveStoreManager(DEF_ID, "AddStoreManagerStr", "AddStoreManager2");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "AddStoreManager2", "wallak");
             bool isException = false;
             try
             {
-                Manager.AddProduct("AddStoreManagerStr", "kloom2", "hi", "mashoo", 666, 666);
+                Manager.AddProduct(DEF_ID, "AddStoreManagerStr", "kloom2", "hi", "mashoo", 666, 666);
             }
             catch (UserHasNoPermissionException)
             {
@@ -370,36 +366,36 @@ namespace SEWorkshop.UnitTests
 
         public void WirteViewMessage()
         {
-            Manager.Register("ViewMessageUser1", "1111");
-            Manager.Register("ViewMessageUser2", "1111");
-            Manager.Login("ViewMessageUser1", "1111");
-            Manager.OpenStore("ViewMessageStore1");
-            Manager.AddStoreManager("ViewMessageStore1", "ViewMessageUser2");
-            Manager.SetPermissionsOfManager("ViewMessageStore1", "ViewMessageUser2", "Replying");
-            Manager.SetPermissionsOfManager("ViewMessageStore1", "ViewMessageUser2", "Watching");
-            Manager.SetPermissionsOfManager("ViewMessageStore1", "ViewMessageUser2", "Products");
-            Manager.Logout();
-            Manager.Login("ViewMessageUser2", "1111");
-            Manager.WriteMessage("ViewMessageStore1", "Hello");
-            var message = Manager.ViewMessage("ViewMessageStore1").ElementAt(0);
+            Manager.Register(DEF_ID, "ViewMessageUser1", "1111");
+            Manager.Register(DEF_ID, "ViewMessageUser2", "1111");
+            Manager.Login(DEF_ID, "ViewMessageUser1", "1111");
+            Manager.OpenStore(DEF_ID, "ViewMessageStore1");
+            Manager.AddStoreManager(DEF_ID, "ViewMessageStore1", "ViewMessageUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "ViewMessageStore1", "ViewMessageUser2", "Replying");
+            Manager.SetPermissionsOfManager(DEF_ID, "ViewMessageStore1", "ViewMessageUser2", "Watching");
+            Manager.SetPermissionsOfManager(DEF_ID, "ViewMessageStore1", "ViewMessageUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "ViewMessageUser2", "1111");
+            Manager.WriteMessage(DEF_ID, "ViewMessageStore1", "Hello");
+            var message = Manager.ViewMessage(DEF_ID, "ViewMessageStore1").ElementAt(0);
             Assert.That(message.Description, Is.EqualTo("hello"));
         }
 
         [Test]
         public void MessageReply()
         {
-            Manager.Register("MessageReplyUser1", "1111");
-            Manager.Register("MessageReplyUser2", "1111");
-            Manager.Login("MessageReplyUser1", "1111");
-            Manager.OpenStore("MessageReplyStore1");
-            Manager.AddStoreManager("MessageReplyStore1", "MessageReplyUser2");
-            Manager.SetPermissionsOfManager("MessageReplyStore1", "MessageReplyUser2", "Replying");
-            Manager.SetPermissionsOfManager("MessageReplyStore1", "MessageReplyUser2", "Watching");
-            Manager.Logout();
-            Manager.Login("MessageReplyUser2", "1111");
-            Manager.WriteMessage("MessageReplyStore1", "Hello");
-            var message = Manager.ViewMessage("MessageReplyStore1").First();
-            Manager.MessageReply(message, "MessageReplyStore1", "reply message");
+            Manager.Register(DEF_ID, "MessageReplyUser1", "1111");
+            Manager.Register(DEF_ID, "MessageReplyUser2", "1111");
+            Manager.Login(DEF_ID, "MessageReplyUser1", "1111");
+            Manager.OpenStore(DEF_ID, "MessageReplyStore1");
+            Manager.AddStoreManager(DEF_ID, "MessageReplyStore1", "MessageReplyUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "MessageReplyStore1", "MessageReplyUser2", "Replying");
+            Manager.SetPermissionsOfManager(DEF_ID, "MessageReplyStore1", "MessageReplyUser2", "Watching");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "MessageReplyUser2", "1111");
+            Manager.WriteMessage(DEF_ID, "MessageReplyStore1", "Hello");
+            var message = Manager.ViewMessage(DEF_ID, "MessageReplyStore1").First();
+            Manager.MessageReply(DEF_ID, message, "MessageReplyStore1", "reply message");
             var reply = message.Next;
             Assert.That(reply.Description, Is.EqualTo("reply message"));
         }
@@ -407,16 +403,16 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void EditProductName()
         {
-            Manager.Register("EditProductNameUser1", "1111");
-            Manager.Register("EditProductNameUser2", "1111");
-            Manager.Login("EditProductNameUser1", "1111");
-            Manager.OpenStore("EditProductNameStore1");
-            Manager.AddStoreManager("EditProductNameStore1", "EditProductNameUser2");
-            Manager.SetPermissionsOfManager("EditProductNameStore1", "EditProductNameUser2", "Products");
-            Manager.Logout();
-            Manager.Login("EditProductNameUser2", "1111");
-            Manager.AddProduct("EditProductNameStore1", "epn_prod1", "old", "cat1", 11.11, 1);
-            Manager.EditProductName("EditProductNameStore1", "epn_prod1", "newName");
+            Manager.Register(DEF_ID, "EditProductNameUser1", "1111");
+            Manager.Register(DEF_ID, "EditProductNameUser2", "1111");
+            Manager.Login(DEF_ID, "EditProductNameUser1", "1111");
+            Manager.OpenStore(DEF_ID, "EditProductNameStore1");
+            Manager.AddStoreManager(DEF_ID, "EditProductNameStore1", "EditProductNameUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "EditProductNameStore1", "EditProductNameUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "EditProductNameUser2", "1111");
+            Manager.AddProduct(DEF_ID, "EditProductNameStore1", "epn_prod1", "old", "cat1", 11.11, 1);
+            Manager.EditProductName(DEF_ID, "EditProductNameStore1", "epn_prod1", "newName");
             string searchStr = "newName";
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Name, Is.EqualTo("newName"));
@@ -426,16 +422,16 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void EditProductCategory()
         {
-            Manager.Register("EditProductCategoryUser1", "1111");
-            Manager.Register("EditProductCategoryUser2", "1111");
-            Manager.Login("EditProductCategoryUser1", "1111");
-            Manager.OpenStore("EditProductCategoryStore1");
-            Manager.AddStoreManager("EditProductCategoryStore1", "EditProductCategoryUser2");
-            Manager.SetPermissionsOfManager("EditProductCategoryStore1", "EditProductCategoryUser2", "Products");
-            Manager.Logout();
-            Manager.Login("EditProductCategoryUser2", "1111");
-            Manager.AddProduct("EditProductCategoryStore1", "epc_prod1", "old", "cat1", 11.11, 1);
-            Manager.EditProductCategory("EditProductCategoryStore1", "epc_prod1", "newCat");
+            Manager.Register(DEF_ID, "EditProductCategoryUser1", "1111");
+            Manager.Register(DEF_ID, "EditProductCategoryUser2", "1111");
+            Manager.Login(DEF_ID, "EditProductCategoryUser1", "1111");
+            Manager.OpenStore(DEF_ID, "EditProductCategoryStore1");
+            Manager.AddStoreManager(DEF_ID, "EditProductCategoryStore1", "EditProductCategoryUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "EditProductCategoryStore1", "EditProductCategoryUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "EditProductCategoryUser2", "1111");
+            Manager.AddProduct(DEF_ID, "EditProductCategoryStore1", "epc_prod1", "old", "cat1", 11.11, 1);
+            Manager.EditProductCategory(DEF_ID, "EditProductCategoryStore1", "epc_prod1", "newCat");
             string searchStr = "epp_prod1";    // theres a typo here
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Category, Is.EqualTo("newCat"));
@@ -445,16 +441,16 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void EditProductPrice()
         {
-            Manager.Register("EditProductPriceUser1", "1111");
-            Manager.Register("EditProductPriceUser2", "1111");
-            Manager.Login("EditProductPriceUser1", "1111");
-            Manager.OpenStore("EditProductPriceStore1");
-            Manager.AddStoreManager("EditProductPriceStore1", "EditProductPriceUser2");
-            Manager.SetPermissionsOfManager("EditProductPriceStore1", "EditProductPriceUser2", "Products");
-            Manager.Logout();
-            Manager.Login("EditProductPriceUser2", "1111");
-            Manager.AddProduct("EditProductPriceStore1", "epp_prod1", "old", "cat1", 11.11, 1);
-            Manager.EditProductPrice("EditProductPriceStore1", "epp_prod1", 12.12);
+            Manager.Register(DEF_ID, "EditProductPriceUser1", "1111");
+            Manager.Register(DEF_ID, "EditProductPriceUser2", "1111");
+            Manager.Login(DEF_ID, "EditProductPriceUser1", "1111");
+            Manager.OpenStore(DEF_ID, "EditProductPriceStore1");
+            Manager.AddStoreManager(DEF_ID, "EditProductPriceStore1", "EditProductPriceUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "EditProductPriceStore1", "EditProductPriceUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "EditProductPriceUser2", "1111");
+            Manager.AddProduct(DEF_ID, "EditProductPriceStore1", "epp_prod1", "old", "cat1", 11.11, 1);
+            Manager.EditProductPrice(DEF_ID, "EditProductPriceStore1", "epp_prod1", 12.12);
             string searchStr = "epp_prod1";
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Price, Is.EqualTo(12.12));
@@ -464,16 +460,16 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void EditProductQuantity()
         {
-            Manager.Register("EditProductQuantityUser1", "1111");
-            Manager.Register("EditProductQuantityUser2", "1111");
-            Manager.Login("EditProductQuantityUser1", "1111");
-            Manager.OpenStore("EditProductQuantityStore1");
-            Manager.AddStoreManager("EditProductQuantityStore1", "EditProductQuantityUser2");
-            Manager.SetPermissionsOfManager("EditProductQuantityStore1", "EditProductQuantityUser2", "Products");
-            Manager.Logout();
-            Manager.Login("EditProductQuantityUser2", "1111");
-            Manager.AddProduct("EditProductQuantityStore1", "epq_prod1", "old", "cat1", 11.11, 1);
-            Manager.EditProductQuantity("EditProductQuantityStore1", "epq_prod1", 3);
+            Manager.Register(DEF_ID, "EditProductQuantityUser1", "1111");
+            Manager.Register(DEF_ID, "EditProductQuantityUser2", "1111");
+            Manager.Login(DEF_ID, "EditProductQuantityUser1", "1111");
+            Manager.OpenStore(DEF_ID, "EditProductQuantityStore1");
+            Manager.AddStoreManager(DEF_ID, "EditProductQuantityStore1", "EditProductQuantityUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "EditProductQuantityStore1", "EditProductQuantityUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "EditProductQuantityUser2", "1111");
+            Manager.AddProduct(DEF_ID, "EditProductQuantityStore1", "epq_prod1", "old", "cat1", 11.11, 1);
+            Manager.EditProductQuantity(DEF_ID, "EditProductQuantityStore1", "epq_prod1", 3);
             string searchStr = "epq_prod1";
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Quantity, Is.EqualTo(3));
@@ -483,20 +479,62 @@ namespace SEWorkshop.UnitTests
         [Test]
         public void EditProductDescription()
         {
-            Manager.Register("EditProductDescriptionUser1", "1111");
-            Manager.Register("EditProductDescriptionUser2", "1111");
-            Manager.Login("EditProductDescriptionUser1", "1111");
-            Manager.OpenStore("EditProductDescriptionStore1");
-            Manager.AddStoreManager("EditProductDescriptionStore1", "EditProductDescriptionUser2");
-            Manager.SetPermissionsOfManager("EditProductDescriptionStore1", "EditProductDescriptionUser2", "Products");
-            Manager.Logout();
-            Manager.Login("EditProductDescriptionUser2", "1111");
-            Manager.AddProduct("EditProductDescriptionStore1", "epd_prod1", "old", "cat1", 11.11, 1);
-            Manager.EditProductDescription("EditProductDescriptionStore1", "epd_prod1", "new");
+            Manager.Register(DEF_ID, "EditProductDescriptionUser1", "1111");
+            Manager.Register(DEF_ID, "EditProductDescriptionUser2", "1111");
+            Manager.Login(DEF_ID, "EditProductDescriptionUser1", "1111");
+            Manager.OpenStore(DEF_ID, "EditProductDescriptionStore1");
+            Manager.AddStoreManager(DEF_ID, "EditProductDescriptionStore1", "EditProductDescriptionUser2");
+            Manager.SetPermissionsOfManager(DEF_ID, "EditProductDescriptionStore1", "EditProductDescriptionUser2", "Products");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "EditProductDescriptionUser2", "1111");
+            Manager.AddProduct(DEF_ID, "EditProductDescriptionStore1", "epd_prod1", "old", "cat1", 11.11, 1);
+            Manager.EditProductDescription(DEF_ID, "EditProductDescriptionStore1", "epd_prod1", "new");
             string searchStr = "epd_prod1";
             var res = Manager.SearchProductsByName(ref searchStr).ElementAt(0);
             Assert.That(res.Description, Is.EqualTo("new"));
             Assert.That(res.Description, Is.Not.EqualTo("old"));
         }
+
+        [Test]
+        public void LoginFromDifferentSessions()
+        {
+            Manager.Register("SessionLoginFromDifferentSessions1", "LoginFromDifferentSessions1", "1234");
+            Manager.Register("SessionLoginFromDifferentSessions2", "LoginFromDifferentSessions2", "1234");
+            Manager.Login("SessionLoginFromDifferentSessions1", "LoginFromDifferentSessions1", "1234");
+            Manager.Login("SessionLoginFromDifferentSessions2", "LoginFromDifferentSessions2", "1234");
+            Assert.Throws<UserAlreadyLoggedInException>(() => Manager.Register("SessionLoginFromDifferentSessions1",
+                "LoginFromDifferentSessions3", "1234"));
+            Assert.Throws<UserAlreadyLoggedInException>(() => Manager.Register("SessionLoginFromDifferentSessions2",
+                "LoginFromDifferentSessions4", "1234"));
+            Manager.Logout("SessionLoginFromDifferentSessions1");
+            Manager.Register("SessionLoginFromDifferentSessions1", "LoginFromDifferentSessions3", "1234");
+            Assert.Throws<UserAlreadyLoggedInException>(() => Manager.Register("SessionLoginFromDifferentSessions2",
+                "LoginFromDifferentSessions4", "1234"));
+        }
+
+        [Test]
+        public void StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory()
+        {
+            Manager.Login(DEF_ID, "admin", "sadnaTeam");
+            Manager.OpenStore(DEF_ID, "StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory");
+            var result = Manager.StorePurchaseHistory(DEF_ID, "StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory");
+            ICollection<Purchase> expected = new List<Purchase>();
+            CollectionAssert.AreEqual(expected, result);
+        }
+
+       [Test]
+        public void WriteReview_Multiple_Sessions()
+        {
+            const string OTHER_ID = "WriteReview_NoPermission_ThrowsException";
+            Manager.Register(DEF_ID, "wrnp_user1", "1111");
+            Manager.Register(OTHER_ID, "wrnp_user2", "1111");
+            Manager.Login(OTHER_ID, "wrnp_user2", "1111");
+            Manager.OpenStore(OTHER_ID, "WriteReviewMultipleStore");
+            Manager.AddProduct(OTHER_ID, "WriteReviewMultipleStore", "someItem", "someDesc", "anotherCat", 11.1, 3);
+            Assert.Throws<UserHasNoPermissionException>( () => Manager.WriteReview(DEF_ID, "WriteReviewMultipleStore",
+                                "someItem", "bad review!!!!"));
+            Manager.Login(DEF_ID, "wrnp_user1", "1111");
+            Manager.WriteReview(DEF_ID, "WriteReviewMultipleStore", "someItem", "bad review!!!!");
+        } 
     }
 }

@@ -1,0 +1,13 @@
+@page
+@model Website.Pages.CreateStoreModel
+@{
+    ViewData["Title"] = "Create Store";
+}
+    <div class="allpage">
+        <h1 class="display-4">Create Store</h1>
+        <form class="loginform" method="post">
+            <input class="input" type="text" asp-for="StoreName" placeholder="StoreName" />
+            <button class="submit" type="submit" id="submit">Create Store</button>
+            <text class="alert-danger">@Model.ErrorMsg</text>
+        </form>
+    </div>

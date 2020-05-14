@@ -8,17 +8,25 @@ namespace SEWorkshop.Models
 {
     public class GuestUser : User
     {
-        public GuestUser() : base() { }
+        private static int nextId = 0;
+        private static object nextIdLock = new object();
+        public int Id { get; }
+
+        public GuestUser() : base() 
+        {
+            lock(nextIdLock)
+            {
+                Id = nextId;
+                nextId++;
+            }
+        }
         
         override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            if (HasPermission)
-                purchase = new Purchase(this, basket);
-            else
-                purchase = new Purchase(new GuestUser(), basket);
+            purchase = new Purchase(new GuestUser(), basket);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)

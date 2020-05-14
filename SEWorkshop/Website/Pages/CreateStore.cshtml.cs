@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,32 +10,41 @@ using SEWorkshop.Exceptions;
 
 namespace Website.Pages
 {
-    public class StoreModel : PageModel
+    public class CreateStoreModel : PageModel
     {
-        [BindProperty(SupportsGet = true)]
         private IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
 
-        public StoreModel(IUserManager userManager)
+        public CreateStoreModel(IUserManager userManager)
         {
             UserManager = userManager;
             StoreName = "";
             ErrorMsg = "";
         }
-        
-        public void OnGet(string storeName)
+
+        public void OnGet()
+        {
+            ErrorMsg = "";
+        }
+
+        public IActionResult OnPost(string storeName)
         {
             try
             {
-                StoreName = storeName;
-                Store = UserManager.SearchStore(StoreName);
+                UserManager.OpenStore(HttpContext.Session.Id, storeName);
+            }
+            catch(UserHasNoPermissionException e)
+            {
+                ErrorMsg = e.ToString();
             }
             catch(StoreNotInTradingSystemException e)
             {
                 ErrorMsg = e.ToString();
             }
+            StoreName = storeName;
+            return RedirectToPage("./Store", new { storeName = storeName });
         }
     }
 }

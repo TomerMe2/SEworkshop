@@ -14,7 +14,6 @@ namespace SEWorkshop.Facades
         private IUserFacade UserFacade { get; }
         private IManageFacade ManageFacade { get; }
         private IStoreFacade StoreFacade { get; }
-        private User CurrUser { get; set; }
 
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
@@ -23,20 +22,14 @@ namespace SEWorkshop.Facades
             ManageFacade = new ManageFacade();
             StoreFacade = new StoreFacade();
             UserFacade = new UserFacade(StoreFacade);
-            CurrUser = new GuestUser();
         }
-        public DataProduct AddProduct(string storeName, string productName, string description, string category, double price, int quantity)
+
+        public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity)
         {
             Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
                 " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            Product product = ManageFacade.AddProduct((LoggedInUser)CurrUser, GetStore(storeName),
+            Product product = ManageFacade.AddProduct(GetLoggedInUsr(user), GetStore(storeName),
                                                           productName, description, category, price, quantity);
-
             return new DataProduct(product);
         }
 
@@ -45,9 +38,24 @@ namespace SEWorkshop.Facades
             return new DataStore(GetStore(storeName));
         }
 
-        public LoggedInUser GetUser(string userName)
+        private LoggedInUser GetLoggedInUsr(DataLoggedInUser user)
         {
-            return UserFacade.GetUser(userName);
+            return UserFacade.GetLoggedInUser(user.Username);
+        }
+
+        private LoggedInUser GetLoggedInUsr(string userName)
+        {
+            return UserFacade.GetLoggedInUser(userName);
+        }
+
+        private User GetUser(DataUser dataUser)
+        {
+            return dataUser switch
+            {
+                DataGuestUser guest => UserFacade.GetGuestUser(guest.Id),
+                DataLoggedInUser loggedIn => UserFacade.GetLoggedInUser(loggedIn.Username),
+                _ => throw new Exception("Not implemented for this user type"),
+            };
         }
 
         private Store GetStore(string storeName)
@@ -71,7 +79,7 @@ namespace SEWorkshop.Facades
             return product;
         }
 
-        public void AddProductToCart(string storeName, string productName, int quantity)
+        public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
@@ -81,34 +89,21 @@ namespace SEWorkshop.Facades
                 Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
-            UserFacade.AddProductToCart(CurrUser, GetProduct(storeName, productName), quantity);
+            UserFacade.AddProductToCart(GetUser(user), GetProduct(storeName, productName), quantity);
         }
 
-        public void AddStoreManager(string storeName, string newManagerUserName)
+        public void AddStoreManager(DataLoggedInUser user, string storeName, string newManagerUserName)
         {
             Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
                storeName, newManagerUserName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            else
-            {
-                ManageFacade.AddStoreManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(newManagerUserName));
-            }
+            ManageFacade.AddStoreManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newManagerUserName));
         }
 
-        public void AddStoreOwner(string storeName, string newOwnerUserName)
+        public void AddStoreOwner(DataLoggedInUser user, string storeName, string newOwnerUserName)
         {
             Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}",
                storeName, newOwnerUserName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.AddStoreOwner((LoggedInUser)CurrUser, GetStore(storeName), GetUser(newOwnerUserName));
+            ManageFacade.AddStoreOwner(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName));
         }
 
         public IEnumerable<DataStore> BrowseStores()
@@ -116,59 +111,34 @@ namespace SEWorkshop.Facades
             return StoreFacade.BrowseStores().Select(store => new DataStore(store));
         }
 
-        public void EditProductCategory(string storeName, string productName, string category)
+        public void EditProductCategory(DataLoggedInUser user, string storeName, string productName, string category)
         {
-            if (!UserFacade.HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.EditProductCategory((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), category);
+            ManageFacade.EditProductCategory(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), category);
         }
 
-        public void EditProductDescription(string storeName, string productName, string description)
+        public void EditProductDescription(DataLoggedInUser user, string storeName, string productName, string description)
         {
-            if (!UserFacade.HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.EditProductDescription((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), description);
+            ManageFacade.EditProductDescription(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), description);
         }
 
-        public void RemovePermissionsOfManager(string storeName, string username, Authorizations authorization)
+        public void RemovePermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization)
         {
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.RemovePermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
+            ManageFacade.RemovePermissionsOfManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(username), authorization);
         }
 
-        public void EditProductName(string storeName, string productName, string name)
+        public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name)
         {
-            if (!UserFacade.HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.EditProductName((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), name);
+            ManageFacade.EditProductName(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), name);
         }
 
-        public void EditProductPrice(string storeName, string productName, double price)
+        public void EditProductPrice(DataLoggedInUser user, string storeName, string productName, double price)
         {
-            if (!UserFacade.HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.EditProductPrice((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), price);
+            ManageFacade.EditProductPrice(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), price);
         }
 
-        public void EditProductQuantity(string storeName, string productName, int quantity)
+        public void EditProductQuantity(DataLoggedInUser user, string storeName, string productName, int quantity)
         {
-            if (!UserFacade.HasPermission)
-            {
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.EditProductQuantity((LoggedInUser)CurrUser, GetStore(storeName), GetProduct(storeName, productName), quantity);
+            ManageFacade.EditProductQuantity(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), quantity);
         }
 
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
@@ -176,42 +146,25 @@ namespace SEWorkshop.Facades
             return products.Where(pred);
         }
 
-        public void Login(string username, byte[] password)
+        public DataLoggedInUser GetLoggedInUserAndApplyCart(string username, byte[] password, DataGuestUser userAsGuest)
         {
             Log.Info(string.Format("Login was invoked with username {0}", username));
             //preserve loggedIn user's cart that he gathered as a GuestUser.
-            Cart cart = CurrUser.Cart;
-            CurrUser = UserFacade.Login(username, password);
-            CurrUser.Cart = cart;
+            Cart cart = GetUser(userAsGuest).Cart;
+            LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
+            loggedIn.Cart = cart;
+            return new DataLoggedInUser(loggedIn);
         }
 
-        public void Logout()
-        {
-            Log.Info("Logout was invoked");
-            Cart cart = CurrUser.Cart;
-            UserFacade.Logout();
-            CurrUser = new GuestUser();
-        }
-
-        public IEnumerable<DataPurchase> ManagingPurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName)
         {
             Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            return ManageFacade.ViewPurchaseHistory((LoggedInUser)CurrUser, GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
+            return ManageFacade.ViewPurchaseHistory(GetLoggedInUsr(user), GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
         }
 
-        public DataMessage MessageReply(DataMessage message, string storeName, string description)
+        public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
             var store = GetStore(storeName);
             DataMessage firstMsgData = message;
             // this whole manouver is because one can answer on a message that is not in the messages list
@@ -236,38 +189,34 @@ namespace SEWorkshop.Facades
                 Log.Info("message is not in the system");
                 throw new MessageNotInSystemException();
             }
-            return new DataMessage(ManageFacade.MessageReply((LoggedInUser)CurrUser, toAnswerOn, GetStore(storeName), description));
+            return new DataMessage(ManageFacade.MessageReply(GetLoggedInUsr(user), toAnswerOn, GetStore(storeName), description));
         }
 
-        public IEnumerable<DataBasket> MyCart()
+        public IEnumerable<DataBasket> MyCart(DataUser user)
         {
-            return CurrUser.Cart.Baskets.Select(bskt => new DataBasket(bskt));
+            return GetUser(user).Cart.Baskets.Select(bskt => new DataBasket(bskt));
         }
 
-        public void OpenStore(string storeName)
+        public void OpenStore(DataLoggedInUser user, string storeName)
         {
             Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
-            if (CurrUser is GuestUser)
-            {
-                Log.Info(string.Format("GuestUser invoked OpenStore"));
-                throw new UserHasNoPermissionException();
-            }
-            StoreFacade.CreateStore((LoggedInUser)CurrUser, storeName);
+            StoreFacade.CreateStore(GetLoggedInUsr(user), storeName);
         }
 
-        public IEnumerable<DataPurchase> PurchaseHistory()
+        public IEnumerable<DataPurchase> PurchaseHistory(DataLoggedInUser user)
         {
-            return UserFacade.PurchaseHistory(CurrUser).Select(prchs => new DataPurchase(prchs));
+            return UserFacade.PurchaseHistory(GetLoggedInUsr(user)).Select(prchs => new DataPurchase(prchs));
         }
 
-        public void Purchase(DataBasket basket, string creditCardNum, Address address)
+        public void Purchase(DataUser dataUser, DataBasket basket, string creditCardNum, Address address)
         {
-            Basket? trueBasket = CurrUser.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
+            var user = GetUser(dataUser);
+            Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
             if (trueBasket is null)
             {
                 throw new BasketNotInSystemException();
             }
-            UserFacade.Purchase(CurrUser, trueBasket, creditCardNum, address);
+            UserFacade.Purchase(user, trueBasket, creditCardNum, address);
         }
 
         public void Register(string username, byte[] password)
@@ -275,20 +224,15 @@ namespace SEWorkshop.Facades
             UserFacade.Register(username, password);
         }
 
-        public void RemoveProduct(string storeName, string productName)
+        public void RemoveProduct(DataLoggedInUser user, string storeName, string productName)
         {
             Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
-            ManageFacade.RemoveProduct((LoggedInUser)CurrUser, store, product);
+            ManageFacade.RemoveProduct(GetLoggedInUsr(user), store, product);
         }
 
-        public void RemoveProductFromCart(string storeName, string productName, int quantity)
+        public void RemoveProductFromCart(DataUser user, string storeName, string productName, int quantity)
         {
             Log.Info(string.Format("RemoveProductFromCart was invoked with storeName {0}, productName {1}, quantity {2}",
                 storeName, productName, quantity));
@@ -298,20 +242,15 @@ namespace SEWorkshop.Facades
                 Log.Info(string.Format("Someone tried to remove product from cart with a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
-            UserFacade.RemoveProductFromCart(CurrUser, GetProduct(storeName, productName), quantity);
+            UserFacade.RemoveProductFromCart(GetUser(user), GetProduct(storeName, productName), quantity);
         }
 
-        public void RemoveStoreManager(string storeName, string username)
+        public void RemoveStoreManager(DataLoggedInUser user, string storeName, string username)
         {
             Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
                storeName, username));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            LoggedInUser manager = UserFacade.GetUser(username);
-            ManageFacade.RemoveStoreManager((LoggedInUser)CurrUser, GetStore(storeName), manager);
+            LoggedInUser manager = UserFacade.GetLoggedInUser(username);
+            ManageFacade.RemoveStoreManager(GetLoggedInUsr(user), GetStore(storeName), manager);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -358,62 +297,47 @@ namespace SEWorkshop.Facades
             return SearchProducts(product => product.Name.ToLower().Replace('_', ' ').Equals(localInput)).Select(prod => new DataProduct(prod));
         }
 
-        public void SetPermissionsOfManager(string storeName, string username, Authorizations authorization)
+        public void SetPermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization)
         {
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            ManageFacade.SetPermissionsOfManager((LoggedInUser)CurrUser, GetStore(storeName), GetUser(username), authorization);
+            ManageFacade.SetPermissionsOfManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(username), authorization);
         }
 
-        public IEnumerable<DataPurchase> StorePurchaseHistory(string storeName)
+        public IEnumerable<DataPurchase> StorePurchaseHistory(DataLoggedInUser user, string storeName)
         {
             Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            return UserFacade.StorePurchaseHistory((LoggedInUser)CurrUser, GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
-
+            return UserFacade.StorePurchaseHistory(GetLoggedInUsr(user), GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
         }
 
-        public IEnumerable<DataPurchase> UserPurchaseHistory(string userNm)
+        public IEnumerable<DataPurchase> UserPurchaseHistory(DataLoggedInUser user, string userNm)
         {
             Log.Info(string.Format("WriteReview was invoked with userName {0}", userNm));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info(string.Format("userName {0} has no permission", userNm));
-                throw new UserHasNoPermissionException();
-            }
-            return UserFacade.UserPurchaseHistory((LoggedInUser)CurrUser, userNm).Select(prchs => new DataPurchase(prchs));
+            return UserFacade.UserPurchaseHistory(GetLoggedInUsr(user), userNm).Select(prchs => new DataPurchase(prchs));
         }
 
-        public IEnumerable<DataMessage> ViewMessage(string storeName)
+        public IEnumerable<DataMessage> ViewMessage(DataLoggedInUser user, string storeName)
         {
             Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
-            if (!UserFacade.HasPermission)
-            {
-                Log.Info("user has no permission");
-                throw new UserHasNoPermissionException();
-            }
-            return ManageFacade.ViewMessage((LoggedInUser)CurrUser, GetStore(storeName)).Select(msg => new DataMessage(msg));
+            return ManageFacade.ViewMessage(GetLoggedInUsr(user), GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
-        public void WriteMessage(string storeName, string description)
+        public void WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            UserFacade.WriteMessage(CurrUser, GetStore(storeName), description);
+            UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description);
         }
 
-        public void WriteReview(string storeName, string productName, string description)
+        public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
         {
             Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
                 storeName, productName, description));
-            UserFacade.WriteReview(CurrUser, GetProduct(storeName, productName), description);
+            UserFacade.WriteReview(GetLoggedInUsr(user), GetProduct(storeName, productName), description);
+        }
+
+        public DataGuestUser CreateGuest()
+        {
+            var guestUsr = UserFacade.CreateGuestUser();
+            return new DataGuestUser(guestUsr);
         }
     }
 }
