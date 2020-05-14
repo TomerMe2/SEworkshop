@@ -1,4 +1,5 @@
 ﻿using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -54,6 +55,15 @@ namespace SEWorkshop.Facades
         public void EditProductQuantity(DataLoggedInUser user, string storeName, string productName, int quantity);
         public void EditProductDescription(DataLoggedInUser user, string storeName, string productName, string description);
         public void RemovePermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
+
+        //All add policies are adding to the end
+        public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op);
+        public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity);
+        public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry);
+        public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity);
+        public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
     }
 }

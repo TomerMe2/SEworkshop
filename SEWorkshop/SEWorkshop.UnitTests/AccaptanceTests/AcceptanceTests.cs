@@ -132,9 +132,9 @@ namespace SEWorkshop.UnitTests
 		{
 			bridge.AddProductToCart("store1", "bisli", 1);
 			var basket = bridge.MyCart().First();
-			Assert.That(() => bridge.Purchase(basket, "555", new Address("Beer Sheva", "Ben Gurion", "99")), Throws.Nothing);
+			Assert.That(() => bridge.Purchase(basket, "555", new Address("Israel", "Beer Sheva", "Ben Gurion", "99")), Throws.Nothing);
 			Assert.Throws<BasketNotInSystemException>(delegate { bridge.Purchase(basket, "555",
-                                                        new Address("Beer Sheva", "Ben Gurion", "99")); });
+                                                        new Address("Israel", "Beer Sheva", "Ben Gurion", "99")); });
 		}
 
 		[Test, Order(30)]
