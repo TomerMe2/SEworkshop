@@ -1,8 +1,8 @@
 ﻿@model Website.Pages.SearchBarModel
-<form asp-page="/SearchResult" method="post">
+<form id="searchForm" asp-page="/SearchResult" method="post">
     <div class="form-inline">
-        <input id="searchText" name="searchText" class="form-control" type="text" placeholder="Search" aria-label="Search" style="width: 70%">
-        <select id="searchCategory" name="searchCategory" class="form-control mdb-select colorful-select dropdown-primary" style="width: 15%">
+        <input id="searchText" name="searchText" class="form-control" type="text" placeholder="Search" aria-label="Search" style="width: 68%">
+        <select id="searchCategory" name="searchCategory" class="form-control mdb-select colorful-select dropdown-primary" style="width: 17%">
             <option value="product_name">Product Name</option>
             <option value="product_category">Product Category</option>
             <option value="product_keywords">Product Keywords</option>

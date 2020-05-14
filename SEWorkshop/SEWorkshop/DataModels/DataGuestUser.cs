@@ -7,6 +7,11 @@ namespace SEWorkshop.DataModels
 {
     public class DataGuestUser : DataUser
     {
-        public DataGuestUser(GuestUser guestUsr) : base(guestUsr) { }
+        public int Id { get; }
+
+        public DataGuestUser(GuestUser guestUsr) : base(guestUsr)
+        {
+            Id = guestUsr.Id;
+        }
     }
 }

@@ -37,7 +37,8 @@ namespace Website.Pages
         {
             try
             {
-                UserManager.Register(Username, Password);
+                string deb = HttpContext.Session.Id;
+                UserManager.Register(HttpContext.Session.Id, Username, Password);
             }
             catch (Exception e)
             {

@@ -23,17 +23,19 @@ namespace Website.Pages
             StoreName = "";
             ErrorMsg = "";
         }
+
         public void OnGet()
         {
             ErrorMsg = "";
         }
+
         public IActionResult OnPost(string storeName)
         {
             try
             {
-                UserManager.OpenStore(storeName);
+                UserManager.OpenStore(HttpContext.Session.Id, storeName);
             }
-            catch(UserIsNotLoggedInException e)
+            catch(UserHasNoPermissionException e)
             {
                 ErrorMsg = e.ToString();
             }
