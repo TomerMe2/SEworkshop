@@ -37,7 +37,7 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> PurchaseHistory(string sessionId);
         public void WriteReview(string sessionId, string storeName, string productName, string description);
-        public void WriteMessage(string sessionId, string storeName, string description);
+        public int WriteMessage(string sessionId, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm);
         public IEnumerable<DataPurchase> StorePurchaseHistory(string sessionId, string storeNm);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(string sessionId, string storeNm);
@@ -56,5 +56,6 @@ namespace SEWorkshop.ServiceLayer
         public void EditProductDescription(string sessionId, string storeName, string productName, string description);
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
+        public DataLoggedInUser GetDataLoggedInUser(string sessionId);
     }
 }
