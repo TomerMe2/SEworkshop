@@ -46,7 +46,6 @@ namespace SEWorkshop.ServiceLayer
             SecurityAdapter = new SecurityAdapter();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
-
         }
 
         private static void ConfigLog()
