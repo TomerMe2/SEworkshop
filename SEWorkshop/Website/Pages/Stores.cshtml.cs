@@ -28,16 +28,6 @@ namespace Website.Pages
             UserManager = userManager;
             StoreName = "";
             Error = "";
-            try
-            {
-                UserManager.Register("1", "Noa Kirel", "1234");
-                UserManager.Login("1", "Noa Kirel", "1234");
-                UserManager.OpenStore("1", "Zara");
-                UserManager.OpenStore("1", "Haim Vegetables");
-            }
-            catch (Exception)
-            {
-            }
             Stores = UserManager.BrowseStores();
         }
         
