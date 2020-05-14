@@ -210,6 +210,14 @@ namespace SEWorkshop.Models
             return management.MessageReply(this,store,message,description);
         }
 
+        public Message MessageReplyAsNotManager(Message message, string description)
+        {
+            Message reply = new Message(this, description, message);
+            message.Next = reply;
+            log.Info("Reply has been published successfully");
+            return reply;
+        }
+
         public IEnumerable<Message> GetMessage(Store store)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);

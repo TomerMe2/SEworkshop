@@ -78,7 +78,7 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        private DataLoggedInUser GetLoggedInUser(string sessionId)
+        public DataLoggedInUser GetLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
             if (usr is DataLoggedInUser)
@@ -240,11 +240,11 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.WriteReview(GetLoggedInUser(sessionId), storeName, productName, description);
         }
 
-        public void WriteMessage(string sessionId, string storeName, string description)
+        public int WriteMessage(string sessionId, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            return FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
@@ -427,5 +427,17 @@ namespace SEWorkshop.ServiceLayer
                 return false;
             }
         }
+
+        public DataLoggedInUser GetDataLoggedInUser(string sessionId)
+        {
+            var usr = GetUser(sessionId);
+            if (usr is DataLoggedInUser)
+            {
+                return (DataLoggedInUser)usr;
+            }
+            throw new UserIsNotLoggedInException();
+        }
+
+
     }
 }
