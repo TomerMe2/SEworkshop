@@ -37,5 +37,9 @@ namespace Website.Pages
                 ErrorMsg = e.ToString();
             }
         }
+
+        public void OnPost(string StoreName, string ProductName)
+        {
+        }
     }
 }
