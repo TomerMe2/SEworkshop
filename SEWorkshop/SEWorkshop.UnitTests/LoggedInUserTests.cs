@@ -6,6 +6,7 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
+using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests
 {
@@ -335,7 +336,26 @@ namespace SEWorkshop.Tests
 
         }
         
-        
+        [Test]
+        public void PurchasePolicyTest()
+        {
+            const string STORE_NAME = "Wello";
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 1);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 0);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+        }
 
     }
 }

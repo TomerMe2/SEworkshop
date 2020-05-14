@@ -3,6 +3,8 @@ using SEWorkshop.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Facades;
+using SEWorkshop.Enums;
+using System;
 
 namespace SEWorkshop.Models
 {
@@ -271,7 +273,6 @@ namespace SEWorkshop.Models
             {
                 return true;
             }
-            
             return false;
         }
 
@@ -310,6 +311,53 @@ namespace SEWorkshop.Models
             }
 
             management.RemovePermissionsOfManager(manager,authorization);
+        }
+
+        private Owns OwnsForStore(Store store)
+        {
+            var res = Owns.FirstOrDefault(owns => owns.Store == store);
+            if (res == null)
+            {
+                throw new UserIsNotOwnerOfThisStore();
+            }
+            return res;
+
+        }
+
+        //All add policies are adding to the end
+        public void AddAlwaysTruePolicy(Store store, Operator op)
+        {
+            OwnsForStore(store).AddAlwaysTruePolicy(op);
+        }
+
+        public void AddSingleProductQuantityPolicy(Store store, Operator op, Product product, int minQuantity, int maxQuantity)
+        {
+            OwnsForStore(store).AddSingleProductQuantityPolicy(op, product, minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(Store store, Operator op, DayOfWeek cantBuyIn)
+        {
+            OwnsForStore(store).AddSystemDayPolicy(op, cantBuyIn);
+        }
+
+        public void AddUserCityPolicy(Store store, Operator op, string requiredCity)
+        {
+            OwnsForStore(store).AddUserCityPolicy(op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(Store store, Operator op, string requiredCountry)
+        {
+            OwnsForStore(store).AddUserCountryPolicy(op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(Store store, Operator op, int minQuantity, int maxQuantity)
+        {
+            OwnsForStore(store).AddWholeStoreQuantityPolicy(op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(Store store, int indexInChain)
+        {
+            OwnsForStore(store).RemovePolicy(indexInChain);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using NLog;
+using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Models.Policies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -247,6 +249,80 @@ namespace SEWorkshop.Models
                     log.Info("Permission has been taken away successfully");
                     authorizations.Remove(authorization);
                 }
+            }
+        }
+
+        private void AddPolicyToEnd(Policy pol, Operator op)
+        {
+            if (pol.InnerPolicy != null)
+            {
+                throw new PolicyCauseCycilicError();
+            }
+            Policy currPol = Store.Policy;
+            while(currPol.InnerPolicy != null)
+            {
+                currPol = currPol.InnerPolicy.Value.Item1;
+            }
+            currPol.InnerPolicy = (pol, op);
+        }
+
+        //All add policies are adding to the end
+        public void AddAlwaysTruePolicy(Operator op)
+        {
+            AddPolicyToEnd(new AlwaysTruePolicy(Store), op);
+        }
+
+        public void AddSingleProductQuantityPolicy(Operator op, Product product, int minQuantity, int maxQuantity)
+        {
+            AddPolicyToEnd(new SingleProductQuantityPolicy(Store, product, minQuantity, maxQuantity), op);
+        }
+
+        public void AddSystemDayPolicy(Operator op, DayOfWeek cantBuyIn)
+        {
+            AddPolicyToEnd(new SystemDayPolicy(Store, cantBuyIn), op);
+        }
+
+        public void AddUserCityPolicy(Operator op, string requiredCity)
+        {
+            AddPolicyToEnd(new UserCityPolicy(Store, requiredCity), op);
+        }
+
+        public void AddUserCountryPolicy(Operator op, string requiredCountry)
+        {
+            AddPolicyToEnd(new UserCountryPolicy(Store, requiredCountry), op);
+        }
+
+        public void AddWholeStoreQuantityPolicy(Operator op, int minQuantity, int maxQuantity)
+        {
+            AddPolicyToEnd(new WholeStoreQuantityPolicy(Store, minQuantity, maxQuantity), op);
+        }
+
+        public void RemovePolicy(int indexInChain)
+        {
+            Policy currPol = Store.Policy;
+            Policy? prev = null;
+            int i = 0;
+            while (currPol.InnerPolicy != null && i < indexInChain)
+            {
+                prev = currPol;
+                currPol = currPol.InnerPolicy.Value.Item1;
+                i++;
+            }
+            if (i != indexInChain)
+            {
+                throw new NoPolicyInTheGivenIndex();
+            }
+            if (i == 0 || prev == null)
+            {
+                if (currPol.InnerPolicy == null)
+                {
+                    throw new CantRemoveTheOnlyPolicy();
+                }
+                Store.Policy = currPol.InnerPolicy.Value.Item1;
+            }
+            else
+            {
+                prev.InnerPolicy = currPol.InnerPolicy;
             }
         }
     }
