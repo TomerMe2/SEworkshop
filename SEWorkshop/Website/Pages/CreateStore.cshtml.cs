@@ -14,7 +14,10 @@ namespace Website.Pages
     {
         private IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
-        public string StoreName {get; private set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string StoreName {get; set; }
+        [BindProperty(SupportsGet = true)]
         public string ErrorMsg { get; private set; }
 
         public CreateStoreModel(IUserManager userManager)
@@ -29,22 +32,17 @@ namespace Website.Pages
             ErrorMsg = "";
         }
 
-        public IActionResult OnPost(string storeName)
+        public IActionResult OnPost()
         {
             try
             {
-                UserManager.OpenStore(HttpContext.Session.Id, storeName);
+                UserManager.OpenStore(HttpContext.Session.Id, StoreName);
             }
-            catch(UserHasNoPermissionException e)
+            catch(Exception e)
             {
                 ErrorMsg = e.ToString();
             }
-            catch(StoreNotInTradingSystemException e)
-            {
-                ErrorMsg = e.ToString();
-            }
-            StoreName = storeName;
-            return RedirectToPage("./Store", new { storeName = storeName });
+            return RedirectToPage("./Index");
         }
     }
 }
