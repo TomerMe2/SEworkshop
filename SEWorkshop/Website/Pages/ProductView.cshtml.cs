@@ -12,10 +12,12 @@ namespace Website.Pages
     public class ProductViewModel : PageModel
     {
         public DataProduct Product { get; private set; }
+        public string destPath;
 
         public ProductViewModel(DataProduct product)
         {
             Product = product;
+            destPath = "./Store/"+Product.Store.Name;
         }
 
         public void OnGet()

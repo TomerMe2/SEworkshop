@@ -8,7 +8,7 @@
         <h6 class="card-subtitle mb-2">@Model.Product.Category</h6>
         <h6 class="card-subtitle mb-2">@Model.Product.Price ₪</h6>
         <p class="card-text">@Model.Product.Description</p>
-        <form method="post" asp-page="Store/@Model.Product.Store.Name">
+        <form method="post" action="@Model.destPath">
             <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
             <input type="hidden" name="ProductName" value="@Model.Product.Name">
             <input type="text" name="Quantity">

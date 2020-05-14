@@ -17,7 +17,9 @@
         <h2 style="font-weight: bold;">Click on the products to add them to the cart!</h2>
         foreach(var product in Model.Store.Products)
         {
-            await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+            ProductViewModel pvm = new ProductViewModel(product);
+            pvm.destPath = pvm.Product.Store.Name;
+            await Html.RenderPartialAsync("ProductView", pvm);
         }
     }
 }
