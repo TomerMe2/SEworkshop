@@ -5,6 +5,7 @@ using System.Text;
 using NLog;
 using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Models.Discounts;
 
 namespace SEWorkshop.Models
 {
