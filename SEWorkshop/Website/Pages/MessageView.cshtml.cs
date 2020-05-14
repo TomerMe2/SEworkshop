@@ -27,11 +27,11 @@ namespace Website.Pages
             CompleteMsg = "";
         }
 
-        public void OnGet(string storeWritingTo, string msgId)
+        public IActionResult OnGet(string storeWritingTo, string msgId)
         {
             if (!UserManager.IsLoggedIn(HttpContext.Session.Id))
             {
-                return;
+                return StatusCode(500);
             }
             try
             {
@@ -40,12 +40,12 @@ namespace Website.Pages
             catch
             {
                 Error = "answering on msg id is not a number";
-                return;
+                return StatusCode(500);
             }
             if (MsgId < -1)
             {
                 Error = "invalid answering on msg id";
-                return;
+                return StatusCode(500);
             }
             if (MsgId != -1)
             {
@@ -55,7 +55,7 @@ namespace Website.Pages
                 if (MsgToShow == null)
                 {
                     Error = "can't find message to show";
-                    return;
+                    return StatusCode(500);
                 }
             }
             try
@@ -65,7 +65,9 @@ namespace Website.Pages
             catch
             {
                 Error = "No such store";
+                return StatusCode(500);
             }
+            return Page();
         }
 
         public IActionResult OnPost(string content, string storeWritingTo, string answeringOnMsgId)

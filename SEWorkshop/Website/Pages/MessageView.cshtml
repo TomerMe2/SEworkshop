@@ -7,26 +7,33 @@
 <h1>MessageView</h1>
 
 @{
-    var currMsg = Model.MsgToShow;
-    while (currMsg != null)
+    if (Model.Error.Equals(""))
     {
-        <div class="card" style="width: 100%">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2">@currMsg.WrittenBy.Username wrote this</h6>
-                <p class="card-text">@currMsg.Description</p>
+        var currMsg = Model.MsgToShow;
+        while (currMsg != null)
+        {
+            <div class="card" style="width: 100%">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2">@currMsg.WrittenBy.Username wrote this</h6>
+                    <p class="card-text">@currMsg.Description</p>
+                </div>
             </div>
-        </div>
-        currMsg = currMsg.Next;
+            currMsg = currMsg.Next;
+        }
+
+        <form id="messageSend" method="post">
+            <div class="form-group">
+                <input type="hidden" name="storeWritingTo" value="@Model.StoreWritingTo?.Name">
+                <input type="hidden" name="answeringOnMsgId" value="@Model.MsgId">
+                <label for="msg_txt_area">Write your message here</label>
+                <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
+                <button type="submit" class="form-control btn btn-primary">Send</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <h2>@Model.Error</h2>
     }
 }
-
-<form id="messageSend" method="post">
-    <div class="form-group">
-        <input type="hidden" name="storeWritingTo" value="@Model.StoreWritingTo?.Name">
-        <input type="hidden" name="answeringOnMsgId" value="@Model.MsgId">
-        <label for="msg_txt_area">Write your message here</label>
-        <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
-        <button type="submit" class="form-control btn btn-primary">Send</button>
-    </div>
-</form>
 
