@@ -38,8 +38,17 @@ namespace Website.Pages
             }
         }
 
-        public void OnPost(string StoreName, string ProductName)
+        public IActionResult OnPost(string StoreName, string ProductName, string Quantity)
         {
+            try
+            {
+                UserManager.AddProductToCart(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
+            }
+            catch(Exception e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
         }
     }
 }

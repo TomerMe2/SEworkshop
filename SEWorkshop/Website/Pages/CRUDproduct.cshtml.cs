@@ -27,6 +27,7 @@ namespace Website.Pages.Shared
         public CRUDproductModel(IUserManager userManager) {
             UserManager = userManager;
             ProductName = "";
+            StoreName = "";
             ProductCategory = "";
             ProductDescription = "";
             ProductPrice = 0.00;
