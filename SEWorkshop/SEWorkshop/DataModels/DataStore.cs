@@ -29,5 +29,10 @@ namespace SEWorkshop.DataModels
                                                                     new DataPurchase(prchs)).ToList().AsReadOnly();
 
         public DataStore(Store store) : base(store) { }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
 }

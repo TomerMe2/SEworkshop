@@ -14,7 +14,15 @@
     else
     {
         @:<h1>@Model.Store.Name</h1>
-        <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
+        var um = Model.UserManager;
+        var sessionId = Model.HttpContext.Session.Id;
+        var user = um.GetDataLoggedInUser(sessionId);
+        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        if (Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))
+        {
+            <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
+        }
         foreach (var product in Model.Store.Products)
         {
             await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));

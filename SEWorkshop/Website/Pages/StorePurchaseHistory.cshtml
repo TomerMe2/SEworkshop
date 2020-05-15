@@ -4,22 +4,49 @@
     ViewData["Title"] = Model.StoreName;
 }
 
-@if (Model.Store != null)
-{
-    <h1>@Model.Store.Name Purchase History</h1>
-    foreach (SEWorkshop.DataModels.DataPurchase purchase in Model.Store.Purchases)
+@{
+    var um = Model.UserManager;
+    var sessionId = Model.HttpContext.Session.Id;
+    if (Model.Store != null && um.IsLoggedIn(sessionId))
     {
-        <div class="card" style="width: 100%">
-            <div class="card-body">
-                <h5 class="card-title">@purchase.User</h5>
-                <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
-                @foreach (var (product, amount) in purchase.Basket.Products)
-                {
-                    <h5 class="card-title">Product name: @product.Name</h5>
-                    <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
-                    <h6 class="card-subtitle mb-2">Amount: @amount</h6>
-                }
-            </div>
-        </div>
+        var user = um.GetDataLoggedInUser(sessionId);
+        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        if (Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))
+        {
+            <h1>@Model.Store.Name Purchase History</h1>
+            foreach (SEWorkshop.DataModels.DataPurchase purchase in Model.Store.Purchases)
+            {
+                var adrs = purchase.Address;
+                var addressStr = $"{adrs.Country}, {adrs.City}, {adrs.Street}, {adrs.HouseNumber}";
+                <div class="card" style="width: 100%">
+                    <div class="card-body">
+                        <h5 class="card-title">@addressStr</h5>
+                        <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
+                        @foreach (var (product, amount) in purchase.Basket.Products)
+                        {
+                            <h5 class="card-title">Product name: @product.Name</h5>
+                            <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
+                            <h6 class="card-subtitle mb-2">Amount: @amount</h6>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h4>You are not a manager or owner of this store</h4>
+        }
+    }
+    else
+    {
+        if (Model.Store == null)
+        {
+            <h4>Store was not found</h4>
+        }
+        if (!um.IsLoggedIn(sessionId))
+        {
+            <h4>You should be logged in to watch this page</h4>
+        }
     }
 }
