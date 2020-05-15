@@ -16,7 +16,7 @@ namespace Website.Pages
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
-
+        public DataLoggedInUser LoggedUser { get; private set; }
         public StoreModel(IUserManager userManager)
         {
             UserManager = userManager;
@@ -26,6 +26,7 @@ namespace Website.Pages
         
         public void OnGet(string storeName)
         {
+            LoggedUser = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
             try
             {
                 StoreName = storeName;
@@ -35,6 +36,20 @@ namespace Website.Pages
             {
                 ErrorMsg = e.ToString();
             }
+        }
+
+        public IActionResult OnPost(string storeName)
+        {
+            try
+            {
+                StoreName = storeName;
+                Store = UserManager.SearchStore(StoreName);
+            }
+            catch (StoreNotInTradingSystemException e)
+            {
+                ErrorMsg = e.ToString();
+            }
+            return RedirectToPage("./Manage", new { StoreName = StoreName });
         }
     }
 }

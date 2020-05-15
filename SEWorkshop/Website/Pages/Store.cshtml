@@ -6,7 +6,7 @@
 @using SEWorkshop.DataModels;
 
 @{
-    if(Model.Store == null)
+    if (Model.Store == null)
     {
         @:<h1>Error</h1>
         @:<div>@Model.ErrorMsg</div>
@@ -14,7 +14,16 @@
     else
     {
         @:<h1>@Model.Store.Name</h1>
-        foreach(var product in Model.Store.Products)
+        if (Model.LoggedUser.Owns.Contains(Model.Store) || Model.LoggedUser.Manages.ContainsKey(Model.Store))
+        {
+            <form id="manage" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="store" value=@Model.Store.Name>
+                    <button type="submit" class="form-control btn btn-primary" style="width: 18%">Manage Store</button>
+                </div>
+            </form>
+        }
+        foreach (var product in Model.Store.Products)
         {
             await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
         }

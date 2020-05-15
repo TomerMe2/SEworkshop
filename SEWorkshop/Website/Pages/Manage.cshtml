@@ -1,0 +1,136 @@
+﻿@page
+@model Website.Pages.ManageModel
+@{
+    ViewData["Title"] = "Manage";
+}
+
+<h1>Manage</h1>
+
+@{
+    if (Model.LoggedUser.Owns.Contains(Model.Store))
+    {
+        <h3>Position - Owner</h3>
+    }
+    else if (Model.LoggedUser.Manages.ContainsKey(Model.Store))
+    {
+        <h3>Position - Manager</h3>
+    }
+
+    <h4>Store Staff:</h4>
+    <table style="width:60%;border:solid;border-color:black;border-width:1px">
+        <tr style="border:solid;border-color:black;border-width:1px">
+            <th style="border:solid;border-color:black;border-width:1px">Username</th>
+            <th style="border:solid;border-color:black;border-width:1px">Position</th>
+            <th style="border:solid;border-color:black;border-width:1px">Assigned By</th>
+            <th style="border:solid;border-color:black;border-width:1px">Action</th>
+        </tr>
+        
+        @{
+            foreach (var owner in Model.Store.Owners)
+            {
+                <tr style="border:solid;border-color:black;border-width:1px">
+                    <th style="border:solid;border-color:black;border-width:1px">@owner.Key.Username</th>
+                    <th style="border:solid;border-color:black;border-width:1px">Owner</th>
+                    @if (owner.Value.Username.Equals("DEMO")){
+                        <th style="border:solid;border-color:black;border-width:1px">Original Owner</th>
+                    }
+                    else {
+                        <th style="border:solid;border-color:black;border-width:1px">@owner.Value.Username</th>
+                    }
+                    <th style="border:solid;border-color:black;border-width:1px">
+                        @{
+                            if (owner.Value.Equals(Model.LoggedUser))
+                            { 
+                                <form id="removeOwner" method="post" style="text-align:center">
+                                    <div class="form-group">
+                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                        <input type="hidden" name="request" value="1">
+                                        <input type="hidden" name="value" value=@owner.Key.Username>
+                                        <button type="submit" class="form-control btn btn-primary" style="width:35%">Remove Owner</button>
+                                    </div>
+                                </form>
+                            }
+                        }
+                    </th>
+                </tr>
+            }
+        }
+        @{
+            foreach (var manager in Model.Store.Managers)
+             {
+                <tr style="border:solid;border-color:black;border-width:1px">
+                    <th style="border:solid;border-color:black;border-width:1px">@manager.Key.Username</th>
+                    <th style="border:solid;border-color:black;border-width:1px">Manager</th>
+                    <th style="border:solid;border-color:black;border-width:1px">@manager.Value.Username</th>
+                    <th style="border:solid;border-color:black;border-width:1px">
+                        @{
+                            if (manager.Value.Equals(Model.LoggedUser))
+                            {
+                                <form id="removeManager" method="post" style="text-align:center">
+                                    <div class="form-group">
+                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                        <input type="hidden" name="request" value="2">
+                                        <input type="hidden" name="value" value=@manager.Key.Username>
+                                        <button type="submit" class="form-control btn btn-primary" style="width:35%">Remove Manager</button>
+                                    </div>
+                                </form>
+
+                                ICollection<SEWorkshop.Authorizations> auths = new List<SEWorkshop.Authorizations>();
+                                manager.Key.Manages.TryGetValue(Model.Store, out auths);
+                                foreach (SEWorkshop.Authorizations a in Enum.GetValues(typeof(SEWorkshop.Authorizations)))
+                                {
+                                    if (auths.Contains(a))
+                                    {
+                                        <form method="post" style="text-align:center">
+                                            <div class="form-group">
+                                                <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                                <input type="hidden" name="request" value="3">
+                                                <input type="hidden" name="value" value=@manager.Key.Username>
+                                                <input type="hidden" name="value2" value=@a>
+                                                <label style="color:green">@a Permission: Granted </label>
+                                                <button type="submit" class="form-control btn btn-primary" style="width:20%">Remove Permission</button>
+                                            </div>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form method="post">
+                                            <div class="form-group" style="text-align:center">
+                                                <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                                <input type="hidden" name="request" value="3">
+                                                <input type="hidden" name="value" value=@manager.Key.Username>
+                                                <input type="hidden" name="value2" value=@a>
+                                                <label style="color:red">@a Permission: Not Granted </label>
+                                                <button type="submit" class="form-control btn btn-primary" style="width:20%">Grant Permission</button>
+                                            </div>
+                                        </form>
+                                    }
+                                }
+                            }
+                        }
+                    </th>
+               </tr>
+            }
+        }
+    </table>
+
+    <h3>Add Owner</h3>
+    <form id="addOwner" method="post">
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Username" style="width: 15%">
+            <input type="hidden" name="request" value="1">
+            <button type="submit" class="form-control btn btn-primary">Send</button>
+        </div>
+    </form>
+
+    <h3>Add Manager</h3>
+    <form id="addOwner" method="post">
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Username" style="width: 15%">
+            <input type="hidden" name="request" value="2">
+            <button type="submit" class="form-control btn btn-primary">Send</button>
+        </div>
+    </form>
+
+    
+}

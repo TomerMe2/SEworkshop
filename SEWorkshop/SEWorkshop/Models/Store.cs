@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using NLog;
 using SEWorkshop.Adapters;
@@ -79,6 +80,11 @@ namespace SEWorkshop.Models
             {
                 throw new PurchaseFailedException();
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
     }
 }
