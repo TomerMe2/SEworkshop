@@ -4,13 +4,13 @@ using System.Text;
 
 namespace SEWorkshop.Models.Discounts
 {
-    public abstract class BuySomeGetSomeFree : ConditionalDiscount
+    public abstract class BuySomeGetSomeFreeDiscount : ConditionalDiscount
     {
         public Store Store { get; set; }
         public int BuySome { get; set; }
         public int GetSome{ get; set; }
         
-        public BuySomeGetSomeFree(Store store, int buySome, int getSome,double percentage, DateTime deadline, Product product) : base( percentage, deadline, product, store)
+        public BuySomeGetSomeFreeDiscount(Store store, int buySome, int getSome,double percentage, DateTime deadline, Product product, User user) : base( percentage, deadline, product, store, user)
         {
             Store = store;
             BuySome = getSome;
