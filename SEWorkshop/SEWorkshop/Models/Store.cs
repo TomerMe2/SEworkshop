@@ -58,6 +58,7 @@ namespace SEWorkshop.Models
 
         public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address)
         {
+            double totalPrice = 0, totalDiscount = 0;
             foreach (var (prod, purchaseQuantity) in itemsList)
             {
                 if (prod.Quantity - purchaseQuantity < 0)
@@ -65,8 +66,19 @@ namespace SEWorkshop.Models
                     throw new NegativeInventoryException();
                 }
             }
+
+            foreach (var (prod, purchaseQuantity) in itemsList)
+            {
+                totalPrice = totalPrice + (prod.Price * purchaseQuantity);
+            }
+
+            foreach (var dis in Discounts)
+            {
+                    
+            }
+            
             if (supplyAdapter.CanSupply(itemsList, address)
-                && billingAdapter.Bill(itemsList, creditCardNumber))
+                && billingAdapter.Bill(itemsList, creditCardNumber, totalPrice))
             {
                 supplyAdapter.Supply(itemsList, address);
                 // Update the quantity in the product itself

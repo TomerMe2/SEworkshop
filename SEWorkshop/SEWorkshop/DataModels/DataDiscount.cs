@@ -9,28 +9,16 @@ namespace SEWorkshop.DataModels
 {
     public abstract class DataDiscount : DataModel<Discount>
     {
-        public (DataDiscount, Operator)? InnerDiscount
-        {
-            get
-            {
-                if (InnerModel.InnerDiscount is null)
-                {
-                    return null;
-                }
-
-                return (CreateDataFromDiscount(InnerModel.InnerDiscount.Value.Item1), InnerModel.InnerDiscount.Value.Item2);
-            }
-        }
-
         public double Percentage => InnerModel.Percentage;
 
         public DateTime Deadline => InnerModel.Deadline;
         
+        
         public DataDiscount(Discount discount) : base(discount) { }
         
-        private DataDiscount CreateDataFromDiscount(Discount valueItem1)
+        public static DataDiscount CreateDataFromDiscount(Discount dis)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO: implement this.
         }
     }
 }

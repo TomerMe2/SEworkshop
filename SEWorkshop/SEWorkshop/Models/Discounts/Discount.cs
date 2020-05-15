@@ -15,25 +15,32 @@ namespace SEWorkshop.Models.Discounts
     }
     public abstract class Discount
     {
-        public (Discount, Operator)? InnerDiscount { get; set; }
         public double Percentage { get; private set; }
         
         public DateTime Deadline { get; set; }
+        
+        public Store Store { get; }
+        
+        public User User { get; }
 
-        public bool IsApplied { get; set; }
 
-        public Discount(double percentage, DateTime deadline)
+        public Discount(double percentage, DateTime deadline, Store store, User user)
         {
             if (SetDiscountPercentage(percentage))
             {
                 Deadline = deadline;
+                Store = store;
+                User = user;
             }
             else
             {
                 throw new Exception(); //TODO: find \ create appropriate exception
             }
+        }
 
-            IsApplied = true;
+        protected Basket? GetBasket()
+        {
+            return User.Cart.Baskets.FirstOrDefault(bskt => bskt.Store == Store);
         }
 
         public bool SetDiscountPercentage(double percentage)
@@ -43,25 +50,9 @@ namespace SEWorkshop.Models.Discounts
                 Percentage = percentage;
                 return true;
             }
-
             return false;
         }
-
-        public abstract double ApplyDiscountOperator();
-
-        public abstract double ApplyImplies(Discount other);
-
-        public double ChooseCheaper(Discount other)
-        {
-            if (ApplyDiscount() > other.ApplyDiscount())
-            {
-                return other.ApplyDiscount();
-            }
-
-            return ApplyDiscount();
-        }
+        
         public abstract double ApplyDiscount();
-
-        public abstract double GetOriginalPrice();
     }
 }
