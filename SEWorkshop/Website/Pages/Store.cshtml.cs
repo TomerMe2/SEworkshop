@@ -38,7 +38,7 @@ namespace Website.Pages
             }
         }
 
-        public IActionResult OnPost(string StoreName, string ProductName, string Quantity)
+        public IActionResult OnPostAddToCartAsync(string StoreName, string ProductName, string Quantity)
         {
             int quantity;
             try

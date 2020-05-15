@@ -31,6 +31,35 @@ namespace Website.Pages
             ErrorMsg = "";
         }
 
+        public IActionResult OnPostAddToCartAsync(string StoreName, string ProductName, string Quantity)
+        {
+            int quantity;
+            try
+            {
+                quantity = int.Parse(Quantity);
+            }
+            catch(Exception)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
+            if(quantity <= 0)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
+            try
+            {
+                UserManager.AddProductToCart(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
+            }
+            catch(Exception e)
+            {
+                ErrorMsg = e.ToString();
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+
         public void OnPost(string searchText, string searchCategory, string minPriceText, string maxPriceText, string categoryFilterText)
         {
             bool low = false, high = false;

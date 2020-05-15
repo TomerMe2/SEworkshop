@@ -8,11 +8,11 @@
         <h6 class="card-subtitle mb-2">@Model.Product.Category</h6>
         <h6 class="card-subtitle mb-2">@Model.Product.Price ₪</h6>
         <p class="card-text">@Model.Product.Description</p>
-        <form method="post" action="@Model.destPath">
+        <form method="post">
             <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
             <input type="hidden" name="ProductName" value="@Model.Product.Name">
             <input type="text" name="Quantity">
-            <button type="submit">Click here to add to the porduct to Cart!</button>
+            <button type="submit" asp-page-handler="AddToCart" value="Add" >Click here to add the porduct to the Cart!</button>
         </form>
     </div>
 </div>

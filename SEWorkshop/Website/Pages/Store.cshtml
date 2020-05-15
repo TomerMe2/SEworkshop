@@ -13,8 +13,7 @@
     }
     else
     {
-        @:<h1>@Model.Store.Name</h1>
-        <h2 style="font-weight: bold;">Click on the products to add them to the cart!</h2>
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         foreach(var product in Model.Store.Products)
         {
             ProductViewModel pvm = new ProductViewModel(product);
