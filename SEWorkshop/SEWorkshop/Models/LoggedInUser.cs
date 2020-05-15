@@ -272,7 +272,7 @@ namespace SEWorkshop.Models
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(this, basket);
+            purchase = new Purchase(this, basket, address);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)
@@ -348,6 +348,11 @@ namespace SEWorkshop.Models
         public void RemovePolicy(Store store, int indexInChain)
         {
             OwnsForStore(store).RemovePolicy(indexInChain);
+        }
+
+        public override int GetHashCode()
+        {
+            return Username.GetHashCode();
         }
     }
 }

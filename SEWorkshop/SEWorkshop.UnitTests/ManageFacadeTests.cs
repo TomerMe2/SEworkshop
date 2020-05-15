@@ -7,6 +7,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using System.Linq;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.UnitTests
 {
@@ -14,7 +15,9 @@ namespace SEWorkshop.UnitTests
     class ManageFacadeTests
     {
         private IManageFacade Facade { get; set; }
-        private ISecurityAdapter SecurityAdapter { get; set; } 
+        private ISecurityAdapter SecurityAdapter { get; set; }
+        private Address DEF_ADRS = new Address("1", "1", "1", "1");
+
 
         [OneTimeSetUp]
         public void Init()
@@ -148,7 +151,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", SecurityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store));
+            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = Facade.ViewPurchaseHistory(usr, store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
@@ -440,7 +443,7 @@ namespace SEWorkshop.UnitTests
             Assert.IsTrue(success && output1.Contains(message1));
 
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
-            Purchase purchase = new Purchase(client, new Basket(store));
+            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> output2 = new List<Purchase>();
             try

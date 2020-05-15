@@ -14,20 +14,16 @@ namespace Website.Pages
 
         [BindProperty(SupportsGet = true)]
         public string Username { get; set; }
-
-        private readonly ILogger<IndexModel> _logger;
         public IUserManager UserManager { get; }
 
-        public IndexModel(ILogger<IndexModel> logger, IUserManager userManager)
+        public IndexModel(IUserManager userManager)
         {
-            _logger = logger;
             UserManager = userManager;
             Username = "";
         }
 
         public void OnGet()
         {
-
         }
     }
 }
