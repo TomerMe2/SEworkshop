@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEWorkshop.DataModels;
+using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
 
 namespace Website.Pages
@@ -28,6 +29,18 @@ namespace Website.Pages
             UserManager = userManager;
             StoreName = "";
             Error = "";
+            try
+            {
+                UserManager.Register("1", "Haim", "1234");
+                UserManager.Register("2", "Noa Kirel", "1234");
+                UserManager.Login("1", "Haim", "1234");
+                UserManager.OpenStore("1", "Haim Vegetables");
+                UserManager.AddProduct("1", "Haim Vegetables", "Apple", "Tasty", "Green Fruits", 5.3, 10);
+                UserManager.Logout("1");
+                UserManager.Login("2", "Noa Kirel", "1234");
+            }
+            catch
+            { }
             Stores = UserManager.BrowseStores();
         }
         

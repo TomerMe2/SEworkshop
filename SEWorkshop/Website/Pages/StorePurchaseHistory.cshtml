@@ -1,0 +1,25 @@
+﻿@page "{storeName}"
+@model Website.Pages.StorePurchaseHistoryModel
+@{
+    ViewData["Title"] = Model.StoreName;
+}
+
+@if (Model.Store != null)
+{
+    <h1>@Model.Store.Name Purchase History</h1>
+    foreach (SEWorkshop.DataModels.DataPurchase purchase in Model.Store.Purchases)
+    {
+        <div class="card" style="width: 100%">
+            <div class="card-body">
+                <h5 class="card-title">@purchase.User</h5>
+                <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
+                @foreach (var (product, amount) in purchase.Basket.Products)
+                {
+                    <h5 class="card-title">Product name: @product.Name</h5>
+                    <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
+                    <h6 class="card-subtitle mb-2">Amount: @amount</h6>
+                }
+            </div>
+        </div>
+    }
+}

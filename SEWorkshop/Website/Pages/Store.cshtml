@@ -6,7 +6,7 @@
 @using SEWorkshop.DataModels;
 
 @{
-    if(Model.Store == null)
+    if (Model.Store == null)
     {
         @:<h1>Error</h1>
         @:<div>@Model.ErrorMsg</div>
@@ -14,7 +14,8 @@
     else
     {
         @:<h1>@Model.Store.Name</h1>
-        foreach(var product in Model.Store.Products)
+        <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
+        foreach (var product in Model.Store.Products)
         {
             await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
         }
