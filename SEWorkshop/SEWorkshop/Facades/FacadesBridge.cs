@@ -126,6 +126,21 @@ namespace SEWorkshop.Facades
             ManageFacade.RemovePermissionsOfManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(username), authorization);
         }
 
+        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName)
+        {
+            GetLoggedInUsr(user).AddProductCategoryDiscount(GetStore(storeName), categoryName);
+        }
+
+        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName)
+        {
+            GetLoggedInUsr(user).AddSpecificProductDiscount(GetStore(storeName), GetProduct(storeName, productName));
+        }
+
+        public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain)
+        {
+            GetLoggedInUsr(user).RemoveDiscount(GetStore(storeName), indexInChain);
+        }
+
         public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name)
         {
             ManageFacade.EditProductName(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), name);

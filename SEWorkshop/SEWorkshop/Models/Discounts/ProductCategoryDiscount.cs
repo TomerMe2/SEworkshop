@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -8,16 +9,16 @@ namespace SEWorkshop.Models.Discounts
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 
                                         Product product, Store store, string category, User user) : 
-                                                                    base(percentage, deadline, product, store, user)
+                                                                    base(percentage, deadline, product, store)
         {
             CatUnderDiscount = category;
         }
 
-        public override double ApplyDiscount()
+        public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
         {
             double totalDiscount = 0;
 
-            foreach (var (prod, quantity) in GetBasket().Products)
+            foreach (var (prod, quantity) in itemsList)
             {
                 if (prod.Category.Equals(CatUnderDiscount))
                 {

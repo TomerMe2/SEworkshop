@@ -427,5 +427,20 @@ namespace SEWorkshop.ServiceLayer
                 return false;
             }
         }
+
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName)
+        {
+            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName);
+        }
+
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName)
+        {
+            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName);
+        }
+
+        public void RemoveDiscount(string sessionId, string storeName, int indexInChain)
+        {
+            FacadesBridge.RemoveDiscount(GetLoggedInUser(sessionId), storeName, indexInChain);
+        }
     }
 }

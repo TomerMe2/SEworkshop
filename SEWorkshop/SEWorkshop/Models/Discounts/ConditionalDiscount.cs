@@ -9,7 +9,7 @@ namespace SEWorkshop.Models.Discounts
     public abstract class ConditionalDiscount : Discount
     {
         public Product Product { get; set; }
-        protected ConditionalDiscount( double percentage, DateTime deadline, Product product, Store store, User user) : base(percentage, deadline, store, user)
+        protected ConditionalDiscount( double percentage, DateTime deadline, Product product, Store store) : base(percentage, deadline, store)
         {
             Product = product;
         }

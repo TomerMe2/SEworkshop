@@ -56,5 +56,10 @@ namespace SEWorkshop.ServiceLayer
         public void EditProductDescription(string sessionId, string storeName, string productName, string description);
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName);
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName);
+
+        //0 based index - first policy is indexed 0
+        public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
     }
 }

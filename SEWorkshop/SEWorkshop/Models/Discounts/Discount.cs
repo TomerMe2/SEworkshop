@@ -20,27 +20,18 @@ namespace SEWorkshop.Models.Discounts
         public DateTime Deadline { get; set; }
         
         public Store Store { get; }
-        
-        public User User { get; }
 
-
-        public Discount(double percentage, DateTime deadline, Store store, User user)
+        public Discount(double percentage, DateTime deadline, Store store)
         {
             if (SetDiscountPercentage(percentage))
             {
                 Deadline = deadline;
                 Store = store;
-                User = user;
             }
             else
             {
                 throw new Exception(); //TODO: find \ create appropriate exception
             }
-        }
-
-        protected Basket? GetBasket()
-        {
-            return User.Cart.Baskets.FirstOrDefault(bskt => bskt.Store == Store);
         }
 
         public bool SetDiscountPercentage(double percentage)
@@ -53,6 +44,6 @@ namespace SEWorkshop.Models.Discounts
             return false;
         }
         
-        public abstract double ApplyDiscount();
+        public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
     }
 }

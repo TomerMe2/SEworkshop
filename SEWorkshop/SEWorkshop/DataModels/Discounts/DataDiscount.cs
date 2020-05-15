@@ -12,9 +12,14 @@ namespace SEWorkshop.DataModels
         public double Percentage => InnerModel.Percentage;
 
         public DateTime Deadline => InnerModel.Deadline;
-        
-        
-        public DataDiscount(Discount discount) : base(discount) { }
+
+        public DataStore Store { get; }
+
+
+        public DataDiscount(Discount discount) : base(discount)
+        {
+            Store = new DataStore(InnerModel.Store);
+        }
         
         public static DataDiscount CreateDataFromDiscount(Discount dis)
         {

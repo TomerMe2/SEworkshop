@@ -279,5 +279,20 @@ namespace SEWorkshop.Models
 
             management.RemovePermissionsOfManager(manager,authorization);
         }
+
+        public void AddProductCategoryDiscount(Store getStore, string categoryName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddSpecificProductDiscount(Store getStore, Product getProduct)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveDiscount(Store getStore, in int indexInChain)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

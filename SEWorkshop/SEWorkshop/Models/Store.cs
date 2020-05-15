@@ -74,7 +74,7 @@ namespace SEWorkshop.Models
 
             foreach (var dis in Discounts)
             {
-                    
+                dis.ApplyDiscount(itemsList);
             }
             
             if (supplyAdapter.CanSupply(itemsList, address)
