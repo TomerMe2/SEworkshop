@@ -14,7 +14,7 @@ namespace Website.Pages.Shared
 
     public class CRUDproductModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
         public DataProduct? Product { get; private set; }
         public string ProductName { get; private set; }
         public string ProductCategory { get; private set; }

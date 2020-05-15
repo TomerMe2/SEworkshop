@@ -13,7 +13,7 @@
     }
     else
     {
-        @:<h1>@Model.Store.Name</h1>
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         var um = Model.UserManager;
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.GetDataLoggedInUser(sessionId);
