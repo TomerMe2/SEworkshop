@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using SEWorkshop.ServiceLayer;
 
 namespace Website.Pages
 {
@@ -13,18 +14,16 @@ namespace Website.Pages
 
         [BindProperty(SupportsGet = true)]
         public string Username { get; set; }
+        public IUserManager UserManager { get; }
 
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(IUserManager userManager)
         {
-            _logger = logger;
+            UserManager = userManager;
             Username = "";
         }
 
         public void OnGet()
         {
-
         }
     }
 }

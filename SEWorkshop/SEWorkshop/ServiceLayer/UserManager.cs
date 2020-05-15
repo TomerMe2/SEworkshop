@@ -7,6 +7,7 @@ using System.Linq;
 using SEWorkshop.Adapters;
 using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -23,6 +24,7 @@ namespace SEWorkshop.ServiceLayer
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
         private object UserDictLock { get; }
+        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; set; }
 
         public UserManager()
         {
@@ -34,6 +36,7 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge = new FacadesBridge();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -46,7 +49,7 @@ namespace SEWorkshop.ServiceLayer
             SecurityAdapter = new SecurityAdapter();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
-
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         private static void ConfigLog()
@@ -62,6 +65,14 @@ namespace SEWorkshop.ServiceLayer
             
             // Apply config           
             LogManager.Configuration = config;
+        }
+
+        private void NotifyMsgObservers(DataMessage msg)
+        {
+            foreach(var obs in MsgObservers)
+            {
+                obs.Notify(msg);
+            }
         }
 
         public DataUser GetUser(string sessionId)
@@ -244,7 +255,9 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            return FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            var msg = FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            NotifyMsgObservers(msg);
+            return msg.Id;
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
@@ -399,7 +412,9 @@ namespace SEWorkshop.ServiceLayer
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            return FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            var msg = FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            NotifyMsgObservers(msg);
+            return msg;
         }
 
         public bool IsLoggedIn(string sessionId)
@@ -428,6 +443,42 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
+        public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op)
+        {
+            FacadesBridge.AddAlwaysTruePolicy(GetLoggedInUser(sessionId), storeName, op);
+        }
+
+        public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            FacadesBridge.AddSingleProductQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, productName, minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            FacadesBridge.AddSystemDayPolicy(GetLoggedInUser(sessionId), storeName, op, cantBuyIn);
+
+        }
+
+        public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity)
+        {
+            FacadesBridge.AddUserCityPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry)
+        {
+            FacadesBridge.AddUserCountryPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            FacadesBridge.AddWholeStoreQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(string sessionId, string storeName, int indexInChain)
+        {
+            FacadesBridge.RemovePolicy(GetLoggedInUser(sessionId), storeName, indexInChain);
+        }
+
         public DataLoggedInUser GetDataLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
@@ -438,6 +489,14 @@ namespace SEWorkshop.ServiceLayer
             throw new UserIsNotLoggedInException();
         }
 
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv)
+        {
+            MsgObservers.Add(obsrv);
+        }
 
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
+        {
+            FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
+        }
     }
 }

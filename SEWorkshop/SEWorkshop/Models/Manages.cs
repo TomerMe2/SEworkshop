@@ -1,4 +1,5 @@
 ﻿using NLog;
+using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;

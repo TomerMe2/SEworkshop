@@ -6,6 +6,7 @@ using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
 using NLog;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades
 {
@@ -316,11 +317,11 @@ namespace SEWorkshop.Facades
             return ManageFacade.ViewMessage(GetLoggedInUsr(user), GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
-        public int WriteMessage(DataLoggedInUser user, string storeName, string description)
+        public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            return UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description).Id;
+            return new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
@@ -334,6 +335,71 @@ namespace SEWorkshop.Facades
         {
             var guestUsr = UserFacade.CreateGuestUser();
             return new DataGuestUser(guestUsr);
+        }
+
+        public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op)
+        {
+            GetLoggedInUsr(user).AddAlwaysTruePolicy(GetStore(storeName), op);
+        }
+
+        public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddSingleProductQuantityPolicy(GetStore(storeName), op,
+                    GetProduct(storeName, productName), minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            GetLoggedInUsr(user).AddSystemDayPolicy(GetStore(storeName), op, cantBuyIn);
+        }
+
+        public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity)
+        {
+            GetLoggedInUsr(user).AddUserCityPolicy(GetStore(storeName), op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry)
+        {
+            GetLoggedInUsr(user).AddUserCountryPolicy(GetStore(storeName), op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddWholeStoreQuantityPolicy(GetStore(storeName), op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain)
+        {
+            GetLoggedInUsr(user).RemovePolicy(GetStore(storeName), indexInChain);
+        }
+
+        public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg)
+        {
+            Log.Info(string.Format("MarkAllDiscussionAsRead was invoked"));
+            var store = GetStore(storeName);
+            Message? firstMsg = store.Messages.FirstOrDefault(message => msg.Represents(message));
+            if (firstMsg is null)
+            {
+                return;
+            }
+            if (msg.WrittenBy.Equals(user))
+            {
+                Message? currMsg = firstMsg;
+                while(currMsg != null)
+                {
+                    currMsg.ClientSawIt = true;
+                    currMsg = currMsg.Next;
+                }
+            }
+            else
+            {
+                Message? currMsg = firstMsg;
+                while (currMsg != null)
+                {
+                    currMsg.StoreSawIt = true;
+                    currMsg = currMsg.Next;
+                }
+            }
         }
     }
 }

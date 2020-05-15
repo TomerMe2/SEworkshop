@@ -12,9 +12,12 @@ namespace Website.Pages
 {
     public class CreateStoreModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
-        public string StoreName {get; private set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string StoreName {get; set; }
+        [BindProperty(SupportsGet = true)]
         public string ErrorMsg { get; private set; }
 
         public CreateStoreModel(IUserManager userManager)
@@ -29,34 +32,23 @@ namespace Website.Pages
             ErrorMsg = "";
         }
 
-        public IActionResult OnPost(string storeName)
+        public IActionResult OnPost()
         {
-            if(storeName == null)
+            if(StoreName == null)
             {
                 ErrorMsg = "Invalid Product Name";
                 return new PageResult();
             }
             try
             {
-                UserManager.OpenStore(HttpContext.Session.Id, storeName);
-            }
-            catch(UserHasNoPermissionException e)
-            {
-                ErrorMsg = e.ToString();
-                return new PageResult();
-            }
-            catch(StoreNotInTradingSystemException e)
-            {
-                ErrorMsg = e.ToString();
-                return new PageResult();
+                UserManager.OpenStore(HttpContext.Session.Id, StoreName);
             }
             catch(Exception)
             {
                 ErrorMsg = "Invalid Store Name";
                 return new PageResult();
             }
-            StoreName = storeName;
-            return RedirectToPage("./Store", new { storeName = storeName });
+            return RedirectToPage("./Index");
         }
     }
 }

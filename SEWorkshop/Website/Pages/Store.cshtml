@@ -6,15 +6,24 @@
 @using SEWorkshop.DataModels;
 
 @{
-    if(Model.Store == null)
+    if (Model.Store == null)
     {
         @:<h1>Error</h1>
         @:<div>@Model.ErrorMsg</div>
     }
     else
     {
-        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
-        foreach(var product in Model.Store.Products)
+        @:<h1>@Model.Store.Name</h1>
+        var um = Model.UserManager;
+        var sessionId = Model.HttpContext.Session.Id;
+        var user = um.GetDataLoggedInUser(sessionId);
+        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        if (Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))
+        {
+            <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
+        }
+        foreach (var product in Model.Store.Products)
         {
             ProductViewModel pvm = new ProductViewModel(product);
             pvm.destPath = pvm.Product.Store.Name;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.DataModels
 {
@@ -20,11 +21,17 @@ namespace SEWorkshop.DataModels
                                                                                 new DataMessage(message)).ToList().AsReadOnly();
         public string Username => InnerLoggedInUser.Username;
         public byte[] Password => InnerLoggedInUser.Password;
+        public int AmountOfUnreadMessages => InnerLoggedInUser.AmountOfUnReadMessage;
         private LoggedInUser InnerLoggedInUser { get; }
 
         public DataLoggedInUser(LoggedInUser usr) : base(usr)
         {
             InnerLoggedInUser = usr;
+        }
+
+        public override int GetHashCode()
+        {
+            return Username.GetHashCode();
         }
     }
 }
