@@ -1,0 +1,21 @@
+﻿@page
+@model Website.Pages.StoresModel
+
+@{
+    ViewData["Title"] = "Stores";
+}
+
+    <div class="allpage">
+        <h1 class="display-4">Stores</h1>
+        <form id="searchForm" method="post">
+            <div class="form-inline">
+                <input class="form-control" type="text" asp-for="StoreName" placeholder="StoreName"/>
+                <button class="form-control btn btn-primary" type="submit">Search Store</button>
+                <text class="alert-danger">@Model.Error</text>
+            </div>
+        </form>
+        @foreach (var store in Model.Stores)
+        {
+            await Html.RenderPartialAsync("./StoreView", new Website.Pages.StoreViewModel(store));
+        }
+    </div>

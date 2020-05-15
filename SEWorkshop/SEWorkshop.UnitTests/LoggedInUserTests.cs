@@ -6,6 +6,7 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
+using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests
 {
@@ -39,9 +40,9 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
             //Message is empty - Throw Exception
-            Assert.Throws<MessageIsEmptyException>(delegate { usr.WriteMessage(str, ""); });
+            Assert.Throws<MessageIsEmptyException>(delegate { usr.WriteMessage(str, "", true); });
             //Message is not empty and user is logged in - success
-            Assert.That(() => usr.WriteMessage(str, "baddd"), Throws.Nothing);
+            Assert.That(() => usr.WriteMessage(str, "baddd", true), Throws.Nothing);
         }
 
         [Test]
@@ -189,7 +190,7 @@ namespace SEWorkshop.Tests
 
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Replying);
             LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"));
-            Message message1 = new Message(client, "Great store!");
+            Message message1 = new Message(client, store, "Great store!", true);
             store.Messages.Add(message1);
             Message reply1 = newManager.MessageReply(message1, store, "Thank you!");
 
@@ -207,7 +208,7 @@ namespace SEWorkshop.Tests
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Watching);
             LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"));
-            Message message1 = new Message(client, "Great store!");
+            Message message1 = new Message(client, store, "Great store!", true);
             store.Messages.Add(message1);
             IEnumerable<Message> output1 = newManager.GetMessage(store);
             Assert.IsTrue(output1.Contains(message1));
@@ -295,7 +296,7 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Message message = new Message(client, "Great app");
+            Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
             Message reply = usr.MessageReply(message, store, "Thank you!");
             Assert.IsTrue(reply.Prev == message && message.Next == reply && reply.Description.Equals("Thank you!"));
@@ -312,7 +313,7 @@ namespace SEWorkshop.Tests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
 
-            Message message = new Message(client, "Great app");
+            Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
 
             IEnumerable<Message> messages = usr.GetMessage(store);
@@ -335,7 +336,26 @@ namespace SEWorkshop.Tests
 
         }
         
-        
+        [Test]
+        public void PurchasePolicyTest()
+        {
+            const string STORE_NAME = "Wello";
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 1);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 0);
+            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+        }
 
     }
 }

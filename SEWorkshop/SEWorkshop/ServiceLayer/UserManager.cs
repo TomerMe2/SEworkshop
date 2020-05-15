@@ -7,6 +7,7 @@ using System.Linq;
 using SEWorkshop.Adapters;
 using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -23,6 +24,7 @@ namespace SEWorkshop.ServiceLayer
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
         private object UserDictLock { get; }
+        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; set; }
 
         public UserManager()
         {
@@ -34,6 +36,7 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge = new FacadesBridge();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -46,7 +49,7 @@ namespace SEWorkshop.ServiceLayer
             SecurityAdapter = new SecurityAdapter();
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
-
+            MsgObservers = new List<IServiceObserver<DataMessage>>();
         }
 
         private static void ConfigLog()
@@ -64,6 +67,14 @@ namespace SEWorkshop.ServiceLayer
             LogManager.Configuration = config;
         }
 
+        private void NotifyMsgObservers(DataMessage msg)
+        {
+            foreach(var obs in MsgObservers)
+            {
+                obs.Notify(msg);
+            }
+        }
+
         public DataUser GetUser(string sessionId)
         {
             lock(UserDictLock)
@@ -78,7 +89,7 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        private DataLoggedInUser GetLoggedInUser(string sessionId)
+        public DataLoggedInUser GetLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
             if (usr is DataLoggedInUser)
@@ -240,11 +251,13 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.WriteReview(GetLoggedInUser(sessionId), storeName, productName, description);
         }
 
-        public void WriteMessage(string sessionId, string storeName, string description)
+        public int WriteMessage(string sessionId, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            var msg = FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
+            NotifyMsgObservers(msg);
+            return msg.Id;
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
@@ -399,7 +412,9 @@ namespace SEWorkshop.ServiceLayer
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
-            return FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            var msg = FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
+            NotifyMsgObservers(msg);
+            return msg;
         }
 
         public bool IsLoggedIn(string sessionId)
@@ -428,19 +443,60 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName)
+        public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op)
         {
-            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName);
+            FacadesBridge.AddAlwaysTruePolicy(GetLoggedInUser(sessionId), storeName, op);
         }
 
-        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName)
+        public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
         {
-            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName);
+            FacadesBridge.AddSingleProductQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, productName, minQuantity, maxQuantity);
         }
 
-        public void RemoveDiscount(string sessionId, string storeName, int indexInChain)
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
         {
-            FacadesBridge.RemoveDiscount(GetLoggedInUser(sessionId), storeName, indexInChain);
+            FacadesBridge.AddSystemDayPolicy(GetLoggedInUser(sessionId), storeName, op, cantBuyIn);
+
+        }
+
+        public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity)
+        {
+            FacadesBridge.AddUserCityPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry)
+        {
+            FacadesBridge.AddUserCountryPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            FacadesBridge.AddWholeStoreQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(string sessionId, string storeName, int indexInChain)
+        {
+            FacadesBridge.RemovePolicy(GetLoggedInUser(sessionId), storeName, indexInChain);
+        }
+
+        public DataLoggedInUser GetDataLoggedInUser(string sessionId)
+        {
+            var usr = GetUser(sessionId);
+            if (usr is DataLoggedInUser)
+            {
+                return (DataLoggedInUser)usr;
+            }
+            throw new UserIsNotLoggedInException();
+        }
+
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv)
+        {
+            MsgObservers.Add(obsrv);
+        }
+
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
+        {
+            FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
         }
     }
 }

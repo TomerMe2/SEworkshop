@@ -11,7 +11,7 @@ namespace Website.Pages
 {
     public class SearchResultModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
         public string RequestedSearchString { get; private set; }
         public string SearchCategory { get; private set; }
         public string ActualSearchString { get; private set; }

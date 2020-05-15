@@ -12,21 +12,24 @@ namespace Website.Pages
 {
     public class StoreModel : PageModel
     {
-        private IUserManager UserManager { get; }
+        public IUserManager UserManager { get; }
         public DataStore? Store { get; private set; }
+        public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
 
         public StoreModel(IUserManager userManager)
         {
             UserManager = userManager;
+            StoreName = "";
             ErrorMsg = "";
         }
-
+        
         public void OnGet(string storeName)
         {
             try
             {
-                Store = UserManager.SearchStore(storeName);
+                StoreName = storeName;
+                Store = UserManager.SearchStore(StoreName);
             }
             catch(StoreNotInTradingSystemException e)
             {

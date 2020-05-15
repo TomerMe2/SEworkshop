@@ -19,7 +19,7 @@ namespace SEWorkshop.Facades
         public LoggedInUser GetLoggedInUser(string username, byte[] password);
         public GuestUser GetGuestUser(int id);
         public GuestUser CreateGuestUser();
-        public void WriteMessage(LoggedInUser user, Store store, string description);
+        public Message WriteMessage(LoggedInUser user, Store store, string description);
         public void WriteReview(LoggedInUser user, Product product, string description);
 
 

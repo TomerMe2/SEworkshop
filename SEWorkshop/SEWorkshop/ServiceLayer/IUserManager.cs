@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -37,7 +38,7 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> PurchaseHistory(string sessionId);
         public void WriteReview(string sessionId, string storeName, string productName, string description);
-        public void WriteMessage(string sessionId, string storeName, string description);
+        public int WriteMessage(string sessionId, string storeName, string description);
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm);
         public IEnumerable<DataPurchase> StorePurchaseHistory(string sessionId, string storeNm);
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(string sessionId, string storeNm);
@@ -56,10 +57,19 @@ namespace SEWorkshop.ServiceLayer
         public void EditProductDescription(string sessionId, string storeName, string productName, string description);
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
-        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName);
-        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName);
 
+        //All add policies are adding to the end
+        public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op);
+        public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity);
+        public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry);
+        public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity);
+        
         //0 based index - first policy is indexed 0
-        public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
+        public void RemovePolicy(string sessionId, string storeName, int indexInChain);
+        public DataLoggedInUser GetDataLoggedInUser(string sessionId);
+        public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
+        public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
     }
 }

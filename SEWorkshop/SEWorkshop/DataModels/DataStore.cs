@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using SEWorkshop.DataModels.Policies;
 
 namespace SEWorkshop.DataModels
 {
@@ -23,7 +24,7 @@ namespace SEWorkshop.DataModels
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
         public bool IsOpen => InnerModel.IsOpen;
         public string Name => InnerModel.Name;
-        public DataPolicy Policy => new DataPolicy(InnerModel.Policy);
+        public DataPolicy Policy => DataPolicy.CreateDataPolFromPol(InnerModel.Policy);
         public IReadOnlyCollection<DataPurchase> Purchases => InnerModel.Purchases.Select(prchs =>
                                                                     new DataPurchase(prchs)).ToList().AsReadOnly();
 

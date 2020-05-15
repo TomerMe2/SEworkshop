@@ -3,6 +3,8 @@ using SEWorkshop.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Facades;
+using SEWorkshop.Enums;
+using System;
 
 namespace SEWorkshop.Models
 {
@@ -28,6 +30,29 @@ namespace SEWorkshop.Models
             Purchases = new List<Purchase>();
         }
 
+        public int AmountOfUnReadMessage
+        {
+            get
+            {
+                int counter = 0;
+                foreach (var msg in Messages)
+                {
+                    //If some message in a message line is unseen, it counts only as one
+                    Message? run = msg;
+                    while (run != null)
+                    {
+                        if (run.ClientSawIt != true)
+                        {
+                            counter++;
+                            continue;
+                        }
+                        run = run.Next;
+                    }
+                }
+                return counter;
+            }
+        }
+
         public void WriteReview(Product product, string description)
         {
             if (description.Length == 0)
@@ -39,13 +64,13 @@ namespace SEWorkshop.Models
             Reviews.Add(review);
         }
        
-        public void WriteMessage(Store store, string description)
+        public void WriteMessage(Store store, string description, bool isClient)
         {
             if (description.Length == 0)
             {
                 throw new MessageIsEmptyException();
             }
-            Message message = new Message(this, description);
+            Message message = new Message(this, store, description, isClient);
             store.Messages.Add(message);
             Messages.Add(message);
         }
@@ -210,6 +235,14 @@ namespace SEWorkshop.Models
             return management.MessageReply(this,store,message,description);
         }
 
+        public Message MessageReplyAsNotManager(Message message, string description)
+        {
+            Message reply = new Message(this, message.ToStore, description, true, message);
+            message.Next = reply;
+            log.Info("Reply has been published successfully");
+            return reply;
+        }
+
         public IEnumerable<Message> GetMessage(Store store)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
@@ -232,16 +265,6 @@ namespace SEWorkshop.Models
             }
 
             return management.ViewPurchaseHistory(this, store);
-        }
-
-        public bool isManger(Store store)
-        {
-            if(Owns.FirstOrDefault(man => man.Store == store) != default)
-            {
-                return true;
-            }
-            
-            return false;
         }
 
         override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
@@ -280,19 +303,51 @@ namespace SEWorkshop.Models
             management.RemovePermissionsOfManager(manager,authorization);
         }
 
-        public void AddProductCategoryDiscount(Store getStore, string categoryName)
+        private Owns OwnsForStore(Store store)
         {
-            throw new System.NotImplementedException();
+            var res = Owns.FirstOrDefault(owns => owns.Store == store);
+            if (res == null)
+            {
+                throw new UserIsNotOwnerOfThisStore();
+            }
+            return res;
+
         }
 
-        public void AddSpecificProductDiscount(Store getStore, Product getProduct)
+        //All add policies are adding to the end
+        public void AddAlwaysTruePolicy(Store store, Operator op)
         {
-            throw new System.NotImplementedException();
+            OwnsForStore(store).AddAlwaysTruePolicy(op);
         }
 
-        public void RemoveDiscount(Store getStore, in int indexInChain)
+        public void AddSingleProductQuantityPolicy(Store store, Operator op, Product product, int minQuantity, int maxQuantity)
         {
-            throw new System.NotImplementedException();
+            OwnsForStore(store).AddSingleProductQuantityPolicy(op, product, minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(Store store, Operator op, DayOfWeek cantBuyIn)
+        {
+            OwnsForStore(store).AddSystemDayPolicy(op, cantBuyIn);
+        }
+
+        public void AddUserCityPolicy(Store store, Operator op, string requiredCity)
+        {
+            OwnsForStore(store).AddUserCityPolicy(op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(Store store, Operator op, string requiredCountry)
+        {
+            OwnsForStore(store).AddUserCountryPolicy(op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(Store store, Operator op, int minQuantity, int maxQuantity)
+        {
+            OwnsForStore(store).AddWholeStoreQuantityPolicy(op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(Store store, int indexInChain)
+        {
+            OwnsForStore(store).RemovePolicy(indexInChain);
         }
     }
 }

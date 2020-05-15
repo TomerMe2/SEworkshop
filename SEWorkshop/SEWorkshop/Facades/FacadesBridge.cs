@@ -6,6 +6,7 @@ using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
 using NLog;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades
 {
@@ -179,32 +180,28 @@ namespace SEWorkshop.Facades
 
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description)
         {
+            //message will always be the first message in the talk
             Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
             var store = GetStore(storeName);
-            DataMessage firstMsgData = message;
-            // this whole manouver is because one can answer on a message that is not in the messages list
-            // for example: answer to an answer.
-            while (firstMsgData.Prev != null)
-            {
-                firstMsgData = firstMsgData.Prev;
-            }
-            Message? firstMsg = store.Messages.FirstOrDefault(msg => firstMsgData.Represents(msg));
+            Message? firstMsg = store.Messages.FirstOrDefault(msg => message.Represents(msg));
             if (firstMsg is null)
             {
                 Log.Info("message is not in the system");
                 throw new MessageNotInSystemException();
             }
             Message toAnswerOn = firstMsg;
-            while (!message.Represents(toAnswerOn) && toAnswerOn.Next != null)
+            while (toAnswerOn.Next != null)
             {
                 toAnswerOn = toAnswerOn.Next;
             }
-            if (!message.Represents(toAnswerOn))
+            var loggedIn = GetLoggedInUsr(user);
+            if(firstMsg.WrittenBy == loggedIn)
             {
-                Log.Info("message is not in the system");
-                throw new MessageNotInSystemException();
+                //It's the first user, and it's the non-manager who initiated the messages
+                return new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
             }
-            return new DataMessage(ManageFacade.MessageReply(GetLoggedInUsr(user), toAnswerOn, GetStore(storeName), description));
+            //It's the manager who should answer it
+            return new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
         }
 
         public IEnumerable<DataBasket> MyCart(DataUser user)
@@ -335,11 +332,11 @@ namespace SEWorkshop.Facades
             return ManageFacade.ViewMessage(GetLoggedInUsr(user), GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
-        public void WriteMessage(DataLoggedInUser user, string storeName, string description)
+        public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
             Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
                 storeName, description));
-            UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description);
+            return new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
@@ -353,6 +350,71 @@ namespace SEWorkshop.Facades
         {
             var guestUsr = UserFacade.CreateGuestUser();
             return new DataGuestUser(guestUsr);
+        }
+
+        public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op)
+        {
+            GetLoggedInUsr(user).AddAlwaysTruePolicy(GetStore(storeName), op);
+        }
+
+        public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddSingleProductQuantityPolicy(GetStore(storeName), op,
+                    GetProduct(storeName, productName), minQuantity, maxQuantity);
+        }
+
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            GetLoggedInUsr(user).AddSystemDayPolicy(GetStore(storeName), op, cantBuyIn);
+        }
+
+        public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity)
+        {
+            GetLoggedInUsr(user).AddUserCityPolicy(GetStore(storeName), op, requiredCity);
+        }
+
+        public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry)
+        {
+            GetLoggedInUsr(user).AddUserCountryPolicy(GetStore(storeName), op, requiredCountry);
+        }
+
+        public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            GetLoggedInUsr(user).AddWholeStoreQuantityPolicy(GetStore(storeName), op, minQuantity, maxQuantity);
+        }
+
+        public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain)
+        {
+            GetLoggedInUsr(user).RemovePolicy(GetStore(storeName), indexInChain);
+        }
+
+        public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg)
+        {
+            Log.Info(string.Format("MarkAllDiscussionAsRead was invoked"));
+            var store = GetStore(storeName);
+            Message? firstMsg = store.Messages.FirstOrDefault(message => msg.Represents(message));
+            if (firstMsg is null)
+            {
+                return;
+            }
+            if (msg.WrittenBy.Equals(user))
+            {
+                Message? currMsg = firstMsg;
+                while(currMsg != null)
+                {
+                    currMsg.ClientSawIt = true;
+                    currMsg = currMsg.Next;
+                }
+            }
+            else
+            {
+                Message? currMsg = firstMsg;
+                while (currMsg != null)
+                {
+                    currMsg.StoreSawIt = true;
+                    currMsg = currMsg.Next;
+                }
+            }
         }
     }
 }

@@ -22,7 +22,8 @@ namespace SEWorkshop.UnitTests
         const string CITY_NAME_STUB = "Beer Sheva";
         const string STREET_NAME_STUB = "Shderot Ben Gurion";
         const string HOUSE_NUMBER_STUB = "111";
-        Address address = new Address(CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+        const string COUNTRY_STUB = "Israel";
+        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
 
         [OneTimeSetUp]
         public void SetUp()
@@ -207,7 +208,7 @@ namespace SEWorkshop.UnitTests
             LoggedInUser peb_user1 = UsrFacade.Register("peb_user1", securityAdaprer.Encrypt("1111"));
             Store peb_store1 = new Store(peb_user1, "peb_store1");
             string peb_creditCardNumber = "1234";
-            Address peb_address1 = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            Address peb_address1 = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             try
             {
                 UsrFacade.Purchase(peb_user1, new Basket(peb_store1), peb_creditCardNumber, peb_address1);
@@ -235,7 +236,7 @@ namespace SEWorkshop.UnitTests
             UsrFacade.AddProductToCart(php_user1, php_product1, 1);
             Purchase p = new Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0));
             string peb_creditCardNumber = "1234";
-            Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            Address peb_address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
 
             foreach (var purchase in UsrFacade.PurchaseHistory(php_user1))
@@ -326,7 +327,7 @@ namespace SEWorkshop.UnitTests
             UsrFacade.AddProductToCart(uphria_user1, uphria_product1, 1);
             UsrFacade.AddProductToCart(uphria_user1, uphria_product2, 1);
             string peb_creditCardNumber = "1234";
-            Address peb_address = new Address("Beer Sheva", "Shderot Ben Gurion", "111");
+            Address peb_address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
             
             LoggedInUser uphria_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));

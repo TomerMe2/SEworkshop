@@ -10,7 +10,7 @@ namespace Website.Pages
 {
     public class RegisterModel : PageModel
     {
-        private IUserManager UserManager;
+        public IUserManager UserManager;
 
         [BindProperty(SupportsGet = true)]
         public string Username { get; set; }
