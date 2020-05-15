@@ -44,6 +44,15 @@ namespace Website.Pages
                 case "3":
                     UserManager.SetPermissionsOfManager(sid, StoreName, value, value2);
                     break;
+                case "4":
+                    UserManager.RemovePermissionsOfManager(sid, StoreName, value, value2);
+                    break;
+                case "5":
+                    UserManager.AddStoreOwner(sid, StoreName, value);
+                    break;
+                case "6":
+                    UserManager.AddStoreManager(sid, StoreName, value);
+                    break;
             }
             return RedirectToPage("./Manage", new { StoreName = StoreName });
         }

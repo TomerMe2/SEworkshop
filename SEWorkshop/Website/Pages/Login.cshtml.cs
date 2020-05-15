@@ -46,7 +46,8 @@ namespace Website.Pages
                 UserManager.AddProduct(sid, "nini", "prod1", "some description1", "cat1", 123.7, 7);
                 UserManager.AddProduct(sid, "nini", "prod2", "some LONGGGGGGGGGGGGGGGGGGGGGGGGG descriptionnnnnnnnnnnnnnn2", "cat2", 999999, 1);
                 UserManager.AddStoreManager(sid, "nini", "manager");
-                UserManager.AddStoreOwner(sid, "nini", "owner2");
+                //UserManager.AddStoreOwner(sid, "nini", "owner2");
+                UserManager.SetPermissionsOfManager(sid, "nini", "manager", "Manager");
                 UserManager.Logout(sid);
             }
             catch { }
