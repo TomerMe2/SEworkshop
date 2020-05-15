@@ -9,7 +9,7 @@ namespace SEWorkshop.Models.Discounts
     public abstract class ConditionalDiscount : Discount
     {
         public Product Product { get; set; }
-        protected ConditionalDiscount( double percentage, DateTime deadline, Product product) : base(percentage, deadline)
+        protected ConditionalDiscount( double percentage, DateTime deadline, Product product, Store store, User user) : base(percentage, deadline, store, user)
         {
             Product = product;
         }
@@ -17,36 +17,8 @@ namespace SEWorkshop.Models.Discounts
         protected abstract double ApplyDiscount(Basket basket);
 
        
-        public override double ApplyImplies(Discount other)
-        {
-            if (IsApplied)
-            {
-                return ApplyDiscount() + other.ApplyDiscount();
-            }
+       
+        
 
-            return Product.Price + other.GetOriginalPrice();
-        }
-
-        public override double ApplyDiscountOperator()
-        {
-            if (InnerDiscount is null)
-            {
-                return ApplyDiscount();
-            }
-
-            Discount other = InnerDiscount.Value.Item1;
-            return InnerDiscount.Value.Item2 switch
-            {
-                Operator.And => ApplyDiscount() + other.ApplyDiscount(),
-                Operator.Implies => ApplyImplies(other),
-                Operator.Xor => ChooseCheaper(other),
-                _ => -1,
-            };
-        }
-
-        public override double GetOriginalPrice()
-        {
-            return Product.Price;
-        }
     }
 }

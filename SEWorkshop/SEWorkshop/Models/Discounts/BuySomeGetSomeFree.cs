@@ -9,7 +9,8 @@ namespace SEWorkshop.Models.Discounts
         public Store Store { get; set; }
         public int BuySome { get; set; }
         public int GetSome{ get; set; }
-        public BuySomeGetSomeFree(Store store, int buySome, int getSome,double percentage, DateTime deadline, Product product) : base( percentage, deadline, product)
+        
+        public BuySomeGetSomeFree(Store store, int buySome, int getSome,double percentage, DateTime deadline, Product product, User user) : base( percentage, deadline, product, store, user)
         {
             Store = store;
             BuySome = getSome;
@@ -35,7 +36,5 @@ namespace SEWorkshop.Models.Discounts
             }
             return 0;
         }
-
-
     }
 }
