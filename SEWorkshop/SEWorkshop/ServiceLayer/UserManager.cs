@@ -515,5 +515,10 @@ namespace SEWorkshop.ServiceLayer
         {
             FacadesBridge.RemoveDiscount(GetLoggedInUser(sessionId), storeName, indexInChain);
         }
+
+        public IEnumerable<string> GetAllUsers(string sessionId)
+        {
+            return FacadesBridge.GetRegisteredUsers();
+        }
     }
 }

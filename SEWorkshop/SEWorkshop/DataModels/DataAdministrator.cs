@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataAdministrator : DataUser
+    public class DataAdministrator : DataLoggedInUser
     {
         public IReadOnlyCollection<DataPurchase> PurchasesToView => InnerAdmin.PurchasesToView.Select(prchs =>
                                                                         new DataPurchase(prchs)).ToList().AsReadOnly();

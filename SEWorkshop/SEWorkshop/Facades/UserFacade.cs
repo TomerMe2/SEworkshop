@@ -225,5 +225,10 @@ namespace SEWorkshop.Facades
             GuestUsers.Add(guest);
             return guest;
         }
+
+        public IEnumerable<string> GetRegisteredUsers()
+        {
+            return RegisteredUsers.Select(user => user.Username);
+        }
     }
 }

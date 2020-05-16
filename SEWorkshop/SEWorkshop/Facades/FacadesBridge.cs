@@ -171,6 +171,8 @@ namespace SEWorkshop.Facades
             Cart cart = GetUser(userAsGuest).Cart;
             LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
             loggedIn.Cart = cart;
+            if (loggedIn is Administrator)
+                return new DataAdministrator((Administrator)loggedIn);
             return new DataLoggedInUser(loggedIn);
         }
 
@@ -417,6 +419,10 @@ namespace SEWorkshop.Facades
                     currMsg = currMsg.Next;
                 }
             }
+        }
+        public IEnumerable<string> GetRegisteredUsers()
+        {
+            return UserFacade.GetRegisteredUsers();
         }
     }
 }

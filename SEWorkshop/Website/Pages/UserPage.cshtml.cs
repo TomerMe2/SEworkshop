@@ -13,24 +13,42 @@ namespace Website.Pages
     public class UserPageModel : PageModel
     {
         public IUserManager UserManager { get; }
-        public IEnumerable<DataPurchase> purchases { get; private set; }
+        public IEnumerable<DataPurchase> Purchases { get; private set; }
+        public IEnumerable<string> Users { get; set; }
+        public bool IsAdmin { get; set; }
+        public string Username { get; set; }
+
         public UserPageModel(IUserManager userManager)
         {
             UserManager = userManager;
-            purchases = new List<DataPurchase>();
-            
+            Purchases = new List<DataPurchase>();
+            Users = new List<string>();
+            IsAdmin = false;
+            Username = "";
         }
-        public void OnGet()
+
+        public void OnGet(string username)
         {
-            purchases = UserManager.PurchaseHistory(HttpContext.Session.Id);
+            string sid = HttpContext.Session.Id;
+            Username = (UserManager.GetDataLoggedInUser(sid)).Username;
+            IsAdmin = UserManager.IsAdministrator(sid);
+            Users = UserManager.GetAllUsers(sid).ToList();
+            if (username == null || username.Length == 0)
+            {
+                Purchases = UserManager.PurchaseHistory(sid);
+            }
+            else
+            {
+                Purchases = UserManager.UserPurchaseHistory(sid, username);
+                Username = username;
+            }
         }
 
         public void OnPost(string content, string storeName, string productName)
         {
             string sid = HttpContext.Session.Id;
             UserManager.WriteReview(sid, storeName, productName, content);
-            purchases = UserManager.PurchaseHistory(sid);
+            Purchases = UserManager.PurchaseHistory(sid);
         }
-
     }
 }

@@ -4,17 +4,28 @@
     ViewData["Title"] = "UserPage";
 }
 
-<h1>Your Purchase History</h1>
+<h1>@Model.Username's Purchase History</h1>
 
-@{ if (Model.purchases.Count() == 0)
+@{ if (Model.Purchases.Count() == 0)
     {
-@:<h6>No Purchases</h6>
+        @:<h6>No Purchases</h6>
     }
     else
     {
-        foreach (var purchase in Model.purchases)
+        foreach (var purchase in Model.Purchases)
         {
             await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(@Model.UserManager, purchase, true, Model.HttpContext.Session.Id));
         }
+    }
+}
+
+@if (Model.IsAdmin)
+{
+    @foreach (string username in Model.Users)
+    {
+        @:
+        <div class="card-body">
+            <h5 class="card-title"><a href='/UserPage/@username'></a>@username</h5>
+        </div>
     }
 }

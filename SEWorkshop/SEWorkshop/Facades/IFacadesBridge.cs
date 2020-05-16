@@ -69,5 +69,6 @@ namespace SEWorkshop.Facades
         public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
         public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain);
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
+        public IEnumerable<string> GetRegisteredUsers();
     }
 }
