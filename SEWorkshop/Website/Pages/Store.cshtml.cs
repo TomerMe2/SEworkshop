@@ -35,7 +35,7 @@ namespace Website.Pages
                 ErrorMsg = e.ToString();
             }
         }
-
+        
         public IActionResult OnPostEditDescriptionAsync(string StoreName, string ProductName, string Description)
         {
             try
@@ -49,6 +49,7 @@ namespace Website.Pages
             }
             return RedirectToPage("./Store", new { storeName = StoreName });
         }
+
         public IActionResult OnPostEditCategoryAsync(string StoreName, string ProductName, string Category)
         {
             try
@@ -62,6 +63,7 @@ namespace Website.Pages
             }
             return RedirectToPage("./Store", new { storeName = StoreName });
         }
+
         public IActionResult OnPostEditPriceAsync(string StoreName, string ProductName, string Price)
         {
             try
@@ -75,6 +77,7 @@ namespace Website.Pages
             }
             return RedirectToPage("./Store", new { storeName = StoreName });
         }
+
         public IActionResult OnPostEditQuantityAsync(string StoreName, string ProductName, string Quantity)
         {
             try
