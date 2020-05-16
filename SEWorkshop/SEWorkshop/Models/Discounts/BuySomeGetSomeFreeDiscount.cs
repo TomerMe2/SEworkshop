@@ -4,22 +4,22 @@ using System.Text;
 
 namespace SEWorkshop.Models.Discounts
 {
-    public abstract class BuySomeGetSomeFreeDiscount : ConditionalDiscount
+    public class BuySomeGetSomeFreeDiscount : ConditionalDiscount
     {
         public Store Store { get; set; }
         public int BuySome { get; set; }
         public int GetSome { get; set; }
 
-        public BuySomeGetSomeFreeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product product, User user) : base(percentage, deadline, product, store)
+        public BuySomeGetSomeFreeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product product) : base(percentage, deadline, product, store)
         {
             Store = store;
-            BuySome = getSome;
-            GetSome = buySome;
+            BuySome = buySome;
+            GetSome = getSome;
         }
 
-        protected override double ApplyDiscount(Basket basket)
+        public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
         {
-            foreach (var product in basket.Products)
+            foreach (var product in itemsList)
             {
                 if (product.Item1 == Product)
                 {

@@ -355,6 +355,34 @@ namespace SEWorkshop.Models
             Store.Discounts.Add(new SpecificProducDiscount(percentage, ddl, product, Store));
         }
 
+        public void AddBuyOverDiscount(Product product, string deadline, double percentage, double minSum)
+        {
+            DateTime ddl = new DateTime();
+            try
+            {
+                ddl = Convert.ToDateTime(deadline);
+            }
+            catch (Exception)
+            {
+
+            }
+            Store.Discounts.Add(new BuyOverDiscount(Store, minSum, percentage, ddl, product));
+        }
+        public void AddBuySomeGetSomeDiscount(Product product, string deadline, double percentage, int buySome, int getSome)
+        {
+            DateTime ddl = new DateTime();
+            try
+            {
+                ddl = Convert.ToDateTime(deadline);
+            }
+            catch (Exception)
+            {
+
+            }
+            Store.Discounts.Add(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, ddl, product));
+        }
+
+
         public void RemoveDiscount(int indexInChain)
         {
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));

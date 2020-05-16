@@ -13,10 +13,5 @@ namespace SEWorkshop.Models.Discounts
         {
             Product = product;
         }
-
-        protected abstract double ApplyDiscount(Basket basket);
-
-
-
     }
 }
