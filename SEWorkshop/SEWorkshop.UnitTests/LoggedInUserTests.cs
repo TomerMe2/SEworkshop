@@ -373,7 +373,7 @@ namespace SEWorkshop.Tests
             usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
-         //   Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
             usr.RemoveDiscount(store, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
