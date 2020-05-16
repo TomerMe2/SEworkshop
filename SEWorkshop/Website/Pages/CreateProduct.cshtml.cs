@@ -9,10 +9,10 @@ using SEWorkshop.DataModels;
 using SEWorkshop.Exceptions;
 using System.Security.Cryptography;
 
-namespace Website.Pages.Shared
+namespace Website.Pages
 {
 
-    public class CRUDproductModel : PageModel
+    public class CreateProductModel : PageModel
     {
         public IUserManager UserManager { get; }
         public DataProduct? Product { get; private set; }
@@ -24,7 +24,7 @@ namespace Website.Pages.Shared
         public string StoreName { get; private set; }
         public string ErrorMsg { get; private set; }
 
-        public CRUDproductModel(IUserManager userManager) {
+        public CreateProductModel(IUserManager userManager) {
             UserManager = userManager;
             ProductName = "";
             StoreName = "";

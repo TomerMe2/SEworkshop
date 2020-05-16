@@ -24,6 +24,7 @@ namespace Website.Pages
         {
             purchases = UserManager.PurchaseHistory(HttpContext.Session.Id);
         }
+
         public void OnPost(string content, string storeName, string productName)
         {
             string sid = HttpContext.Session.Id;
