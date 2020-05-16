@@ -18,7 +18,7 @@ namespace Website.Pages
         public int? PriceMin { get; private set; }
         public int? PriceMax { get; private set; }
         public string? CategoryFilter { get; private set; }
-        public string Error { get; private set; }
+        public string ErrorMsg { get; private set; }
         public IEnumerable<DataProduct> SearchResult { get; private set; }
 
         public SearchResultModel(IUserManager userManager)
@@ -28,7 +28,36 @@ namespace Website.Pages
             RequestedSearchString = "";
             ActualSearchString = "";
             SearchCategory = "";
-            Error = "";
+            ErrorMsg = "";
+        }
+
+        public IActionResult OnPostAddToCartAsync(string StoreName, string ProductName, string Quantity)
+        {
+            int quantity;
+            try
+            {
+                quantity = int.Parse(Quantity);
+            }
+            catch(Exception)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
+            if(quantity <= 0)
+            {
+                ErrorMsg = "Quantity must be a positive number";
+                return new PageResult();
+            }
+            try
+            {
+                UserManager.AddProductToCart(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
+            }
+            catch(Exception e)
+            {
+                ErrorMsg = e.ToString();
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
         }
 
         public void OnPost(string searchText, string searchCategory, string minPriceText, string maxPriceText, string categoryFilterText)
@@ -59,7 +88,7 @@ namespace Website.Pages
             }
             catch
             {
-                Error = "Invalid Price Range";
+                ErrorMsg = "Invalid Price Range";
             }
 
 
