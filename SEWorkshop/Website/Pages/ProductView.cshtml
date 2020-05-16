@@ -13,7 +13,17 @@
             <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
             <input type="hidden" name="ProductName" value="@Model.Product.Name">
             <input type="text" name="Quantity">
-            <button type="submit" asp-page-handler="AddToCart" value="Add" >Click here to add the porduct to the Cart!</button>
+            <button type="submit" asp-page-handler="AddToCart" value="Add" >Add to Cart</button>
         </form>
+        @{
+            if (Model.Authorized)
+            {
+                <form method="post">
+                    <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
+                    <input type="hidden" name="ProductName" value="@Model.Product.Name">
+                    <button type="submit" asp-page-handler="RemoveProduct" value="Remove" >Remove the Product from the Store</button>
+                </form>
+            }
+        }
     </div>
 </div>

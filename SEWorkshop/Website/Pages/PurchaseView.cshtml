@@ -8,7 +8,7 @@
         <h3>Store - @Model.Purchase.Basket.Store.Name</h3>
         @{ foreach (var product in Model.Purchase.Basket.Products)
             {
-                await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1));
+                await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1, Model.UserManager, false));
             @:<h6>  Quantity Purchased: @product.Item2</h6>
             if (Model.CanReview)
                 {

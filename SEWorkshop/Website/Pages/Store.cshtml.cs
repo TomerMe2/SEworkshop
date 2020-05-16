@@ -36,6 +36,21 @@ namespace Website.Pages
             }
         }
 
+        public IActionResult OnPostRemoveProductAsync(string StoreName, string ProductName, string Quantity)
+        {
+            try
+            {
+                Console.WriteLine("AAAA");
+                UserManager.RemoveProduct(HttpContext.Session.Id, StoreName, ProductName);
+            }
+            catch
+            {
+                ErrorMsg = "An Error Has Occured";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+
         public IActionResult OnPostAddToCartAsync(string StoreName, string ProductName, string Quantity)
         {
             int quantity;

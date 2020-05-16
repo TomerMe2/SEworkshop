@@ -25,7 +25,9 @@
         }
         foreach (var product in Model.Store.Products)
         {
-            ProductViewModel pvm = new ProductViewModel(product);
+            bool authorized = Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Products));
+            ProductViewModel pvm = new ProductViewModel(product, um, authorized);
             pvm.destPath = pvm.Product.Store.Name;
             await Html.RenderPartialAsync("ProductView", pvm);
         }
