@@ -349,32 +349,14 @@ namespace SEWorkshop.Models
             }
         }
 
-        public void AddProductCategoryDiscount(Operator op, string categoryName, string deadline, double percentage, int indexInChain)
+        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-                throw new Exception("bad date");
-            }
-            AddDiscountToEnd(new ProductCategoryDiscount(percentage, ddl, Store, categoryName), op, indexInChain);
+            AddDiscountToEnd(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain);
         }
 
-        public void AddSpecificProductDiscount(Operator op, Product product, string deadline, double percentage, int indexInChain)
+        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-                throw new Exception("bad date");
-            }
-            AddDiscountToEnd(new SpecificProducDiscount(percentage, ddl, product, Store), op, indexInChain);
+            AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
         }
 
         public void RemoveDiscount(int indexInChain)
