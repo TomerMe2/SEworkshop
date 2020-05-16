@@ -36,11 +36,76 @@ namespace Website.Pages
             }
         }
 
+        public IActionResult OnPostEditDescriptionAsync(string StoreName, string ProductName, string Description)
+        {
+            try
+            {
+                UserManager.EditProductDescription(HttpContext.Session.Id, StoreName, ProductName, Description);
+            }
+            catch
+            {
+                ErrorMsg = "Invalid Data";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+        public IActionResult OnPostEditCategoryAsync(string StoreName, string ProductName, string Category)
+        {
+            try
+            {
+                UserManager.EditProductCategory(HttpContext.Session.Id, StoreName, ProductName, Category);
+            }
+            catch
+            {
+                ErrorMsg = "Invalid Data";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+        public IActionResult OnPostEditPriceAsync(string StoreName, string ProductName, string Price)
+        {
+            try
+            {
+                UserManager.EditProductPrice(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Price));
+            }
+            catch
+            {
+                ErrorMsg = "Invalid Data";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+        public IActionResult OnPostEditQuantityAsync(string StoreName, string ProductName, string Quantity)
+        {
+            try
+            {
+                UserManager.EditProductQuantity(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
+            }
+            catch
+            {
+                ErrorMsg = "Invalid Data";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
+
+        public IActionResult OnPostEditNameAsync(string StoreName, string ProductName, string Name)
+        {
+            try
+            {
+                UserManager.EditProductName(HttpContext.Session.Id, StoreName, ProductName, Name);
+            }
+            catch
+            {
+                ErrorMsg = "Invalid Data";
+                return new PageResult();
+            }
+            return RedirectToPage("./Store", new { storeName = StoreName });
+        }
         public IActionResult OnPostRemoveProductAsync(string StoreName, string ProductName, string Quantity)
         {
             try
             {
-                Console.WriteLine("AAAA");
                 UserManager.RemoveProduct(HttpContext.Session.Id, StoreName, ProductName);
             }
             catch
