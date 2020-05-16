@@ -1,0 +1,19 @@
+@page
+@model Website.Pages.CartModel
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<div class="allpage">
+    <h1>Cart</h1>
+    @{
+        if(Model.Cart != null)
+        {
+            foreach (var basket in Model.Cart.Baskets)
+            {
+                await Html.RenderPartialAsync("BasketView", new BasketViewModel(Model.UserManager, basket));
+            }
+        }
+    }
+    <text class="alert-danger">@Model.ErrorMsg</text>
+</div>
