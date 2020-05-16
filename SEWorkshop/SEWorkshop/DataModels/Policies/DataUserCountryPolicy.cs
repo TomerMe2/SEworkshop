@@ -15,5 +15,9 @@ namespace SEWorkshop.DataModels.Policies
         {
             InnerCityPol = pol;
         }
+        public override string ToString()
+        {
+            return "Only users in the country of " + RequiredCountry + " can purchase";
+        }
     }
 }

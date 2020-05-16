@@ -16,5 +16,13 @@ namespace SEWorkshop.DataModels.Policies
         {
             InnerQuantityPolicy = pol;
         }
+        public override string ToString()
+        {
+            if (MinQuantity == -1)
+                return "Store quantity lower than " + MaxQuantity;
+            if (MaxQuantity == -1)
+                return "Store quantity above " + MinQuantity;
+            return "Store quantity between " + MinQuantity + "-" + MaxQuantity;
+        }
     }
 }
