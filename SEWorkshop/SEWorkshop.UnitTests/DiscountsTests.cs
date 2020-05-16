@@ -44,7 +44,7 @@ namespace SEWorkshop.Tests
             Bskt = new Basket(Str);
             Buyer.Cart.Baskets.Add(Bskt);
 
-            Deadline = new DateTime(2022, 5, 22);
+            Deadline = DateTime.Now.AddMonths(1);
         }
         
         [Test]
@@ -106,7 +106,8 @@ namespace SEWorkshop.Tests
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
             Discount dis = new SpecificProducDiscount(50, new DateTime(2020, 5, 15), Prod2, Str);
-            Assert.Throws<DiscountExpiredException>(delegate { dis.ComposeDiscounts(Bskt.Products); });
+            double discount = dis.ComposeDiscounts(Bskt.Products);
+            Assert.That(discount, Is.EqualTo(0));
         }
     }
 }

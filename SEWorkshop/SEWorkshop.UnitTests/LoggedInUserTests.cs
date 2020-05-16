@@ -364,15 +364,16 @@ namespace SEWorkshop.Tests
         public void PurchaseDiscountTest()
         {
             const string STORE_NAME = "store1";
+            DateTime deadline = DateTime.Now.AddMonths(1);
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             usr.Owns.Add(new Owns(usr, store));
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
-            usr.AddProductCategoryDiscount(store, "cat1", new DateTime(2020, 5, 18), 50, Operator.And, 0);
+            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
-            usr.AddSpecificProductDiscount(store, prod1, new DateTime(2020, 5, 20), 50, Operator.Xor, 0);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
-            usr.AddSpecificProductDiscount(store, prod1, new DateTime(2022, 5, 20), 50, Operator.Xor, 1);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
             usr.RemoveDiscount(store, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
         }

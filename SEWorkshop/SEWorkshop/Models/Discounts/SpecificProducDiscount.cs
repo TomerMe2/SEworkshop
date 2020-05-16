@@ -17,7 +17,7 @@ namespace SEWorkshop.Models.Discounts
         {
             if (DateTime.Now > Deadline)
             {
-                throw new DiscountExpiredException();
+                return 0;
             }
             
             double totalDiscount = 0;

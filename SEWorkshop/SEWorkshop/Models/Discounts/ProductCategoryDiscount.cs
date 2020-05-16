@@ -23,7 +23,7 @@ namespace SEWorkshop.Models.Discounts
             {
                 if (DateTime.Now > Deadline)
                 {
-                    throw new DiscountExpiredException();
+                    return 0;
                 }
                 if (prod.Category.Equals(CatUnderDiscount))
                 {
