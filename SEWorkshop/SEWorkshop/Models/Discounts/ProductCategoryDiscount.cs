@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -20,6 +21,10 @@ namespace SEWorkshop.Models.Discounts
 
             foreach (var (prod, quantity) in itemsList)
             {
+                if (DateTime.Now > Deadline)
+                {
+                    throw new DiscountExpiredException();
+                }
                 if (prod.Category.Equals(CatUnderDiscount))
                 {
                     totalDiscount += (prod.Price * quantity) * (Percentage / 100);

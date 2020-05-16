@@ -6,6 +6,8 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
+using SEWorkshop.Enums;
+using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests
@@ -355,6 +357,23 @@ namespace SEWorkshop.Tests
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
             usr.RemovePolicy(store, 0);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+        }
+
+        [Test]
+        public void PurchaseDiscountTest()
+        {
+            const string STORE_NAME = "store1";
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
+            usr.AddProductCategoryDiscount(store, "cat1", "18/5/2020", 50, Operator.And, 0);
+            Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
+            usr.AddSpecificProductDiscount(store, prod1, "20/5/2022", 50, Operator.Xor, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
+            usr.AddSpecificProductDiscount(store, prod1, "20/5/2022", 50, Operator.Xor, 1);
+            usr.RemoveDiscount(store, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
         }
 
     }

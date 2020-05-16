@@ -266,6 +266,27 @@ namespace SEWorkshop.Models
             }
             currPol.InnerPolicy = (pol, op);
         }
+        
+        private void AddDiscountToEnd(Discount dis, Operator op, int indexInChain)
+        {
+            if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
+            {
+                Store.Discounts.Add(dis);
+            }
+            else
+            {
+                if (dis.InnerDiscount != null)
+                {
+                    throw new PolicyCauseCycilicError();
+                }
+                Discount currDis = Store.Discounts.ElementAt(indexInChain);
+                while(currDis.InnerDiscount != null)
+                {
+                    currDis = currDis.InnerDiscount.Value.Item1;
+                }
+                currDis.InnerDiscount = (dis, op);
+            }
+        }
 
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(Operator op)
@@ -327,7 +348,7 @@ namespace SEWorkshop.Models
             }
         }
 
-        public void AddProductCategoryDiscount(string categoryName, string deadline, double percentage)
+        public void AddProductCategoryDiscount(Operator op, string categoryName, string deadline, double percentage, int indexInChain)
         {
             DateTime ddl = new DateTime();
             try
@@ -338,10 +359,10 @@ namespace SEWorkshop.Models
             {
                 
             }
-            Store.Discounts.Add(new ProductCategoryDiscount(percentage, ddl, null, Store, categoryName));
+            AddDiscountToEnd(new ProductCategoryDiscount(percentage, ddl, null, Store, categoryName), op, indexInChain);
         }
 
-        public void AddSpecificProductDiscount(Product product, string deadline, double percentage)
+        public void AddSpecificProductDiscount(Operator op, Product product, string deadline, double percentage, int indexInChain)
         {
             DateTime ddl = new DateTime();
             try
@@ -352,7 +373,7 @@ namespace SEWorkshop.Models
             {
                 
             }
-            Store.Discounts.Add(new SpecificProducDiscount(percentage, ddl, product, Store));
+            AddDiscountToEnd(new SpecificProducDiscount(percentage, ddl, product, Store), op, indexInChain);
         }
 
         public void RemoveDiscount(int indexInChain)

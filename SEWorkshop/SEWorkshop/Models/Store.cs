@@ -70,7 +70,7 @@ namespace SEWorkshop.Models
 
             foreach (var discount in Discounts)
             {
-                totalPrice -= discount.ApplyDiscount(itemsList);
+                totalPrice -= discount.ComposeDiscounts(itemsList);
             }
             if (supplyAdapter.CanSupply(itemsList, address)
                 && billingAdapter.Bill(itemsList, creditCardNumber, totalPrice))

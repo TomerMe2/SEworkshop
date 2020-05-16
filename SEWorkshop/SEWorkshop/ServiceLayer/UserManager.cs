@@ -499,14 +499,16 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
         }
 
-        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, string deadline, double percentage)
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, string deadline, double percentage,
+                                                Operator op, int indexInChain)
         {
-            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage);
+            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
         }
 
-        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, string deadline, double percentage)
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, string deadline, double percentage,
+                                                Operator op, int indexInChain)
         {
-            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage);
+            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage, op, indexInChain);
         }
 
         public void RemoveDiscount(string sessionId, string storeName, int indexInChain)
