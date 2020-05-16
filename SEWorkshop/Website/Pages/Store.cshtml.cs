@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.DataModels;
-using SEWorkshop.Exceptions;
 
 namespace Website.Pages
 {
@@ -32,7 +31,7 @@ namespace Website.Pages
                 StoreName = storeName;
                 Store = UserManager.SearchStore(StoreName);
             }
-            catch(StoreNotInTradingSystemException e)
+            catch(Exception e)
             {
                 ErrorMsg = e.ToString();
             }

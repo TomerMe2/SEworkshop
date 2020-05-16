@@ -7,6 +7,7 @@ using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Models.Policies;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Tests
 {
@@ -14,6 +15,7 @@ namespace SEWorkshop.Tests
     public class LoggedInUserTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
+        private Address DEF_ADRS = new Address("1", "1", "1", "1");
 
         [Test]
         public void WriteReview()
@@ -329,7 +331,7 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store));
+            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
