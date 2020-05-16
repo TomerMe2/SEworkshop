@@ -15,11 +15,13 @@ namespace Website.Pages
         [BindProperty (SupportsGet = true)]
         public string ErrorMsg { get; set; }
         public DataBasket Basket { get; set; }
+        public bool Paying { get; set; }
 
         public BasketViewModel(IUserManager userManager, DataBasket basket)
         {
             UserManager = userManager;
             Basket = basket;
+            Paying = false;
             ErrorMsg = "";
         }
 
