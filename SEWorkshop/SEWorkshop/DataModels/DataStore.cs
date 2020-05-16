@@ -21,7 +21,7 @@ namespace SEWorkshop.DataModels
                 .ToDictionary(tup => tup.Item1, tup => tup.Item2);
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
-                                                                            new DataDiscount(discount)).ToList().AsReadOnly();
+                                                                            DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
         public bool IsOpen => InnerModel.IsOpen;
         public string Name => InnerModel.Name;
         public DataPolicy Policy => DataPolicy.CreateDataPolFromPol(InnerModel.Policy);
