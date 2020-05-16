@@ -9,8 +9,8 @@
         @{ foreach (var product in Model.Purchase.Basket.Products)
             {
                 await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1, Model.UserManager, false));
-            @:<h6>  Quantity Purchased: @product.Item2</h6>
-            if (Model.CanReview)
+                @:<h6>  Quantity Purchased: @product.Item2</h6>
+                if (Model.CanReview)
                 {
                     IEnumerable<SEWorkshop.DataModels.DataReview> reviews = product.Item1.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser(Model.Session)).Username));
                     if (reviews.Count() == 0)
@@ -27,11 +27,11 @@
                     }
                     else
                     {
-                        <p>Review: "@reviews.First().Description"</p>
+                        <p>Your Review: "@reviews.First().Description"</p>
                     }
                 }
             }
-            }
+        }
         <br />
         <h5 class="card-subtitle mb-2">Total Purchase Price: @Model.TotalPrice ₪</h5>
     </div>

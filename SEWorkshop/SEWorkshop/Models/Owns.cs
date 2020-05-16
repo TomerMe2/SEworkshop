@@ -137,6 +137,7 @@ namespace SEWorkshop.Models
         {
             if (StoreContainsProduct(productToRemove, Store))
             {
+                productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
                 log.Info("Product has been removed from store successfully");
                 return;
