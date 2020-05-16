@@ -9,7 +9,6 @@ using System.Linq;
 using SEWorkshop.Enums;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
-using SEWorkshop.Enums;
 
 namespace SEWorkshop.Tests
 {

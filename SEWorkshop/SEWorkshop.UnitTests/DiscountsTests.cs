@@ -44,7 +44,7 @@ namespace SEWorkshop.Tests
             Bskt = new Basket(Str);
             Buyer.Cart.Baskets.Add(Bskt);
 
-            Deadline = Convert.ToDateTime("20/5/2022");
+            Deadline = new DateTime(2022, 5, 22);
         }
         
         [Test]
