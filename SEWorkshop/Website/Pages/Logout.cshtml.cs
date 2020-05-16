@@ -19,6 +19,7 @@ namespace Website.Pages
             UserManager = userManager;
             ErrorMsg = "";
         }
+
         public IActionResult OnGet()
         {
             if(!UserManager.IsLoggedIn(HttpContext.Session.Id))
@@ -35,7 +36,7 @@ namespace Website.Pages
                 ErrorMsg = "An Error has Occured";
                 return new PageResult();
             }
-            return RedirectToPage("./Login");
+            return RedirectToPage("./Stores");
         }
     }
 }
