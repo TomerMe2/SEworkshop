@@ -262,6 +262,12 @@ namespace SEWorkshop.Models
                 throw new PolicyCauseCycilicError();
             }
             Policy currPol = Store.Policy;
+            if (currPol is AlwaysTruePolicy && currPol.InnerPolicy is null)
+            {
+                //The owner wants different policy, and allways true should be removed
+                Store.Policy = pol;
+                return;
+            }
             while(currPol.InnerPolicy != null)
             {
                 currPol = currPol.InnerPolicy.Value.Item1;
@@ -340,9 +346,12 @@ namespace SEWorkshop.Models
             {
                 if (currPol.InnerPolicy == null)
                 {
-                    throw new CantRemoveTheOnlyPolicy();
+                    Store.Policy = new AlwaysTruePolicy(Store);
                 }
-                Store.Policy = currPol.InnerPolicy.Value.Item1;
+                else
+                {
+                    Store.Policy = currPol.InnerPolicy.Value.Item1;
+                }
             }
             else
             {
