@@ -147,21 +147,5 @@ namespace Website.Pages
             }
             return RedirectToPage("./Store", new { storeName = StoreName });
         }
-
-        /*
-        public IActionResult OnPost(string storeName)
-        {
-            try
-            {
-                StoreName = storeName;
-                Store = UserManager.SearchStore(StoreName);
-            }
-            catch (StoreNotInTradingSystemException e)
-            {
-                ErrorMsg = e.ToString();
-            }
-            return RedirectToPage("./Manage", new { StoreName = StoreName });
-        }
-        */
     }
 }
