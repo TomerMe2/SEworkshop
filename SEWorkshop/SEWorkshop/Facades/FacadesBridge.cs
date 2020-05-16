@@ -418,5 +418,15 @@ namespace SEWorkshop.Facades
                 }
             }
         }
+
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, buySome, getSome,op, indexInChain);
+        }
+
+        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            GetLoggedInUsr(user).AddBuyOverDiscountDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, minSum, op, indexInChain);
+        }
     }
 }
