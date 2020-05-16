@@ -13,7 +13,7 @@
     }
     else
     {
-        @:<h1>@Model.Store.Name</h1>
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         }
         if (Model.LoggedUser.Owns.Contains(Model.Store) || Model.LoggedUser.Manages.ContainsKey(Model.Store))
         {
@@ -26,16 +26,20 @@
         }
         var um = Model.UserManager;
         var sessionId = Model.HttpContext.Session.Id;
-        var user = um.GetDataLoggedInUser(sessionId);
-        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        if (Model.Store.Owners.ContainsKey(user) ||
-            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))
+        var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
+        var isMan = user != null && Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))))
         {
             <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
         }
         foreach (var product in Model.Store.Products)
         {
-            await Html.RenderPartialAsync("ProductView", new ProductViewModel(product));
+            bool authorized = user != null && (Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Products)));
+            ProductViewModel pvm = new ProductViewModel(product, um, authorized);
+            pvm.destPath = pvm.Product.Store.Name;
+            await Html.RenderPartialAsync("ProductView", pvm);
         }
     }
 }

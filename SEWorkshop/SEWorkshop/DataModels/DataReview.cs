@@ -7,7 +7,7 @@ namespace SEWorkshop.DataModels
 {
     public class DataReview : DataModel<Review>
     {
-        public DataUser Writer => new DataUser(InnerModel.Writer);
+        public DataLoggedInUser Writer => new DataLoggedInUser(InnerModel.Writer);
         public string Description => InnerModel.Description;
 
         public DataReview(Review review) : base(review) { }
