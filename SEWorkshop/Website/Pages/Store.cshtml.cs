@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.DataModels;
-
+using SEWorkshop.Exceptions;
+
 namespace Website.Pages
 {
     public class StoreModel : PageModel
@@ -15,7 +16,6 @@ namespace Website.Pages
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
-
         public StoreModel(IUserManager userManager)
         {
             UserManager = userManager;

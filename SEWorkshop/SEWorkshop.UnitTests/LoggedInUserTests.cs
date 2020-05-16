@@ -344,19 +344,18 @@ namespace SEWorkshop.Tests
             const string STORE_NAME = "Wello";
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
             usr.Owns.Add(new Owns(usr, store));
             usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
-            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1.InnerPolicy.Value.Item1);
-            usr.RemovePolicy(store, 1);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 1);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
+            Assert.IsNull(store.Policy.InnerPolicy);
             usr.RemovePolicy(store, 0);
-            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
         }
 
         [Test]

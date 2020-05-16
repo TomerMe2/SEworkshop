@@ -44,6 +44,7 @@ namespace Website.Pages
                 return new PageResult();
             }
             return RedirectToPage("./Index", new { Username = Username });
+            
         }
     }
 }

@@ -8,5 +8,10 @@ namespace SEWorkshop.DataModels.Policies
     public class DataAlwaysTruePolicy : DataPolicy
     {
         public DataAlwaysTruePolicy(AlwaysTruePolicy pol) : base(pol) { }
-    }
+
+        public override string ToString()
+        {
+            return "true";
+        }
+    }   
 }

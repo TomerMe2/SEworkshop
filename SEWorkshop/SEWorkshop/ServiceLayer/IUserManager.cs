@@ -75,5 +75,6 @@ namespace SEWorkshop.ServiceLayer
         public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int IndexInChain);
         public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
+        public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
     }
 }
