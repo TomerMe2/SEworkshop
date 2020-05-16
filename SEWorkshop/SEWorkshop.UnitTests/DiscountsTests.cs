@@ -105,7 +105,7 @@ namespace SEWorkshop.Tests
         {
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
-            Discount dis = new SpecificProducDiscount(50, Convert.ToDateTime("15/5/2020"), Prod2, Str);
+            Discount dis = new SpecificProducDiscount(50, new DateTime(2020, 5, 15), Prod2, Str);
             Assert.Throws<DiscountExpiredException>(delegate { dis.ComposeDiscounts(Bskt.Products); });
         }
     }
