@@ -349,5 +349,20 @@ namespace SEWorkshop.Models
         {
             OwnsForStore(store).RemovePolicy(indexInChain);
         }
+
+        public void AddProductCategoryDiscount(Store store, string categoryName, string deadline, double percentage)
+        {
+            OwnsForStore(store).AddProductCategoryDiscount(categoryName, deadline, percentage);
+        }
+
+        public void AddSpecificProductDiscount(Store store, Product product, string deadline, double percentage)
+        {
+            OwnsForStore(store).AddSpecificProductDiscount(product, deadline, percentage);
+        }
+
+        public void RemoveDiscount(Store store, int indexInChain)
+        {
+            OwnsForStore(store).RemoveDiscount(indexInChain);
+        }
     }
 }

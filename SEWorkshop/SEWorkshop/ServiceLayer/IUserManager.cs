@@ -71,5 +71,9 @@ namespace SEWorkshop.ServiceLayer
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
+
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, string deadline, double percentage);
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, string deadline, double percentage);
+        public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
     }
 }

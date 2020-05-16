@@ -8,7 +8,7 @@ namespace SEWorkshop.Models.Discounts
         public string CatUnderDiscount;
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 
-                                        Product product, Store store, string category, User user) : 
+                                        Product product, Store store, string category) : 
                                                                     base(percentage, deadline, product, store)
         {
             CatUnderDiscount = category;

@@ -1,11 +1,12 @@
 ﻿using NLog;
-using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models.Policies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SEWorkshop.Models.Discounts;
+using Operator = SEWorkshop.Enums.Operator;
 
 namespace SEWorkshop.Models
 {
@@ -324,6 +325,39 @@ namespace SEWorkshop.Models
             {
                 prev.InnerPolicy = currPol.InnerPolicy;
             }
+        }
+
+        public void AddProductCategoryDiscount(string categoryName, string deadline, double percentage)
+        {
+            DateTime ddl = new DateTime();
+            try
+            {
+                ddl = Convert.ToDateTime(deadline);
+            }
+            catch (Exception)
+            {
+                
+            }
+            Store.Discounts.Add(new ProductCategoryDiscount(percentage, ddl, null, Store, categoryName));
+        }
+
+        public void AddSpecificProductDiscount(Product product, string deadline, double percentage)
+        {
+            DateTime ddl = new DateTime();
+            try
+            {
+                ddl = Convert.ToDateTime(deadline);
+            }
+            catch (Exception)
+            {
+                
+            }
+            Store.Discounts.Add(new SpecificProducDiscount(percentage, ddl, product, Store));
+        }
+
+        public void RemoveDiscount(int indexInChain)
+        {
+            Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }
 
