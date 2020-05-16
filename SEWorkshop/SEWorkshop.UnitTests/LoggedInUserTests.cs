@@ -1,13 +1,13 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
-using SEWorkshop.Models.Policies;
 using SEWorkshop.Enums;
+using SEWorkshop.Models.Discounts;
+using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests
 {
@@ -357,6 +357,60 @@ namespace SEWorkshop.Tests
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
             usr.RemovePolicy(store, 0);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+        }
+
+        [Test]
+        public void PurchaseDiscountTest()
+        {
+            const string STORE_NAME = "store1";
+            DateTime deadline = DateTime.Now.AddMonths(1);
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
+            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
+            Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
+            usr.RemoveDiscount(store, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
+        }
+
+        [Test]
+        public void BuyOverTest()
+        {
+            const string STORE_NAME = "writeReviewStore";
+            const string USER_NAME = "WriteReviewUser";
+            const string USER_PASSWORD = "1111";
+            const string PROD_NAME = "writeReviewProd";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 10.00, 5);
+            BuyOverDiscount dis = new BuyOverDiscount(str, 9.90, 50, DateTime.Today, prod);
+            GuestUser customer = new GuestUser();
+            customer.AddProductToCart(prod, 1);
+            var basket = customer.Cart.Baskets.ElementAt(0);
+            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 5.00);
+
+        }
+
+        [Test]
+        public void BuySomeGetSomeFreeTest()
+        {
+            const string STORE_NAME = "writeReviewStore";
+            const string USER_NAME = "WriteReviewUser";
+            const string USER_PASSWORD = "1111";
+            const string PROD_NAME = "writeReviewProd";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 5);
+            BuySomeGetSomeFreeDiscount dis = new BuySomeGetSomeFreeDiscount(str, 2, 1, 0, DateTime.Today, prod);
+            GuestUser customer = new GuestUser();
+            customer.AddProductToCart(prod, 3);
+            var basket = customer.Cart.Baskets.ElementAt(0);
+            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 11.11);
+
         }
 
     }
