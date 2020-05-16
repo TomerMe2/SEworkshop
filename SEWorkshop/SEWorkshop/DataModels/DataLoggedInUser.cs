@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.DataModels
 {
@@ -26,6 +27,11 @@ namespace SEWorkshop.DataModels
         public DataLoggedInUser(LoggedInUser usr) : base(usr)
         {
             InnerLoggedInUser = usr;
+        }
+
+        public override int GetHashCode()
+        {
+            return Username.GetHashCode();
         }
     }
 }

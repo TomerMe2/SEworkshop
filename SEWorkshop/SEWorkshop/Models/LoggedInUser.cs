@@ -272,7 +272,7 @@ namespace SEWorkshop.Models
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(this, basket);
+            purchase = new Purchase(this, basket, address);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)
@@ -350,14 +350,14 @@ namespace SEWorkshop.Models
             OwnsForStore(store).RemovePolicy(indexInChain);
         }
 
-        public void AddProductCategoryDiscount(Store store, string categoryName, string deadline, double percentage)
+        public void AddProductCategoryDiscount(Store store, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain)
         {
-            OwnsForStore(store).AddProductCategoryDiscount(categoryName, deadline, percentage);
+            OwnsForStore(store).AddProductCategoryDiscount(op, categoryName, deadline, percentage, indexInChain);
         }
 
-        public void AddSpecificProductDiscount(Store store, Product product, string deadline, double percentage)
+        public void AddSpecificProductDiscount(Store store, Product product, DateTime deadline, double percentage, Operator op, int IndexInChain)
         {
-            OwnsForStore(store).AddSpecificProductDiscount(product, deadline, percentage);
+            OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain);
         }
         public void AddBuyOverDiscountDiscount(Store store, Product product, string deadline, double percentage, double minSum)
         {
@@ -371,6 +371,11 @@ namespace SEWorkshop.Models
         public void RemoveDiscount(Store store, int indexInChain)
         {
             OwnsForStore(store).RemoveDiscount(indexInChain);
+        }
+
+        public override int GetHashCode()
+        {
+            return Username.GetHashCode();
         }
     }
 }

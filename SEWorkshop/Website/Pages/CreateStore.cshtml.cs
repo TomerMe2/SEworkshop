@@ -34,13 +34,19 @@ namespace Website.Pages
 
         public IActionResult OnPost()
         {
+            if(StoreName == null)
+            {
+                ErrorMsg = "Invalid Product Name";
+                return new PageResult();
+            }
             try
             {
                 UserManager.OpenStore(HttpContext.Session.Id, StoreName);
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                ErrorMsg = e.ToString();
+                ErrorMsg = "Invalid Store Name";
+                return new PageResult();
             }
             return RedirectToPage("./Index");
         }

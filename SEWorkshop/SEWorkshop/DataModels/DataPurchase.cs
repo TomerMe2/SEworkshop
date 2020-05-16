@@ -10,6 +10,7 @@ namespace SEWorkshop.DataModels
         public DataUser User => new DataUser(InnerModel.User);
         public DataBasket Basket => new DataBasket(InnerModel.Basket);
         public DateTime TimeStamp => InnerModel.TimeStamp;
+        public Address Address => InnerModel.Address;
 
         public DataPurchase(Purchase prchs) : base(prchs) { }
     }

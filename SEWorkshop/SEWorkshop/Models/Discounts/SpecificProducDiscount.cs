@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -14,12 +15,17 @@ namespace SEWorkshop.Models.Discounts
 
         public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
         {
+            if (DateTime.Now > Deadline)
+            {
+                return 0;
+            }
+            
             double totalDiscount = 0;
             foreach (var (prod, quantity) in itemsList)
             {
                 if (Product == prod)
                 {
-                    totalDiscount += prod.Price * (1 - Percentage / 100);
+                    totalDiscount += (prod.Price * quantity) * (Percentage / 100);
                 }
             }
 

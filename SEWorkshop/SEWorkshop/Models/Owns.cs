@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using SEWorkshop.Models.Discounts;
 using Operator = SEWorkshop.Enums.Operator;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models
 {
@@ -138,6 +139,7 @@ namespace SEWorkshop.Models
         {
             if (StoreContainsProduct(productToRemove, Store))
             {
+                productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
                 log.Info("Product has been removed from store successfully");
                 return;
@@ -266,6 +268,27 @@ namespace SEWorkshop.Models
             }
             currPol.InnerPolicy = (pol, op);
         }
+        
+        private void AddDiscountToEnd(Discount dis, Operator op, int indexInChain)
+        {
+            if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
+            {
+                Store.Discounts.Add(dis);
+            }
+            else
+            {
+                if (dis.InnerDiscount != null)
+                {
+                    throw new PolicyCauseCycilicError();
+                }
+                Discount currDis = Store.Discounts.ElementAt(indexInChain);
+                while(currDis.InnerDiscount != null)
+                {
+                    currDis = currDis.InnerDiscount.Value.Item1;
+                }
+                currDis.InnerDiscount = (dis, op);
+            }
+        }
 
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(Operator op)
@@ -327,32 +350,14 @@ namespace SEWorkshop.Models
             }
         }
 
-        public void AddProductCategoryDiscount(string categoryName, string deadline, double percentage)
+        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-                
-            }
-            Store.Discounts.Add(new ProductCategoryDiscount(percentage, ddl, null, Store, categoryName));
+            AddDiscountToEnd(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain);
         }
 
-        public void AddSpecificProductDiscount(Product product, string deadline, double percentage)
+        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-                
-            }
-            Store.Discounts.Add(new SpecificProducDiscount(percentage, ddl, product, Store));
+            AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
         }
 
         public void AddBuyOverDiscount(Product product, string deadline, double percentage, double minSum)

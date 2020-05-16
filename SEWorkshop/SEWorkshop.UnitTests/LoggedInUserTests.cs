@@ -6,6 +6,8 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
+using SEWorkshop.Enums;
+using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
 using SEWorkshop.Models.Discounts;
 
@@ -15,6 +17,7 @@ namespace SEWorkshop.Tests
     public class LoggedInUserTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
+        private Address DEF_ADRS = new Address("1", "1", "1", "1");
 
         [Test]
         public void WriteReview()
@@ -330,7 +333,7 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store));
+            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
@@ -356,6 +359,24 @@ namespace SEWorkshop.Tests
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
             usr.RemovePolicy(store, 0);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+        }
+
+        [Test]
+        public void PurchaseDiscountTest()
+        {
+            const string STORE_NAME = "store1";
+            DateTime deadline = DateTime.Now.AddMonths(1);
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
+            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
+            Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
+         //   Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
+            usr.RemoveDiscount(store, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
         }
 
         [Test]

@@ -43,7 +43,7 @@ namespace Website.Pages
                 {
                     foreach (var manages in usr.Manages)
                     {
-                        if (manages.Value.Contains(SEWorkshop.Authorizations.Replying))
+                        if (manages.Value.Contains(SEWorkshop.Enums.Authorizations.Replying))
                         {
                             MsgToShow = manages.Key.Messages.FirstOrDefault(currMsg => currMsg.Id == MsgId);
                         }

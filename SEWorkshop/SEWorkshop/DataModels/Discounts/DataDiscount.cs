@@ -23,7 +23,12 @@ namespace SEWorkshop.DataModels
         
         public static DataDiscount CreateDataFromDiscount(Discount dis)
         {
-            throw new NotImplementedException(); //TODO: implement this.
+            return dis switch
+            {
+                SpecificProducDiscount d => new DataOpenDiscount(d),
+                ProductCategoryDiscount d => new DataProductCategoryDiscount(d),
+                _ => throw new Exception("Should not get here"),
+            };
         }
     }
 }

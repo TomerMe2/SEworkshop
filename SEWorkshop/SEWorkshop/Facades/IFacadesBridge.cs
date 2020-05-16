@@ -66,8 +66,8 @@ namespace SEWorkshop.Facades
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
 
-        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, string deadline, double percentage);
-        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, string deadline, double percentage);
+        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
+        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain);
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
     }
 }
