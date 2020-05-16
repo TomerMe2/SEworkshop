@@ -52,7 +52,7 @@ namespace SEWorkshop.Tests
         {
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
-            Discount dis = new ProductCategoryDiscount(50, Deadline, Prod1, Str, "cat1");
+            Discount dis = new ProductCategoryDiscount(50, Deadline, Str, "cat1");
             double discount = dis.ComposeDiscounts(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price * 0.5 * 3)); //prod2 is not under discount
         }

@@ -16,6 +16,8 @@ namespace SEWorkshop.DataModels
         public int Quantity => InnerModel.Quantity;
         public IReadOnlyCollection<DataReview> Reviews => InnerModel.Reviews.Select(rev => new DataReview(rev)).ToList().AsReadOnly();
 
+        public double PriceAfterDiscount => InnerModel.PriceAfterDiscount();
+
         public DataProduct(Product product) : base(product) { }
     }
 }

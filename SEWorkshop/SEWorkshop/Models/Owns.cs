@@ -358,9 +358,9 @@ namespace SEWorkshop.Models
             }
             catch (Exception)
             {
-                
+                throw new Exception("bad date");
             }
-            AddDiscountToEnd(new ProductCategoryDiscount(percentage, ddl, null, Store, categoryName), op, indexInChain);
+            AddDiscountToEnd(new ProductCategoryDiscount(percentage, ddl, Store, categoryName), op, indexInChain);
         }
 
         public void AddSpecificProductDiscount(Operator op, Product product, string deadline, double percentage, int indexInChain)
@@ -372,7 +372,7 @@ namespace SEWorkshop.Models
             }
             catch (Exception)
             {
-                
+                throw new Exception("bad date");
             }
             AddDiscountToEnd(new SpecificProducDiscount(percentage, ddl, product, Store), op, indexInChain);
         }

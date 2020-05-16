@@ -4,13 +4,13 @@ using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models.Discounts
 {
-    public class ProductCategoryDiscount : OpenDiscount
+    public class ProductCategoryDiscount : Discount
     {
         public string CatUnderDiscount;
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 
-                                        Product product, Store store, string category) : 
-                                                                    base(percentage, deadline, product, store)
+                                         Store store, string category) : 
+                                                                    base(percentage, deadline, store)
         {
             CatUnderDiscount = category;
         }

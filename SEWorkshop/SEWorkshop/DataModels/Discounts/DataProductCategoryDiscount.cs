@@ -2,7 +2,7 @@
 
 namespace SEWorkshop.DataModels
 {
-    public class DataProductCategoryDiscount : DataOpenDiscount
+    public class DataProductCategoryDiscount : DataDiscount
     {
         
         private ProductCategoryDiscount InnerProductCategoryDiscount { get; }
