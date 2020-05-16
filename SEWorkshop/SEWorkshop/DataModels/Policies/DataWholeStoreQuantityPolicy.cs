@@ -16,6 +16,7 @@ namespace SEWorkshop.DataModels.Policies
         {
             InnerQuantityPolicy = pol;
         }
+
         public override string ToString()
         {
             if (MinQuantity == -1)

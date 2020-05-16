@@ -42,21 +42,7 @@
                     {
                         <th style="border:solid;border-color:black;border-width:1px">@owner.Value.Username</th>
                     }
-                    <th style="border:solid;border-color:black;border-width:1px">
-                        @{/*
-                            if (owner.Value.Equals(Model.LoggedUser))
-                            {
-                                <form id="removeOwner" method="post" style="text-align:center">
-                                    <div class="form-group">
-                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                        <input type="hidden" name="request" value="1">
-                                        <input type="hidden" name="value" value=@owner.Key.Username>
-                                        <button type="submit" class="form-control btn btn-primary" style="width:35%">Remove Owner</button>
-                                    </div>
-                                </form>
-                            }
-                        */}
-                    </th>
+                    <th style="border:solid;border-color:black;border-width:1px"></th>
                 </tr>
             }
         }
@@ -74,14 +60,14 @@
                                 <form id="removeManager" method="post" style="text-align:center">
                                     <div class="form-group">
                                         <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                        <input type="hidden" name="request" value="2">
-                                        <input type="hidden" name="value" value=@manager.Key.Username>
-                                        <button type="submit" class="form-control btn btn-primary" style="width:35%">Remove Manager</button>
+                                        <input type="hidden" name="request" value="RemoveManager">
+                                        <input type="hidden" name="username" value=@manager.Key.Username>
+                                        <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:35%">Remove Manager</button>
                                     </div>
                                 </form>
                                 ICollection<SEWorkshop.Enums.Authorizations> tempauths = new List<SEWorkshop.Enums.Authorizations>();
                                 manager.Key.Manages.TryGetValue(Model.Store, out tempauths);
-                                if (isOwner || tempauths.Contains(SEWorkshop.Enums.Authorizations.Authorizing))
+                                if (isOwner || (tempauths != null && tempauths.Contains(SEWorkshop.Enums.Authorizations.Authorizing)))
                                     foreach (SEWorkshop.Enums.Authorizations a in Enum.GetValues(typeof(SEWorkshop.Enums.Authorizations)))
                                     {
                                         if (tempauths.Contains(a))
@@ -89,11 +75,11 @@
                                             <form method="post" style="text-align:center">
                                                 <div class="form-group">
                                                     <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                                    <input type="hidden" name="request" value="4">
-                                                    <input type="hidden" name="value" value=@manager.Key.Username>
-                                                    <input type="hidden" name="value2" value=@a>
+                                                    <input type="hidden" name="request" value="RemovePermission">
+                                                    <input type="hidden" name="username" value=@manager.Key.Username>
+                                                    <input type="hidden" name="authorization" value=@a>
                                                     <label style="color:green">@a Permission: Granted </label>
-                                                    <button type="submit" class="form-control btn btn-primary" style="width:20%">Remove Permission</button>
+                                                    <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Remove</button>
                                                 </div>
                                             </form>
                                         }
@@ -102,11 +88,11 @@
                                             <form method="post">
                                                 <div class="form-group" style="text-align:center">
                                                     <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                                    <input type="hidden" name="request" value="3">
-                                                    <input type="hidden" name="value" value=@manager.Key.Username>
-                                                    <input type="hidden" name="value2" value=@a>
+                                                    <input type="hidden" name="request" value="AddPermission">
+                                                    <input type="hidden" name="username" value=@manager.Key.Username>
+                                                    <input type="hidden" name="authorization" value=@a>
                                                     <label style="color:red">@a Permission: Not Granted </label>
-                                                    <button type="submit" class="form-control btn btn-primary" style="width:20%">Grant Permission</button>
+                                                    <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Grant</button>
                                                 </div>
                                             </form>
                                         }
@@ -126,9 +112,9 @@
         <form id="addOwner" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="5">
-                <input class="form-control" name="value" type="text" placeholder="Username" style="width: 15%">
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Owner</button>
+                <input type="hidden" name="request" value="AddOwner">
+                <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
+                <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Owner</button>
             </div>
         </form>
     }
@@ -139,9 +125,9 @@
         <form id="addManager" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="6">
-                <input class="form-control" name="value" type="text" placeholder="Username" style="width: 15%">
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
+                <input type="hidden" name="request" value="AddManager">
+                <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
+                <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
             </div>
         </form>
     }
@@ -158,10 +144,10 @@
             <form id="addManager" method="post">
                 <div class="form-group">
                     <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="12">
+                    <input type="hidden" name="request" value="RemovePolicy">
                     <label for="index">Index:</label>
                     <input type="number" id="index" name="value" min="1" max=@Model.PolicyNumber>
-                    <button type="submit" class="form-control btn btn-primary" style="width:15%">Remove</button>
+                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Remove</button>
                 </div>
             </form>
         }
@@ -170,9 +156,10 @@
         <form id="dayPolicy" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="7">
+                <input type="hidden" name="request" value="DayPolicy">
                 <select id="value" name="value">
                     <option value="And">And</option>
+                    <option value="Or">Or</option>
                     <option value="Xor">Xor</option>
                 </select>
                 <select id="value2" name="value2">
@@ -184,7 +171,7 @@
                     <option value="Friday">Friday</option>
                     <option value="Saturday">Saturday</option>
                 </select>
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
             </div>
         </form>
 
@@ -192,9 +179,10 @@
         <form id="addManager" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="8">
+                <input type="hidden" name="request" value="CountryPolicy">
                 <select id="value" name="value">
                     <option value="And">And</option>
+                    <option value="Or">Or</option>
                     <option value="Xor">Xor</option>
                 </select>
                 <select id="value2" name="value2">
@@ -203,7 +191,7 @@
                         <option value=@s>@s</option>
                     }
                 </select>
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
             </div>
         </form>
 
@@ -211,13 +199,14 @@
         <form id="addManager" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="9">
+                <input type="hidden" name="request" value="CityPolicy">
                 <select id="value" name="value">
                     <option value="And">And</option>
+                    <option value="Or">Or</option>
                     <option value="Xor">Xor</option>
                 </select>
                 <input name="value2" type="text" placeholder="City" style="width: 15%">
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
             </div>
         </form>
 
@@ -225,14 +214,15 @@
         <form id="addManager" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="10">
+                <input type="hidden" name="request" value="StoreQuantityPolicy">
                 <select id="value" name="value">
                     <option value="And">And</option>
+                    <option value="Or">Or</option>
                     <option value="Xor">Xor</option>
                 </select>
                 <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
                 <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
             </div>
         </form>
 
@@ -240,15 +230,16 @@
         <form id="addManager" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="11">
+                <input type="hidden" name="request" value="ProductQuantityPolicy">
                 <select id="value" name="value">
                     <option value="And">And</option>
+                    <option value="Or">Or</option>
                     <option value="Xor">Xor</option>
                 </select>
                 <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
                 <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
                 <input name="value4" type="text" placeholder="Product" style="width: 15%">
-                <button type="submit" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
             </div>
         </form>
     }
