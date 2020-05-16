@@ -6,13 +6,11 @@ namespace SEWorkshop.Models.Discounts
 {
     public class BuySomeGetSomeFreeDiscount : ConditionalDiscount
     {
-        public Store Store { get; set; }
         public int BuySome { get; set; }
         public int GetSome { get; set; }
 
         public BuySomeGetSomeFreeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product product) : base(percentage, deadline, product, store)
         {
-            Store = store;
             BuySome = buySome;
             GetSome = getSome;
         }

@@ -60,6 +60,7 @@ namespace SEWorkshop.Models.Discounts
         public double ChooseCheaper(ICollection<(Product, int)> itemsList)
         {
             return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
+
         }
 
         public double ApplyImplies(ICollection<(Product, int)> itemsList)
