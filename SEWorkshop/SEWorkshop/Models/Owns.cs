@@ -360,6 +360,16 @@ namespace SEWorkshop.Models
             AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
         }
 
+        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain)
+        {
+            AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
+        }
+        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
+        {
+            AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
+        }
+
+
         public void RemoveDiscount(int indexInChain)
         {
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
