@@ -360,31 +360,13 @@ namespace SEWorkshop.Models
             AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
         }
 
-        public void AddBuyOverDiscount(Product product, string deadline, double percentage, double minSum)
+        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-
-            }
-            Store.Discounts.Add(new BuyOverDiscount(Store, minSum, percentage, ddl, product));
+            AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
         }
-        public void AddBuySomeGetSomeDiscount(Product product, string deadline, double percentage, int buySome, int getSome)
+        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
         {
-            DateTime ddl = new DateTime();
-            try
-            {
-                ddl = Convert.ToDateTime(deadline);
-            }
-            catch (Exception)
-            {
-
-            }
-            Store.Discounts.Add(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, ddl, product));
+            AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
         }
 
 

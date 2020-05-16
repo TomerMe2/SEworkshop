@@ -10,14 +10,12 @@ namespace SEWorkshop.Models.Discounts
 {
     public abstract class Discount
     {
-    
-        public double Percentage { get; private set; }
-        
-        public DateTime Deadline { get; set; }
-        
-        public Store Store { get; }
-
         public (Discount, Operator)? InnerDiscount { get; set; }
+        public double Percentage { get; private set; }
+
+        public DateTime Deadline { get; set; }
+
+        public Store Store { get; }
 
         public Discount(double percentage, DateTime deadline, Store store)
         {
@@ -41,6 +39,9 @@ namespace SEWorkshop.Models.Discounts
             }
             return false;
         }
+
+        public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
+
         public double ComposeDiscounts(ICollection<(Product, int)> itemsList)
         {
             if (InnerDiscount is null)
@@ -59,8 +60,11 @@ namespace SEWorkshop.Models.Discounts
 
         public double ChooseCheaper(ICollection<(Product, int)> itemsList)
         {
-            return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
-
+            if (InnerDiscount != null)
+            {
+                return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
+            }
+            return ApplyDiscount(itemsList);
         }
 
         public double ApplyImplies(ICollection<(Product, int)> itemsList)
@@ -68,13 +72,13 @@ namespace SEWorkshop.Models.Discounts
             double firstDiscount = ApplyDiscount(itemsList);
             if (firstDiscount > 0)
             {
-                return firstDiscount + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList);
+                if (InnerDiscount != null)
+                {
+                    return firstDiscount + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList);
+                }
+                return firstDiscount;
             }
-
             return 0;
         }
-
-        public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
-   
     }
 }
