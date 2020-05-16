@@ -16,7 +16,6 @@ namespace Website.Pages
         public DataStore? Store { get; private set; }
         public string StoreName {get; private set; }
         public string ErrorMsg { get; private set; }
-        public DataLoggedInUser LoggedUser { get; private set; }
         public StoreModel(IUserManager userManager)
         {
             UserManager = userManager;
@@ -26,7 +25,6 @@ namespace Website.Pages
         
         public void OnGet(string storeName)
         {
-            LoggedUser = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
             try
             {
                 StoreName = storeName;
@@ -150,6 +148,7 @@ namespace Website.Pages
             return RedirectToPage("./Store", new { storeName = StoreName });
         }
 
+        /*
         public IActionResult OnPost(string storeName)
         {
             try
@@ -163,5 +162,6 @@ namespace Website.Pages
             }
             return RedirectToPage("./Manage", new { StoreName = StoreName });
         }
+        */
     }
 }

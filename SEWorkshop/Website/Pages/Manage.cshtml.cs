@@ -44,7 +44,7 @@ namespace Website.Pages
             PolicyNumber = 0;
             Error = error;
             if (policy.InnerPolicy.HasValue)
-                Policy = stringPolicy(policy.InnerPolicy.Value.Item1, 1);
+                Policy = StringPolicy(policy.InnerPolicy.Value.Item1, 1);
             else
                 Policy = "None";
         }
@@ -59,42 +59,98 @@ namespace Website.Pages
                     //UserManager.Removeow(sid, StoreName, value);
                     break;
                 case "2":
-                    UserManager.RemoveStoreManager(sid, StoreName, value);
-                    break;
-                case "3":
-                    UserManager.SetPermissionsOfManager(sid, StoreName, value, value2);
-                    break;
-                case "4":
-                    UserManager.RemovePermissionsOfManager(sid, StoreName, value, value2);
-                    break;
-                case "5":
-                    UserManager.AddStoreOwner(sid, StoreName, value);
-                    if(value == null)
+                    try
                     {
-                        Error = "Illegal Value";
-                        break;
+                        UserManager.RemoveStoreManager(sid, StoreName, value);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
                     }
                     break;
-                case "6":
-                    UserManager.AddStoreManager(sid, StoreName, value);
+                case "3":
+                    try
+                    {
+                        UserManager.SetPermissionsOfManager(sid, StoreName, value, value2);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
+                    break;
+                case "4":
+                    try
+                    {
+                        UserManager.RemovePermissionsOfManager(sid, StoreName, value, value2);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
+                    break;
+                case "5":
                     if (value == null)
                     {
                         Error = "Illegal Value";
                         break;
                     }
+                    try
+                    {
+                        UserManager.AddStoreOwner(sid, StoreName, value);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
+                    break;
+                case "6":
+                    if (value == null)
+                    {
+                        Error = "Illegal Value";
+                        break;
+                    }
+                    try
+                    {
+                        UserManager.AddStoreManager(sid, StoreName, value);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
                     break;
                 case "7":
-                    UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (DayOfWeek)Enum.Parse(typeof(DayOfWeek), value2));
+                    try
+                    {
+                        UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (DayOfWeek)Enum.Parse(typeof(DayOfWeek), value2));
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
                     break;
                 case "8":
-                    UserManager.AddUserCountryPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value2);
+                    try
+                    {
+                        UserManager.AddUserCountryPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value2);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
                     break;
                 case "9":
-                    UserManager.AddUserCityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value2);
                     if (value2 == null)
                     {
                         Error = "Illegal Value";
                         break;
+                    }
+                    try
+                    {
+                        UserManager.AddUserCityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value2);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
                     }
                     break;
                 case "10":
@@ -104,24 +160,28 @@ namespace Website.Pages
                         if (value2 == null)
                             min = -1;
                         else {
-                            min = Int32.Parse(value2);
+                            min = int.Parse(value2);
                             if (min < 0)
-                                throw new Exception();
+                                throw new ArgumentOutOfRangeException();
                         }
                         if (value3 == null)
                             max = -1;
                         else {
-                            max = Int32.Parse(value3);
+                            max = int.Parse(value3);
                             if (max < 0)
-                                throw new Exception();
+                                throw new ArgumentOutOfRangeException();
                         }
                         if ((min > max && max != -1) || (min == -1 && max == -1))
-                            throw new Exception();
+                            throw new ArgumentOutOfRangeException();
                         UserManager.AddWholeStoreQuantityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), min, max);
                     }
-                    catch (Exception)
+                    catch (ArgumentOutOfRangeException)
                     {
                         Error = "Invald Number Range";
+                    }
+                    catch(Exception e)
+                    {
+                        Error = e.ToString();
                     }
                     break;
                 case "11":
@@ -132,20 +192,20 @@ namespace Website.Pages
                             min = -1;
                         else
                         {
-                            min = Int32.Parse(value2);
+                            min = int.Parse(value2);
                             if (min < 0)
-                                throw new Exception();
+                                throw new ArgumentOutOfRangeException();
                         }
                         if (value3 == null)
                             max = -1;
                         else
                         {
-                            max = Int32.Parse(value3);
+                            max = int.Parse(value3);
                             if (max < 0)
-                                throw new Exception();
+                                throw new ArgumentOutOfRangeException();
                         }
                         if ((min > max && max != -1) || (min == -1 && max == -1))
-                            throw new Exception();
+                            throw new ArgumentOutOfRangeException();
                         if (value4 == null)
                         {
                             Error = "Illegal Value";
@@ -153,26 +213,37 @@ namespace Website.Pages
                         }
                         UserManager.AddSingleProductQuantityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value4, min, max);
                     }
-                    catch (Exception)
+                    catch (ArgumentOutOfRangeException)
                     {
                         Error = "Invald Number Range";
                     }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
                     break;
                 case "12":
-                    UserManager.RemovePolicy(sid, StoreName, Int32.Parse(value));
+                    try
+                    {
+                        UserManager.RemovePolicy(sid, StoreName, int.Parse(value));
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
                     break;
             }
-            return RedirectToPage("./Manage", new { StoreName = StoreName, Error = Error });
+            return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        private string stringPolicy(DataPolicy policy, int index)
+        private string StringPolicy(DataPolicy policy, int index)
         {
             if (!policy.InnerPolicy.HasValue)
             {
                 PolicyNumber = index;
                 return "[" + index + "] " + policy.ToString();
             }
-            return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerPolicy.Value.Item2.ToString() + " (" + stringPolicy(policy.InnerPolicy.Value.Item1, index + 1) + ")";
+            return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerPolicy.Value.Item2.ToString() + " (" + StringPolicy(policy.InnerPolicy.Value.Item1, index + 1) + ")";
         }
     }
 }

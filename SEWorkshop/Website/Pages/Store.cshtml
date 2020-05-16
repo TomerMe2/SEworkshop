@@ -13,21 +13,17 @@
     }
     else
     {
-        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
-        }
-        if (Model.LoggedUser.Owns.Contains(Model.Store) || Model.LoggedUser.Manages.ContainsKey(Model.Store))
-        {
-            <form id="manage" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="store" value=@Model.Store.Name>
-                    <button type="submit" class="form-control btn btn-primary" style="width: 18%">Manage Store</button>
-                </div>
-            </form>
-        }
         var um = Model.UserManager;
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
-        var isMan = user != null && Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        var isMan = user != null && Model.Store.Managers.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
+        if (user != null && (user.Owns.Contains(Model.Store) ||
+                                         user.Manages.ContainsKey(Model.Store)))
+        {
+            <h5 class="card-title"><a href='/Manage/?StoreName=@Model.Store.Name'>Store Manage</a></h5>
+        }
+
         if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))))
         {
