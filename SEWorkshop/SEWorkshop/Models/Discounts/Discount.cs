@@ -60,7 +60,11 @@ namespace SEWorkshop.Models.Discounts
 
         public double ChooseCheaper(ICollection<(Product, int)> itemsList)
         {
-            return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
+            if (InnerDiscount != null)
+            {
+                return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
+            }
+            return ApplyDiscount(itemsList);
         }
 
         public double ApplyImplies(ICollection<(Product, int)> itemsList)
@@ -68,9 +72,12 @@ namespace SEWorkshop.Models.Discounts
             double firstDiscount = ApplyDiscount(itemsList);
             if (firstDiscount > 0)
             {
-                return firstDiscount + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList);
+                if (InnerDiscount != null)
+                {
+                    return firstDiscount + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList);
+                }
+                return firstDiscount;
             }
-
             return 0;
         }
     }

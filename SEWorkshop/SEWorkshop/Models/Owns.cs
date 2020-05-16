@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using SEWorkshop.Models.Discounts;
 using Operator = SEWorkshop.Enums.Operator;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models
 {
