@@ -10,20 +10,24 @@
             </div>
             @{
                 double sum = 0;
-                foreach(var Product in Model.Basket.Products)
+                foreach (var product in Model.Basket.Products)
                 {
-                    string name = Product.Item1.Name;
-                    int quantity = Product.Item2;
-                    sum += quantity*Product.Item1.Price;
-                    <div style="display: flex;">
-                        <h5>Product: @name, Quantity: @quantity ₪</h5>
+                    string name = product.Item1.Name;
+                    int quantity = product.Item2;
+                    sum += quantity * product.Item1.Price;
+                    var priceOfProd = quantity * product.Item1.Price;
+                    <div>
+                        <div><h5>Product: @name</h5></div>
+                        <div><h6>Price per unit: @product.Item1.Price ₪</h6></div>
+                        <div><h6>Quantity: @quantity</h6></div>
+                        <div><h6>Price: @quantity * @product.Item1.Price ₪ = @priceOfProd ₪</h6></div>
                         <input type="hidden" name="StoreName" value="@Model.Basket.Store.Name">
                         <input type="hidden" name="ProductName" value="@name">
                         <input type="hidden" name="Quantity" value="@quantity">
                         <button asp-page-handler="RemoveFromCart" value="Remove">Remove From Cart</button>
                     </div>
                 }
-                <h4>Total Cost: @sum</h4>
+                <h4>Cost of this basket: @sum</h4>
             }
         </form>
     </div>
