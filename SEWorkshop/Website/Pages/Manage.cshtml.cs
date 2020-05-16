@@ -10,6 +10,7 @@ using Microsoft.Extensions.ObjectPool;
 using SEWorkshop.DataModels;
 using SEWorkshop.DataModels.Policies;
 using SEWorkshop.Enums;
+using SEWorkshop.Models;
 using SEWorkshop.Models.Policies;
 using SEWorkshop.ServiceLayer;
 
@@ -27,6 +28,8 @@ namespace Website.Pages
         public DataStore Store { get; private set; }
         public DataLoggedInUser LoggedUser { get; private set; }
         public IEnumerable<string> countries { get; private set; }
+        public ICollection<string> products { get; private set; }
+        public ICollection<string> categories { get; private set; }
 
         public ManageModel(IUserManager userManager)
         {
@@ -35,6 +38,7 @@ namespace Website.Pages
             countries = System.IO.File.ReadAllLines("./wwwroot/texts/countries.txt");
             Error = "";
             Policy = "";
+            
         }
         public void OnGet(string storeName, string error) 
         {
@@ -43,10 +47,19 @@ namespace Website.Pages
             DataPolicy policy = Store.Policy;
             PolicyNumber = 0;
             Error = error;
+            products = new List<string>();
+            categories = new List<string>();
+            foreach (DataProduct dp in Store.Products)
+            {
+                if (!categories.Contains(dp.Category))
+                    categories.Add(dp.Category);
+                products.Add(dp.Name);
+            }
+
             if (policy is DataAlwaysTruePolicy)
                 Policy = "None";
             else
-                Policy = StringPolicy(policy, 0);
+                Policy = StringPolicy(policy, 1);
 
         }
 
@@ -204,13 +217,36 @@ namespace Website.Pages
                 case "RemovePolicy":
                     try
                     {
-                        UserManager.RemovePolicy(sid, StoreName, int.Parse(value));
+                        UserManager.RemovePolicy(sid, StoreName, int.Parse(value) - 1);
                     }
                     catch (Exception e)
                     {
                         Error = e.ToString();
                     }
                     break;
+            }
+            return RedirectToPage("./Manage", new { StoreName, Error });
+        }
+
+        public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index)
+        {
+            string sid = HttpContext.Session.Id;
+            DateTime dateTime = DateTime.Parse(date);
+            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            try
+            {
+                if (appliedTo.Equals("Product"))
+                {
+                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, Int32.Parse(index));
+                }
+                else
+                {
+                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, Int32.Parse(index));
+                }
+            }
+            catch(Exception e){
+                Error = e.ToString();
             }
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
