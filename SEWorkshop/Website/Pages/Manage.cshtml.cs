@@ -43,10 +43,11 @@ namespace Website.Pages
             DataPolicy policy = Store.Policy;
             PolicyNumber = 0;
             Error = error;
-            if (policy.InnerPolicy.HasValue)
-                Policy = StringPolicy(policy.InnerPolicy.Value.Item1, 1);
-            else
+            if (policy is DataAlwaysTruePolicy)
                 Policy = "None";
+            else
+                Policy = StringPolicy(policy, 0);
+
         }
 
         public IActionResult OnPostOwnerManagerHandler(string storeName, string request, string username)
@@ -173,7 +174,7 @@ namespace Website.Pages
                 case "StoreQuantityPolicy":
                     try
                     {
-                        handleMinMax(value2, value3);
+                        HandleMinMax(value2, value3);
                         UserManager.AddWholeStoreQuantityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), Min, Max);
                     }
                     catch (ArgumentOutOfRangeException)
@@ -188,7 +189,7 @@ namespace Website.Pages
                 case "ProductQuantityPolicy":
                     try
                     {
-                        handleMinMax(value2, value3);
+                        HandleMinMax(value2, value3);
                         UserManager.AddSingleProductQuantityPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), value4, Min, Max);
                     }
                     catch (ArgumentOutOfRangeException)
@@ -224,7 +225,7 @@ namespace Website.Pages
             return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerPolicy.Value.Item2.ToString() + " (" + StringPolicy(policy.InnerPolicy.Value.Item1, index + 1) + ")";
         }
 
-        private void handleMinMax(string min, string max)
+        private void HandleMinMax(string min, string max)
         {
             if (min == null)
                 Min = -1;
