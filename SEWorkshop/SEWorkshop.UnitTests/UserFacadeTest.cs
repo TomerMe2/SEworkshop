@@ -234,7 +234,7 @@ namespace SEWorkshop.UnitTests
             MngrFacade.AddProduct(php_user1, php_store1, "php_product1", "nininini", "cat1", 11.11, 1);
             Product php_product1 = php_store1.Products.First(product => product.Name.Equals("php_product1"));
             UsrFacade.AddProductToCart(php_user1, php_product1, 1);
-            Purchase p = new Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0));
+            Purchase p = new Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), address);
             string peb_creditCardNumber = "1234";
             Address peb_address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
@@ -286,7 +286,7 @@ namespace SEWorkshop.UnitTests
             UsrFacade.AddProductToCart(phue_user1, phue_product1, 1);
             UsrFacade.AddProductToCart(phue_user1, phue_product2, 1);
             var basket = phue_user1.Cart.Baskets.ElementAt(0);
-            Purchase p = new Purchase(phue_user1, basket);
+            Purchase p = new Purchase(phue_user1, basket, address);
             UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), CREDIT_CARD_NUMBER_STUB, address);
             var result = UsrFacade.PurchaseHistory(phue_user1);
 
