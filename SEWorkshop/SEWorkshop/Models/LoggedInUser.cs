@@ -282,16 +282,13 @@ namespace SEWorkshop.Models
                 throw new BasketIsEmptyException();
             Purchase purchase;
             purchase = new Purchase(this, basket, address);
-         
-            ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
+            
             foreach (var (prod, purchaseQuantity) in basket.Products)
             {
                 if (purchaseQuantity <= 0)
                     throw new NegativeQuantityException();
-                else
-                    productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address, this);
+            basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);

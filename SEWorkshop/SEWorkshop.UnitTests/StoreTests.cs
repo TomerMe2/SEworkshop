@@ -58,9 +58,11 @@ namespace SEWorkshop.Tests
        
             pb_user1.AddProduct(pb_store1,"pb_prod1", "ninini", "cat1", 11.111, 1);
             var pb_prod1 = pb_store1.SearchProducts(product => product.Name.Equals("pb_prod1")).ElementAt(0);
+            Basket bskt = new Basket(pb_store1);
+            bskt.Products.Add((pb_prod1, 2));
             try
             {
-                pb_store1.PurchaseBasket(new List<(Product, int)>() {(pb_prod1, 2)}, CREDIT_CARD_NUMBER_STUB, address, pb_user1);
+                pb_store1.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, address, pb_user1);
                 Assert.Fail();
             }
             catch (NegativeInventoryException)
@@ -80,7 +82,9 @@ namespace SEWorkshop.Tests
             Store pb_store2 = new Store(pb_user2, "pb_store2");
             pb_user2.AddProduct(pb_store2,"pb_prod2", "ninini", "cat1", 11.111, 1);
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
-            pb_store2.PurchaseBasket(new List<(Product, int)>(){(pb_prod2, 1)}, CREDIT_CARD_NUMBER_STUB, address, pb_user2);
+            Basket bskt = new Basket(pb_store2);
+            bskt.Products.Add((pb_prod2, 1));
+            pb_store2.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, address, pb_user2);
             Assert.That(pb_prod2.Quantity, Is.EqualTo(0));
         }
     }

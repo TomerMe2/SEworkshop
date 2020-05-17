@@ -58,31 +58,25 @@ namespace SEWorkshop.Models
                 select product).ToList();
         }
 
-        public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address, User user)
+        public void PurchaseBasket(Basket basket, string creditCardNumber, Address address, User user)
         {
-            double totalPrice = 0;
             if (!Policy.CanPurchase(user, address))
             {
                 throw new PolicyIsFalse();
             }
-            foreach (var (prod, purchaseQuantity) in itemsList)
+            foreach (var (prod, purchaseQuantity) in basket.Products)
             {
                 if (prod.Quantity - purchaseQuantity < 0)
                 {
                     throw new NegativeInventoryException();
                 }
             }
-
-            foreach (var discount in Discounts)
+            if (supplyAdapter.CanSupply(basket.Products, address)
+                && billingAdapter.Bill(basket.Products, creditCardNumber, basket.PriceAfterDiscount()))
             {
-                totalPrice -= discount.ComposeDiscounts(itemsList);
-            }
-            if (supplyAdapter.CanSupply(itemsList, address)
-                && billingAdapter.Bill(itemsList, creditCardNumber, totalPrice))
-            {
-                supplyAdapter.Supply(itemsList, address);
+                supplyAdapter.Supply(basket.Products, address);
                 // Update the quantity in the product itself
-                foreach (var (prod, purchaseQuantity) in itemsList)
+                foreach (var (prod, purchaseQuantity) in basket.Products)
                 {
                     prod.Quantity = prod.Quantity - purchaseQuantity;
                 }
