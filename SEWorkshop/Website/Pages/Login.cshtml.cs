@@ -59,8 +59,7 @@ namespace Website.Pages
                 Error = e.ToString();
                 return new PageResult();
             }
-            return RedirectToPage("./Index", new { Username = Username });
-            
+            return RedirectToPage("./Stores");
         }
     }
 }

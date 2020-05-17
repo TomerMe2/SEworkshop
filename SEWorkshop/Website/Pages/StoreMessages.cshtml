@@ -1,0 +1,41 @@
+﻿@page
+@model Website.Pages.StoreMessagesModel
+@{
+    ViewData["Title"] = "StoreMessages";
+}
+
+@{
+    var sid = Model.HttpContext.Session.Id;
+    if (!Model.UserManager.IsLoggedIn(sid))
+    {
+        <h3>You are not logged in</h3>
+    }
+    else
+    {
+        var user = Model.UserManager.GetDataLoggedInUser(sid);
+        bool isOwner = user.Owns.Where(str => str.Name.Equals(Model.StoreName)).Any();
+        bool isManWithAuth = false;
+        foreach (var keyVal in user.Manages)
+        {
+            if (keyVal.Key.Name.Equals(Model.StoreName) && keyVal.Value.Contains(SEWorkshop.Enums.Authorizations.Watching))
+            {
+                isManWithAuth = true;
+                break;
+            }
+        }
+        if (!(isOwner || isManWithAuth))
+        {
+            <h3>You have no permissions to view this page</h3>
+        }
+        else
+        {
+            <h1>Messages for @Model.StoreName</h1>
+            foreach (var msg in Model.UserManager.SearchStore(Model.StoreName).Messages)
+            {
+                await Html.RenderPartialAsync("MessagePartial", new MessagePartialModel(msg, false));
+            }
+        }
+    }
+
+}
+

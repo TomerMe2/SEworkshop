@@ -27,6 +27,8 @@ namespace SEWorkshop.DataModels
             {
                 SpecificProducDiscount d => new DataOpenDiscount(d),
                 ProductCategoryDiscount d => new DataProductCategoryDiscount(d),
+                BuyOverDiscount d => new DataBuyOverDiscount(d),
+                BuySomeGetSomeFreeDiscount d => new DataBuySomeGetSomeFreeDiscount(d),
                 _ => throw new Exception("Should not get here"),
             };
         }

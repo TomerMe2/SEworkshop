@@ -1,10 +1,16 @@
-﻿@page "{storeWritingTo}/{msgId}"
+﻿@page "{storeName}/{writerUserName}"
 @model Website.Pages.MessageViewModel
 @{
-    ViewData["Title"] = "MessageView";
+    if (Model.MsgToShow != null)
+    {
+        ViewData["Title"] = "MessageView";
+    }
 }
 
-<h1>MessageView</h1>
+@if (Model.StoreWritingTo != null)
+{
+    <h2>Conversation between @Model.UserNameWritingTo and @Model.StoreWritingTo.Name</h2>
+}
 
 @{
     if (Model.Error.Equals(""))
@@ -24,10 +30,13 @@
         <form id="messageSend" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeWritingTo" value="@Model.StoreWritingTo?.Name">
-                <input type="hidden" name="answeringOnMsgId" value="@Model.MsgId">
+                <input type="hidden" name="userNameWritingTo" value="@Model.UserNameWritingTo">
                 <label for="msg_txt_area">Write your message here</label>
                 <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
-                <button type="submit" class="form-control btn btn-primary">Send</button>
+                @if (Model.CanRespond)
+                {
+                    <button type="submit" class="form-control btn btn-primary">Send</button>
+                }
             </div>
         </form>
     }
