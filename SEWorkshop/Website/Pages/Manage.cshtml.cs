@@ -24,8 +24,8 @@ namespace Website.Pages
         public int PolicyNumber { get; private set; }
         public int Min { get; private set; }
         public int Max { get; private set; }
-        public DataStore Store { get; private set; }
-        public DataLoggedInUser LoggedUser { get; private set; }
+        public DataStore? Store { get; private set; }
+        public DataLoggedInUser? LoggedUser { get; private set; }
         public IEnumerable<string> countries { get; private set; }
 
         public ManageModel(IUserManager userManager)
