@@ -1,0 +1,36 @@
+﻿@page
+@model Website.Pages.UserPageModel
+@{
+    ViewData["Title"] = "UserPage";
+}
+@{
+    var sid = Model.HttpContext.Session.Id;
+    if (!Model.UserManager.IsLoggedIn(sid))
+    {
+        <h5>You are not logged in</h5>
+    }
+    else
+    {
+        var usr = Model.UserManager.GetDataLoggedInUser(sid);
+        <h1>Your conversations</h1>
+        if (usr.Messages.Count == 0)
+        {
+            <h6>No messages</h6>
+        }
+        foreach (var msg in usr.Messages)
+        {
+            await Html.RenderPartialAsync("MessagePartial", new MessagePartialModel(msg, true));
+        }
+        <h1>Your Purchase History</h1>
+        var purchases = Model.UserManager.PurchaseHistory(sid);
+        if (purchases.Count() == 0)
+        {
+            <h6>No Purchases</h6>
+        }
+        foreach (var prchs in purchases)
+        {
+            await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(@Model.UserManager,
+                prchs, true, Model.HttpContext.Session.Id));
+        }
+    }
+}

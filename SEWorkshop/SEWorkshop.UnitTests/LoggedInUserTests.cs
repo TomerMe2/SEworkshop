@@ -1,11 +1,12 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using System.Linq;
+using SEWorkshop.Enums;
+using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests
@@ -14,6 +15,7 @@ namespace SEWorkshop.Tests
     public class LoggedInUserTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
+        private Address DEF_ADRS = new Address("1", "1", "1", "1");
 
         [Test]
         public void WriteReview()
@@ -329,7 +331,7 @@ namespace SEWorkshop.Tests
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store));
+            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
@@ -342,19 +344,72 @@ namespace SEWorkshop.Tests
             const string STORE_NAME = "Wello";
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
             usr.Owns.Add(new Owns(usr, store));
             usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy.InnerPolicy.Value.Item1);
-            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1.InnerPolicy.Value.Item1);
-            usr.RemovePolicy(store, 1);
-            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy.Value.Item1);
+            usr.RemovePolicy(store, 1);
+            Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
+            Assert.IsNull(store.Policy.InnerPolicy);
             usr.RemovePolicy(store, 0);
-            Assert.IsInstanceOf<SystemDayPolicy>(store.Policy);
+            Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
+        }
+
+        [Test]
+        public void PurchaseDiscountTest()
+        {
+            const string STORE_NAME = "store1";
+            DateTime deadline = DateTime.Now.AddMonths(1);
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            usr.Owns.Add(new Owns(usr, store));
+            Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
+            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
+            Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
+            usr.RemoveDiscount(store, 0);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
+        }
+
+        [Test]
+        public void BuyOverTest()
+        {
+            const string STORE_NAME = "writeReviewStore";
+            const string USER_NAME = "WriteReviewUser";
+            const string USER_PASSWORD = "1111";
+            const string PROD_NAME = "writeReviewProd";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 10.00, 5);
+            BuyOverDiscount dis = new BuyOverDiscount(str, 9.90, 50, DateTime.Today, prod);
+            GuestUser customer = new GuestUser();
+            customer.AddProductToCart(prod, 1);
+            var basket = customer.Cart.Baskets.ElementAt(0);
+            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 5.00);
+
+        }
+
+        [Test]
+        public void BuySomeGetSomeFreeTest()
+        {
+            const string STORE_NAME = "writeReviewStore";
+            const string USER_NAME = "WriteReviewUser";
+            const string USER_PASSWORD = "1111";
+            const string PROD_NAME = "writeReviewProd";
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
+            Store str = new Store(usr, STORE_NAME);
+            Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 5);
+            BuySomeGetSomeFreeDiscount dis = new BuySomeGetSomeFreeDiscount(str, 2, 1, 0, DateTime.Today, prod);
+            GuestUser customer = new GuestUser();
+            customer.AddProductToCart(prod, 3);
+            var basket = customer.Cart.Baskets.ElementAt(0);
+            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 11.11);
+
         }
 
     }

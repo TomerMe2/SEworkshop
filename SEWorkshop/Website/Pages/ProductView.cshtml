@@ -1,13 +1,49 @@
 ﻿@model Website.Pages.ProductViewModel
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
 
-<div class="card" style="width: 100%">
+
+<div class="card" style="width: 50%">
     <div class="card-body">
-        <h5 class="card-title">@Model.Product.Name</h5>
-        <h6 class="card-subtitle mb-2">@Model.Product.Category</h6>
-        <h6 class="card-subtitle mb-2">@Model.Product.Price ₪</h6>
-        <p class="card-text">@Model.Product.Description</p>
+        <h5 class="card-title">Product Name: @Model.Product.Name</h5>
+        <h6 class="card-subtitle mb-2">Category: @Model.Product.Category</h6>
+        <h6 class="card-subtitle mb-2">Cost: @Model.Product.Price ₪</h6>
+        <h6 class="card-text">Amount in Store: @Model.Product.Quantity</h6>
+        <p class="card-text">Description: @Model.Product.Description</p>
+        <form method="post">
+            <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
+            <input type="hidden" name="ProductName" value="@Model.Product.Name">
+            <input type="text" name="Quantity" placeholder="Quantity">
+            <button type="submit" asp-page-handler="AddToCart" value="Add" >Add to Cart</button>
+        </form>
+        @{
+            if (Model.Authorized)
+            {
+                <form method="post">
+                    <button type="submit" asp-page-handler="RemoveProduct" value="Remove" >Remove the Product from the Store</button>
+                    <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
+                    <input type="hidden" name="ProductName" value="@Model.Product.Name">
+                    <br/>
+                    <div style="display: flex;">
+                        <input type="text" name="Description" placeholder="Description">
+                        <button type="submit" asp-page-handler="EditDescription" value="EditDescription">Edit Description</button>
+                    </div>
+                    <div style="display: flex;">
+                        <input type="text" name="Name" placeholder="Name">
+                        <button type="submit" asp-page-handler="EditName" value="EditName">Edit Name</button>
+                    </div>
+                    <div style="display: flex;">
+                        <input type="text" name="Category" placeholder="Category">
+                        <button type="submit" asp-page-handler="EditCategory" value="EditCategory">Edit Category</button>
+                    </div>
+                    <div style="display: flex;">
+                        <input type="text" name="Price" placeholder="Price">
+                        <button type="submit" asp-page-handler="EditPrice" value="EditPrice">Edit Price</button>
+                    </div>
+                    <div style="display: flex;">
+                        <input type="text" name="Quantity" placeholder="Quantity">
+                        <button type="submit" asp-page-handler="EditQuantity" value="EditQuantity">Edit Quantity</button>
+                    </div>
+                </form>
+            }
+        }
     </div>
 </div>

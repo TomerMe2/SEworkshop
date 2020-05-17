@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SEWorkshop.DataModels;
+using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
+using System.Linq;
 
 namespace Website.Pages
 {
@@ -21,19 +23,19 @@ namespace Website.Pages
         public DataStore? Store { get; private set; }
         
         [BindProperty(SupportsGet = true)]
-        public string Error { get; set; }
+        public string ErrorMsg { get; set; }
 
         public StoresModel(IUserManager userManager)
         {
             UserManager = userManager;
             StoreName = "";
-            Error = "";
+            ErrorMsg = "";
             Stores = UserManager.BrowseStores();
         }
         
         public void OnGet()
         {
-            Error = "";
+            ErrorMsg = "";
             Stores = UserManager.BrowseStores();
         }
 
@@ -45,7 +47,7 @@ namespace Website.Pages
             }
             catch (Exception e)
             {
-                Error = e.ToString();
+                ErrorMsg = e.ToString();
                 StoreName = "";
                 return new PageResult();
             }

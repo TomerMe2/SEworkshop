@@ -100,7 +100,7 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public DataLoggedInUser GetLoggedInUser(string sessionId)
+        private DataLoggedInUser GetLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
             if (usr is DataLoggedInUser)
@@ -509,6 +509,36 @@ namespace SEWorkshop.ServiceLayer
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
             FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
+        }
+
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
+        }
+        public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain);
+        }
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName,string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain);
+        }
+
+
+
+
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage, op, indexInChain);
+        }
+
+        public void RemoveDiscount(string sessionId, string storeName, int indexInChain)
+        {
+            FacadesBridge.RemoveDiscount(GetLoggedInUser(sessionId), storeName, indexInChain);
         }
 
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)

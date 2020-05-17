@@ -8,6 +8,7 @@ namespace SEWorkshop.Enums
     {
         And,
         Or,
-        Xor
+        Xor,
+        Implies,
     }
 }

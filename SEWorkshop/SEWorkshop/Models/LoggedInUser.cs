@@ -281,7 +281,7 @@ namespace SEWorkshop.Models
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(this, basket);
+            purchase = new Purchase(this, basket, address);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)
@@ -358,6 +358,34 @@ namespace SEWorkshop.Models
         public void RemovePolicy(Store store, int indexInChain)
         {
             OwnsForStore(store).RemovePolicy(indexInChain);
+        }
+
+        public void AddProductCategoryDiscount(Store store, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            OwnsForStore(store).AddProductCategoryDiscount(op, categoryName, deadline, percentage, indexInChain);
+        }
+
+        public void AddSpecificProductDiscount(Store store, Product product, DateTime deadline, double percentage, Operator op, int IndexInChain)
+        {
+            OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain);
+        }
+        public void AddBuyOverDiscountDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain)
+        {
+            OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain);
+        }
+        public void AddBuySomeGetSomeFreeDiscount(Store store, Product product, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain)
+        {
+            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, product, deadline, percentage, buySome, getSome, IndexInChain);
+        }
+
+        public void RemoveDiscount(Store store, int indexInChain)
+        {
+            OwnsForStore(store).RemoveDiscount(indexInChain);
+        }
+
+        public override int GetHashCode()
+        {
+            return Username.GetHashCode();
         }
     }
 }

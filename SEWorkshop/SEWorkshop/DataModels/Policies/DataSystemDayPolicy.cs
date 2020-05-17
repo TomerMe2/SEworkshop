@@ -14,5 +14,10 @@ namespace SEWorkshop.DataModels.Policies
         {
             InnerDayPol = pol;
         }
+
+        public override string ToString()
+        {
+            return "Can't purchase on "+ CantBuyIn.ToString();
+        }
     }
 }

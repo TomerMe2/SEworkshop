@@ -22,7 +22,6 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <img class="navbar-brand" src="~/Images/azamazon.png" width="175" height="86" alt="Sample Photo" />
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Website</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -51,13 +50,22 @@
                                 </li>
                             }
                             <li class="navbar-brand">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/SearchStore">Search Store</a>
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Stores">Stores</a>
                             </li>
-                             <li class="navbar-brand">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Stores">Stores</a>
-                                </li>
+                            <li class="navbar-brand">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Cart">Cart</a>
+                            </li>
                             if (isLoggedIn && usr != null)
                             {
+                                <li class="navbar-brand">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/CreateProduct">Create Product</a>
+                                </li>
+                                <li class="navbar-brand">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/UserPage">User</a>
+                                </li>
+                                <li class="navbar-brand">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/MyStores">My Stores</a>
+                                </li>
                                 <li class="navbar-brand">
                                     <!-- DO NOT CHANGE THIS UNREAD MESSAGES PATTERN. THINGS WILL BREAK -->
                                     <span id="pendingMsgs" class="nav-item">@usr?.AmountOfUnreadMessages unread messages</span>

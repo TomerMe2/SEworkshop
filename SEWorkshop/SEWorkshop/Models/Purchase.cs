@@ -8,12 +8,15 @@ namespace SEWorkshop.Models
     {
         public User User {get; private set;}
         public Basket Basket { get; private set; }
+        public Address Address { get; }
         public DateTime TimeStamp { get; }
-        public Purchase(User user, Basket basket)
+
+        public Purchase(User user, Basket basket, Address adrs)
         {
             User = user;
             Basket = basket;
             TimeStamp = DateTime.Now;
+            Address = adrs;
         }
     }
 }

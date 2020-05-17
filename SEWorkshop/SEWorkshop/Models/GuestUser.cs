@@ -26,7 +26,7 @@ namespace SEWorkshop.Models
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(new GuestUser(), basket);
+            purchase = new Purchase(new GuestUser(), basket, address);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)

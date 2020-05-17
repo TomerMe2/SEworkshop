@@ -39,5 +39,6 @@ namespace SEWorkshop.Models.Policies
             }
             return counter <= MaxQuantity;
         }
+
     }
 }

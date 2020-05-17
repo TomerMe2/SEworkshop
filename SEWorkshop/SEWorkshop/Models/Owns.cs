@@ -1,11 +1,13 @@
 ﻿using NLog;
-using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models.Policies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SEWorkshop.Models.Discounts;
+using Operator = SEWorkshop.Enums.Operator;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models
 {
@@ -137,6 +139,7 @@ namespace SEWorkshop.Models
         {
             if (StoreContainsProduct(productToRemove, Store))
             {
+                productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
                 log.Info("Product has been removed from store successfully");
                 return;
@@ -259,11 +262,38 @@ namespace SEWorkshop.Models
                 throw new PolicyCauseCycilicError();
             }
             Policy currPol = Store.Policy;
+            if (currPol is AlwaysTruePolicy && currPol.InnerPolicy is null)
+            {
+                //The owner wants different policy, and allways true should be removed
+                Store.Policy = pol;
+                return;
+            }
             while(currPol.InnerPolicy != null)
             {
                 currPol = currPol.InnerPolicy.Value.Item1;
             }
             currPol.InnerPolicy = (pol, op);
+        }
+        
+        private void AddDiscountToEnd(Discount dis, Operator op, int indexInChain)
+        {
+            if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
+            {
+                Store.Discounts.Add(dis);
+            }
+            else
+            {
+                if (dis.InnerDiscount != null)
+                {
+                    throw new PolicyCauseCycilicError();
+                }
+                Discount currDis = Store.Discounts.ElementAt(indexInChain);
+                while(currDis.InnerDiscount != null)
+                {
+                    currDis = currDis.InnerDiscount.Value.Item1;
+                }
+                currDis.InnerDiscount = (dis, op);
+            }
         }
 
         //All add policies are adding to the end
@@ -316,14 +346,42 @@ namespace SEWorkshop.Models
             {
                 if (currPol.InnerPolicy == null)
                 {
-                    throw new CantRemoveTheOnlyPolicy();
+                    Store.Policy = new AlwaysTruePolicy(Store);
                 }
-                Store.Policy = currPol.InnerPolicy.Value.Item1;
+                else
+                {
+                    Store.Policy = currPol.InnerPolicy.Value.Item1;
+                }
             }
             else
             {
                 prev.InnerPolicy = currPol.InnerPolicy;
             }
+        }
+
+        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain)
+        {
+            AddDiscountToEnd(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain);
+        }
+
+        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain)
+        {
+            AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
+        }
+
+        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain)
+        {
+            AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
+        }
+        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
+        {
+            AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
+        }
+
+
+        public void RemoveDiscount(int indexInChain)
+        {
+            Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }
 
