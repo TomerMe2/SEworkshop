@@ -141,14 +141,22 @@ namespace SEWorkshop.ServiceLayer
 
         public DataStore SearchStore(string storeName)
         {
-            Log.Info("BrowseStores was invoked");
+            Log.Info("SearchStore was invoked");
             return FacadesBridge.SearchStore(storeName);
         }
 
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
             Log.Info("FilterProducts was invoked");
-            return FacadesBridge.FilterProducts(products, pred);
+            try
+            {
+                return FacadesBridge.FilterProducts(products, pred);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("FilterProducts {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public void Login(string sessionId, string username, string password)
@@ -187,7 +195,15 @@ namespace SEWorkshop.ServiceLayer
         public void OpenStore(string sessionId, string storeName)
         {
             Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
-            FacadesBridge.OpenStore(GetLoggedInUser(sessionId), storeName);
+            try
+            {
+                FacadesBridge.OpenStore(GetLoggedInUser(sessionId), storeName);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("OpenStore {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
