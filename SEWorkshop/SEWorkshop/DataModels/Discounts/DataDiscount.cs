@@ -15,6 +15,17 @@ namespace SEWorkshop.DataModels
 
         public DataStore Store { get; }
 
+        public (DataDiscount, Operator)? InnerDiscount
+        {
+            get
+            {
+                if (InnerModel.InnerDiscount == null)
+                {
+                    return null;
+                }
+                return (CreateDataFromDiscount(InnerModel.InnerDiscount.Value.Item1), InnerModel.InnerDiscount.Value.Item2);
+            }
+        }
 
         public DataDiscount(Discount discount) : base(discount)
         {
