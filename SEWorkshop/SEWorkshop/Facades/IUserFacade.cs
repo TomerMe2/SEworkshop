@@ -22,6 +22,6 @@ namespace SEWorkshop.Facades
         public Message WriteMessage(LoggedInUser user, Store store, string description);
         public void WriteReview(LoggedInUser user, Product product, string description);
 
-
+        public IEnumerable<string> GetRegisteredUsers();
     }
 }

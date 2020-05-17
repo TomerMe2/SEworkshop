@@ -72,5 +72,6 @@ namespace SEWorkshop.Facades
         public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain);
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
+        public IEnumerable<string> GetRegisteredUsers();
     }
 }

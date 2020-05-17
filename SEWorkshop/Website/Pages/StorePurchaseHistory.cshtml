@@ -12,7 +12,8 @@
         var user = um.GetDataLoggedInUser(sessionId);
         var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
         if (Model.Store.Owners.ContainsKey(user) ||
-            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))
+            || Model.UserManager.IsAdministrator(sessionId))
         {
             <h1>@Model.Store.Name Purchase History</h1>
             foreach (SEWorkshop.DataModels.DataPurchase purchase in Model.Store.Purchases)

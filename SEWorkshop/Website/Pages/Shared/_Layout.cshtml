@@ -59,16 +59,17 @@
                             {
                                 <li class="navbar-brand">
                                     <a class="nav-link text-dark" asp-area="" asp-page="/CreateProduct">Create Product</a>
+                                    <!-- DO NOT CHANGE THIS UNREAD MESSAGES PATTERN. THINGS WILL BREAK -->
+                                    <span id="pendingMsgs" class="nav-item">@usr?.AmountOfUnreadMessages unread messages</span>
                                 </li>
                                 <li class="navbar-brand">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/UserPage">User</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/CreateProduct">Add Product</a>
+                                </li>
+                                <li class="navbar-brand">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/UserPage" asp-route-username="">Purchase History</a>
                                 </li>
                                 <li class="navbar-brand">
                                     <a class="nav-link text-dark" asp-area="" asp-page="/MyStores">My Stores</a>
-                                </li>
-                                <li class="navbar-brand">
-                                    <!-- DO NOT CHANGE THIS UNREAD MESSAGES PATTERN. THINGS WILL BREAK -->
-                                    <span id="pendingMsgs" class="nav-item">@usr?.AmountOfUnreadMessages unread messages</span>
                                 </li>
                             }
                         }

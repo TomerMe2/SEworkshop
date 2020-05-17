@@ -171,6 +171,8 @@ namespace SEWorkshop.Facades
             Cart cart = GetUser(userAsGuest).Cart;
             LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
             loggedIn.Cart = cart;
+            if (loggedIn is Administrator)
+                return new DataAdministrator((Administrator)loggedIn);
             return new DataLoggedInUser(loggedIn);
         }
 
@@ -427,6 +429,10 @@ namespace SEWorkshop.Facades
         public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain)
         {
             GetLoggedInUsr(user).AddBuyOverDiscountDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, minSum, op, indexInChain);
+        }
+        public IEnumerable<string> GetRegisteredUsers()
+        {
+            return UserFacade.GetRegisteredUsers();
         }
     }
 }

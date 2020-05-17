@@ -34,7 +34,8 @@
             <h5 class="card-title"><a href="/StoreMessages/?storeName=@Model.Store.Name">View Messages As Manager</a></h5>
         }
         if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
-            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))))
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
+            || Model.UserManager.IsAdministrator(sessionId))
         {
             <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
         }
