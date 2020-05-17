@@ -60,7 +60,7 @@ namespace Website.Pages
             }
             foreach(DataDiscount disc in Store.Discounts)
             {
-                discounts.Add(StringDiscount(policy, 1));
+                discounts.Add(StringDiscount(disc));
             }
             DiscountNumber = Store.Discounts.Count();
             if (policy is DataAlwaysTruePolicy)
@@ -244,12 +244,12 @@ namespace Website.Pages
             StoreName = storeName;
             try
             {
+                Store = UserManager.SearchStore(storeName);
+                DiscountNumber = Store.Discounts.Count();
                 if (index == null)
                     newIndex = DiscountNumber;
                 else
                     newIndex = Int32.Parse(index);
-                Store = UserManager.SearchStore(storeName);
-                DiscountNumber = Store.Discounts.Count();
                 if (appliedTo.Equals("Product"))
                 {
                     UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
@@ -280,7 +280,7 @@ namespace Website.Pages
                     newIndex = DiscountNumber;
                 else
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, chosenProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex);
             }
             catch (Exception e)
             {
@@ -313,6 +313,28 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
+        public IActionResult OnPostRemoveDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index)
+        {
+            int newIndex;
+            string sid = HttpContext.Session.Id;
+            StoreName = storeName;
+            try
+            {
+                Store = UserManager.SearchStore(storeName);
+                DiscountNumber = Store.Discounts.Count();
+                if (index == null)
+                    newIndex = DiscountNumber;
+                else
+                    newIndex = Int32.Parse(index);
+                UserManager.RemoveDiscount(sid, storeName, newIndex);
+            }
+            catch (Exception e)
+            {
+                Error = e.ToString();
+            }
+            return RedirectToPage("./Manage", new { StoreName, Error });
+        }
+
         private string StringPolicy(DataPolicy policy, int index)
         {
             if (!policy.InnerPolicy.HasValue)
@@ -321,6 +343,15 @@ namespace Website.Pages
                 return "[" + index + "] " + policy.ToString();
             }
             return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerPolicy.Value.Item2.ToString() + " (" + StringPolicy(policy.InnerPolicy.Value.Item1, index + 1) + ")";
+        }
+
+        private string StringDiscount(DataDiscount discount)
+        {
+            if (!discount.InnerDiscount.HasValue)
+            {
+                return "" + discount.ToString();
+            }
+            return discount.ToString() + " " + discount.InnerDiscount.Value.Item2.ToString() + " (" + StringDiscount(discount.InnerDiscount.Value.Item1) + ")";
         }
 
         private void HandleMinMax(string min, string max)
