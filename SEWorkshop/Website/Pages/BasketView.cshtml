@@ -14,12 +14,14 @@
                 }
             </div>
             @{
-                double sum = 0;
+                double sum = Model.Basket.PriceWithoutDiscount;
+                double sumafterdiscount = Model.Basket.PriceAfterDiscount;
                 foreach (var product in Model.Basket.Products)
                 {
                     string name = product.Item1.Name;
                     int quantity = product.Item2;
-                    sum += quantity * product.Item1.Price;
+                    //sum += quantity * product.Item1.Price;
+                    //sumafterdiscount += quantity * product.ToTuple().Item1.PriceAfterDiscount;
                     var priceOfProd = quantity * product.Item1.Price;
                     <div>
                         <div><h5>Product: @name</h5></div>
@@ -32,7 +34,8 @@
                         <button asp-page-handler="RemoveFromCart" value="Remove">Remove From Cart</button>
                     </div>
                 }
-                <h4>Cost of this basket: @sum</h4>
+                <h4>Cost of this Basket: @sum</h4>
+                <h4>Cost after Discount: @sumafterdiscount</h4>
             }
         </form>
                 @{

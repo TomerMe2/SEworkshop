@@ -16,5 +16,27 @@ namespace SEWorkshop.Models
             Store = store;
             Products = new List<(Product, int)>();
         }
+
+        public double PriceWithoutDiscount()
+        {
+            double totalPrice = 0;
+            foreach (var (product, quantity) in Products)
+            {
+                totalPrice += product.Price * quantity;
+            }
+
+            return totalPrice;
+        }
+
+        public double PriceAfterDiscount()
+        {
+            double price = PriceWithoutDiscount();
+            foreach (var dis in Store.Discounts)
+            {
+                price -= dis.ComposeDiscounts(Products);
+            }
+
+            return price;
+        }
     }
 }

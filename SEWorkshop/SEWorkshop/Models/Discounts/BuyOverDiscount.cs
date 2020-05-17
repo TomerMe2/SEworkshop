@@ -23,7 +23,7 @@ namespace SEWorkshop.Models.Discounts
             }
             if (sumBasket >= MinSum)
             {
-                return sumBasket * (1 - Percentage / 100);
+                return sumBasket * (Percentage / 100);
             }
             return 0;
         }

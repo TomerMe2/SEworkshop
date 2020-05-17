@@ -13,6 +13,10 @@
             {
                 await Html.RenderPartialAsync("BasketView", new BasketViewModel(Model.UserManager, basket));
             }
+            if(Model.Cart.Baskets.Count == 0)
+            {
+                <h2>Your Cart is Empty!</h2>
+            }
         }
     }
     <text class="alert-danger">@Model.ErrorMsg</text>

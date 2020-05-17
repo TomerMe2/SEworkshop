@@ -39,6 +39,13 @@
         {
             <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
         }
+        foreach(var discount in @Model.Store.Discounts)
+        {
+            if(discount is SEWorkshop.DataModels.DataOpenDiscount)
+            {
+                <p class="card-text">@discount.ToString()</p>
+            }
+        }
         foreach (var product in Model.Store.Products)
         {
             bool authorized = user != null && (Model.Store.Owners.ContainsKey(user) ||
