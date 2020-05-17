@@ -9,6 +9,7 @@ namespace SEWorkshop.DataModels
     {
         private BuyOverDiscount InnerBuyOverModel { get; }
         public double MinSum => InnerBuyOverModel.MinSum;
+        public DataProduct Product => new DataProduct(InnerBuyOverModel.Product);
         
         public DataBuyOverDiscount(BuyOverDiscount discount) : base(discount)
         {
