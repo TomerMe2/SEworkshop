@@ -12,14 +12,7 @@ namespace Website.Pages
     public class UserPageModel : PageModel
     {
         public IUserManager UserManager { get; }
-        public IEnumerable<DataPurchase> Purchases { get; private set; }
-        public IEnumerable<string> Users { get; set; }
-        public bool IsAdmin { get; set; }
-        public string Username { get; set; }  //current user
-        [BindProperty(SupportsGet = true)]
-        public string SearchUsername { get; set; }
-        public string ErrorMsg { get; set; }
-
+        public IEnumerable<DataPurchase> purchases { get; private set; }
         public UserPageModel(IUserManager userManager)
         {
             UserManager = userManager;
@@ -54,7 +47,7 @@ namespace Website.Pages
         {
             string sid = HttpContext.Session.Id;
             UserManager.WriteReview(sid, storeName, productName, content);
-            Purchases = UserManager.PurchaseHistory(sid);
+            purchases = UserManager.PurchaseHistory(sid);
         }
         */
         public IActionResult OnPost()

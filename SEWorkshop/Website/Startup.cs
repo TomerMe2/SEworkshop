@@ -36,7 +36,8 @@ namespace Website
 
             services.AddRazorPages();
             services.AddSingleton<IUserManager, UserManager>();
-            services.AddSingleton(typeof(NotificationsObserver), typeof(NotificationsObserver));
+            services.AddSingleton(typeof(MessagesObserver), typeof(MessagesObserver));
+            services.AddSingleton(typeof(PurchaseObserver), typeof(PurchaseObserver));
             services.AddSignalR();
         }
 
@@ -74,7 +75,8 @@ namespace Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapHub<NotificationsHub>("/notificationshub");
+                endpoints.MapHub<MessagesNotificationsHub>("/notificationshub");
+                endpoints.MapHub<PurchasesNotificationsHub>("/purchasenotificationshub");
             });
         }
     }

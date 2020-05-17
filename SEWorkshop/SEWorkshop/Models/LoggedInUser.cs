@@ -267,7 +267,16 @@ namespace SEWorkshop.Models
             return management.ViewPurchaseHistory(this, store);
         }
 
-        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        public bool isManger(Store store)
+        {
+            if(Owns.FirstOrDefault(man => man.Store == store) != default)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -282,11 +291,12 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
+            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address, this);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             facade.AddPurchaseToList(purchase);
+            return purchase;
         }
 
 
@@ -358,6 +368,14 @@ namespace SEWorkshop.Models
         public void AddSpecificProductDiscount(Store store, Product product, DateTime deadline, double percentage, Operator op, int IndexInChain)
         {
             OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain);
+        }
+        public void AddBuyOverDiscountDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain)
+        {
+            OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain);
+        }
+        public void AddBuySomeGetSomeFreeDiscount(Store store, Product product, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain)
+        {
+            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, product, deadline, percentage, buySome, getSome, IndexInChain);
         }
 
         public void RemoveDiscount(Store store, int indexInChain)

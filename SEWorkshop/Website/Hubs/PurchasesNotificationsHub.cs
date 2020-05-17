@@ -1,22 +1,18 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SEWorkshop.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SEWorkshop.ServiceLayer;
-using Microsoft.AspNetCore.Http;
-using SEWorkshop.DataModels;
-using System.Collections.Concurrent;
-using System.Threading;
 
 namespace Website.Hubs
 {
-    public class NotificationsHub : Hub
+    public class PurchasesNotificationsHub : Hub
     {
         public IUserManager UserManager { get; }
-        private NotificationsObserver Observer { get; }
+        private PurchaseObserver Observer { get; }
 
-        public NotificationsHub(IUserManager userManager, NotificationsObserver observer)
+        public PurchasesNotificationsHub(IUserManager userManager, PurchaseObserver observer)
         {
             UserManager = userManager;
             Observer = observer;
@@ -41,6 +37,5 @@ namespace Website.Hubs
             return base.OnDisconnectedAsync(exception);
         }
 
-       
     }
 }

@@ -1,0 +1,54 @@
+@model Website.Pages.BasketViewModel
+
+<div class="card" style="width: 50%">
+    <div class="card-body">
+        <h3 class="card-title">Store Name: @Model.Basket.Store.Name</h3>
+        <form method="post">
+            <div style="display: flex;">
+                <input type="hidden" name="StoreName" value="@Model.Basket.Store.Name">
+                @{
+                    if(!Model.Paying)
+                    {
+                        <button asp-page-handler="Billing" value="Billing">Go to the Billing Screen!</button>
+                    }
+                }
+            </div>
+            @{
+                double sum = 0;
+                foreach (var product in Model.Basket.Products)
+                {
+                    string name = product.Item1.Name;
+                    int quantity = product.Item2;
+                    sum += quantity * product.Item1.Price;
+                    var priceOfProd = quantity * product.Item1.Price;
+                    <div>
+                        <div><h5>Product: @name</h5></div>
+                        <div><h6>Price per unit: @product.Item1.Price ₪</h6></div>
+                        <div><h6>Quantity: @quantity</h6></div>
+                        <div><h6>Price: @priceOfProd ₪</h6></div>
+                        <input type="hidden" name="StoreName" value="@Model.Basket.Store.Name">
+                        <input type="hidden" name="ProductName" value="@name">
+                        <input type="hidden" name="Quantity" value="@quantity">
+                        <button asp-page-handler="RemoveFromCart" value="Remove">Remove From Cart</button>
+                    </div>
+                }
+                <h4>Cost of this basket: @sum</h4>
+            }
+        </form>
+                @{
+                    if(Model.Paying)
+                    {
+                        <form method="post">
+                            <input type="hidden" name="storeName" value="@Model.Basket.Store.Name"/>
+                            <input type="text" style="margin-bottom: 10px" name="CreditCardNumber" placeholder="Credit Card Number" />
+                            <input type="text" style="margin-bottom: 10px" name="Country" placeholder="Country" />
+                            <input type="text" style="margin-bottom: 10px" name="City" placeholder="City" />
+                            <input type="text" style="margin-bottom: 10px" name="Street" placeholder="Street" />
+                            <input type="text" style="margin-bottom: 10px" name="HouseNumber" placeholder="House Number" />
+                            <button class="submit" type="submit" asp-page-handler="Purchase" value="Purchase">Click to Pay</button>
+                        </form>
+                    }
+                }
+    </div>
+    <text class="alert-danger">@Model.ErrorMsg</text>
+</div>

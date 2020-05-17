@@ -4,22 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.DataModels;
-using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Website.Hubs
 {
-    public class NotificationsObserver : IServiceObserver<DataMessage>
+    public class PurchaseObserver : IServiceObserver<DataPurchase>
     {
-        private IHubContext<NotificationsHub> MsgHub { get; }
+        private IHubContext<PurchasesNotificationsHub> PrchsHub { get; }
         private ConcurrentDictionary<string, string> ConnectionsDict { get; }
         private IUserManager UserManager { get; }
 
-        public NotificationsObserver(IHubContext<NotificationsHub> hubContext, IUserManager userManager)
+        public PurchaseObserver(IHubContext<PurchasesNotificationsHub> hubContext, IUserManager userManager)
         {
-            MsgHub = hubContext;
+            PrchsHub = hubContext;
             UserManager = userManager;
-            UserManager.RegisterMessageObserver(this);
+            UserManager.RegisterPurchaseObserver(this);
             ConnectionsDict = new ConcurrentDictionary<string, string>();
         }
 
@@ -33,18 +33,20 @@ namespace Website.Hubs
             ConnectionsDict.Remove(conId, out string? _);
         }
 
-        public async void Notify(DataMessage arg)
+        public async void Notify(DataPurchase arg)
         {
-            DataMessage first = arg;
-            while (first.Prev != null)
-            {
-                first = first.Prev;
-            }
             foreach (var keyVal in ConnectionsDict)
             {
-                if (keyVal.Value.Equals(first.WrittenBy.Username) && !arg.WrittenBy.Username.Equals(keyVal.Value))
+                var usrName = keyVal.Value;
+                // This requirement is defined only for owners
+                foreach (var innerKeyVal in arg.Basket.Store.Owners)
                 {
-                    await MsgHub.Clients.Client(keyVal.Key).SendAsync("NewMessage", arg.ToStore.Name);
+                    if (innerKeyVal.Key.Username.Equals(usrName))
+                    {
+                        //push it
+                        await PrchsHub.Clients.Client(keyVal.Key).SendAsync("NewPurchase", arg.Basket.Store.Name);
+                        return;
+                    }
                 }
             }
         }

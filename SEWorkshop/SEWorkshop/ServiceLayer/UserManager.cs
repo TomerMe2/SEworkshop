@@ -24,7 +24,8 @@ namespace SEWorkshop.ServiceLayer
         private ISecurityAdapter SecurityAdapter { get; }
         private IDictionary<string, DataUser> UsersDict { get; }
         private object UserDictLock { get; }
-        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; set; }
+        private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; }
+        private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
 
         public UserManager()
         {
@@ -37,6 +38,7 @@ namespace SEWorkshop.ServiceLayer
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
+            PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -50,6 +52,7 @@ namespace SEWorkshop.ServiceLayer
             UsersDict = new Dictionary<string, DataUser>();
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
+            PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
         }
 
         private static void ConfigLog()
@@ -75,6 +78,14 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
+        private void NotifyPrchsObservers(DataPurchase prchs)
+        {
+            foreach(var obs in PurchaseObservers)
+            {
+                obs.Notify(prchs);
+            }
+        }
+
         public DataUser GetUser(string sessionId)
         {
             lock(UserDictLock)
@@ -89,7 +100,7 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public DataLoggedInUser GetLoggedInUser(string sessionId)
+        private DataLoggedInUser GetLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
             if (usr is DataLoggedInUser)
@@ -174,7 +185,8 @@ namespace SEWorkshop.ServiceLayer
         public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
         {
             Log.Info(string.Format("Purchase was invoked"));
-            FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            NotifyPrchsObservers(prchs);
         }
 
         public void Register(string sessionId, string username, string password)
@@ -504,6 +516,19 @@ namespace SEWorkshop.ServiceLayer
         {
             FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
         }
+        public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain);
+        }
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName,string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain);
+        }
+
+
+
 
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
@@ -519,6 +544,11 @@ namespace SEWorkshop.ServiceLayer
         public IEnumerable<string> GetAllUsers(string sessionId)
         {
             return FacadesBridge.GetRegisteredUsers();
+        }
+
+        public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)
+        {
+            PurchaseObservers.Add(obsrv);
         }
     }
 }

@@ -13,14 +13,29 @@
     }
     else
     {
-        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         var um = Model.UserManager;
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
-        var isMan = user != null && Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        if (user != null && (((Model.Store.Owners.ContainsKey(user) ||
+        var isMan = user != null && Model.Store.Managers.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
+        if (user != null)
+        {
+            <h5><a href="/MessageView/@Model.Store.Name/@user.Username"> Go to conversation with this store </a></h5>
+        }
+        if (user != null && (user.Owns.Contains(Model.Store) ||
+                                         user.Manages.ContainsKey(Model.Store)))
+        {
+            <h5 class="card-title"><a href='/Manage/?StoreName=@Model.Store.Name'>Store Manage</a></h5>
+        }
+        if (user != null &&
+        (user.Owns.Contains(Model.Store) ||
+            (user.Manages.ContainsKey(Model.Store) && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
+        {
+            <h5 class="card-title"><a href="/StoreMessages/?storeName=@Model.Store.Name">View Messages As Manager</a></h5>
+        }
+        if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
-            || Model.UserManager.IsAdministrator(sessionId)))
+            || Model.UserManager.IsAdministrator(sessionId))
         {
             <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
         }

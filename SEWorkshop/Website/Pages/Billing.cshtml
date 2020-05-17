@@ -1,0 +1,19 @@
+@page "{storeName}"
+@model Website.Pages.BillingModel
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<div class="allpage">
+    <h1>Billing for Store: @Model.StoreName</h1>
+    @{
+        if(Model.Basket != null)
+        {
+            BasketViewModel bvm = new BasketViewModel(Model.UserManager, Model.Basket);
+            bvm.Paying = true;
+            await Html.RenderPartialAsync("BasketView", bvm);
+        }
+    }
+    <text class="alert-danger">@Model.ErrorMsg</text>
+</div>
+

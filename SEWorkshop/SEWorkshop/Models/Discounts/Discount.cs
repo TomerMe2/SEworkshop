@@ -12,9 +12,9 @@ namespace SEWorkshop.Models.Discounts
     {
         public (Discount, Operator)? InnerDiscount { get; set; }
         public double Percentage { get; private set; }
-        
+
         public DateTime Deadline { get; set; }
-        
+
         public Store Store { get; }
 
         public Discount(double percentage, DateTime deadline, Store store)
@@ -39,9 +39,9 @@ namespace SEWorkshop.Models.Discounts
             }
             return false;
         }
-        
+
         public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
-        
+
         public double ComposeDiscounts(ICollection<(Product, int)> itemsList)
         {
             if (InnerDiscount is null)
