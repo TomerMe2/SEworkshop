@@ -7,7 +7,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Models.Policies;
 using SEWorkshop.Enums;
 
-namespace SEWorkshop.Tests
+namespace SEWorkshop.Tests.UnitTests
 {
     [TestFixture]
     class PoliciesTests

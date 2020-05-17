@@ -5,7 +5,7 @@ using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Models.Discounts;
 
-namespace SEWorkshop.Tests
+namespace SEWorkshop.Tests.UnitTests
 {
     public class DiscountsTests
     {

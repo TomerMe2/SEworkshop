@@ -7,7 +7,7 @@ using SEWorkshop.Exceptions;
 using System.Linq;
 using SEWorkshop.Models;
 
-namespace SEWorkshop.UnitTests
+namespace SEWorkshop.Tests.IntegrationTests
 {
     [TestFixture]
     class UserManagerTests
