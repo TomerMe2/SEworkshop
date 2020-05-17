@@ -10,6 +10,7 @@ namespace SEWorkshop.DataModels
         private BuySomeGetSomeFreeDiscount InnerBuySomeModel { get; }
         public int BuySome => InnerBuySomeModel.BuySome;
         public int GetSome => InnerBuySomeModel.GetSome;
+        public DataProduct Product => new DataProduct(InnerBuySomeModel.Product);
         
         public DataBuySomeGetSomeFreeDiscount(BuySomeGetSomeFreeDiscount discount) : base(discount)
         {
