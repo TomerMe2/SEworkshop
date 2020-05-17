@@ -226,7 +226,6 @@ namespace SEWorkshop.Facades
 
         public void RemoveProduct(DataLoggedInUser user, string storeName, string productName)
         {
-            Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
             ManageFacade.RemoveProduct(GetLoggedInUsr(user), store, product);

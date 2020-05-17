@@ -397,7 +397,6 @@ namespace SEWorkshop.ServiceLayer
             // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
             // same applies for category
             TyposFixerNames.RemoveFromDictionary(productName);
-
         }
 
         public void EditProductDescription(string sessionId, string storeName, string productName, string description)
