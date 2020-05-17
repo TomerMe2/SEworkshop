@@ -10,11 +10,8 @@ namespace SEWorkshop.Facades
 {
     public class ManageFacade : IManageFacade
     {
-        private readonly Logger log = LogManager.GetCurrentClassLogger();
-
         public ManageFacade()
         {
-            log.Info("ManageFacade created");
         }
 
         public bool UserHasPermission(LoggedInUser loggedInUser, Store store, Authorizations authorization)
@@ -97,13 +94,10 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
-            log.Info("User tries to view purchase history of store {0}", store.Name);
             if (UserHasPermission(loggedInUser, store, Authorizations.Watching))
-            {
-                log.Info("Data has been fetched successfully");
+            { 
                 return store.Purchases;
             }
-            log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
 

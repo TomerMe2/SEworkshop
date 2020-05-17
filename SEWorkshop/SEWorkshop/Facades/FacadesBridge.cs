@@ -16,8 +16,6 @@ namespace SEWorkshop.Facades
         private IManageFacade ManageFacade { get; }
         private IStoreFacade StoreFacade { get; }
 
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
         public FacadesBridge()
         {
             ManageFacade = new ManageFacade();
@@ -27,8 +25,6 @@ namespace SEWorkshop.Facades
 
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity)
         {
-            Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
-                " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
             Product product = ManageFacade.AddProduct(GetLoggedInUsr(user), GetStore(storeName),
                                                           productName, description, category, price, quantity);
             return new DataProduct(product);
@@ -82,12 +78,9 @@ namespace SEWorkshop.Facades
 
         public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}",
-                storeName, productName, quantity));
             var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
-                Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
             UserFacade.AddProductToCart(GetUser(user), GetProduct(storeName, productName), quantity);
@@ -95,15 +88,11 @@ namespace SEWorkshop.Facades
 
         public void AddStoreManager(DataLoggedInUser user, string storeName, string newManagerUserName)
         {
-            Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
-               storeName, newManagerUserName));
             ManageFacade.AddStoreManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newManagerUserName));
         }
 
         public void AddStoreOwner(DataLoggedInUser user, string storeName, string newOwnerUserName)
         {
-            Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}",
-               storeName, newOwnerUserName));
             ManageFacade.AddStoreOwner(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName));
         }
 
@@ -166,7 +155,6 @@ namespace SEWorkshop.Facades
 
         public DataLoggedInUser GetLoggedInUserAndApplyCart(string username, byte[] password, DataGuestUser userAsGuest)
         {
-            Log.Info(string.Format("Login was invoked with username {0}", username));
             //preserve loggedIn user's cart that he gathered as a GuestUser.
             Cart cart = GetUser(userAsGuest).Cart;
             LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
@@ -178,19 +166,16 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName)
         {
-            Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
             return ManageFacade.ViewPurchaseHistory(GetLoggedInUsr(user), GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
         }
 
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description)
         {
             //message will always be the first message in the talk
-            Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
             var store = GetStore(storeName);
             Message? firstMsg = store.Messages.FirstOrDefault(msg => message.Represents(msg));
             if (firstMsg is null)
             {
-                Log.Info("message is not in the system");
                 throw new MessageNotInSystemException();
             }
             Message toAnswerOn = firstMsg;
@@ -215,7 +200,6 @@ namespace SEWorkshop.Facades
 
         public void OpenStore(DataLoggedInUser user, string storeName)
         {
-            Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
             StoreFacade.CreateStore(GetLoggedInUsr(user), storeName);
         }
 
@@ -242,7 +226,6 @@ namespace SEWorkshop.Facades
 
         public void RemoveProduct(DataLoggedInUser user, string storeName, string productName)
         {
-            Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
             Store store = GetStore(storeName);
             Product product = GetProduct(storeName, productName);
             ManageFacade.RemoveProduct(GetLoggedInUsr(user), store, product);
@@ -250,12 +233,9 @@ namespace SEWorkshop.Facades
 
         public void RemoveProductFromCart(DataUser user, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("RemoveProductFromCart was invoked with storeName {0}, productName {1}, quantity {2}",
-                storeName, productName, quantity));
             var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
-                Log.Info(string.Format("Someone tried to remove product from cart with a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
             UserFacade.RemoveProductFromCart(GetUser(user), GetProduct(storeName, productName), quantity);
@@ -263,28 +243,23 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(DataLoggedInUser user, string storeName, string username)
         {
-            Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
-               storeName, username));
             LoggedInUser manager = UserFacade.GetLoggedInUser(username);
             ManageFacade.RemoveStoreManager(GetLoggedInUsr(user), GetStore(storeName), manager);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
         {
-            Log.Info("SearchProducts was invoked");
             return StoreFacade.SearchProducts(pred);
         }
 
         public IEnumerable<DataProduct> SearchProductsByCategory(string input)
         {
-            Log.Info("SearchProductsByCategory was invoked with input {0}", input);
             string localInput = input;
             return SearchProducts(product => product.Category.ToLower().Replace('_', ' ').Equals(localInput)).Select(prod => new DataProduct(prod)); 
         }
 
         public IEnumerable<DataProduct> SearchProductsByKeywords(string input)
         {
-            Log.Info("SearchProductsByKeywords was invoked with input {0}", input);
             bool HasWordInsideOther(string[] words1, List<string> words2)
             {
                 foreach (string word1 in words1)
@@ -308,7 +283,6 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataProduct> SearchProductsByName(string input)
         {
-            Log.Info("SearchProductsByName was invoked with input {0}", input);
             string localInput = input;
             return SearchProducts(product => product.Name.ToLower().Replace('_', ' ').Equals(localInput)).Select(prod => new DataProduct(prod));
         }
@@ -320,33 +294,26 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataPurchase> StorePurchaseHistory(DataLoggedInUser user, string storeName)
         {
-            Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
             return UserFacade.StorePurchaseHistory(GetLoggedInUsr(user), GetStore(storeName)).Select(prchs => new DataPurchase(prchs));
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(DataLoggedInUser user, string userNm)
         {
-            Log.Info(string.Format("WriteReview was invoked with userName {0}", userNm));
             return UserFacade.UserPurchaseHistory(GetLoggedInUsr(user), userNm).Select(prchs => new DataPurchase(prchs));
         }
 
         public IEnumerable<DataMessage> ViewMessage(DataLoggedInUser user, string storeName)
         {
-            Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
             return ManageFacade.ViewMessage(GetLoggedInUsr(user), GetStore(storeName)).Select(msg => new DataMessage(msg));
         }
 
         public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
-            Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
-                storeName, description));
             return new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
         {
-            Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
-                storeName, productName, description));
             UserFacade.WriteReview(GetLoggedInUsr(user), GetProduct(storeName, productName), description);
         }
 
@@ -394,7 +361,6 @@ namespace SEWorkshop.Facades
 
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg)
         {
-            Log.Info(string.Format("MarkAllDiscussionAsRead was invoked"));
             var store = GetStore(storeName);
             Message? firstMsg = store.Messages.FirstOrDefault(message => msg.Represents(message));
             if (firstMsg is null)

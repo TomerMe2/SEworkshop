@@ -21,8 +21,6 @@ namespace SEWorkshop.Facades
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
-
         public UserFacade(IStoreFacade storeFacade)
         {
             StoreFacade = storeFacade;
@@ -82,12 +80,10 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Register(string username, byte[] password)
         {
-            log.Info("User tries to register with the username: {0}", username);
             foreach(var user in RegisteredUsers)
             {
                 if(user.Username.Equals(username))
                 {
-                    log.Info("User tried to register with already existing username");
                     throw new UserAlreadyExistsException();
                 }
             }
@@ -95,25 +91,21 @@ namespace SEWorkshop.Facades
             {
                 if(admin.Username.Equals(username))
                 {
-                    log.Info("User tried to register with already existing admin username");
                     throw new UserAlreadyExistsException();
                 }
             }
             LoggedInUser newUser = new LoggedInUser(username, password);
             RegisteredUsers.Add(newUser);
-            log.Info("Registration has been completed successfully");
             return newUser;
         }
 
         public IEnumerable<Basket> MyCart(User user)
         {
-            log.Info("User fetches cart data");
             return user.Cart.Baskets;
         }
         
         public IEnumerable<Purchase> PurchaseHistory(LoggedInUser user)
         {
-            log.Info("User tries to seek its purchase history");
             ICollection<Purchase> userPurchases = new List<Purchase>();
             foreach(var purchase in Purchases)
             {
@@ -122,7 +114,6 @@ namespace SEWorkshop.Facades
                     userPurchases.Add(purchase);
                 }
             }
-            log.Info("Purchase history seek has been completed successfully");
             return userPurchases;
         }
 
@@ -133,19 +124,15 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
-            log.Info("Admin tries to seek {0}'s purchase history", userNmToView);
             if (!Administrators.Contains(requesting))
             {
-                log.Info("A unauthorized user tried to fetch data without permission");
                 throw new UserHasNoPermissionException();
             }
             var user = RegisteredUsers.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
             if(user is null)
             {
-                log.Info("User does not exist");
                 throw new UserDoesNotExistException();
             }
-            log.Info("Data has been fetched successfully");
             return PurchaseHistory(user);
         }
 
@@ -169,10 +156,8 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
-            log.Info("Admin tries to seek {0}'s purchase history", store.Name);
             if (!Administrators.Contains(requesting))
             {
-                log.Info("A unauthorized user tried to fetch data without permission");
                 throw new UserHasNoPermissionException();
             }
             ICollection<Purchase> purchaseHistory = new List<Purchase>();
@@ -186,36 +171,29 @@ namespace SEWorkshop.Facades
                     }
                 }
             }
-            log.Info("Data has been fetched successfully");
             return purchaseHistory;
         }
 
         public void WriteReview(LoggedInUser user, Product product, string description)
         {
-            log.Info("User tries to write a review");
             if (description.Length == 0)
             {
-                log.Info("The review is empty");
                 throw new ReviewIsEmptyException();
             }
             Review review = new Review(user, description);
             product.Reviews.Add(review);
             ((LoggedInUser) user).Reviews.Add(review);
-            log.Info("The review has been published successfully");
         }
 
         public Message WriteMessage(LoggedInUser user, Store store, string description)
         {
-            log.Info("User tries to write a message");
             if (description.Length == 0)
             {
-                log.Info("The message is empty");
                 throw new MessageIsEmptyException();
             }
             Message message = new Message(user, store, description, true);
             store.Messages.Add(message);
             user.Messages.Add(message);
-            log.Info("The message has been published successfully");
             return message;
         }
 
