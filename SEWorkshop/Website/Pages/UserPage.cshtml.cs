@@ -12,7 +12,11 @@ namespace Website.Pages
     public class UserPageModel : PageModel
     {
         public IUserManager UserManager { get; }
-        public IEnumerable<DataPurchase> purchases { get; private set; }
+        public IEnumerable<DataPurchase> Purchases { get; private set; }
+        public IEnumerable<string> Users;
+        public bool IsAdmin;
+        public string Username;
+
         public UserPageModel(IUserManager userManager)
         {
             UserManager = userManager;
@@ -20,15 +24,12 @@ namespace Website.Pages
             Users = new List<string>();
             IsAdmin = false;
             Username = "";
-            SearchUsername = "";
-            ErrorMsg = "";
         }
 
         public void OnGet(string username)
         {
             string sid = HttpContext.Session.Id;
             Username = (UserManager.GetDataLoggedInUser(sid)).Username;
-            SearchUsername = "";
             IsAdmin = UserManager.IsAdministrator(sid);
             Users = UserManager.GetAllUsers(sid).ToList();
             if (username == null || username.Length == 0)
@@ -50,18 +51,5 @@ namespace Website.Pages
             purchases = UserManager.PurchaseHistory(sid);
         }
         */
-        public IActionResult OnPost()
-        {
-            try
-            {
-                Purchases = UserManager.UserPurchaseHistory(HttpContext.Session.Id, SearchUsername);
-            }
-            catch (Exception e)
-            {
-                ErrorMsg = e.ToString();
-                return new PageResult();
-            }
-            return RedirectToPage("./UserPage", new { Username = SearchUsername });
-        }
     }
 }

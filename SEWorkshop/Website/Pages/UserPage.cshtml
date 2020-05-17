@@ -4,13 +4,9 @@
     ViewData["Title"] = "UserPage";
 }
 
-@if (Model.SearchUsername.Length == 0)
+@if (Model.Username.Length > 0)
 {
     @:<h1>@Model.Username's Purchase History</h1>
-}
-else
-{
-    @:<h1>@Model.SearchUsername's Purchase History</h1>
 }
 
 @{ if (Model.Purchases.Count() == 0)
@@ -19,6 +15,7 @@ else
     }
     else
     {
+        string sid = HttpContext.Session.Id;
         var usr = Model.UserManager.GetDataLoggedInUser(sid);
         <h1>Your conversations</h1>
         if (usr.Messages.Count == 0)
@@ -45,14 +42,6 @@ else
 
 @if (Model.IsAdmin)
 {
-    @:<h5>Type a username to watch his purchase history</h5>
-    <form id="searchForm" method="post">
-        <div class="form-inline">
-            <input asp-for="SearchUsername" id="searchText" name="searchText" class="form-control" type="text" placeholder="Username" aria-label="Search" style="width: 40%">
-            <button type="submit" class="form-control btn btn-primary" id="submit" style="width: 10%">Search</button>
-        </div>
-    </form>
-    @:<text class="alert-danger">@Model.ErrorMsg</text>
     @:<h5>Select a user to view his purchase history</h5>
     @foreach (string username in Model.Users)
     {
