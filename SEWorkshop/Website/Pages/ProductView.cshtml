@@ -12,16 +12,16 @@
             <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
             <input type="hidden" name="ProductName" value="@Model.Product.Name">
             <input type="text" name="Quantity" placeholder="Quantity">
-            <button type="submit" asp-page-handler="AddToCart" value="Add">Add to Cart</button>
+            <button type="submit" asp-page-handler="AddToCart" value="Add" >Add to Cart</button>
         </form>
         @{
             if (Model.Authorized)
             {
                 <form method="post">
-                    <button type="submit" asp-page-handler="RemoveProduct" value="Remove">Remove the Product from the Store</button>
+                    <button type="submit" asp-page-handler="RemoveProduct" value="Remove" >Remove the Product from the Store</button>
                     <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
                     <input type="hidden" name="ProductName" value="@Model.Product.Name">
-                    <br />
+                    <br/>
                     <div style="display: flex;">
                         <input type="text" name="Description" placeholder="Description">
                         <button type="submit" asp-page-handler="EditDescription" value="EditDescription">Edit Description</button>
@@ -43,15 +43,6 @@
                         <button type="submit" asp-page-handler="EditQuantity" value="EditQuantity">Edit Quantity</button>
                     </div>
                 </form>
-            }
-            if (Model.Product.Reviews.Any())
-            {
-                <br/>
-                <p class="card-subtitle">Reviews:</p>
-                foreach(var review in Model.Product.Reviews)
-                {
-                    <p class="card-text">@review.Writer.Username Wrote: "@review.Description"</p>
-                }
             }
         }
     </div>
