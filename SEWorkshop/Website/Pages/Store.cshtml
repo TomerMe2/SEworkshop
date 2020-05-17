@@ -27,7 +27,12 @@
         {
             <h5 class="card-title"><a href='/Manage/?StoreName=@Model.Store.Name'>Store Manage</a></h5>
         }
-
+        if (user != null &&
+        (user.Owns.Contains(Model.Store) ||
+            (user.Manages.ContainsKey(Model.Store) && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
+        {
+            <h5 class="card-title"><a href="/StoreMessages/?storeName=@Model.Store.Name">View Messages As Manager</a></h5>
+        }
         if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))))
         {
