@@ -29,14 +29,13 @@ namespace Website.Pages
 
         public IActionResult OnPostBillingAsync(string StoreName)
         {
-            return RedirectToPage("./Bill", new {storeName = StoreName});
+            return RedirectToPage("./Billing", new {storeName = StoreName});
         }
         
         public IActionResult OnPostRemoveFromCartAsync(string StoreName, string ProductName, string Quantity)
         {
             try
             {
-                Console.WriteLine(Quantity);
                 UserManager.RemoveProductFromCart(HttpContext.Session.Id, StoreName, ProductName, int.Parse(Quantity));
             }
             catch
