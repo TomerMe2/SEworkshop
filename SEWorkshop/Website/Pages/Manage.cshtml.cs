@@ -58,6 +58,10 @@ namespace Website.Pages
                     categories.Add(dp.Category);
                 products.Add(dp.Name);
             }
+            foreach(DataDiscount disc in Store.Discounts)
+            {
+                discounts.Add(StringDiscount(policy, 1));
+            }
             DiscountNumber = Store.Discounts.Count();
             if (policy is DataAlwaysTruePolicy)
                 Policy = "None";
