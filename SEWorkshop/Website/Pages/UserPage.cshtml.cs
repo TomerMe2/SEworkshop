@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEWorkshop;
 using SEWorkshop.DataModels;
 using SEWorkshop.ServiceLayer;
 
@@ -67,8 +66,9 @@ namespace Website.Pages
             catch (Exception e)
             {
                 ErrorMsg = e.ToString();
+                return new PageResult();
             }
-            return new PageResult();
+            return RedirectToPage("./UserPage", new { Username = SearchUsername });
         }
     }
 }

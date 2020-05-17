@@ -18,8 +18,9 @@
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
         var isMan = user != null && Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
-            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching)))))
+        if (user != null && (((Model.Store.Owners.ContainsKey(user) ||
+            (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
+            || Model.UserManager.IsAdministrator(sessionId)))
         {
             <h5 class="card-title"><a href='/StorePurchaseHistory/@Model.Store.Name'>Purchase History</a></h5>
         }
