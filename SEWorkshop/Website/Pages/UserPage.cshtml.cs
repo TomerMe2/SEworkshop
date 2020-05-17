@@ -42,14 +42,13 @@ namespace Website.Pages
                 Username = username;
             }
         }
-
-        /*
+        
         public void OnPost(string content, string storeName, string productName)
         {
             string sid = HttpContext.Session.Id;
             UserManager.WriteReview(sid, storeName, productName, content);
-            purchases = UserManager.PurchaseHistory(sid);
+            Purchases = UserManager.PurchaseHistory(sid);
         }
-        */
+        
     }
 }

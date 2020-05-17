@@ -17,25 +17,30 @@
     {
         string sid = HttpContext.Session.Id;
         var usr = Model.UserManager.GetDataLoggedInUser(sid);
-        <h1>Your conversations</h1>
-        if (usr.Messages.Count == 0)
+        if (!Model.IsAdmin)
         {
-            <h6>No messages</h6>
+            <h1>Your conversations</h1>
+            if (usr.Messages.Count == 0)
+            {
+                <h6>No messages</h6>
+            }
+            foreach (var msg in usr.Messages)
+            {
+                await Html.RenderPartialAsync("MessagePartial", new MessagePartialModel(msg, true));
+            }
         }
-        foreach (var msg in usr.Messages)
+        if (!Model.IsAdmin)
         {
-            await Html.RenderPartialAsync("MessagePartial", new MessagePartialModel(msg, true));
+            <h1>Your Purchase History</h1>
         }
-        <h1>Your Purchase History</h1>
-        var purchases = Model.UserManager.PurchaseHistory(sid);
-        if (purchases.Count() == 0)
+        if (Model.Purchases.Count() == 0)
         {
             <h6>No Purchases</h6>
         }
-        foreach (var prchs in purchases)
+        foreach (var prchs in Model.Purchases)
         {
             await Html.RenderPartialAsync("PurchaseView", new PurchaseViewModel(@Model.UserManager,
-                prchs, true, Model.HttpContext.Session.Id));
+                prchs, !Model.IsAdmin, Model.HttpContext.Session.Id));
         }
     }
 }
