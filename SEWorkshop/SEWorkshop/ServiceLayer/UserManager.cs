@@ -347,14 +347,14 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> StorePurchaseHistory(string sessionId, string storeName)
         {
-            Log.Info(string.Format("StorePurchaseHistory was invoked with storeName {0}", storeName));
+            Log.Info(string.Format("StorePurchaseHistory    {0}", storeName));
             try
             {
                 return FacadesBridge.StorePurchaseHistory(GetLoggedInUser(sessionId), storeName);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("UserPurchaseHistory {0}", e.ToString()));
+                Log.Info(string.Format("StorePurchaseHistory    {0}", e.ToString()));
                 throw e;
             }
         }
