@@ -64,8 +64,7 @@ namespace SEWorkshop.ServiceLayer
             // Rules for mapping loggers to targets
             config.AddRule(LogLevel.Debug, LogLevel.Info, eventLogFile);
             config.AddRule(LogLevel.Error, LogLevel.Fatal, errorLogFile);
-
-            // Apply config           
+            // Apply config
             LogManager.Configuration = config;
         }
 
@@ -121,47 +120,47 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddProductToCart(string sessionId, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}", storeName, productName, quantity));
+            Log.Info(string.Format("AddProductToCart    {0}    {1}    {2}", storeName, productName, quantity));
             try
             {
                 FacadesBridge.AddProductToCart(GetUser(sessionId), storeName, productName, quantity);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("{0} {1}", e.ToString(), storeName));
+                Log.Info(string.Format("AddProductToCart    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public IEnumerable<DataStore> BrowseStores()
         {
-            Log.Info("BrowseStores was invoked");
+            Log.Info("BrowseStores");
             return FacadesBridge.BrowseStores();
         }
 
         public DataStore SearchStore(string storeName)
         {
-            Log.Info("SearchStore was invoked");
+            Log.Info("SearchStore");
             return FacadesBridge.SearchStore(storeName);
         }
 
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
         {
-            Log.Info("FilterProducts was invoked");
+            Log.Info("FilterProducts");
             try
             {
                 return FacadesBridge.FilterProducts(products, pred);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("FilterProducts {0}", e.ToString()));
+                Log.Info(string.Format("FilterProducts    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public void Login(string sessionId, string username, string password)
         {
-            Log.Info(string.Format("Login was invoked with username {0}", username));
+            Log.Info(string.Format("Login    {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 throw new UsernameOrPasswordAreEmpty();
@@ -177,7 +176,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void Logout(string sessionId)
         {
-            Log.Info("Logout was invoked");
+            Log.Info("Logout");
             var user = GetUser(sessionId);
             if (user is DataGuestUser)
             {
@@ -188,34 +187,34 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataBasket> MyCart(string sessionId)
         {
-            Log.Info("MyCart was invoked");
+            Log.Info("MyCart");
             return FacadesBridge.MyCart(GetUser(sessionId));
         }
 
         public void OpenStore(string sessionId, string storeName)
         {
-            Log.Info(string.Format("OpenStore was invoked with storeName {0}", storeName));
+            Log.Info(string.Format("OpenStore    {0}", storeName));
             try
             {
                 FacadesBridge.OpenStore(GetLoggedInUser(sessionId), storeName);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("OpenStore {0}", e.ToString()));
+                Log.Info(string.Format("OpenStore    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
         {
-            Log.Info(string.Format("Purchase was invoked"));
+            Log.Info(string.Format("Purchase"));
             var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
             NotifyPrchsObservers(prchs);
         }
 
         public void Register(string sessionId, string username, string password)
         {
-            Log.Info(string.Format("Register was invoked with username {0}", username));
+            Log.Info(string.Format("Register    {0}", username));
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 throw new UsernameOrPasswordAreEmpty();
@@ -231,30 +230,28 @@ namespace SEWorkshop.ServiceLayer
             }
             catch (Exception e)
             {
-                Log.Info(e.ToString());
+                Log.Info(string.Format("Register    {0}", e.ToString()));
                 throw e;
             }
-            Log.Info("Registration has been completed successfully");
         }
 
         public void RemoveProductFromCart(string sessionId, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("RemoveProductFromCart was invoked with storeName {0}, productName {1}, quantity {2}",
-                storeName, productName, quantity));
+            Log.Info(string.Format("RemoveProductFromCart    {0}    {1}    {2}", storeName, productName, quantity));
             try
             {
                 FacadesBridge.RemoveProductFromCart(GetUser(sessionId), storeName, productName, quantity);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("{0} {1}", e.ToString(), storeName));
+                Log.Info(string.Format("RemoveProductFromCart    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public IEnumerable<DataProduct> SearchProductsByName(ref string input)
         {
-            Log.Info("SearchProductsByName was invoked with input {0}", input);
+            Log.Info("SearchProductsByName    {0}", input);
             string localInput = input;
             IEnumerable<DataProduct> products = FacadesBridge.SearchProductsByName(localInput);
             if (products.Any())
@@ -268,7 +265,7 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataProduct> SearchProductsByCategory(ref string input)
         {
-            Log.Info("SearchProductsByCategory was invoked with input {0}", input);
+            Log.Info("SearchProductsByCategory    {0}", input);
             string localInput = input;
             IEnumerable<DataProduct> products = FacadesBridge.SearchProductsByCategory(localInput);
             if (products.Any())
@@ -281,7 +278,7 @@ namespace SEWorkshop.ServiceLayer
         
         public IEnumerable<DataProduct> SearchProductsByKeywords(ref string input)
         {
-            Log.Info("SearchProductsByKeywords was invoked with input {0}", input);
+            Log.Info("SearchProductsByKeywords    {0}", input);
             string localInput = input;
             var products = FacadesBridge.SearchProductsByKeywords(localInput);
             if (products.Any())
@@ -295,29 +292,27 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> PurchaseHistory(string sessionId)
         {
-            Log.Info("PurchaseHistory was invoked");
+            Log.Info("PurchaseHistory");
             return FacadesBridge.PurchaseHistory(GetLoggedInUser(sessionId));
         }
 
         public void WriteReview(string sessionId, string storeName, string productName, string description)
         {
-            Log.Info(string.Format("WriteReview was invoked with storeName {0}, productName {1}, description {2}",
-                storeName, productName, description));
+            Log.Info(string.Format("WriteReview    {0}    {1}    {2}", storeName, productName, description));
             try
             {
                 FacadesBridge.WriteReview(GetLoggedInUser(sessionId), storeName, productName, description);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("WriteReview {0}", e.ToString()));
+                Log.Info(string.Format("WriteReview    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public int WriteMessage(string sessionId, string storeName, string description)
         {
-            Log.Info(string.Format("WriteMessage was invoked with storeName {0}, description {1}",
-                storeName, description));
+            Log.Info(string.Format("WriteMessage    {0}    {1}", storeName, description));
             try
             {
                 var msg = FacadesBridge.WriteMessage(GetLoggedInUser(sessionId), storeName, description);
@@ -326,21 +321,21 @@ namespace SEWorkshop.ServiceLayer
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("WriteMessage {0}", e.ToString()));
+                Log.Info(string.Format("WriteMessage    {0}", e.ToString()));
                 throw e;
             }
         }
 
         public IEnumerable<DataPurchase> UserPurchaseHistory(string sessionId, string userNm)
         {
-            Log.Info(string.Format("UserPurchaseHistory was invoked with userName {0}", userNm));
+            Log.Info(string.Format("UserPurchaseHistory    {0}", userNm));
             try
             {
                 return FacadesBridge.UserPurchaseHistory(GetLoggedInUser(sessionId), userNm);
             }
             catch (Exception e)
             {
-                Log.Info(string.Format("UserPurchaseHistory {0}", e.ToString()));
+                Log.Info(string.Format("UserPurchaseHistory    {0}", e.ToString()));
                 throw e;
             }
         }
@@ -361,15 +356,15 @@ namespace SEWorkshop.ServiceLayer
 
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(string sessionId, string storeName)
         {
-            Log.Info(string.Format("ManagingPurchaseHistory was invoked with storeName {0}", storeName));
+            Log.Info(string.Format("ManagingPurchaseHistory    {0}", storeName));
             return FacadesBridge.ManagingPurchaseHistory(GetLoggedInUser(sessionId), storeName);
         }
 
         public DataProduct AddProduct(string sessionId, string storeName, string productName, string description,
                                         string category, double price, int quantity)
         {
-            Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
-                " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
+            Log.Info(string.Format("AddProduct    {0}    {1}    {2}    {3}    {4}    {5}",
+                storeName, productName, description, category, price, quantity));
             var prod = FacadesBridge.AddProduct(GetLoggedInUser(sessionId), storeName, productName, description, category, price, quantity);
             //replacing spaces with _, so different words will be related to one product name in the typos fixer algorithm
             TyposFixerNames.AddToDictionary(productName);
@@ -392,7 +387,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemoveProduct(string sessionId, string storeName, string productName)
         {
-            Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}", storeName, productName));
+            Log.Info(string.Format("RemoveProduct    {0}    {1}", storeName, productName));
             FacadesBridge.RemoveProduct(GetLoggedInUser(sessionId), storeName, productName);
             // we don't need to remove the product's description cus there are lots of produts with possibly similar descriptions
             // same applies for category
@@ -401,55 +396,49 @@ namespace SEWorkshop.ServiceLayer
 
         public void EditProductDescription(string sessionId, string storeName, string productName, string description)
         {
-            Log.Info(string.Format("RemoveProduct was invoked with storeName {0}, productName {1}, description {2}",
-                storeName, productName, description));
+            Log.Info(string.Format("RemoveProduct    {0}    {1}    {2}", storeName, productName, description));
             FacadesBridge.EditProductDescription(GetLoggedInUser(sessionId), storeName, productName, description);
         }
 
         public void EditProductPrice(string sessionId, string storeName, string productName, double price)
         {
-            Log.Info(string.Format("EditProductPrice was invoked with storeName {0}, productName {1}, price {2}",
-                storeName, productName, price));
+            Log.Info(string.Format("EditProductPrice    {0}    {1}    {2}", storeName, productName, price));
             FacadesBridge.EditProductPrice(GetLoggedInUser(sessionId), storeName, productName, price);
         }
 
         public void EditProductCategory(string sessionId, string storeName, string productName, string category)
         {
-            Log.Info(string.Format("EditProductCategory was invoked with storeName {0}, productName {1}, category {2}",
-                storeName, productName, category));
+            Log.Info(string.Format("EditProductCategory    {0}    {1}    {2}", storeName, productName, category));
             FacadesBridge.EditProductCategory(GetLoggedInUser(sessionId), storeName, productName, category);
         }
 
         public void EditProductName(string sessionId, string storeName, string productName, string name)
         {
-            Log.Info(string.Format("EditProductName was invoked with storeName {0}, productName {1}, name {2}",
-                storeName, productName, name));
+            Log.Info(string.Format("EditProductName    {0}    {1}    {2}", storeName, productName, name));
             FacadesBridge.EditProductName(GetLoggedInUser(sessionId), storeName, productName, name);
         }
 
         public void EditProductQuantity(string sessionId, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("EditProductQuantity was invoked with storeName {0}, productName {1}, quantity {2}",
-                storeName, productName, quantity));
+            Log.Info(string.Format("EditProductQuantity    {0}    {1}    {2}", storeName, productName, quantity));
             FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
         public void AddStoreOwner(string sessionId, string storeName, string username)
         {
-            Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}", storeName, username));
+            Log.Info(string.Format("AddStoreOwner    {0}    {1}", storeName, username));
             FacadesBridge.AddStoreOwner(GetLoggedInUser(sessionId), storeName, username);
         }
 
         public void AddStoreManager(string sessionId, string storeName, string username)
         {
-            Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}", storeName, username));
+            Log.Info(string.Format("AddStoreManager    {0}    {1}", storeName, username));
             FacadesBridge.AddStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
         public void SetPermissionsOfManager(string sessionId, string storeName, string username, string auth)
         {
-            Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
-                storeName, username, auth));
+            Log.Info(string.Format("SetPermissionsOfManager    {0}    {1}    {2}", storeName, username, auth));
             var authorization = auth switch
             {
                 "Products" => Authorizations.Products,
@@ -465,8 +454,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth)
         {
-            Log.Info(string.Format("SetPermissionsOfManager was invoked with storeName {0}, username {1}, auth {2}",
-                storeName, username, auth));
+            Log.Info(string.Format("SetPermissionsOfManager    {0}    {1}    {2}", storeName, username, auth));
             var authorization = auth switch
             {
                 "Products" => Authorizations.Products,
@@ -482,20 +470,19 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemoveStoreManager(string sessionId, string storeName, string username)
         {
-            Log.Info(string.Format("RemoveStoreManager was invoked with storeName {0}, username {1}",
-                storeName, username));
+            Log.Info(string.Format("RemoveStoreManager    {0}    {1}", storeName, username));
             FacadesBridge.RemoveStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeName)
         {
-            Log.Info(string.Format("ViewMessage was invoked with storeName {0}", storeName));
+            Log.Info(string.Format("ViewMessage    {0}", storeName));
             return FacadesBridge.ViewMessage(GetLoggedInUser(sessionId), storeName);
         }
 
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
-            Log.Info(string.Format("MessageReply was invoked with storeName {0}", storeName));
+            Log.Info(string.Format("MessageReply    {0}", storeName));
             try
             {
                 var msg = FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
@@ -504,7 +491,7 @@ namespace SEWorkshop.ServiceLayer
             }
             catch(Exception e)
             {
-                Log.Info(e.ToString);
+                Log.Info(string.Format("MessageReply    {0}", e.ToString()));
                 throw e;
             }
         }
@@ -587,7 +574,7 @@ namespace SEWorkshop.ServiceLayer
 
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
-            Log.Info(string.Format("MarkAllDiscussionAsRead was invoked"));
+            Log.Info(string.Format("MarkAllDiscussionAsRead"));
             FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
         }
 
