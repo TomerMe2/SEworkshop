@@ -1,0 +1,17 @@
+﻿@model Website.Pages.MessagePartialModel
+
+    <div class="card" style="width: 50%">
+        <div class="card-body">
+            @if (Model.IsClient)
+            {
+                //The client will see the store that he is talking with
+                <h5 class="card-title">With @Model.Message.ToStore.Name</h5>
+            }
+            else
+            {
+                //The store will see the client that they are talking with
+                <h5 class="card-title">With @Model.Message.WrittenBy</h5>
+            }
+            <h6 class="card-text"><a href="/MessageView/@Model.Message.ToStore.Name/@Model.Message.Id">See full conversation </a></h6>
+        </div>
+    </div>

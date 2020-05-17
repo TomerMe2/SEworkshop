@@ -1,4 +1,4 @@
-﻿@page "{storeWritingTo}/{msgId}"
+﻿@page "{storeName}/{writerUserName}"
 @model Website.Pages.MessageViewModel
 @{
     ViewData["Title"] = "MessageView";
@@ -24,10 +24,13 @@
         <form id="messageSend" method="post">
             <div class="form-group">
                 <input type="hidden" name="storeWritingTo" value="@Model.StoreWritingTo?.Name">
-                <input type="hidden" name="answeringOnMsgId" value="@Model.MsgId">
+                <input type="hidden" name="userNameWritingTo" value="@Model.UserNameWritingTo">
                 <label for="msg_txt_area">Write your message here</label>
                 <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
-                <button type="submit" class="form-control btn btn-primary">Send</button>
+                @if (Model.CanRespond)
+                {
+                    <button type="submit" class="form-control btn btn-primary">Send</button>
+                }
             </div>
         </form>
     }

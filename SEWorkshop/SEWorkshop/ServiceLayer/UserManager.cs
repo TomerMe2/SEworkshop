@@ -89,7 +89,7 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public DataLoggedInUser GetLoggedInUser(string sessionId)
+        private DataLoggedInUser GetLoggedInUser(string sessionId)
         {
             var usr = GetUser(sessionId);
             if (usr is DataLoggedInUser)
