@@ -42,7 +42,6 @@ namespace Website.Pages
 
         public IActionResult OnPostPurchaseAsync(string storeName, string CreditCardNumber, string Country, string City, string Street, string HouseNumber)
         {
-            Console.WriteLine(storeName);
             List<DataBasket> cart = UserManager.MyCart(HttpContext.Session.Id).ToList();
             foreach (var basket in cart)
             {
