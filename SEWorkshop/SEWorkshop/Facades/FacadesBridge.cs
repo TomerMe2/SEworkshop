@@ -16,8 +16,6 @@ namespace SEWorkshop.Facades
         private IManageFacade ManageFacade { get; }
         private IStoreFacade StoreFacade { get; }
 
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
         public FacadesBridge()
         {
             ManageFacade = new ManageFacade();
@@ -27,8 +25,6 @@ namespace SEWorkshop.Facades
 
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity)
         {
-            Log.Info(string.Format("AddProduct was invoked with storeName {0}, productName {1}, description {2}," +
-                " category {3}, price {4}, quantity{5}", storeName, productName, description, category, price, quantity));
             Product product = ManageFacade.AddProduct(GetLoggedInUsr(user), GetStore(storeName),
                                                           productName, description, category, price, quantity);
             return new DataProduct(product);
@@ -82,12 +78,9 @@ namespace SEWorkshop.Facades
 
         public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
-            Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}",
-                storeName, productName, quantity));
             var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
             if (store is null)
             {
-                Log.Info(string.Format("Someone searched for a non existing store with name {0}", storeName));
                 throw new StoreNotInTradingSystemException();
             }
             UserFacade.AddProductToCart(GetUser(user), GetProduct(storeName, productName), quantity);
@@ -95,15 +88,11 @@ namespace SEWorkshop.Facades
 
         public void AddStoreManager(DataLoggedInUser user, string storeName, string newManagerUserName)
         {
-            Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
-               storeName, newManagerUserName));
             ManageFacade.AddStoreManager(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newManagerUserName));
         }
 
         public void AddStoreOwner(DataLoggedInUser user, string storeName, string newOwnerUserName)
         {
-            Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}",
-               storeName, newOwnerUserName));
             ManageFacade.AddStoreOwner(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName));
         }
 

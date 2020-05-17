@@ -61,11 +61,10 @@ namespace SEWorkshop.ServiceLayer
             // Targets where to log to: File and Console
             var eventLogFile = new NLog.Targets.FileTarget(EVENT_LOG_NM) { FileName = EVENT_LOG_NM + ".txt" };
             var errorLogFile = new NLog.Targets.FileTarget(ERROR_LOG_NM) { FileName = ERROR_LOG_NM + ".txt" };
-            // Rules for mapping loggers to targets    
+            // Rules for mapping loggers to targets
             config.AddRule(LogLevel.Debug, LogLevel.Info, eventLogFile);
             config.AddRule(LogLevel.Error, LogLevel.Fatal, errorLogFile);
 
-            
             // Apply config           
             LogManager.Configuration = config;
         }
@@ -122,7 +121,15 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddProductToCart(string sessionId, string storeName, string productName, int quantity)
         {
-            FacadesBridge.AddProductToCart(GetUser(sessionId), storeName, productName, quantity);
+            Log.Info(string.Format("AddProductToCart was invoked with storeName {0}, productName {1}, quantity {2}", storeName, productName, quantity));
+            try
+            {
+                FacadesBridge.AddProductToCart(GetUser(sessionId), storeName, productName, quantity);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("{0} {1}", e.ToString(), storeName));
+            }
         }
 
         public IEnumerable<DataStore> BrowseStores()
@@ -362,13 +369,13 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddStoreOwner(string sessionId, string storeName, string username)
         {
+            Log.Info(string.Format("AddStoreOwner was invoked with storeName {0}, username {1}", storeName, username));
             FacadesBridge.AddStoreOwner(GetLoggedInUser(sessionId), storeName, username);
         }
 
         public void AddStoreManager(string sessionId, string storeName, string username)
         {
-            Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}",
-                storeName, username));
+            Log.Info(string.Format("AddStoreManager was invoked with storeName {0}, username {1}", storeName, username));
             FacadesBridge.AddStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
