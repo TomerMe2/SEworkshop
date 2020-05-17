@@ -504,6 +504,19 @@ namespace SEWorkshop.ServiceLayer
         {
             FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
         }
+        public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain);
+        }
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName,string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain)
+        {
+            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain);
+        }
+
+
+
 
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
