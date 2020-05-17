@@ -8,6 +8,16 @@
         <h6 class="card-subtitle mb-2">Cost: @Model.Product.Price ₪</h6>
         <h6 class="card-text">Amount in Store: @Model.Product.Quantity</h6>
         <p class="card-text">Description: @Model.Product.Description</p>
+        @{
+            foreach(var discount in @Model.Product.Store.Discounts)
+            {
+                if(discount is SEWorkshop.DataModels.DataOpenDiscount &&
+                    ((SEWorkshop.DataModels.DataOpenDiscount)discount).Product.Equals(@Model.Product))
+                {
+                    <p class="card-text">@discount.ToString()</p>
+                }
+            }
+        }
         <form method="post">
             <input type="hidden" name="StoreName" value="@Model.Product.Store.Name">
             <input type="hidden" name="ProductName" value="@Model.Product.Name">
