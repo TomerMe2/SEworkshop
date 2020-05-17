@@ -15,5 +15,10 @@ namespace SEWorkshop.DataModels
         {
             InnerBuyOverModel = discount;
         }
+
+        public override string ToString()
+        {
+            return "Purchase Over " + MinSum + " And Get: " + Percentage + "% Discount On Product: '" + this.Product.Name + "' Untill: " + Deadline.ToString();
+        }
     }
 }

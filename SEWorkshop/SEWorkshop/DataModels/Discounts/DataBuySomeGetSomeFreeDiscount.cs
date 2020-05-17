@@ -16,5 +16,10 @@ namespace SEWorkshop.DataModels
         {
             InnerBuySomeModel = discount;
         }
+
+        public override string ToString()
+        {
+            return "Buy " + BuySome + " Get "+ GetSome + " With: " + Percentage + "% Discount On Product: '" + this.Product.Name + "' Untill: " + Deadline.ToString();
+        }
     }
 }

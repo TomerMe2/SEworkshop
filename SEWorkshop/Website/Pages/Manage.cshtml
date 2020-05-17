@@ -113,7 +113,7 @@
             }
         }
     </table>
-    @if (Model.Store != null && Model.LoggedUser != null)
+    if (Model.LoggedUser != null && Model.Store != null)
     {
         var auths = Model.LoggedUser.Manages.ContainsKey(Model.Store) ? Model.LoggedUser.Manages[Model.Store] : null;
         @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Owner))))
@@ -257,6 +257,156 @@
                     <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
                 </div>
             </form>
-        }
-    }
-}
+
+            <h3>Manage Discounts</h3>
+            <h4>Current Discount:</h4>
+            @if (Model.DiscountNumber > 0)
+            {
+            <table style="width:80%;border:solid;border-color:black;border-width:1px">
+                <tr style="border:solid;border-color:black;border-width:1px">
+                    <th style="border:solid;border-color:black;border-width:1px">Index</th>
+                    <th style="border:solid;border-color:black;border-width:1px">Discount</th>
+                    <th style="border:solid;border-color:black;border-width:1px;width:20%">Action</th>
+                </tr>
+                @{ 
+                    int index = 0;
+                    foreach (var d in Model.discounts)
+                    {
+                        <tr>
+                            <th style="border:solid;border-color:black;border-width:1px">@index</th>
+                            <th style="border:solid;border-color:black;border-width:1px">@d</th>
+                            <th style="border:solid;border-color:black;border-width:1px">
+                                <form id="removeDiscount" method="post" style="text-align:center">
+                                    <div class="form-group">
+                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                        <input type="hidden" name="index" value=@index>
+                                        <button type="submit" asp-page-handler="RemoveDiscountHandler" class="form-control btn btn-primary" style="width:80%">Remove</button>
+                                    </div>
+                                </form>
+                            </th>
+                        </tr>
+                        index++;
+                    }
+                }
+            </table>
+                    }
+                    else
+                    {
+                <h5>None</h5>
+                    }
+
+                <h6>Leave Index Field Empty For New Discount</h6>
+                <h4>Add Discount</h4>
+                <form id="discount" method="post">
+                    <div class="form-group" onload="fun(0)">
+                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                        <select id="operator" name="oper">
+                            <option value="And">And</option>
+                            <option value="Or">Or</option>
+                            <option value="Xor">Xor</option>
+                            <option value="Implies">Implies</option>
+                        </select>
+                        <select id="appliedTo" name="appliedTo" onchange="fun(this.value)">
+                            <option value="Product">Product</option>
+                            <option value="Category">Category</option>
+                        </select>
+                        <select id="chosenProduct" name="chosenProduct" style="width:8%">
+                            @foreach (var s in Model.products)
+                            {
+                                <option value=@s>@s</option>
+                            }
+                        </select>
+                        <select id="chosenCategory" name="chosenCategory" style="display:none;width:8%">
+                            @foreach (var s in Model.categories)
+                            {
+                                <option value=@s>@s</option>
+                            }
+                        </select>
+                        <label for="percent">Discount:</label>
+                        <input type="number" id="percent" name="percent" min=0 max=100>
+                        <label for="index">%  Index: </label>
+                        <input type="number" id="index" name="index" style="width:5%" min="0" max="@(Model.DiscountNumber - 1)">
+                        <label for="date">  Deadline</label>
+                        <input type="date" id="date" name="date" style="width:15%">
+                        <button type="submit" asp-page-handler="DiscountHandler" class="form-control btn btn-primary" style="width:15%">Add Discount</button>
+                    </div>
+                </form>
+
+                <h4>Add Buy X Get Y Discount</h4>
+                <form id="discount" method="post">
+                    <div class="form-group">
+                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                        <select id="operator" name="oper">
+                            <option value="And">And</option>
+                            <option value="Or">Or</option>
+                            <option value="Xor">Xor</option>
+                            <option value="Implies">Implies</option>
+                        </select>
+                        <select id="chosenProduct" name="chosenProduct" style="width:8%">
+                            @foreach (var s in Model.products)
+                            {
+                                <option value=@s>@s</option>
+                            }
+                        </select>
+                        <label for="buy">Buy:</label>
+                        <input type="number" id="buy" name="buy" style="width:6%" min="0">
+                        <label for="get">Get:</label>
+                        <input type="number" id="get" name="get" style="width:6%" min="0">
+                        <label for="percent">Discount:</label>
+                        <input type="number" id="percent" name="percent" min="0" max=100>
+                        <label for="index">%  Index: </label>
+                        <input type="number" id="index" name="index" style="width:5%" min="0" max="@(Model.DiscountNumber - 1)">
+                        <label for="date">  Deadline</label>
+                        <input type="date" id="date" name="date" style="width:15%">
+                        <button type="submit" asp-page-handler="GetDiscountHandler" class="form-control btn btn-primary" style="width:15%">Add Discount</button>
+                    </div>
+                </form>
+
+                <h4>Add Buy Over X Discount</h4>
+                <form id="discount" method="post">
+                    <div class="form-group">
+                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                        <select id="operator" name="oper">
+                            <option value="And">And</option>
+                            <option value="Or">Or</option>
+                            <option value="Xor">Xor</option>
+                            <option value="Implies">Implies</option>
+                        </select>
+                        <select id="chosenProduct" name="chosenProduct" style="width:8%">
+                            @foreach (var s in Model.products)
+                            {
+                                <option value=@s>@s</option>
+                            }
+                        </select>
+                        <label for="buy">Buy Over:</label>
+                        <input type="number" id="buy" name="buy" style="width:6%" min="0">
+                        <label for="percent">Discount:</label>
+                        <input type="number" id="percent" name="percent" min="0" max=100>
+                        <label for="index">%  Index: </label>
+                        <input type="number" id="index" name="index" style="width:5%" min="0" max="@(Model.DiscountNumber - 1)">
+                        <label for="date">  Deadline</label>
+                        <input type="date" id="date" name="date" style="width:15%">
+                        <button type="submit" asp-page-handler="OverDiscountHandler" class="form-control btn btn-primary" style="width:15%">Add Discount</button>
+                    </div>
+                </form>
+
+                <script>
+                    function fun(val) {
+                        if (val == "Product") {
+                            $('#chosenCategory').hide();
+                            $('#chosenProduct').show();
+                        }
+                        else if (val == "Category") {
+                            $('#chosenProduct').hide();
+                            $('#chosenCategory').show();
+                        }
+                        else if (val == 0) {
+                            $('#chosenProduct').show();
+                            $('#chosenCategory').hide();
+                        }
+                    }
+                </script>
+
+                }
+                }
+                }
