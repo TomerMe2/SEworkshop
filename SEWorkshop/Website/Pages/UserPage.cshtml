@@ -4,11 +4,18 @@
     ViewData["Title"] = "UserPage";
 }
 
-<h1>@Model.Username's Purchase History</h1>
+@if (Model.SearchUsername.Length == 0)
+{
+    @:<h1>@Model.Username's Purchase History</h1>
+}
+else
+{
+    @:<h1>@Model.SearchUsername's Purchase History</h1>
+}
 
 @{ if (Model.Purchases.Count() == 0)
     {
-        @:<h6>No Purchases</h6>
+        @:<h6 style="color:#242c3c">No Purchases</h6>
     }
     else
     {
@@ -21,11 +28,20 @@
 
 @if (Model.IsAdmin)
 {
+    @:<h5>Type a username to watch his purchase history</h5>
+    <form id="searchForm" method="post">
+        <div class="form-inline">
+            <input asp-for="SearchUsername" id="searchText" name="searchText" class="form-control" type="text" placeholder="Username" aria-label="Search" style="width: 68%">
+            <button type="submit" class="form-control btn btn-primary" id="submit" style="width: 10%">Search</button>
+        </div>
+    </form>
+    @:<text class="alert-danger">@Model.ErrorMsg</text>
+    @:<h5>Select a user to view his purchase history</h5>
     @foreach (string username in Model.Users)
     {
         @:
         <div class="card-body">
-            <h5 class="card-title"><a href='/UserPage/@username'></a>@username</h5>
+            <h5 class="card-title"><a asp-page="/UserPage" asp-route-username="@username">@username</a></h5>
         </div>
     }
 }
