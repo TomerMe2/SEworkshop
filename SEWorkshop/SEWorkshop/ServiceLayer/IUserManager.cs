@@ -81,5 +81,6 @@ namespace SEWorkshop.ServiceLayer
 
         public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
         public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
+        public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
     }
 }

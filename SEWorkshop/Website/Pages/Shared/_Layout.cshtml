@@ -16,7 +16,7 @@
                 var usrUp = Model.UserManager.GetDataLoggedInUser(sessionId);
                 <script src="~/lib/signalr.js"></script>
                 <script src="~/js/MessageNotificationsHubClient.js"></script>
-                <script> ConnectToNotificationsHub('@usrUp.Username')</script>
+                <script> connectToAllHubs('@usrUp.Username')</script>
             }
         }
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
