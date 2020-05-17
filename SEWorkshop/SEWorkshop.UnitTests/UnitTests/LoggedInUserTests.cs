@@ -9,7 +9,7 @@ using SEWorkshop.Enums;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
 
-namespace SEWorkshop.Tests
+namespace SEWorkshop.Tests.UnitTests
 {
     [TestFixture]
     public class LoggedInUserTests

@@ -6,7 +6,7 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 
-namespace SEWorkshop.Tests
+namespace SEWorkshop.Tests.UnitTests
 {
     [TestFixture]
     public class StoreTests

@@ -9,7 +9,7 @@ using System.Linq;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Enums;
 
-namespace SEWorkshop.UnitTests
+namespace SEWorkshop.Tests.IntegrationTests
 {
     [TestFixture]
     class ManageFacadeTests

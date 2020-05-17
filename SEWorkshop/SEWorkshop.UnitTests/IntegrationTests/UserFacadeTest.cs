@@ -7,7 +7,7 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 
-namespace SEWorkshop.UnitTests
+namespace SEWorkshop.Tests.IntegrationTests
 {
     [TestFixture]
     public class UserFacadeTest
