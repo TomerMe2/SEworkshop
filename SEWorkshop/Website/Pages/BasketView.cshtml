@@ -14,14 +14,14 @@
                 }
             </div>
             @{
-                double sum = 0;
-                double sumafterdiscount = 0;
+                double sum = Model.Basket.PriceWithoutDiscount;
+                double sumafterdiscount = Model.Basket.PriceAfterDiscount;
                 foreach (var product in Model.Basket.Products)
                 {
                     string name = product.Item1.Name;
                     int quantity = product.Item2;
-                    sum += quantity * product.Item1.Price;
-                    sumafterdiscount += quantity * product.ToTuple().Item1.PriceAfterDiscount;
+                    //sum += quantity * product.Item1.Price;
+                    //sumafterdiscount += quantity * product.ToTuple().Item1.PriceAfterDiscount;
                     var priceOfProd = quantity * product.Item1.Price;
                     <div>
                         <div><h5>Product: @name</h5></div>

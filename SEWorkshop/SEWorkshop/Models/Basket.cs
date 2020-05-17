@@ -22,7 +22,7 @@ namespace SEWorkshop.Models
             double totalPrice = 0;
             foreach (var (product, quantity) in Products)
             {
-                totalPrice += product.Price * product.Quantity;
+                totalPrice += product.Price * quantity;
             }
 
             return totalPrice;
