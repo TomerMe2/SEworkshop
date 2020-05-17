@@ -8,7 +8,6 @@ using SEWorkshop.Adapters;
 using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
-using SEWorkshop.Models;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -483,7 +482,7 @@ namespace SEWorkshop.ServiceLayer
 
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeName, string description)
         {
-            Log.Info(string.Format("MessageReply    {0}", storeName));
+            Log.Info(string.Format("MessageReply    {0}    {1}    {2}", storeName, message.Id, description));
             try
             {
                 var msg = FacadesBridge.MessageReply(GetLoggedInUser(sessionId), message, storeName, description);
@@ -525,37 +524,39 @@ namespace SEWorkshop.ServiceLayer
 
         public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op)
         {
-            Log.Info(string.Format("AddAlwaysTruePolicy    {0}", storeName));
+            Log.Info(string.Format("AddAlwaysTruePolicy    {0}    {1}", storeName, op));
             FacadesBridge.AddAlwaysTruePolicy(GetLoggedInUser(sessionId), storeName, op);
         }
 
         public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
         {
-            Log.Info(string.Format("AddSingleProductQuantityPolicy    {0}    {1}    {2}    {3}", storeName, productName, minQuantity, maxQuantity));
+            Log.Info(string.Format("AddSingleProductQuantityPolicy    {0}    {1}    {2}    {3}    {4}",
+                storeName, productName, op, minQuantity, maxQuantity));
             FacadesBridge.AddSingleProductQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, productName, minQuantity, maxQuantity);
         }
 
         public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
         {
-            Log.Info(string.Format("AddSystemDayPolicy    {0}    {1}", storeName, cantBuyIn.ToString()));
+            Log.Info(string.Format("AddSystemDayPolicy    {0}    {1}    {2}", storeName, op, cantBuyIn.ToString()));
             FacadesBridge.AddSystemDayPolicy(GetLoggedInUser(sessionId), storeName, op, cantBuyIn);
         }
 
         public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity)
         {
-            Log.Info(string.Format("AddUserCityPolicy    {0}    {1}", storeName, requiredCity));
+            Log.Info(string.Format("AddUserCityPolicy    {0}    {1}    {2}", storeName, op, requiredCity));
             FacadesBridge.AddUserCityPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCity);
         }
 
         public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry)
         {
-            Log.Info(string.Format("AddUserCountryPolicy    {0}    {1}", storeName, requiredCountry));
+            Log.Info(string.Format("AddUserCountryPolicy    {0}    {1}    {2}", storeName, op, requiredCountry));
             FacadesBridge.AddUserCountryPolicy(GetLoggedInUser(sessionId), storeName, op, requiredCountry);
         }
 
         public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity)
         {
-            Log.Info(string.Format("AddWholeStoreQuantityPolicy    {0}    {1}    {2}", storeName, minQuantity, maxQuantity));
+            Log.Info(string.Format("AddWholeStoreQuantityPolicy    {0}    {1}    {2}    {3}",
+                storeName, op, minQuantity, maxQuantity));
             FacadesBridge.AddWholeStoreQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, minQuantity, maxQuantity);
         }
 
@@ -582,37 +583,37 @@ namespace SEWorkshop.ServiceLayer
 
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
-            Log.Info(string.Format("MarkAllDiscussionAsRead    {0}", storeName));
+            Log.Info(string.Format("MarkAllDiscussionAsRead    {0}    {1}", storeName, msg.Id));
             FacadesBridge.MarkAllDiscussionAsRead(GetLoggedInUser(sessionId), storeName, msg);
         }
 
         public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
         {
-            Log.Info(string.Format("AddProductCategoryDiscount    {0}    {1}    {2}    {3}    {4}",
-                storeName, categoryName, deadline, percentage, indexInChain));
+            Log.Info(string.Format("AddProductCategoryDiscount    {0}    {1}    {2}    {3}    {4}    {5}",
+                storeName, categoryName, deadline, percentage, op, indexInChain));
             FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
         }
         public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
         {
-            Log.Info(string.Format("AddBuyOverDiscount    {0}    {1}    {2}    {3}    {4}    {5}",
-                  storeName, productName, deadline, percentage, indexInChain, minSum));
+            Log.Info(string.Format("AddBuyOverDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}",
+                  storeName, productName, deadline, percentage, op, indexInChain, minSum));
             FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain);
         }
         public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
         {
-            Log.Info(string.Format("AddBuySomeGetSomeDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}",
-                    storeName, productName, deadline, percentage, indexInChain, buySome, getSome));
+            Log.Info(string.Format("AddBuySomeGetSomeDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}    {7}",
+                    storeName, productName, deadline, percentage, op, indexInChain, buySome, getSome));
             FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain);
         }
 
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain)
         {
-            Log.Info(string.Format("AddSpecificProductDiscount    {0}    {1}    {2}    {3}    {4}",
-                    storeName, productName, deadline, percentage, indexInChain));
+            Log.Info(string.Format("AddSpecificProductDiscount    {0}    {1}    {2}    {3}    {4}    {5}",
+                    storeName, productName, deadline, percentage, op, indexInChain));
             FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage, op, indexInChain);
         }
 
