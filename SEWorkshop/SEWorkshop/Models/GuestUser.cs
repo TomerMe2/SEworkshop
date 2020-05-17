@@ -21,7 +21,7 @@ namespace SEWorkshop.Models
             }
         }
         
-        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -39,6 +39,7 @@ namespace SEWorkshop.Models
             basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
+            return purchase;
         }
     }
 }

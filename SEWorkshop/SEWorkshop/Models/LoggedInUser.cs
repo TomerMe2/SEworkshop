@@ -267,7 +267,16 @@ namespace SEWorkshop.Models
             return management.ViewPurchaseHistory(this, store);
         }
 
-        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        public bool isManger(Store store)
+        {
+            if(Owns.FirstOrDefault(man => man.Store == store) != default)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -287,6 +296,7 @@ namespace SEWorkshop.Models
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             facade.AddPurchaseToList(purchase);
+            return purchase;
         }
 
 

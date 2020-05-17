@@ -16,7 +16,7 @@ namespace SEWorkshop.Facades
         public DataGuestUser CreateGuest();
         public IEnumerable<DataBasket> MyCart(DataUser user);
         public void OpenStore(DataLoggedInUser user, string storeName);
-        public void Purchase(DataUser user, DataBasket basket, string creditCardNumber, Address address);
+        public DataPurchase Purchase(DataUser user, DataBasket basket, string creditCardNumber, Address address);
         public void Register(string username, byte[] password);
         public void RemoveProductFromCart(DataUser user, string storeName, string productName, int quantity);
 
