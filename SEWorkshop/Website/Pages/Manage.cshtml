@@ -8,8 +8,8 @@
 <text class="alert-danger">@Model.Error</text>
 
 @{
-    bool isOwner = Model.LoggedUser != null && Model.LoggedUser.Owns.Contains(Model.Store);
-    bool isManager = Model.LoggedUser != null && Model.Store != null && Model.LoggedUser.Manages.ContainsKey(Model.Store);
+    bool isOwner = Model.LoggedUser == null || Model.Store == null ? false : Model.LoggedUser.Owns.Contains(Model.Store);
+    bool isManager = Model.LoggedUser == null || Model.Store == null ? false : Model.LoggedUser.Manages.ContainsKey(Model.Store);
     if (isOwner)
     {
         <h3>Position - Owner</h3>
@@ -29,7 +29,7 @@
         </tr>
 
         @{
-            if(Model.Store != null)
+            if (Model.Store != null)
             {
                 foreach (var owner in Model.Store.Owners)
                 {
@@ -50,7 +50,7 @@
             }
         }
         @{
-            if(Model.Store != null)
+            if (Model.Store != null)
             {
                 foreach (var manager in Model.Store.Managers)
                 {
@@ -70,20 +70,23 @@
                                             <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:35%">Remove Manager</button>
                                         </div>
                                     </form>
-                                    ICollection<SEWorkshop.Enums.Authorizations>? tempauths = new List<SEWorkshop.Enums.Authorizations>();
-                                    manager.Key.Manages.TryGetValue(Model.Store, out tempauths);
+                                    var tempauths = manager.Key.Manages.ContainsKey(Model.Store) ? manager.Key.Manages[Model.Store] : null;
                                     if (isOwner || (tempauths != null && tempauths.Contains(SEWorkshop.Enums.Authorizations.Authorizing)))
-                                        foreach (SEWorkshop.Enums.Authorizations? a in Enum.GetValues(typeof(SEWorkshop.Enums.Authorizations)))
+                                        foreach (SEWorkshop.Enums.Authorizations? auth in Enum.GetValues(typeof(SEWorkshop.Enums.Authorizations)))
                                         {
-                                            if (tempauths != null && a != null && tempauths.Contains((SEWorkshop.Enums.Authorizations)a))
+                                            if (auth is null)
+                                            {
+                                                continue;
+                                            }
+                                            if (tempauths != null && tempauths.Contains(auth.Value))
                                             {
                                                 <form method="post" style="text-align:center">
                                                     <div class="form-group">
                                                         <input type="hidden" name="storeName" value=@Model.Store.Name>
                                                         <input type="hidden" name="request" value="RemovePermission">
                                                         <input type="hidden" name="username" value=@manager.Key.Username>
-                                                        <input type="hidden" name="authorization" value=@a>
-                                                        <label style="color:green">@a Permission: Granted </label>
+                                                        <input type="hidden" name="authorization" value=@auth>
+                                                        <label style="color:green">@auth Permission: Granted </label>
                                                         <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Remove</button>
                                                     </div>
                                                 </form>
@@ -95,8 +98,8 @@
                                                         <input type="hidden" name="storeName" value=@Model.Store.Name>
                                                         <input type="hidden" name="request" value="AddPermission">
                                                         <input type="hidden" name="username" value=@manager.Key.Username>
-                                                        <input type="hidden" name="authorization" value=@a>
-                                                        <label style="color:red">@a Permission: Not Granted </label>
+                                                        <input type="hidden" name="authorization" value=@auth>
+                                                        <label style="color:red">@auth Permission: Not Granted </label>
                                                         <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Grant</button>
                                                     </div>
                                                 </form>
@@ -110,11 +113,10 @@
             }
         }
     </table>
-    ICollection<SEWorkshop.Enums.Authorizations>? auths = new List<SEWorkshop.Enums.Authorizations>();
-    if(Model.LoggedUser != null && Model.Store != null)
+    @if (Model.Store != null && Model.LoggedUser != null)
     {
-        Model.LoggedUser.Manages.TryGetValue(Model.Store, out auths);
-        @if (Model.Store != null && (isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Owner))))
+        var auths = Model.LoggedUser.Manages.ContainsKey(Model.Store) ? Model.LoggedUser.Manages[Model.Store] : null;
+        @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Owner))))
         {
             <h3>Add Owner</h3>
             <form id="addOwner" method="post">
@@ -126,19 +128,22 @@
                 </div>
             </form>
         }
+
+        @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Manager))))
+        {
+            <h3>Add Manager</h3>
+            <form id="addManager" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="storeName" value=@Model.Store.Name>
+                    <input type="hidden" name="request" value="AddManager">
+                    <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
+                    <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
+                </div>
+            </form>
+        }
     }
-    @if (Model.Store != null && (isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Manager))))
-    {
-        <h3>Add Manager</h3>
-        <form id="addManager" method="post">
-            <div class="form-group">
-                <input type="hidden" name="storeName" value=@Model.Store.Name>
-                <input type="hidden" name="request" value="AddManager">
-                <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
-                <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
-            </div>
-        </form>
-    }
+
+
 
     @if (isOwner)
     {
@@ -146,7 +151,7 @@
         <h4>Current Policy:</h4>
         <h5>@Model.Policy</h5>
 
-        @if (Model.Store != null && Model.PolicyNumber > 0)
+        @if (Model.PolicyNumber > 0 && Model.Store != null)
         {
             <h4>Remove Policy</h4>
             <form id="addManager" method="post">
@@ -159,7 +164,8 @@
                 </div>
             </form>
         }
-        if(Model.Store != null)
+
+        @if (Model.Store != null)
         {
             <h4>Add Day Policy</h4>
             <form id="dayPolicy" method="post">
@@ -183,7 +189,7 @@
                     <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
                 </div>
             </form>
-        
+
             <h4>Add Country Policy</h4>
             <form id="addManager" method="post">
                 <div class="form-group">
@@ -203,8 +209,8 @@
                     <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
                 </div>
             </form>
-        
-        <h4>Add City Policy</h4>
+
+            <h4>Add City Policy</h4>
             <form id="addManager" method="post">
                 <div class="form-group">
                     <input type="hidden" name="storeName" value=@Model.Store.Name>

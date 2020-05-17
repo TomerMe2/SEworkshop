@@ -1,0 +1,62 @@
+﻿@page
+@model Website.Pages.MyStoresModel
+@{
+    ViewData["Title"] = "MyStores";
+}
+
+@{
+    var sid = HttpContext.Session.Id;
+    if (!Model.UserManager.IsLoggedIn(sid))
+    {
+        <h4>You are not logged in</h4>
+    }
+    else
+    {
+        var usr = Model.UserManager.GetDataLoggedInUser(sid);
+        if (!usr.Owns.Any())
+        {
+            <h4>You don't own any stores</h4>
+        }
+        else
+        {
+            <h4>Stores that you own:</h4>
+            var alreadySeenStores = new List<SEWorkshop.DataModels.DataStore>();
+            foreach (var store in usr.Owns)
+            {
+                if (alreadySeenStores.Contains(store))
+                {
+                    continue;
+                }
+                alreadySeenStores.Add(store);
+                <div class="card" style="width: 70%">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href='/Store/@store.Name'>@store.Name</a></h5>
+                    </div>
+                </div>
+            }
+        }
+        if (!usr.Manages.Any())
+        {
+            <h4>You don't manage any stores</h4>
+        }
+        else
+        {
+            <h4>Stores that you manage:</h4>
+            foreach (var keyVal in usr.Manages)
+            {
+                <div class="card" style="width: 70%">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href='/Store/@keyVal.Key.Name'>@keyVal.Key.Name</a></h5>
+                        <h5 class="card-text"> with authorizations:
+                        @{ 
+                            IEnumerable<string> auths = keyVal.Value.Select(auth => auth.ToString());
+                            @:<span>@string.Join(", ", auths)</span>
+                        }
+                        </h5>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+
