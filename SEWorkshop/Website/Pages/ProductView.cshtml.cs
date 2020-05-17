@@ -20,7 +20,7 @@ namespace Website.Pages
         {
             Product = product;
             UserManager = userManager;
-            destPath = "./Store/"+Product.Store.Name;
+            destPath = "./Store/" + Product.Store.Name;
             Authorized = authorized;
         }
 
