@@ -26,7 +26,7 @@ namespace Website.Pages
             Username = "";
         }
 
-        public void OnGet(string username)
+        public IActionResult OnGet(string username)
         {
             string sid = HttpContext.Session.Id;
             Username = (UserManager.GetDataLoggedInUser(sid)).Username;
@@ -38,9 +38,17 @@ namespace Website.Pages
             }
             else
             {
-                Purchases = UserManager.UserPurchaseHistory(sid, username);
+                try
+                {
+                    Purchases = UserManager.UserPurchaseHistory(sid, username);
+                }
+                catch
+                {
+                    return StatusCode(500);
+                }
                 Username = username;
             }
+            return Page();
         }
         
         public void OnPost(string content, string storeName, string productName)
