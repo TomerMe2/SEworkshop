@@ -40,7 +40,7 @@ async function connectToAllHubs(userName) {
 
     const handlersForPurchasHub = [
         ["NewPurchase", storeName => {
-            alert("Some purchased from your store " + storeName);
+            alert("Someone purchased from your store " + storeName);
         }]
     ];
     ConnectToNotificationsHub(userName, "/purchasenotificationshub", handlersForPurchasHub);

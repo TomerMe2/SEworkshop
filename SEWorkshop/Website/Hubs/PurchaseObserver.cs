@@ -38,7 +38,6 @@ namespace Website.Hubs
             foreach (var keyVal in ConnectionsDict)
             {
                 var usrName = keyVal.Value;
-                var owns = arg.Basket.Store.Owners.First(innerKeyVal => innerKeyVal.Key.Username.Equals(usrName));
                 // This requirement is defined only for owners
                 foreach (var innerKeyVal in arg.Basket.Store.Owners)
                 {
