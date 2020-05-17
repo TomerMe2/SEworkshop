@@ -23,11 +23,13 @@ namespace Website.Pages
         public string Error { get; private set; }
         public string Policy { get; private set; }
         public int PolicyNumber { get; private set; }
+        public int DiscountNumber { get; private set; }
         public int Min { get; private set; }
         public int Max { get; private set; }
         public DataStore? Store { get; private set; }
         public DataLoggedInUser? LoggedUser { get; private set; }
         public IEnumerable<string> countries { get; private set; }
+        public ICollection<string> discounts { get; private set; }
         public ICollection<string> products { get; private set; }
         public ICollection<string> categories { get; private set; }
 
@@ -36,9 +38,12 @@ namespace Website.Pages
             UserManager = userManager;
             StoreName = "";
             countries = System.IO.File.ReadAllLines("./wwwroot/texts/countries.txt");
+            products = new List<string>();
+            categories = new List<string>();
+            discounts = new List<string>();
             Error = "";
             Policy = "";
-            
+            DiscountNumber = 0;
         }
         public void OnGet(string storeName, string error) 
         {
@@ -47,20 +52,18 @@ namespace Website.Pages
             DataPolicy policy = Store.Policy;
             PolicyNumber = 0;
             Error = error;
-            products = new List<string>();
-            categories = new List<string>();
             foreach (DataProduct dp in Store.Products)
             {
                 if (!categories.Contains(dp.Category))
                     categories.Add(dp.Category);
                 products.Add(dp.Name);
             }
-
+            DiscountNumber = Store.Discounts.Count();
             if (policy is DataAlwaysTruePolicy)
                 Policy = "None";
             else
                 Policy = StringPolicy(policy, 1);
-
+            
         }
 
         public IActionResult OnPostOwnerManagerHandler(string storeName, string request, string username)
@@ -230,22 +233,77 @@ namespace Website.Pages
 
         public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index)
         {
+            int newIndex;
             string sid = HttpContext.Session.Id;
             DateTime dateTime = DateTime.Parse(date);
             Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
             StoreName = storeName;
             try
             {
+                if (index == null)
+                    newIndex = DiscountNumber;
+                else
+                    newIndex = Int32.Parse(index);
+                Store = UserManager.SearchStore(storeName);
+                DiscountNumber = Store.Discounts.Count();
                 if (appliedTo.Equals("Product"))
                 {
-                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, Int32.Parse(index));
+                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
                 }
                 else
                 {
-                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, Int32.Parse(index));
+                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex);
                 }
             }
             catch(Exception e){
+                Error = e.ToString();
+            }
+            return RedirectToPage("./Manage", new { StoreName, Error });
+        }
+
+        public IActionResult OnPostGetDiscountHandler(string storeName, string buy, string get, string oper, string chosenProduct, string percent, string date, string index)
+        {
+            int newIndex;
+            string sid = HttpContext.Session.Id;
+            DateTime dateTime = DateTime.Parse(date);
+            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            try
+            {
+                Store = UserManager.SearchStore(storeName);
+                DiscountNumber = Store.Discounts.Count();
+                if (index == null)
+                    newIndex = DiscountNumber;
+                else
+                    newIndex = Int32.Parse(index);
+                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+            }
+            catch (Exception e)
+            {
+                Error = e.ToString();
+            }
+            return RedirectToPage("./Manage", new { StoreName, Error });
+        }
+
+        public IActionResult OnPostOverDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index)
+        {
+            int newIndex;
+            string sid = HttpContext.Session.Id;
+            DateTime dateTime = DateTime.Parse(date);
+            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            try
+            {
+                Store = UserManager.SearchStore(storeName);
+                DiscountNumber = Store.Discounts.Count();
+                if (index == null)
+                    newIndex = DiscountNumber;
+                else
+                    newIndex = Int32.Parse(index);
+                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+            }
+            catch (Exception e)
+            {
                 Error = e.ToString();
             }
             return RedirectToPage("./Manage", new { StoreName, Error });
