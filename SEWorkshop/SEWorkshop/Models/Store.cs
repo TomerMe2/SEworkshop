@@ -58,9 +58,13 @@ namespace SEWorkshop.Models
                 select product).ToList();
         }
 
-        public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address)
+        public void PurchaseBasket(ICollection<(Product, int)> itemsList, string creditCardNumber, Address address, User user)
         {
             double totalPrice = 0;
+            if (!Policy.CanPurchase(user, address))
+            {
+                throw new PolicyIsFalse();
+            }
             foreach (var (prod, purchaseQuantity) in itemsList)
             {
                 if (prod.Quantity - purchaseQuantity < 0)

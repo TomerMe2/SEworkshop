@@ -11,5 +11,10 @@ namespace SEWorkshop.DataModels
         {
             InnerSpecificProducDiscount = discount;
         }
+
+        public override string ToString()
+        {
+            return Percentage + "% On Product: '"  + this.Product.Name + "' Untill: " + Deadline.ToString();
+        }
     }
 }

@@ -126,9 +126,9 @@ namespace SEWorkshop.Facades
             return userPurchases;
         }
 
-        public void Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            user.Purchase(basket, creditCardNumber, address, this);
+            return user.Purchase(basket, creditCardNumber, address, this);
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
@@ -224,6 +224,11 @@ namespace SEWorkshop.Facades
             var guest = new GuestUser();
             GuestUsers.Add(guest);
             return guest;
+        }
+
+        public IEnumerable<string> GetRegisteredUsers()
+        {
+            return RegisteredUsers.Select(user => user.Username);
         }
     }
 }

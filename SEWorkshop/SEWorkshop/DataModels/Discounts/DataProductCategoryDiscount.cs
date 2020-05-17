@@ -12,5 +12,10 @@ namespace SEWorkshop.DataModels
         {
             InnerProductCategoryDiscount = discount;
         }
+
+        public override string ToString()
+        {
+            return Percentage + "% On Category: '" + CatUnderDiscount + "' Untill: " + Deadline.ToString();
+        }
     }
 }

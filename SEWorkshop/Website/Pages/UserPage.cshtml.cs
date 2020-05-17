@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEWorkshop;
 using SEWorkshop.DataModels;
 using SEWorkshop.ServiceLayer;
 
@@ -13,24 +12,51 @@ namespace Website.Pages
     public class UserPageModel : PageModel
     {
         public IUserManager UserManager { get; }
-        public IEnumerable<DataPurchase> purchases { get; private set; }
+        public IEnumerable<DataPurchase> Purchases { get; private set; }
+        public IEnumerable<string> Users;
+        public bool IsAdmin;
+        public string Username;
+
         public UserPageModel(IUserManager userManager)
         {
             UserManager = userManager;
-            purchases = new List<DataPurchase>();
-            
-        }
-        public void OnGet()
-        {
-            purchases = UserManager.PurchaseHistory(HttpContext.Session.Id);
+            Purchases = new List<DataPurchase>();
+            Users = new List<string>();
+            IsAdmin = false;
+            Username = "";
         }
 
+        public IActionResult OnGet(string username)
+        {
+            string sid = HttpContext.Session.Id;
+            Username = (UserManager.GetDataLoggedInUser(sid)).Username;
+            IsAdmin = UserManager.IsAdministrator(sid);
+            Users = UserManager.GetAllUsers(sid).ToList();
+            if (username == null || username.Length == 0)
+            {
+                Purchases = UserManager.PurchaseHistory(sid);
+            }
+            else
+            {
+                try
+                {
+                    Purchases = UserManager.UserPurchaseHistory(sid, username);
+                }
+                catch
+                {
+                    return StatusCode(500);
+                }
+                Username = username;
+            }
+            return Page();
+        }
+        
         public void OnPost(string content, string storeName, string productName)
         {
             string sid = HttpContext.Session.Id;
             UserManager.WriteReview(sid, storeName, productName, content);
-            purchases = UserManager.PurchaseHistory(sid);
+            Purchases = UserManager.PurchaseHistory(sid);
         }
-
+        
     }
 }

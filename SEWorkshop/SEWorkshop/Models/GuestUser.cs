@@ -21,12 +21,12 @@ namespace SEWorkshop.Models
             }
         }
         
-        override public void Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(new GuestUser(), basket, address);
+            purchase = new Purchase(this, basket, address);
          
             ICollection<(Product, int)> productsToPurchase= new List<(Product, int)>();
             foreach (var (prod, purchaseQuantity) in basket.Products)
@@ -36,9 +36,10 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
+            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address, this);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
+            return purchase;
         }
     }
 }

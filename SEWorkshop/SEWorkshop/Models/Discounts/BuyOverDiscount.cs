@@ -8,7 +8,6 @@ namespace SEWorkshop.Models.Discounts
     {
        
         public double MinSum { get; set; }
-        public int OffSum { get; set; }
 
         public BuyOverDiscount(Store store, double minSum, double percentage, DateTime deadline, Product product) : base(percentage, deadline, product, store)
         {
