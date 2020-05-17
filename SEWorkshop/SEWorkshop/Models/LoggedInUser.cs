@@ -291,7 +291,7 @@ namespace SEWorkshop.Models
                 else
                     productsToPurchase.Add((prod, purchaseQuantity));
             }
-            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address);
+            basket.Store.PurchaseBasket(productsToPurchase, creditCardNumber, address, this);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
