@@ -45,9 +45,16 @@ namespace Website.Pages
             Policy = "";
             DiscountNumber = 0;
         }
-        public void OnGet(string storeName, string error) 
+        public IActionResult OnGet(string storeName, string error) 
         {
-            Store = UserManager.SearchStore(storeName);
+            try
+            {
+                Store = UserManager.SearchStore(storeName);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
             LoggedUser = UserManager.GetDataLoggedInUser(HttpContext.Session.Id);
             DataPolicy policy = Store.Policy;
             PolicyNumber = 0;
@@ -67,6 +74,7 @@ namespace Website.Pages
                 Policy = "None";
             else
                 Policy = StringPolicy(policy, 1);
+            return Page();
             
         }
 
@@ -239,8 +247,32 @@ namespace Website.Pages
         {
             int newIndex;
             string sid = HttpContext.Session.Id;
-            DateTime dateTime = DateTime.Parse(date);
-            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
+            {
+                Error = "Missing values";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            DateTime dateTime;
+            Operator op;
+            try
+            {
+                dateTime = DateTime.Parse(date);
+            }
+            catch
+            {
+                Error = "Date is invalid";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            try
+            {
+                op = (Operator)Enum.Parse(typeof(Operator), oper);
+            }
+            catch
+            {
+                Error = "Operator is invalid";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
             StoreName = storeName;
             try
             {
@@ -259,7 +291,8 @@ namespace Website.Pages
                     UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex);
                 }
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 Error = e.ToString();
             }
             return RedirectToPage("./Manage", new { StoreName, Error });
@@ -269,8 +302,32 @@ namespace Website.Pages
         {
             int newIndex;
             string sid = HttpContext.Session.Id;
-            DateTime dateTime = DateTime.Parse(date);
-            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
+            {
+                Error = "Missing values";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            DateTime dateTime;
+            Operator op;
+            try
+            {
+                dateTime = DateTime.Parse(date);
+            }
+            catch
+            {
+                Error = "invalid date";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            try
+            {
+                op = (Operator)Enum.Parse(typeof(Operator), oper);
+            }
+            catch
+            {
+                Error = "invalid operator";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
             StoreName = storeName;
             try
             {
@@ -293,8 +350,32 @@ namespace Website.Pages
         {
             int newIndex;
             string sid = HttpContext.Session.Id;
-            DateTime dateTime = DateTime.Parse(date);
-            Operator op = (Operator)Enum.Parse(typeof(Operator), oper);
+            StoreName = storeName;
+            if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
+            {
+                Error = "Missing values";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            DateTime dateTime;
+            Operator op;
+            try
+            {
+                dateTime = DateTime.Parse(date);
+            }
+            catch
+            {
+                Error = "invalid date";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
+            try
+            {
+                op = (Operator)Enum.Parse(typeof(Operator), oper);
+            }
+            catch
+            {
+                Error = "invalid operator";
+                return RedirectToPage("./Manage", new { StoreName, Error });
+            }
             StoreName = storeName;
             try
             {
