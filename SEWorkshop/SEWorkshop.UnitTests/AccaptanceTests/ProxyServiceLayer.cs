@@ -10,26 +10,25 @@ namespace SEWorkshop.Tests.AccaptanceTests
     class ProxyServiceLayer : Bridge
     {
         private UserManager userManager = new UserManager();
-        private const string DEF_ID = "AccTests";
 
-        public override DataProduct AddProduct(string storeNm, string productName, string description, string category, double price, int quantity)
+        public override DataProduct AddProduct(string sid, string storeNm, string productName, string description, string category, double price, int quantity)
         {
-            return userManager.AddProduct(DEF_ID, storeNm, productName, description, category, price, quantity);
+            return userManager.AddProduct(sid, storeNm, productName, description, category, price, quantity);
         }
 
-        public override void AddProductToCart(string storeName, string productName, int quantity)
+        public override void AddProductToCart(string sid, string storeName, string productName, int quantity)
         {
-            userManager.AddProductToCart(DEF_ID, storeName, productName, quantity);
+            userManager.AddProductToCart(sid, storeName, productName, quantity);
         }
 
-        public override void AddStoreManager(string storeNm, string username)
+        public override void AddStoreManager(string sid, string storeNm, string username)
         {
-            userManager.AddStoreManager(DEF_ID, storeNm, username);
+            userManager.AddStoreManager(sid, storeNm, username);
         }
 
-        public override void AddStoreOwner(string storeNm, string username)
+        public override void AddStoreOwner(string sid, string storeNm, string username)
         {
-            userManager.AddStoreOwner(DEF_ID, storeNm, username);
+            userManager.AddStoreOwner(sid, storeNm, username);
         }
 
         public override IEnumerable<DataStore> BrowseStores()
@@ -37,29 +36,29 @@ namespace SEWorkshop.Tests.AccaptanceTests
             return userManager.BrowseStores();
         }
 
-        public override void EditProductCategory(string storeName, string productName, string category)
+        public override void EditProductCategory(string sid, string storeName, string productName, string category)
         {
-            userManager.EditProductCategory(DEF_ID, storeName, productName, category);
+            userManager.EditProductCategory(sid, storeName, productName, category);
         }
 
-        public override void EditProductDescription(string storeName, string productName, string description)
+        public override void EditProductDescription(string sid, string storeName, string productName, string description)
         {
-            userManager.EditProductDescription(DEF_ID, storeName, productName, description);
+            userManager.EditProductDescription(sid, storeName, productName, description);
         }
 
-        public override void EditProductName(string storeName, string productName, string Name)
+        public override void EditProductName(string sid, string storeName, string productName, string Name)
         {
-            userManager.EditProductName(DEF_ID, storeName, productName, Name);
+            userManager.EditProductName(sid, storeName, productName, Name);
         }
 
-        public override void EditProductPrice(string storeName, string productName, double price)
+        public override void EditProductPrice(string sid, string storeName, string productName, double price)
         {
-            userManager.EditProductPrice(DEF_ID, storeName, productName, price);
+            userManager.EditProductPrice(sid, storeName, productName, price);
         }
 
-        public override void EditProductQuantity(string storeName, string productName, int quantity)
+        public override void EditProductQuantity(string sid, string storeName, string productName, int quantity)
         {
-            userManager.EditProductQuantity(DEF_ID, storeName, productName, quantity);
+            userManager.EditProductQuantity(sid, storeName, productName, quantity);
         }
 
         public override IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred)
@@ -67,64 +66,64 @@ namespace SEWorkshop.Tests.AccaptanceTests
             return FilterProducts(products, pred);
         }
 
-        public override void Login(string username, string password)
+        public override void Login(string sid, string username, string password)
         {
-            userManager.Login(DEF_ID, username, password);
+            userManager.Login(sid, username, password);
         }
 
-        public override void Logout()
+        public override void Logout(string sid)
         {
-            userManager.Logout(DEF_ID);
+            userManager.Logout(sid);
         }
 
-        public override IEnumerable<DataPurchase> ManagingPurchaseHistory(string storeNm)
+        public override IEnumerable<DataPurchase> ManagingPurchaseHistory(string sid, string storeNm)
         {
-            return userManager.ManagingPurchaseHistory(DEF_ID, storeNm);
+            return userManager.ManagingPurchaseHistory(sid, storeNm);
         }
 
-        public override DataMessage MessageReply(DataMessage message, string storeNm, string description)
+        public override DataMessage MessageReply(string sid, DataMessage message, string storeNm, string description)
         {
-            return userManager.MessageReply(DEF_ID, message, storeNm, description);
+            return userManager.MessageReply(sid, message, storeNm, description);
         }
 
-        public override IEnumerable<DataBasket> MyCart()
+        public override IEnumerable<DataBasket> MyCart(string sid)
         {
-            return userManager.MyCart(DEF_ID);
+            return userManager.MyCart(sid);
         }
 
-        public override void OpenStore(string storeName)
+        public override void OpenStore(string sid, string storeName)
         {
-            userManager.OpenStore(DEF_ID, storeName);
+            userManager.OpenStore(sid, storeName);
         }
 
-        public override IEnumerable<DataPurchase> PurchaseHistory()
+        public override IEnumerable<DataPurchase> PurchaseHistory(string sid)
         {
-            return userManager.PurchaseHistory(DEF_ID);
+            return userManager.PurchaseHistory(sid);
         }
 
-        public override void Purchase(DataBasket basket, string creditCardNumber, Address address)
+        public override void Purchase(string sid, DataBasket basket, string creditCardNumber, Address address)
         {
-            userManager.Purchase(DEF_ID, basket, creditCardNumber, address);
+            userManager.Purchase(sid, basket, creditCardNumber, address);
         }
 
-        public override void Register(string username, string password)
+        public override void Register(string sid, string username, string password)
         {
-            userManager.Register(DEF_ID, username, password);
+            userManager.Register(sid, username, password);
         }
 
-        public override void RemoveProduct(string storeNm, string productName)
+        public override void RemoveProduct(string sid, string storeNm, string productName)
         {
-            userManager.RemoveProduct(DEF_ID, storeNm, productName);
+            userManager.RemoveProduct(sid, storeNm, productName);
         }
 
-        public override void RemoveProductFromCart(string storeName, string productName, int quantity)
+        public override void RemoveProductFromCart(string sid, string storeName, string productName, int quantity)
         {
-            userManager.RemoveProductFromCart(DEF_ID, storeName, productName, quantity);
+            userManager.RemoveProductFromCart(sid, storeName, productName, quantity);
         }
 
-        public override void RemoveStoreManager(string storeNm, string username)
+        public override void RemoveStoreManager(string sid, string storeNm, string username)
         {
-            userManager.RemoveStoreManager(DEF_ID, storeNm, username);
+            userManager.RemoveStoreManager(sid, storeNm, username);
         }
 
         public override IEnumerable<DataProduct> SearchProductsByCategory(ref string input)
@@ -142,34 +141,39 @@ namespace SEWorkshop.Tests.AccaptanceTests
             return userManager.SearchProductsByName(ref input);
         }
 
-        public override void SetPermissionsOfManager(string storeNm, string username, string authorization)
+        public override void SetPermissionsOfManager(string sid, string storeNm, string username, string authorization)
         {
-            userManager.SetPermissionsOfManager(DEF_ID, storeNm, username, authorization);
+            userManager.SetPermissionsOfManager(sid, storeNm, username, authorization);
         }
 
-        public override IEnumerable<DataPurchase> StorePurchaseHistory(string storeNm)
+        public override IEnumerable<DataPurchase> StorePurchaseHistory(string sid, string storeNm)
         {
-            return userManager.StorePurchaseHistory(DEF_ID, storeNm);
+            return userManager.StorePurchaseHistory(sid, storeNm);
         }
 
-        public override IEnumerable<DataPurchase> UserPurchaseHistory(string userNm)
+        public override IEnumerable<DataPurchase> UserPurchaseHistory(string sid, string userNm)
         {
-            return userManager.UserPurchaseHistory(DEF_ID, userNm);
+            return userManager.UserPurchaseHistory(sid, userNm);
         }
 
-        public override IEnumerable<DataMessage> ViewMessage(string storeNm)
+        public override IEnumerable<DataMessage> ViewMessage(string sid, string storeNm)
         {
-            return userManager.ViewMessage(DEF_ID, storeNm);
+            return userManager.ViewMessage(sid, storeNm);
         }
 
-        public override void WriteMessage(string storeName, string description)
+        public override void WriteMessage(string sid, string storeName, string description)
         {
-            userManager.WriteMessage(DEF_ID, storeName, description);
+            userManager.WriteMessage(sid, storeName, description);
         }
 
-        public override void WriteReview(string storeName, string productName, string description)
+        public override void WriteReview(string sid, string storeName, string productName, string description)
         {
-            userManager.WriteReview(DEF_ID, storeName, productName, description);
+            userManager.WriteReview(sid, storeName, productName, description);
+        }
+
+        public override void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)
+        {
+            userManager.RegisterPurchaseObserver(obsrv);
         }
     }
 }
