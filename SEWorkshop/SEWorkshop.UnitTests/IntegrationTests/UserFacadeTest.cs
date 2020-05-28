@@ -424,5 +424,24 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             Assert.True(passed);
         }
+
+        [Test]
+        public void IncomeInDateTest()
+        {
+            //THIS TEST CAN FAIL AROUND MIDNIGHT. DO NOT RUN IT AROUND MIDNIGHT.
+            double incomeBefore = UsrFacade.GetIncomeInDate(DateTime.Now);
+            var usr1 = UsrFacade.Register("IncomeInDateTestUsr1", new byte[] { 0 });
+            var usr2 = UsrFacade.Register("IncomeInDateTestUsr2", new byte[] { 0 });
+            var store = StrFacade.CreateStore(usr1, "IncomeInDateTestStr");
+            var prod = new Product(store, "someProd", "nini", "someCat", 123, 99);
+            store.Products.Add(prod);
+            UsrFacade.AddProductToCart(usr2, prod, 5);
+            var basket = usr2.Cart.Baskets.First(bskt => bskt.Store.Name.Equals(store.Name));
+            UsrFacade.Purchase(usr2, basket, "1234", new Address("nini", "nana", "wallak", "ahla"));
+            double increaseShouldBe = basket.PriceAfterDiscount();
+            double incomeNow = UsrFacade.GetIncomeInDate(DateTime.Now);
+            // This weird compare is done to avoid floating number representation issues
+            Assert.IsTrue(Math.Abs((incomeNow - incomeBefore) - increaseShouldBe) <= 0.0001);
+        }
     }
 }

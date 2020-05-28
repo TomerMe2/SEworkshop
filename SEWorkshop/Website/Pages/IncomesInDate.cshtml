@@ -1,0 +1,31 @@
+﻿@page
+@model Website.Pages.IncomesInDateModel
+@{
+    ViewData["Title"] = "IncomesInDate";
+}
+
+@{
+    if (!Model.UserManager.IsAdministrator(Model.HttpContext.Session.Id))
+    {
+        <h1>You are not an admin. Go Away.</h1>
+    }
+    else
+    {
+        <h1>Incomes Per Day</h1>
+        @:<text class="alert-danger">@Model.ErrorMsg</text>
+        <h2 class="text-body">
+            Incomes for @Model.Date.ToString("dd/MM/yyy"):
+            @Model.UserManager.GetIncomeInDate(Model.HttpContext.Session.Id, Model.Date)
+        </h2>
+
+        <div class="allpage">
+            <h3 class="display-4">Look at another day</h3>
+            <form class="loginform" method="post">
+                <input class="input" type="text" name="day" placeholder="day" />
+                <input class="input" type="text" name="month" placeholder="month" />
+                <input class="input" type="text" name="year" placeholder="year" />
+                <button class="submit" type="submit" id="submit">Another Day!</button>
+            </form>
+        </div>
+    }
+}

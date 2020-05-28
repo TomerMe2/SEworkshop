@@ -400,5 +400,10 @@ namespace SEWorkshop.Facades
         {
             return UserFacade.GetRegisteredUsers();
         }
+
+        public double GetIncomeInDate(DateTime date)
+        {
+            return UserFacade.GetIncomeInDate(date);
+        }
     }
 }
