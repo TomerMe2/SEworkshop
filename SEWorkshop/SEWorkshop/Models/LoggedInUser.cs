@@ -296,7 +296,6 @@ namespace SEWorkshop.Models
             return purchase;
         }
 
-
         public void RemovePermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));

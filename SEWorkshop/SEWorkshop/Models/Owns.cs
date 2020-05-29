@@ -17,7 +17,6 @@ namespace SEWorkshop.Models
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-
         public Owns(LoggedInUser loggedInUser, Store store) : base()
         {
             AuthoriztionsOfUser.Add(Authorizations.Authorizing);
@@ -373,18 +372,15 @@ namespace SEWorkshop.Models
         {
             AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
         }
+
         public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
         {
             AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
         }
-
 
         public void RemoveDiscount(int indexInChain)
         {
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }
-
 }
-
-

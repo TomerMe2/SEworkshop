@@ -224,9 +224,52 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			string username = "Noa Kirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
+			bridge.Logout(DEF_SID);
 			bridge.Register(DEF_SID, username, password);
 			bridge.Login(DEF_SID, username, password);
 			bridge.OpenStore(DEF_SID, storeName);
+			string productName = "pouch1";
+			bridge.AddProduct(DEF_SID, storeName, productName, "very cool", "Pouches for women", 50, 300);
+			Assert.That(() => bridge.AddSingleProductQuantityPolicy(DEF_SID, storeName, Enums.Operator.Or, productName, 5, 10), Throws.Nothing);
+
+			bridge.Logout(DEF_SID);
+			bridge.Register(DEF_SID, "user1", "password");
+			bridge.Login(DEF_SID, "user1", "password");
+			bridge.AddProductToCart(DEF_SID, storeName, productName, 7);
+			IEnumerable<DataBasket> cart = bridge.MyCart(DEF_SID);
+			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33");
+			Assert.That(() => bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
+			bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
+			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart.First(), "123456789", address); });
+
+			bridge.Logout(DEF_SID);
+			bridge.Login(DEF_SID, username, password);
+			Assert.That(() => bridge.RemovePolicy(DEF_SID, storeName, 0), Throws.Nothing);
+
+			bridge.Logout(DEF_SID);
+			bridge.Login(DEF_SID, "user1", "password");
+			IEnumerable<DataBasket> cart2 = bridge.MyCart(DEF_SID);
+			Assert.That(() => bridge.Purchase(DEF_SID, cart2.First(), "123456789", address), Throws.Nothing);
+		}
+
+		[Test, Order(34)]
+		public void Test_4_2_2()
+		{
+			string username = "Noa Kirel";
+			string password = "1234";
+			string storeName = "Waist Pouches";
+			bridge.Logout(DEF_SID);
+			bridge.Login(DEF_SID, username, password);
+			string productName2 = "pouch2";
+			bridge.AddProduct(DEF_SID, storeName, productName2, "very cool", "Pouches for women", 50, 300);
+			DateTime deadline = new DateTime().AddYears(1);
+			Assert.That(() => bridge.AddSpecificProductDiscount(DEF_SID, storeName, productName2, deadline, 20, Enums.Operator.And, 0), Throws.Nothing);
+			Assert.That(() => bridge.AddProductCategoryDiscount(DEF_SID, storeName, productName2, deadline, 20, Enums.Operator.And, 1), Throws.Nothing);
+
+			bridge.Logout(DEF_SID);
+			bridge.Login(DEF_SID, "user1", "password");
+			IEnumerable<DataProduct> products = bridge.SearchProductsByName(ref productName2);
+			Assert.AreEqual(32, products.First().PriceAfterDiscount);
 		}
 
 		[Test, Order(23)]
