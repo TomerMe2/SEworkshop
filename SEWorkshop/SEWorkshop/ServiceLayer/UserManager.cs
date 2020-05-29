@@ -632,5 +632,11 @@ namespace SEWorkshop.ServiceLayer
         {
             PurchaseObservers.Add(obsrv);
         }
+
+        public double GetIncomeInDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetIncomeInDate(date);
+        }
     }
 }

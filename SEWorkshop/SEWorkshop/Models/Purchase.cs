@@ -10,6 +10,7 @@ namespace SEWorkshop.Models
         public Basket Basket { get; private set; }
         public Address Address { get; }
         public DateTime TimeStamp { get; }
+        public double MoneyPaid { get; }
 
         public Purchase(User user, Basket basket, Address adrs)
         {
@@ -17,6 +18,7 @@ namespace SEWorkshop.Models
             Basket = basket;
             TimeStamp = DateTime.Now;
             Address = adrs;
+            MoneyPaid = basket.PriceAfterDiscount();
         }
     }
 }

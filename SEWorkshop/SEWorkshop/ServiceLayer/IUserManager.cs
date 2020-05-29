@@ -83,5 +83,7 @@ namespace SEWorkshop.ServiceLayer
         public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
+        public double GetIncomeInDate(string sessionId, DateTime date);
+
     }
 }
