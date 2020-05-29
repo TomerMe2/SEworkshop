@@ -44,7 +44,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.That(() => bridge.BrowseStores(), Throws.Nothing);
 		}
 
-
 		[Test, Order(7)]
 		public void Test_2_5_1()
 		{
@@ -99,7 +98,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			bridge.Login(DEF_SID, "user", "1234");
 			Assert.That(() => bridge.AddProductToCart(DEF_SID, "store1", "bisli", 1), Throws.Nothing);
 			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 2);
-
 		}
 
 		[Test, Order(12)]
@@ -193,7 +191,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.AddProduct(DEF_SID, "store1", "bamba3", "peanut snack", "food", 4.5, 1); });
 			bridge.Logout(DEF_SID);
 			bridge.Login(DEF_SID, "user", "1234");
-
 		}
 
 		[Test, Order(6)]
@@ -219,6 +216,17 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			bridge.Logout(DEF_SID);
 			Assert.Throws<UserHasNoPermissionException>(delegate { bridge.EditProductName(DEF_SID, "store1", "bamba2", "bamba3"); });
 			bridge.Login(DEF_SID, "user", "1234");
+		}
+
+		[Test, Order(33)]
+		public void Test_4_2_1()
+		{
+			string username = "Noa Kirel";
+			string password = "1234";
+			string storeName = "Waist Pouches";
+			bridge.Register(DEF_SID, username, password);
+			bridge.Login(DEF_SID, username, password);
+			bridge.OpenStore(DEF_SID, storeName);
 		}
 
 		[Test, Order(23)]

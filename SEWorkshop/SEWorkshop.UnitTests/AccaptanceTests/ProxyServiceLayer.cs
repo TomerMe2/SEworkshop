@@ -1,4 +1,5 @@
 ﻿using SEWorkshop.DataModels;
+using SEWorkshop.Enums;
 using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
 using System;
@@ -174,6 +175,66 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public override void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)
         {
             userManager.RegisterPurchaseObserver(obsrv);
+        }
+
+        public override void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op)
+        {
+            userManager.AddAlwaysTruePolicy(sessionId, storeName, op);
+        }
+
+        public override void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
+        {
+            userManager.AddSingleProductQuantityPolicy(sessionId, storeName, op, productName, minQuantity, maxQuantity);
+        }
+
+        public override void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        {
+            userManager.AddSystemDayPolicy(sessionId, storeName, op, cantBuyIn);
+        }
+
+        public override void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity)
+        {
+            userManager.AddUserCityPolicy(sessionId, storeName, op, requiredCity);
+        }
+
+        public override void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry)
+        {
+            userManager.AddUserCountryPolicy(sessionId, storeName, op, requiredCountry);
+        }
+
+        public override void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            userManager.AddWholeStoreQuantityPolicy(sessionId, storeName, op, minQuantity, maxQuantity);
+        }
+
+        public override void RemovePolicy(string sessionId, string storeName, int indexInChain)
+        {
+            userManager.RemovePolicy(sessionId, storeName, indexInChain);
+        }
+
+        public override void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            userManager.AddProductCategoryDiscount(sessionId, storeName, categoryName, deadline, percentage, op, indexInChain);
+        }
+
+        public override void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            userManager.AddSpecificProductDiscount(sessionId, storeName, productName, deadline, percentage, op, indexInChain);
+        }
+
+        public override void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            userManager.AddBuySomeGetSomeDiscount(buySome, getSome, sessionId, productName, storeName, deadline, percentage, op, indexInChain);
+        }
+
+        public override void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        {
+            userManager.AddBuyOverDiscount(minSum, sessionId, storeName, productName, deadline, percentage, op, indexInChain);
+        }
+
+        public override void RemoveDiscount(string sessionId, string storeName, int indexInChain)
+        {
+            userManager.RemoveDiscount(sessionId, storeName, indexInChain);
         }
     }
 }
