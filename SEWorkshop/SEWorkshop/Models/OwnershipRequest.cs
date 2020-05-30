@@ -21,8 +21,8 @@ namespace SEWorkshop.Models
             foreach (var ow in store.Owners.Keys)
             {
                 
-                    Message m = new Message(ow, store, "Ownership request", true, null);
-                    Answers.Add((ow, false));
+                owner.WriteMessage(store,"ownership request", false);
+                Answers.Add((ow, false));
             }
         }
         public Boolean IsApproved()
