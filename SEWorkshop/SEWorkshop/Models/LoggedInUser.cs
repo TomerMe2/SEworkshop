@@ -11,6 +11,7 @@ namespace SEWorkshop.Models
     public class LoggedInUser : User
     {
         public ICollection<Owns> Owns { get; private set; }
+        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
         public ICollection<Manages> Manage { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
@@ -23,11 +24,13 @@ namespace SEWorkshop.Models
         {
             Username = username;
             Password = password;
+            OwnershipRequests = new List<OwnershipRequest>();
             Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
+
         }
 
         public int AmountOfUnReadMessage
@@ -191,6 +194,10 @@ namespace SEWorkshop.Models
             if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
             {
                 throw new UserIsAlreadyStoreManagerException();
+            }
+            if (Owns.Select(mng => mng.LoggedInUser == newOwner).Any())
+            {
+                throw new UserIsAlreadyStoreOwnerException();
             }
 
             ownership.AddStoreOwner(newOwner);

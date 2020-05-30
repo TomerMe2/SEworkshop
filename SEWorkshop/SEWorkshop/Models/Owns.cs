@@ -30,17 +30,49 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
-
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser ,newOwner);
+            if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
             {
-                throw new UserIsAlreadyStoreOwnerException();
+                throw new OwnershipRequestAlreadyExistsException();
+            }
+            if (request.IsApproved())
+            {
+                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                    {
+                      throw new UserIsAlreadyStoreOwnerException();
+                    }
+                Store.OwnershipRequests.Remove(newOwner);
+                Owns ownership = new Owns(newOwner, Store);
+                newOwner.Owns.Add(ownership);
+                log.Info("A new Owner has been added to store");
+            }
+            else
+            {
+                log.Info("A new Owner request has been sent");
+            }
+        }
+        public void AnswerOwnershipRequest(LoggedInUser newOwner, Boolean answer)
+        {
+            foreach (var req in newOwner.OwnershipRequests)
+            {
+                if (req.Store == Store)
+                {
+                    req.Answer(LoggedInUser, answer);
+                }
+                if (req.IsApproved())
+                {
+                    if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                    {
+                        throw new UserIsAlreadyStoreOwnerException();
+                    }
+                    Owns ownership = new Owns(newOwner, Store);
+                    Store.OwnershipRequests.Remove(newOwner);
+                    newOwner.Owns.Add(ownership);
+                    log.Info("A new Owner has been added to store");
+                }
             }
 
-            Owns ownership = new Owns(newOwner, Store);
-            newOwner.Owns.Add(ownership);
-
-            log.Info("A new owner has been added successfully");
         }
 
         override public void AddStoreManager(LoggedInUser newManager)
