@@ -77,7 +77,19 @@ namespace SEWorkshop.Models
             store.Messages.Add(message);
             Messages.Add(message);
         }
-        
+
+        internal void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, bool answer)
+        {
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+
+
+            if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
+            {
+                throw new UserIsAlreadyStoreManagerException();
+            }
+            ownership.AnswerOwnershipRequest(newOwner, answer);
+        }
+
         public Product AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
@@ -195,11 +207,6 @@ namespace SEWorkshop.Models
             {
                 throw new UserIsAlreadyStoreManagerException();
             }
-            if (Owns.Select(mng => mng.LoggedInUser == newOwner).Any())
-            {
-                throw new UserIsAlreadyStoreOwnerException();
-            }
-
             ownership.AddStoreOwner(newOwner);
             
         }

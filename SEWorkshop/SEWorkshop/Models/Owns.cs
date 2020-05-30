@@ -32,16 +32,22 @@ namespace SEWorkshop.Models
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
             OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser ,newOwner);
+            if (Store.Owners.ContainsKey(newOwner))
+            {
+                throw new UserIsAlreadyStoreOwnerException();
+            }
+            
             if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
             {
                 throw new OwnershipRequestAlreadyExistsException();
             }
+            newOwner.OwnershipRequests.Add(request);
             if (request.IsApproved())
             {
                 if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
-                    {
-                      throw new UserIsAlreadyStoreOwnerException();
-                    }
+                {
+                    throw new UserIsAlreadyStoreOwnerException();
+                }
                 Store.OwnershipRequests.Remove(newOwner);
                 Owns ownership = new Owns(newOwner, Store);
                 newOwner.Owns.Add(ownership);

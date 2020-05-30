@@ -117,5 +117,10 @@ namespace SEWorkshop.Facades
         {
             loggedInUser.RemovePermissionsOfManager(store, manager,authorization);
         }
+
+        public void AnswerOwnershipRequest(LoggedInUser loggedInUser, Store store,LoggedInUser newOwner, bool answer)
+        {
+            loggedInUser.AnswerOwnershipRequest(store, newOwner,answer);
+        }
     }
 }

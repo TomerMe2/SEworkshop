@@ -18,25 +18,18 @@ namespace SEWorkshop.Models
             Owner = owner;
             NewOwner = newOwner;
             Answers = new List<(LoggedInUser, Boolean)>();
-            foreach (var ow in store.Owners.Values)
+            foreach (var ow in store.Owners.Keys)
             {
-                if (ow != owner)
-                {
+                
                     Message m = new Message(ow, store, "Ownership request", true, null);
                     Answers.Add((ow, false));
-                }
-                else
-                {
-                    Answers.Add((ow, true));
-                }
-
             }
         }
         public Boolean IsApproved()
         {
             foreach(var answer in Answers)
             {
-                if (answer.Item2 == false)
+                if (answer.Item2 == false && answer.Item1.Username!= "DEMO" && answer.Item1.Username != Owner.Username)
                     return false;
             }
             return true;
@@ -50,8 +43,10 @@ namespace SEWorkshop.Models
                 {
                     Answers.Remove(answer);
                     Answers.Add((owner, descision));
+                    return;
                 }
             }
         }
-    }
+
+       }
 }

@@ -424,6 +424,13 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
+        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, Boolean answer)
+        {
+            Log.Info(string.Format("AnswerOwnershipRequest    {0}    {1}    {2}", storeName, newOwnerUserName, answer));
+            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId),storeName, newOwnerUserName, answer);
+
+        }
+
         public void AddStoreOwner(string sessionId, string storeName, string username)
         {
             Log.Info(string.Format("AddStoreOwner    {0}    {1}", storeName, username));

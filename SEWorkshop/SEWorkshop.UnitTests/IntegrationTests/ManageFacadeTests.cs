@@ -459,6 +459,35 @@ namespace SEWorkshop.Tests.IntegrationTests
         }
 
         [Test]
+        public void AddingAndApprovingNewStoreOwner()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
+            Facade.AddStoreOwner(usr, store, newOwner);
+            LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
+           
+            Facade.AddStoreOwner(usr, store, secondOwner);
+            Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
+            bool output = false; 
+              
+            try
+            {
+                Facade.AnswerOwnershipRequest(newOwner, store, secondOwner, true);
+                output = true;
+
+            }
+            catch
+            {
+                output= false;
+            }
+            Assert.IsTrue( store.Owners.ContainsKey(secondOwner));
+        }
+
+
+
+        [Test]
         public void RemovePermissionsOfManager()
         {
             const string STORE_NAME = "Google Play";
