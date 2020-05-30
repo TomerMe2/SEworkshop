@@ -74,5 +74,7 @@ namespace SEWorkshop.Facades
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();
+        public double GetIncomeInDate(DateTime date);
+
     }
 }

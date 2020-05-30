@@ -208,5 +208,14 @@ namespace SEWorkshop.Facades
         {
             return RegisteredUsers.Select(user => user.Username);
         }
+
+        public double GetIncomeInDate(DateTime date)
+        {
+            var relevants = Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
+                                                    && prchs.TimeStamp.Month == date.Month
+                                                    && prchs.TimeStamp.Day == date.Day);
+            var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
+            return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
+        }
     }
 }
