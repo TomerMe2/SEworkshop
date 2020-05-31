@@ -4,7 +4,7 @@ using SEWorkshop.Exceptions;
 
 namespace SEWorkshop.Models.Discounts
 {
-    public class ProductCategoryDiscount : Discount
+    public class ProductCategoryDiscount : PrimitiveDiscount
     {
         public string CatUnderDiscount;
         
@@ -15,7 +15,7 @@ namespace SEWorkshop.Models.Discounts
             CatUnderDiscount = category;
         }
 
-        public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
         {
             double totalDiscount = 0;
 

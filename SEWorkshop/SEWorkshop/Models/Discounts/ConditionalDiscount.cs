@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SEWorkshop.Models.Discounts
 {
-    public abstract class ConditionalDiscount : Discount
+    public abstract class ConditionalDiscount : PrimitiveDiscount
     {
         public Product Product { get; set; }
         protected ConditionalDiscount(double percentage, DateTime deadline, Product product, Store store) : base(percentage, deadline, store)
