@@ -4,16 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Facades;
 using SEWorkshop.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System;
 
 namespace SEWorkshop.Models
 {
+    [Table("Users")]
     public class LoggedInUser : User
     {
         public ICollection<Owns> Owns { get; private set; }
         public ICollection<Manages> Manage { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
+        [Key]
         public string Username { get; private set; }
         public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
         private ICollection<Purchase> Purchases { get; set; }
@@ -59,7 +63,7 @@ namespace SEWorkshop.Models
             {
                 throw new ReviewIsEmptyException();
             }
-            Review review = new Review(this, description);
+            Review review = new Review(this, description, product);
             product.Reviews.Add(review);
             Reviews.Add(review);
         }

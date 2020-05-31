@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Models.Discounts;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Products")]
     public class Product
     {
+        [ForeignKey("Stores"), Key, Column(Order = 0)]
         public Store Store { get; private set; }
+        [Key, Column(Order = 1)]
         public string Name { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }

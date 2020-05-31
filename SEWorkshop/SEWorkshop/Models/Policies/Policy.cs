@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using SEWorkshop.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace SEWorkshop.Models.Policies
 {
     public abstract class Policy
     {
+        [Key]
+        public int Id {get;}
         public (Policy, Operator)? InnerPolicy { get; set; }
         public Store Store { get; }
         

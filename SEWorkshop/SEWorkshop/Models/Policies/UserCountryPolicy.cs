@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
+    [Table("UCountryPolicies")]
     public class UserCountryPolicy : Policy
     {
         public string RequiredCountry { get; set; }

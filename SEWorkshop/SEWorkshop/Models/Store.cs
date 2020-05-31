@@ -8,9 +8,12 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Stores")]
     public class Store
     {
         public ICollection<Product> Products { get; private set; }
@@ -19,6 +22,7 @@ namespace SEWorkshop.Models
         public IList<Message> Messages { get; private set; }
         public ICollection<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
+        [Key]
         public string Name { get; private set; }
         public Policy Policy { get; set; }
         public ICollection<Purchase> Purchases {get; private set; }

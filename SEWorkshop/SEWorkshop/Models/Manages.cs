@@ -5,12 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Managers")]
     public class Manages : AuthorityHandler
     {
+        [ForeignKey("Users"), Key, Column(Order = 0)]
         public LoggedInUser LoggedInUser { get; set; }
+        [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 

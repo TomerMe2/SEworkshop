@@ -180,7 +180,7 @@ namespace SEWorkshop.Facades
             {
                 throw new ReviewIsEmptyException();
             }
-            Review review = new Review(user, description);
+            Review review = new Review(user, description, product);
             product.Reviews.Add(review);
             ((LoggedInUser) user).Reviews.Add(review);
         }

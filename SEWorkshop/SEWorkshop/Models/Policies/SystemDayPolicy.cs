@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
+    [Table("SDPolicies")]
     public class SystemDayPolicy : Policy
     {
         public DayOfWeek CantBuyIn { get; set; }

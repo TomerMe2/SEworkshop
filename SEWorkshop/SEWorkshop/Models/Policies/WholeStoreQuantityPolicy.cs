@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
+    [Table("WSQPolicies")]
     public class WholeStoreQuantityPolicy : Policy
     {
         public int MinQuantity { get; set; }

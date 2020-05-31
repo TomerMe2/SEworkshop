@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Messages")]
     public class Message
     {
         private static int counter = 0;
         private static object counterLock = new object();
+        [Key]
         public int Id { get; }
         public Store ToStore { get; }
         public LoggedInUser WrittenBy { get; private set; }
         public string Description {get; private set;}
+        [ForeignKey("Messages")]
         public Message? Prev { get; private set; }
+        [ForeignKey("Messages")]
         public Message? Next { get; set; }
         public bool StoreSawIt { get; set; }
         public bool ClientSawIt { get; set; }

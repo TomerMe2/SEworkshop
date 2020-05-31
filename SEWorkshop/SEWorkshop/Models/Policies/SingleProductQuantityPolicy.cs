@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
+    [Table("SPQPolicies")]
     public class SingleProductQuantityPolicy : Policy
     {
         public Product Prod { get; set; }

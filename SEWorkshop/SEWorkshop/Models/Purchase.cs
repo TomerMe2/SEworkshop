@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Purchases")]
     public class Purchase
     {
+        [ForeignKey("Users"), Key, Column(Order = 0)]
         public User User {get; private set;}
         public Basket Basket { get; private set; }
         public Address Address { get; }
+        [Key, Column(Order = 1)]
         public DateTime TimeStamp { get; }
         public double MoneyPaid { get; }
 

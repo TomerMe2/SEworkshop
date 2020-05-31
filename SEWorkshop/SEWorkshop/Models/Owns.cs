@@ -8,12 +8,17 @@ using System.Text;
 using SEWorkshop.Models.Discounts;
 using Operator = SEWorkshop.Enums.Operator;
 using SEWorkshop.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
+    [Table("Owners")]
     public class Owns : AuthorityHandler
     {
+        [ForeignKey("Users"), Key, Column(Order = 0)]
         public LoggedInUser LoggedInUser { get; set; }
+        [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
