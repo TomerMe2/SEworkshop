@@ -5,7 +5,7 @@ using SEWorkshop.Models.Discounts;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataBuySomeGetSomeFreeDiscount : DataDiscount
+    public class DataBuySomeGetSomeFreeDiscount : DataPrimitiveDiscount
     {
         private BuySomeGetSomeFreeDiscount InnerBuySomeModel { get; }
         public int BuySome => InnerBuySomeModel.BuySome;

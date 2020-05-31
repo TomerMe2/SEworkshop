@@ -15,7 +15,7 @@ namespace SEWorkshop.Models.Discounts
             GetSome = getSome;
         }
 
-        public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
         {
             foreach (var product in itemsList)
             {

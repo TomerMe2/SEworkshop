@@ -14,7 +14,7 @@ namespace SEWorkshop.Models.Discounts
              MinSum = minSum;
         }
        
-        public override double ApplyDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
         {
             double sumBasket = 0;
             foreach (var product in itemsList)

@@ -280,7 +280,7 @@ namespace SEWorkshop.Models
             currPol.InnerPolicy = (pol, op);
         }
         
-        private void AddDiscountToEnd(Discount dis, Operator op, int indexInChain)
+        private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
         {
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
             {
@@ -288,17 +288,85 @@ namespace SEWorkshop.Models
             }
             else
             {
-                if (dis.InnerDiscount != null)
+                Discount? existing = SearchNode(Store.Discounts.ElementAt(indexInChain), disId);
+                if (existing != null)
                 {
-                    throw new PolicyCauseCycilicError();
+                    ComposedDiscount? father = existing.Father;
+                    if (father is null)
+                    {
+                        Store.Discounts.RemoveAt(indexInChain);
+                        if (toLeft)
+                        {
+                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, dis, existing));
+                        }
+                        else
+                        {
+                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, existing, dis));
+                        }
+                    }
+                    else
+                    {
+                        if (toLeft)
+                    {
+                        /*father.ComposedParts = existing.IsLeftChild()
+                            ? (father.ComposedParts.Value.Item1,
+                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2),
+                                father.ComposedParts.Value.Item3)
+                            : (father.ComposedParts.Value.Item1,
+                                father.ComposedParts.Value.Item2,
+                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3));*/
+                        if (existing.IsLeftChild())
+                        {
+                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
+                            newDis.Father = father;
+                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                        }
+                        else
+                        {
+                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
+                            newDis.Father = father;
+                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                        }
+                    }
+                    else
+                    {
+                        /*father.ComposedParts = existing.IsLeftChild()
+                            ? (father.ComposedParts.Value.Item1,
+                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis),
+                                father.ComposedParts.Value.Item3)
+                            : (father.ComposedParts.Value.Item1,
+                                father.ComposedParts.Value.Item2,
+                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis));*/
+                        if (existing.IsLeftChild())
+                        {
+                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                            newDis.Father = father;
+                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                        }
+                        else
+                        {
+                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                            newDis.Father = father;
+                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                        }
+                    }
+                    }
                 }
-                Discount currDis = Store.Discounts.ElementAt(indexInChain);
-                while(currDis.InnerDiscount != null)
-                {
-                    currDis = currDis.InnerDiscount.Value.Item1;
-                }
-                currDis.InnerDiscount = (dis, op);
             }
+        }
+
+        private Discount? SearchNode(Discount root, int disId)
+        {
+            if (root.DiscountId == disId)
+            {
+                return root;
+            }
+            if (root.ComposedParts is null)
+            {
+                return null;
+            }
+
+            return SearchNode(root.ComposedParts.Value.Item2, disId) ?? SearchNode(root.ComposedParts.Value.Item3, disId);
         }
 
         //All add policies are adding to the end
@@ -364,23 +432,23 @@ namespace SEWorkshop.Models
             }
         }
 
-        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain)
+        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain);
+            ComposeDiscount(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain, disId, toLeft);
         }
 
-        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain)
+        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
+            ComposeDiscount(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain, disId, toLeft);
         }
 
-        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain)
+        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
+            ComposeDiscount(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
+        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
+            ComposeDiscount(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain, disId, toLeft);
         }
 
 

@@ -358,7 +358,7 @@ namespace SEWorkshop.Tests.UnitTests
             Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
         }
 
-        [Test]
+        [Test, Order(1)]
         public void PurchaseDiscountTest()
         {
             const string STORE_NAME = "store1";
@@ -367,11 +367,11 @@ namespace SEWorkshop.Tests.UnitTests
             Store store = new Store(usr, STORE_NAME);
             usr.Owns.Add(new Owns(usr, store));
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
-            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0);
+            usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0, 1, true);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
-            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0);
-            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).InnerDiscount.Value.Item1);
-            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0, 0, false);
+            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).ComposedParts.Value.Item3);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1, 1, true);
             usr.RemoveDiscount(store, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
         }
@@ -390,7 +390,7 @@ namespace SEWorkshop.Tests.UnitTests
             GuestUser customer = new GuestUser();
             customer.AddProductToCart(prod, 1);
             var basket = customer.Cart.Baskets.ElementAt(0);
-            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 5.00);
+            Assert.AreEqual(dis.ComputeDiscount(basket.Products), 5.00);
 
         }
 
@@ -408,7 +408,7 @@ namespace SEWorkshop.Tests.UnitTests
             GuestUser customer = new GuestUser();
             customer.AddProductToCart(prod, 3);
             var basket = customer.Cart.Baskets.ElementAt(0);
-            Assert.AreEqual(dis.ApplyDiscount(basket.Products), 11.11);
+            Assert.AreEqual(dis.ComputeDiscount(basket.Products), 11.11);
 
         }
 

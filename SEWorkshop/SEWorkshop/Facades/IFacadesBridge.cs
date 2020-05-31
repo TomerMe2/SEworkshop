@@ -66,10 +66,10 @@ namespace SEWorkshop.Facades
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
 
-        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain);
+        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();

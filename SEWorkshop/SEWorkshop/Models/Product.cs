@@ -37,11 +37,11 @@ namespace SEWorkshop.Models
             ICollection<(Product, int)> product = new List<(Product, int)>{(this, 1)};
             foreach (var discount in Store.Discounts)
             {
-                if (discount.InnerDiscount is null && discount is OpenDiscount)
+                if (discount is OpenDiscount)
                 {
                     if (((OpenDiscount) discount).Product == this)
                     {
-                        price -= discount.ComposeDiscounts(product);
+                        price -= discount.ComputeDiscount(product);
                     }
                 }
             }
