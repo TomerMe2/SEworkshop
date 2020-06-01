@@ -224,7 +224,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			string username = "Noa Kirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
-			bridge.Logout(DEF_SID);
+			//bridge.Logout(DEF_SID);
 			bridge.Register(DEF_SID, username, password);
 			bridge.Login(DEF_SID, username, password);
 			bridge.OpenStore(DEF_SID, storeName);
@@ -239,8 +239,10 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			IEnumerable<DataBasket> cart = bridge.MyCart(DEF_SID);
 			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33");
 			Assert.That(() => bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
+			IEnumerable<DataBasket> cart4 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
 			bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
 			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart.First(), "123456789", address); });
+			IEnumerable<DataBasket> cart3 = bridge.MyCart(DEF_SID); //debug: check that cart is not empty
 
 			bridge.Logout(DEF_SID);
 			bridge.Login(DEF_SID, username, password);
@@ -391,6 +393,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
             var prchs = obsrv.Purchases[0];
             Assert.IsTrue(prchs.Address.Equals(adrs));
             Assert.IsTrue(prchs.Basket.Equals(basket));
+			bridge.Logout(DEF_SID);
         }
 	}
 }

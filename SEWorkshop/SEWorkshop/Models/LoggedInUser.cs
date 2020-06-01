@@ -288,12 +288,19 @@ namespace SEWorkshop.Models
                 if (purchaseQuantity <= 0)
                     throw new NegativeQuantityException();
             }
-            basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
-            Cart.Baskets.Remove(basket);
-            basket.Store.Purchases.Add(purchase);
-            Purchases.Add(purchase);
-            facade.AddPurchaseToList(purchase);
-            return purchase;
+            try
+            {
+                basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
+                Cart.Baskets.Remove(basket);
+                basket.Store.Purchases.Add(purchase);
+                Purchases.Add(purchase);
+                facade.AddPurchaseToList(purchase);
+                return purchase;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
 
         public void RemovePermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
