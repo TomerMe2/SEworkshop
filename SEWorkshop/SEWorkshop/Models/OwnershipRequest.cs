@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
@@ -26,34 +27,17 @@ namespace SEWorkshop.Models
                 Answers.Add((ow, RequestState.Pending));
             }
         }
-        public bool IsApproved()
-        {
-            if (GetRequestState() == RequestState.Denied)
-            {
-                return false;
-            }
-            if (GetRequestState() == RequestState.Pending)
-            {
-                throw new PendingStoreOwnershipRequestException();
-            }
-            return true;
-        }
-
         public RequestState GetRequestState()
         {
-            foreach (var answer in Answers)
+            if (IsDenied())
             {
-                if (answer.Item1.Username != Owner.Username)
-                {
-                    if (answer.Item2 == RequestState.Denied)
-                        return RequestState.Denied;
-                    if (answer.Item2 == RequestState.Pending)
-                    {
-                        return RequestState.Pending;
-                    }
-                }
-
+                return RequestState.Denied;
             }
+            if (IsPending())
+            {
+                return RequestState.Pending;
+            }
+           
             return RequestState.Approved;
         }
 
@@ -69,6 +53,14 @@ namespace SEWorkshop.Models
                 }
             }
         }
+
+        public bool IsDenied() => ((from ans in Answers
+            where ans.Item1.Username != Owner.Username && ans.Item2 == RequestState.Denied
+            select ans).ToList().Count() > 0);
+
+        public bool IsPending() => ((from ans in Answers
+            where ans.Item1.Username != Owner.Username && ans.Item2 == RequestState.Pending
+            select ans).ToList().Count() > 0);
     }
 
 }

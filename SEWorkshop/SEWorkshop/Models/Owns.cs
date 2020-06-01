@@ -65,7 +65,7 @@ namespace SEWorkshop.Models
                 {
                     req.Answer(LoggedInUser, answer);
                 }
-                if (req.IsApproved())
+                if (req.GetRequestState()==RequestState.Approved)
                 {
                     if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
                     {
