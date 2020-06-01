@@ -358,7 +358,7 @@ namespace SEWorkshop.Tests.UnitTests
             Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
         }
 
-        [Test, Order(1)]
+        [Test]
         public void PurchaseDiscountTest()
         {
             const string STORE_NAME = "store1";
@@ -369,7 +369,8 @@ namespace SEWorkshop.Tests.UnitTests
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
             usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0, 1, true);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
-            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0, 0, false);
+            int id = store.Discounts.ElementAt(0).DiscountId;
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0, id, false);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).ComposedParts.Value.Item3);
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1, 1, true);
             usr.RemoveDiscount(store, 0);
