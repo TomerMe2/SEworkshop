@@ -424,11 +424,17 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
-        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, Boolean answer)
+        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, string answer)
         {
             Log.Info(string.Format("AnswerOwnershipRequest    {0}    {1}    {2}", storeName, newOwnerUserName, answer));
-            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId),storeName, newOwnerUserName, answer);
-
+            var requestState = answer switch
+            {
+                "Denied" => RequestState.Denied,
+                "Approved" => RequestState.Approved,
+                "Pending" => RequestState.Pending,
+                _ => throw new AuthorizationDoesNotExistException(),
+            };
+            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId), storeName, newOwnerUserName, requestState);
         }
 
         public void AddStoreOwner(string sessionId, string storeName, string username)

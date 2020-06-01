@@ -30,7 +30,6 @@ namespace SEWorkshop.Models
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
-
         }
 
         public int AmountOfUnReadMessage
@@ -78,7 +77,7 @@ namespace SEWorkshop.Models
             Messages.Add(message);
         }
 
-        internal void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, bool answer)
+        public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
 

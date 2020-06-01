@@ -42,7 +42,7 @@ namespace SEWorkshop.Models
                 throw new OwnershipRequestAlreadyExistsException();
             }
             newOwner.OwnershipRequests.Add(request);
-            if (request.IsApproved())
+            if (request.GetRequestState()==RequestState.Approved)
             {
                 if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
                 {
@@ -58,7 +58,7 @@ namespace SEWorkshop.Models
                 log.Info("A new Owner request has been sent");
             }
         }
-        public void AnswerOwnershipRequest(LoggedInUser newOwner, Boolean answer)
+        public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
         {
             foreach (var req in newOwner.OwnershipRequests)
             {

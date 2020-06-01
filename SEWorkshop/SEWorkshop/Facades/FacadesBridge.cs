@@ -96,7 +96,7 @@ namespace SEWorkshop.Facades
             ManageFacade.AddStoreOwner(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName));
         }
 
-        public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, Boolean answer)
+        public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, RequestState answer)
         {
             ManageFacade.AnswerOwnershipRequest(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName), answer);
         }
