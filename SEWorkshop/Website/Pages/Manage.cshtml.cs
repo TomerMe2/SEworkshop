@@ -243,9 +243,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index)
+        public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -253,6 +254,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -279,16 +282,22 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
-                    newIndex = DiscountNumber;
-                else
-                    newIndex = Int32.Parse(index);
-                if (appliedTo.Equals("Product"))
                 {
-                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+                    newIndex = DiscountNumber;
+                    innerID = 0;
                 }
                 else
                 {
-                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex);
+                    newIndex = Int32.Parse(index);
+                    innerID = Int32.Parse(innerid);
+                }
+                if (appliedTo.Equals("Product"))
+                {
+                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
+                }
+                else
+                {
+                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
                 }
             }
             catch (Exception e)
@@ -337,7 +346,7 @@ namespace Website.Pages
                     newIndex = DiscountNumber;
                 else
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, chosenProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex);
+                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, chosenProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex, 0, true);
             }
             catch (Exception e)
             {
@@ -385,7 +394,7 @@ namespace Website.Pages
                     newIndex = DiscountNumber;
                 else
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, 0, true);
             }
             catch (Exception e)
             {
@@ -428,11 +437,11 @@ namespace Website.Pages
 
         private string StringDiscount(DataDiscount discount)
         {
-            if (!discount.InnerDiscount.HasValue)
+            if (!discount.ComposedParts.HasValue)
             {
-                return "" + discount.ToString();
+                return "[" + discount.DiscountId + "] " + discount.ToString();
             }
-            return discount.ToString() + " " + discount.InnerDiscount.Value.Item2.ToString() + " (" + StringDiscount(discount.InnerDiscount.Value.Item1) + ")";
+            return "(" + StringDiscount(discount.ComposedParts.Value.Item2) + ") " + discount.ComposedParts.Value.Item1.ToString() + " (" + StringDiscount(discount.ComposedParts.Value.Item3) + ")";
         }
 
         private void HandleMinMax(string min, string max)
