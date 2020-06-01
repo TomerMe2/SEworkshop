@@ -484,8 +484,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
-            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
             Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
+            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
             Facade.AnswerOwnershipRequest(newOwner,store,secondOwner,RequestState.Approved);
             Assert.IsTrue(store.Owners.ContainsKey(secondOwner));
             Assert.IsFalse(store.OwnershipRequests.ContainsKey(secondOwner));
