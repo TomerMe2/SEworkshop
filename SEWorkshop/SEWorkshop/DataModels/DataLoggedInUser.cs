@@ -33,5 +33,28 @@ namespace SEWorkshop.DataModels
         {
             return Username.GetHashCode();
         }
+
+        public bool IsManager(IReadOnlyCollection<DataManages> Management)
+        {
+            foreach(var manager in Management)
+            {
+                if(manager.user.InnerLoggedInUser == InnerLoggedInUser)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool IsOwner(IReadOnlyCollection<DataOwns> Ownership)
+        {
+            foreach(var owner in Ownership)
+            {
+                if(owner.user.InnerLoggedInUser == InnerLoggedInUser)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

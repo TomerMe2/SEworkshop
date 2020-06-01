@@ -20,6 +20,12 @@ namespace SEWorkshop.DataModels
                     (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
                 .ToDictionary(tup => tup.Item1, tup => tup.Item2);
     */  
+        public IReadOnlyCollection<DataManages> Management => InnerModel.Management
+                .Select((item) =>
+                    (new DataManages(new Manages(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
+        public IReadOnlyCollection<DataOwns> Ownership => InnerModel.Management
+                .Select((item) =>
+                    (new DataOwns(new Owns(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
@@ -34,6 +40,16 @@ namespace SEWorkshop.DataModels
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        
+        public bool IsManager(DataLoggedInUser user)
+        {
+            return user.IsManager(Management);
+        }
+        public bool IsOwner(DataLoggedInUser user)
+        {
+            return user.IsOwner(Ownership);        
         }
     }
 }
