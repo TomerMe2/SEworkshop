@@ -48,6 +48,7 @@ namespace SEWorkshop.ServiceLayer
         public void AddStoreManager(string sessionId, string storeNm, string username);
         public void SetPermissionsOfManager(string sessionId, string storeNm, string username, string authorization);
         public void RemoveStoreManager(string sessionId, string storeNm, string username);
+        public void RemoveStoreOwner(string sessionId, string storeNm, string username);
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeNm);
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeNm, string description);
         public void EditProductName(string sessionId, string storeName, string productName, string Name);

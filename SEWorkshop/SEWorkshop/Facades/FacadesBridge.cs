@@ -252,6 +252,12 @@ namespace SEWorkshop.Facades
             ManageFacade.RemoveStoreManager(GetLoggedInUsr(user), GetStore(storeName), manager);
         }
 
+        public void RemoveStoreOwner(DataLoggedInUser user, string storeName, string username)
+        {
+            LoggedInUser owner = UserFacade.GetLoggedInUser(username);
+            ManageFacade.RemoveStoreOwner(GetLoggedInUsr(user), GetStore(storeName), owner);
+        }
+
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
         {
             return StoreFacade.SearchProducts(pred);
