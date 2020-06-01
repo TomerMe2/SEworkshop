@@ -288,11 +288,11 @@ namespace SEWorkshop.Tests.IntegrationTests
             try
             {
                 Facade.AddStoreOwner(newManager, store, ownerToTest1);
-                success = false;
+                success = true;
             }
             catch
             {
-                success = true;
+                success = false;
             }
             Assert.IsTrue(success );
 
