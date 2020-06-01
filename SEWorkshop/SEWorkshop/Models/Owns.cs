@@ -94,6 +94,35 @@ namespace SEWorkshop.Models
             log.Info("The manager has been removed successfully");
         }
 
+        override public void RemoveStoreOwner(LoggedInUser ownerToRemove)
+        {
+            log.Info("User tries to remove the owner {0} from store", ownerToRemove.Username);
+            bool isStoreOwner = IsUserStoreOwner(ownerToRemove, Store);
+            if (!isStoreOwner)
+            {
+                log.Info("The requested owner is not an owner");
+                throw new UserIsNotOwnerOfThisStore();
+            }
+
+            if (!Store.Owners.ContainsKey(ownerToRemove))
+            {
+                log.Info("The requested owner is not an owner");
+                throw new UserIsNotOwnerOfThisStore();
+            }
+
+            LoggedInUser appointer = Store.Owners[ownerToRemove];
+            if (appointer != LoggedInUser)
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+
+            Store.Owners.Remove(ownerToRemove);
+            var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
+            ownerToRemove.Owns.Remove(owning);
+            log.Info("The owner has been removed successfully");
+        }
+
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);

@@ -14,6 +14,7 @@ namespace SEWorkshop.Facades
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager); //throws exception
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization); //throws exception
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove); //throws exception
+        public void RemoveStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser ownerToRemove); //throws exception
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store); //throws exception
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description); //throws exception
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store); //throws exception

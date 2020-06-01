@@ -62,7 +62,41 @@ namespace SEWorkshop.Models
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
-        
+        }
+
+        public override void RemoveStoreOwner(LoggedInUser ownerToRemove)
+        {
+            log.Info("User tries to remove the owner {0} from store", ownerToRemove.Username);
+            bool isStoreOwner = IsUserStoreOwner(ownerToRemove, Store);
+            if (!isStoreOwner)
+            {
+                log.Info("The requested manager is not an owner");
+                throw new UserIsNotOwnerOfThisStore();
+            }
+            if (HasAuthorization(Authorizations.Owner))
+            {
+                if (!Store.Owners.ContainsKey(ownerToRemove))
+                {
+                    log.Info("The requested manager is not an owner");
+                    throw new UserIsNotOwnerOfThisStore();
+                }
+                LoggedInUser appointer = Store.Owners[ownerToRemove];
+                if (appointer != LoggedInUser)
+                {
+                    log.Info("User has no permission for that action");
+                    throw new UserHasNoPermissionException();
+                }
+                Store.Owners.Remove(ownerToRemove);
+                var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
+                ownerToRemove.Owns.Remove(owning);
+                log.Info("The owner has been removed successfully");
+                return;
+            }
+            else
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
         }
 
         public override Product AddProduct(string name, string description, string category, double price, int quantity)
@@ -229,7 +263,28 @@ namespace SEWorkshop.Models
 
         }
 
-     
+        public void AddStoreOwner(LoggedInUser newOwner)
+        {
+            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+            if (!HasAuthorization(Authorizations.Owner))
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+            if (IsUserStoreManager(newOwner, Store) || IsUserStoreOwner(newOwner, Store))
+            {
+                log.Info("The requested user is already a store manager or owner");
+                throw new UserIsAlreadyStoreManagerException();
+            }
+            Store.Owners.Add(newOwner, LoggedInUser);
+            Owns owning = new Owns(newOwner, Store);
+            newOwner.Owns.Add(owning);
+            log.Info("A new owner has been added successfully");
+            return;
+
+        }
+
+
 
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
