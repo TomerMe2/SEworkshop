@@ -10,8 +10,8 @@
     if (Model.Store != null && um.IsLoggedIn(sessionId))
     {
         var user = um.GetDataLoggedInUser(sessionId);
-        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        if (Model.Store.Owners.ContainsKey(user) ||
+        var isMan = Model.Store.IsOwner(um.GetDataLoggedInUser(sessionId));
+        if (Model.Store.IsOwner(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))
             || Model.UserManager.IsAdministrator(sessionId))
         {
