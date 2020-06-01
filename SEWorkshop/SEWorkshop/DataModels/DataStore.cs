@@ -11,7 +11,7 @@ namespace SEWorkshop.DataModels
     {
         public IReadOnlyCollection<DataProduct> Products => InnerModel.Products.Select(prod =>
                         new DataProduct(prod)).ToList().AsReadOnly();
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Managers => InnerModel.Managers
+    /*    public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Managers => InnerModel.Managers
                 .Select((item) =>
                     (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
                 .ToDictionary(tup => tup.Item1, tup => tup.Item2);
@@ -19,6 +19,7 @@ namespace SEWorkshop.DataModels
                 .Select((item) =>
                     (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
                 .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+    */  
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();

@@ -61,7 +61,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser usr2 = new LoggedInUser("SearchNaNa", SecurityAdapter.Encrypt("910"));
             Store store1 = Facade.CreateStore(usr1, "StrNini");
             Store store2 = Facade.CreateStore(usr2, "StrNana");
-            var result = Facade.SearchStore(store => store.Owners.ContainsKey(usr1));
+            var result = Facade.SearchStore(store => store.GetOwnership(usr1) != null);
             Assert.IsTrue(result.Contains(store1) && result.Count == 1);
             result = Facade.SearchStore(store => store.Name.Equals("StrNana"));
             Assert.IsTrue(result.Contains(store2) && result.Count == 1);

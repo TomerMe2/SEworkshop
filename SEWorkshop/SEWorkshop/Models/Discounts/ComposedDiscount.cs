@@ -19,6 +19,10 @@ namespace SEWorkshop.Models.Discounts
 
         public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
         {
+            if(ComposedParts == null)
+            {
+                throw new Exception("Null reference for composed parts");
+            }
             return ComposedParts.Value.Item1 switch
             {
                 Operator.And => ComposedParts.Value.Item2.ComputeDiscount(itemsList) + ComposedParts.Value.Item3.ComputeDiscount(itemsList),
@@ -30,12 +34,20 @@ namespace SEWorkshop.Models.Discounts
         
         public double ChooseCheaper(ICollection<(Product, int)> itemsList)
         {
+            if(ComposedParts == null)
+            {
+                throw new Exception("Null reference for composed parts");
+            }
             return Math.Min(ComposedParts.Value.Item2.ComputeDiscount(itemsList),
                 ComposedParts.Value.Item3.ComputeDiscount(itemsList));
         }
 
         public double ApplyImplies(ICollection<(Product, int)> itemsList)
         {
+            if(ComposedParts == null)
+            {
+                throw new Exception("Null reference for composed parts");
+            }
             double firstDiscount = ComposedParts.Value.Item2.ComputeDiscount(itemsList);
             if (firstDiscount > 0)
             {

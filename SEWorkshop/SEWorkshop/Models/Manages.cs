@@ -18,17 +18,16 @@ namespace SEWorkshop.Models
         [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+        public LoggedInUser Appointer { get; private set;}
 
 
-        public Manages(LoggedInUser loggedInUser, Store store) : base()
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base()
         {
             AuthoriztionsOfUser.Add(Authorizations.Watching);
             LoggedInUser = loggedInUser;
             Store = store;
-    
+            Appointer = appointer;
         }
-
-     
 
         public override void RemoveStoreManager(LoggedInUser managerToRemove)
         {
@@ -41,19 +40,19 @@ namespace SEWorkshop.Models
             }
             if (HasAuthorization(Authorizations.Manager))
             {
-                if (!Store.Managers.ContainsKey(managerToRemove))
+                Manages? management = Store.GetManagement(managerToRemove);
+                if (management == null)
                 {
                     log.Info("The requested manager is not a store manager");
                     throw new UserIsNotMangerOfTheStoreException();
                 }
-                LoggedInUser appointer = Store.Managers[managerToRemove];
+                LoggedInUser appointer = management.Appointer;
                 if (appointer != LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                Store.Managers.Remove(managerToRemove);
-                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+                Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
                 log.Info("The manager has been removed successfully");
                 return;
@@ -222,8 +221,8 @@ namespace SEWorkshop.Models
                     log.Info("The requested user is already a store manager or owner");
                     throw new UserIsAlreadyStoreManagerException();
                 }
-                Store.Managers.Add(newManager, LoggedInUser);
-                Manages mangement = new Manages(newManager, Store);
+                Manages mangement = new Manages(newManager, Store, LoggedInUser);
+                Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
                 log.Info("A new manager has been added successfully");
                 return;
@@ -241,14 +240,14 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer.Username == this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
+                ICollection<Authorizations> authorizations = management.AuthoriztionsOfUser;
                 
                 if (!authorizations.Contains(authorization))
                 {
@@ -270,14 +269,14 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer.Username == this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
+                ICollection<Authorizations> authorizations = management.AuthoriztionsOfUser;
                 if (authorizations.Contains(authorization))
                 {
                     log.Info("Permission has been taken away successfully");

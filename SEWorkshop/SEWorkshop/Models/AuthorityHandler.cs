@@ -29,12 +29,12 @@ namespace SEWorkshop.Models
         abstract public void EditProductPrice(Product product, double price);
         abstract public void EditProductQuantity(Product product, int quantity);
 
-        public bool IsUserStoreOwner(LoggedInUser loggedInUser, Store store) => ((from owner in store.Owners
-                                                                     where owner.Key == loggedInUser
+        public bool IsUserStoreOwner(LoggedInUser loggedInUser, Store store) => ((from owner in store.Ownership
+                                                                     where owner.LoggedInUser == loggedInUser
                                                                      select owner).ToList().Count() > 0);
 
-        public bool IsUserStoreManager(LoggedInUser loggedInUser, Store store) => ((from manager in store.Managers
-                                                                       where manager.Key == loggedInUser
+        public bool IsUserStoreManager(LoggedInUser loggedInUser, Store store) => ((from manager in store.Management
+                                                                       where manager.LoggedInUser == loggedInUser
                                                                        select manager).ToList().Count() > 0);
 
         public bool StoreContainsProduct(Product product, Store store) => ((from pr in store.Products

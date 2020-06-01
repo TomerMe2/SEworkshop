@@ -21,30 +21,33 @@ namespace SEWorkshop.Models
         [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+        public LoggedInUser Appointer { get; private set;}
 
 
-        public Owns(LoggedInUser loggedInUser, Store store) : base()
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base()
         {
             AuthoriztionsOfUser.Add(Authorizations.Authorizing);
+            AuthoriztionsOfUser.Add(Authorizations.Products);
             AuthoriztionsOfUser.Add(Authorizations.Watching);
             AuthoriztionsOfUser.Add(Authorizations.Manager);
             AuthoriztionsOfUser.Add(Authorizations.Owner);
             LoggedInUser = loggedInUser;
             Store = store;
+            Appointer = appointer;
         }
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
 
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+            if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
 
-            Owns ownership = new Owns(newOwner, Store);
+            Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+            Store.Ownership.Add(ownership);
             newOwner.Owns.Add(ownership);
-
             log.Info("A new owner has been added successfully");
         }
 
@@ -57,9 +60,8 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-
-            Store.Managers.Add(newManager, LoggedInUser);
-            Manages mangement = new Manages(newManager, Store);
+            Manages mangement = new Manages(newManager, Store, LoggedInUser);
+            Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
             log.Info("A new manager has been added successfully");
         }
@@ -74,21 +76,20 @@ namespace SEWorkshop.Models
                 throw new UserIsNotMangerOfTheStoreException();
             }
 
-            if (!Store.Managers.ContainsKey(managerToRemove))
+            Manages? management = Store.GetManagement(managerToRemove);
+            if (management == null)
             {
                 log.Info("The requested manager is not a store manager");
                 throw new UserIsNotMangerOfTheStoreException();
             }
 
-            LoggedInUser appointer = Store.Managers[managerToRemove];
+            LoggedInUser appointer = management.Appointer;
             if (appointer != LoggedInUser)
             {
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
-
-            Store.Managers.Remove(managerToRemove);
-            var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+            Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
             log.Info("The manager has been removed successfully");
         }
@@ -98,7 +99,8 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager] != this.LoggedInUser)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer != this.LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
@@ -243,7 +245,8 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager] != this.LoggedInUser)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer != this.LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
@@ -307,49 +310,55 @@ namespace SEWorkshop.Models
                     else
                     {
                         if (toLeft)
-                    {
-                        /*father.ComposedParts = existing.IsLeftChild()
-                            ? (father.ComposedParts.Value.Item1,
-                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2),
-                                father.ComposedParts.Value.Item3)
-                            : (father.ComposedParts.Value.Item1,
-                                father.ComposedParts.Value.Item2,
-                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3));*/
-                        if (existing.IsLeftChild())
                         {
-                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                            /*father.ComposedParts = existing.IsLeftChild()
+                                ? (father.ComposedParts.Value.Item1,
+                                    (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2),
+                                    father.ComposedParts.Value.Item3)
+                                : (father.ComposedParts.Value.Item1,
+                                    father.ComposedParts.Value.Item2,
+                                    (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3));*/
+                            if(father.ComposedParts != null)
+                            {
+                                if (existing.IsLeftChild())
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                                else
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
                         }
                         else
                         {
-                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                            /*father.ComposedParts = existing.IsLeftChild()
+                                ? (father.ComposedParts.Value.Item1,
+                                    (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis),
+                                    father.ComposedParts.Value.Item3)
+                                : (father.ComposedParts.Value.Item1,
+                                    father.ComposedParts.Value.Item2,
+                                    (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis));*/
+                            if(father.ComposedParts != null)
+                            {
+                                if (existing.IsLeftChild())
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                                else
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
                         }
-                    }
-                    else
-                    {
-                        /*father.ComposedParts = existing.IsLeftChild()
-                            ? (father.ComposedParts.Value.Item1,
-                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis),
-                                father.ComposedParts.Value.Item3)
-                            : (father.ComposedParts.Value.Item1,
-                                father.ComposedParts.Value.Item2,
-                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis));*/
-                        if (existing.IsLeftChild())
-                        {
-                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
-                        }
-                        else
-                        {
-                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
-                        }
-                    }
                     }
                 }
             }

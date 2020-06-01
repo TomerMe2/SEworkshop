@@ -101,12 +101,12 @@ namespace SEWorkshop.Facades
             throw new UserHasNoPermissionException();
         }
 
-        public bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Owners
-                                                                          where owner.Key == user
+        public bool IsUserStoreOwner(LoggedInUser user, Store store) => ((from owner in store.Ownership
+                                                                          where owner.LoggedInUser == user
                                                                           select owner).ToList().Count() > 0);
 
-        public bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Managers
-                                                                            where manager.Key == user
+        public bool IsUserStoreManager(LoggedInUser user, Store store) => ((from manager in store.Management
+                                                                            where manager.LoggedInUser == user
                                                                             select manager).ToList().Count() > 0);
 
         public bool StoreContainsProduct(Store store, Product product) => ((from pr in store.Products

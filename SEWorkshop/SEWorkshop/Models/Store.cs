@@ -17,8 +17,10 @@ namespace SEWorkshop.Models
     public class Store
     {
         public ICollection<Product> Products { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
+        public ICollection<Manages> Management { get; private set; }
+        public ICollection<Owns> Ownership { get; private set; }
+    //    public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
+    //    public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
         public IList<Message> Messages { get; private set; }
         public IList<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
@@ -36,17 +38,14 @@ namespace SEWorkshop.Models
         public Store(LoggedInUser owner, string name)
         {
             Products = new List<Product>();
-            Managers = new Dictionary<LoggedInUser, LoggedInUser>();
-            Owners = new Dictionary<LoggedInUser, LoggedInUser>();
+            Management = new List<Manages>();
+            Ownership = new List<Owns>();
             Messages = new List<Message>();
             IsOpen = true;
             Discounts = new List<Discount>();
             Name = name;
             Policy = new AlwaysTruePolicy(this);
             Purchases = new List<Purchase>();
-            Owns owns = new Owns(owner, this);
-            owner.Owns.Add(owns);
-            Owners.Add(owner, new LoggedInUser("DEMO", new Byte[0]));
         }
 
         public void CloseStore()
@@ -94,6 +93,30 @@ namespace SEWorkshop.Models
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        public Manages? GetManagement(LoggedInUser manager)
+        {
+            foreach(var manage in Management)
+            {
+                if(manager == manage.LoggedInUser)
+                {
+                    return manage;
+                }
+            }
+            return null;
+        }
+
+        public Owns? GetOwnership(LoggedInUser owner)
+        {
+            foreach(var own in Ownership)
+            {
+                if(owner == own.LoggedInUser)
+                {
+                    return own;
+                }
+            }
+            return null;
         }
     }
 }

@@ -31,8 +31,9 @@ namespace SEWorkshop.Facades
             }
             Store newStore = new Store(owner, storeName);
             Stores.Add(newStore);
-            Owns newOwnership = new Owns(owner, newStore);
+            Owns newOwnership = new Owns(owner, newStore, new LoggedInUser("DEMO", new Byte[0]));
             owner.Owns.Add(newOwnership);
+            newStore.Ownership.Add(newOwnership);
             return newStore;
         }
 

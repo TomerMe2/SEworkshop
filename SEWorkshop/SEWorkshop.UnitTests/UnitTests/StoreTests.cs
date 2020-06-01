@@ -34,6 +34,9 @@ namespace SEWorkshop.Tests.UnitTests
         {
             LoggedInUser sp_user1 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             Store sp_store1 = new Store(sp_user1, "sp_store1");
+            Owns ownership = new Owns(sp_user1, sp_store1, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            sp_store1.Ownership.Add(ownership);
+            sp_user1.Owns.Add(ownership);
             sp_user1.AddProduct(sp_store1,"sp_prod1", "ninini", "cat1", 11.11, 1);
             var result = sp_store1.SearchProducts(product => product.Name.Contains("2"));
             Assert.That(result, Is.Empty);
@@ -44,6 +47,9 @@ namespace SEWorkshop.Tests.UnitTests
         {
             LoggedInUser sp_user2 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             Store sp_store2 = new Store(sp_user2, "sp_store2");
+            Owns ownership = new Owns(sp_user2, sp_store2, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            sp_store2.Ownership.Add(ownership);
+            sp_user2.Owns.Add(ownership);
             sp_user2.AddProduct(sp_store2,"sp_prod2", "ninini", "cat1", 11.11, 1);
             var result = sp_store2.SearchProducts(product => product.Name.Contains("2"));
             Assert.That(result, Is.Not.Empty);
@@ -55,6 +61,9 @@ namespace SEWorkshop.Tests.UnitTests
         {
             LoggedInUser pb_user1 = new LoggedInUser("pb_user1", _securityAdapter.Encrypt("1111"));
             Store pb_store1 = new Store(pb_user1, "pb_store2");
+            Owns ownership = new Owns(pb_user1, pb_store1, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            pb_store1.Ownership.Add(ownership);
+            pb_user1.Owns.Add(ownership);
        
             pb_user1.AddProduct(pb_store1,"pb_prod1", "ninini", "cat1", 11.111, 1);
             var pb_prod1 = pb_store1.SearchProducts(product => product.Name.Equals("pb_prod1")).ElementAt(0);
@@ -80,6 +89,9 @@ namespace SEWorkshop.Tests.UnitTests
         {
             LoggedInUser pb_user2 = new LoggedInUser("pb_user2", _securityAdapter.Encrypt("1111"));
             Store pb_store2 = new Store(pb_user2, "pb_store2");
+            Owns ownership = new Owns(pb_user2, pb_store2, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            pb_store2.Ownership.Add(ownership);
+            pb_user2.Owns.Add(ownership);
             pb_user2.AddProduct(pb_store2,"pb_prod2", "ninini", "cat1", 11.111, 1);
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
             Basket bskt = new Basket(pb_store2);

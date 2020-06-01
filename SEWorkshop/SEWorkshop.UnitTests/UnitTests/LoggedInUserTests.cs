@@ -26,6 +26,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string PROD_NAME = "writeReviewProd";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            str.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 1);
             //Review is empty - Throw Exception
             Assert.Throws<ReviewIsEmptyException>(delegate { usr.WriteReview(prod, ""); });
@@ -41,6 +44,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string USER_PASSWORD = "1111";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            str.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             //Message is empty - Throw Exception
             Assert.Throws<MessageIsEmptyException>(delegate { usr.WriteMessage(str, "", true); });
             //Message is not empty and user is logged in - success
@@ -53,6 +59,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = usr.AddProduct(store, "BestApp", "Authentic One", "App", 4.00, 10);
 
             Assert.IsTrue(store.Products.Contains(product));
@@ -75,6 +84,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = usr.AddProduct(store, "BestApp", "Authentic One", "App", 4.00, 10);
             usr.RemoveProduct(store, product);
             Assert.IsTrue(!store.Products.Contains(product));
@@ -96,6 +108,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
             usr.EditProductDescription(store, product, "Awesome App");
@@ -109,6 +124,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
             usr.EditProductCategory(store, product, "General Communication");
@@ -122,6 +140,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product1 = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             Product product2 = new Product(store, "Instagram", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product1);
@@ -147,6 +168,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
             usr.EditProductPrice(store, product, 1.00);
@@ -161,6 +185,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
             store.Products.Add(product);
             usr.EditProductQuantity(store, product, 200);
@@ -173,6 +200,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Replying);
@@ -187,6 +217,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
 
@@ -206,6 +239,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Watching);
@@ -223,6 +259,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Products);
@@ -238,10 +277,12 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newOwner = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreOwner(store, newOwner);
-            Assert.IsTrue(store.Owners.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newOwner, usr)));
-
+            Assert.IsTrue(store.GetOwnership(newOwner).Appointer == usr);
         }
 
 
@@ -252,9 +293,12 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
-            Assert.IsTrue(store.Managers.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newManager, usr)));
+            Assert.IsTrue(store.GetManagement(newManager).Appointer == usr);
             bool catched = false;
             try
             {
@@ -275,10 +319,13 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             usr.RemoveStoreManager(store, newManager);
-            Assert.IsTrue(!store.Managers.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newManager, usr)));
+            Assert.IsTrue(store.GetManagement(newManager) == null);
             bool catched = false;
             try
             {
@@ -297,6 +344,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
             Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
@@ -313,6 +363,9 @@ namespace SEWorkshop.Tests.UnitTests
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
 
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
 
             Message message = new Message(client, store, "Great app", true);
@@ -330,6 +383,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
             Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
             store.Purchases.Add(purchase);
@@ -345,7 +401,9 @@ namespace SEWorkshop.Tests.UnitTests
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
             Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            usr.Owns.Add(new Owns(usr, store));
+            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
+            usr.Owns.Add(ownership);
+            store.Ownership.Add(ownership);
             usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
             Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
@@ -365,7 +423,9 @@ namespace SEWorkshop.Tests.UnitTests
             DateTime deadline = DateTime.Now.AddMonths(1);
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
-            usr.Owns.Add(new Owns(usr, store));
+            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
+            usr.Owns.Add(ownership);
+            store.Ownership.Add(ownership);
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
             usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0, 1, true);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
@@ -386,6 +446,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string PROD_NAME = "writeReviewProd";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            str.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 10.00, 5);
             BuyOverDiscount dis = new BuyOverDiscount(str, 9.90, 50, DateTime.Today, prod);
             GuestUser customer = new GuestUser();
@@ -404,6 +467,9 @@ namespace SEWorkshop.Tests.UnitTests
             const string PROD_NAME = "writeReviewProd";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
             Store str = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            str.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 5);
             BuySomeGetSomeFreeDiscount dis = new BuySomeGetSomeFreeDiscount(str, 2, 1, 0, DateTime.Today, prod);
             GuestUser customer = new GuestUser();
