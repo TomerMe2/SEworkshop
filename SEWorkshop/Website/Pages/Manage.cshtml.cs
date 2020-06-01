@@ -84,6 +84,16 @@ namespace Website.Pages
             StoreName = storeName;
             switch (request)
             {
+                case "RemoveOwner":
+                    try
+                    {
+                        UserManager.RemoveStoreOwner(sid, StoreName, username);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
+                    break;
                 case "RemoveManager":
                     try
                     {
