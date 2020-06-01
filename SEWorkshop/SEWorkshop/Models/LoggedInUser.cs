@@ -80,8 +80,6 @@ namespace SEWorkshop.Models
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
-
-
             if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
             {
                 throw new UserIsAlreadyStoreManagerException();
@@ -100,7 +98,6 @@ namespace SEWorkshop.Models
                     throw new UserHasNoPermissionException();
                 }
                 return ownership.AddProduct(name, description, category, price, quantity);
-
             }
             return management.AddProduct(name, description, category, price, quantity);
         }

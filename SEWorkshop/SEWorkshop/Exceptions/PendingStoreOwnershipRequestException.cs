@@ -7,7 +7,6 @@ namespace SEWorkshop.Exceptions
     [System.Serializable]
     public class PendingStoreOwnershipRequestException : System.Exception
     {
-
         public PendingStoreOwnershipRequestException() { }
         public PendingStoreOwnershipRequestException(string message) : base(message) { }
         public PendingStoreOwnershipRequestException(string message, System.Exception inner) : base(message, inner) { }

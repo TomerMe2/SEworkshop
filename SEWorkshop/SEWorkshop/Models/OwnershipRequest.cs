@@ -69,7 +69,6 @@ namespace SEWorkshop.Models
                 }
             }
         }
-
-       }
+    }
 
 }

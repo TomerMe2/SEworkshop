@@ -36,7 +36,6 @@ namespace SEWorkshop.Models
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
-            
             if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
             {
                 throw new OwnershipRequestAlreadyExistsException();
@@ -78,7 +77,6 @@ namespace SEWorkshop.Models
                     log.Info("A new Owner has been added to store");
                 }
             }
-
         }
 
         override public void AddStoreManager(LoggedInUser newManager)

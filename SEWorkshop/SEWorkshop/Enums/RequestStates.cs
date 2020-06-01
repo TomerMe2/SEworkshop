@@ -10,5 +10,4 @@ namespace SEWorkshop.Enums
             Approved,
             Denied
     }
-  
 }
