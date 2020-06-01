@@ -75,7 +75,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Store store = new Store(usr, STORE_NAME);
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
-             Assert.IsTrue(store.Owners.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newOwner, usr)));
+            Assert.IsTrue(store.Owners.Contains(new KeyValuePair<LoggedInUser, LoggedInUser>(newOwner, usr)));
             bool success = false;
             try
             {
@@ -468,11 +468,12 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
+            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
             Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
             Facade.AnswerOwnershipRequest(newOwner, store, secondOwner, RequestState.Denied);
-            Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
-
+            Assert.IsFalse(store.Owners.ContainsKey(secondOwner) && store.OwnershipRequests.ContainsKey(secondOwner));
         }
+
         [Test]
         public void AddingAndApprovingNewStoreOwner()
         {
@@ -482,11 +483,12 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
-
             Facade.AddStoreOwner(usr, store, secondOwner);
+            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
             Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
             Facade.AnswerOwnershipRequest(newOwner,store,secondOwner,RequestState.Approved);
             Assert.IsTrue(store.Owners.ContainsKey(secondOwner));
+            Assert.IsFalse(store.OwnershipRequests.ContainsKey(secondOwner));
         }
 
 
