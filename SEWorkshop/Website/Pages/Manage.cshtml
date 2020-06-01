@@ -31,18 +31,18 @@
         @{
             if (Model.Store != null)
             {
-                foreach (var owner in Model.Store.Owners)
+                foreach (var owner in Model.Store.Ownership)
                 {
                     <tr style="border:solid;border-color:black;border-width:1px">
-                        <th style="border:solid;border-color:black;border-width:1px">@owner.Key.Username</th>
+                        <th style="border:solid;border-color:black;border-width:1px">@owner.user.Username</th>
                         <th style="border:solid;border-color:black;border-width:1px">Owner</th>
-                        @if (owner.Value.Username.Equals("DEMO"))
+                        @if (owner.appointer.Username.Equals("DEMO"))
                         {
                             <th style="border:solid;border-color:black;border-width:1px">Original Owner</th>
                         }
                         else
                         {
-                            <th style="border:solid;border-color:black;border-width:1px">@owner.Value.Username</th>
+                            <th style="border:solid;border-color:black;border-width:1px">@owner.appointer.Username</th>
                         }
                         <th style="border:solid;border-color:black;border-width:1px"></th>
                     </tr>
@@ -52,25 +52,25 @@
         @{
             if (Model.Store != null)
             {
-                foreach (var manager in Model.Store.Managers)
+                foreach (var manager in Model.Store.Management)
                 {
                     <tr style="border:solid;border-color:black;border-width:1px">
-                        <th style="border:solid;border-color:black;border-width:1px">@manager.Key.Username</th>
+                        <th style="border:solid;border-color:black;border-width:1px">@manager.user.Username</th>
                         <th style="border:solid;border-color:black;border-width:1px">Manager</th>
-                        <th style="border:solid;border-color:black;border-width:1px">@manager.Value.Username</th>
+                        <th style="border:solid;border-color:black;border-width:1px">@manager.appointer.Username</th>
                         <th style="border:solid;border-color:black;border-width:1px">
                             @{
-                                if (manager.Value.Equals(Model.LoggedUser))
+                                if (manager.appointer.Equals(Model.LoggedUser))
                                 {
                                     <form id="removeManager" method="post" style="text-align:center">
                                         <div class="form-group">
                                             <input type="hidden" name="storeName" value=@Model.Store.Name>
                                             <input type="hidden" name="request" value="RemoveManager">
-                                            <input type="hidden" name="username" value=@manager.Key.Username>
+                                            <input type="hidden" name="username" value=@manager.user.Username>
                                             <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:35%">Remove Manager</button>
                                         </div>
                                     </form>
-                                    var tempauths = manager.Key.Manages.ContainsKey(Model.Store) ? manager.Key.Manages[Model.Store] : null;
+                                    var tempauths = manager.user.Manages.ContainsKey(Model.Store) ? manager.user.Manages[Model.Store] : null;
                                     if (isOwner || (tempauths != null && tempauths.Contains(SEWorkshop.Enums.Authorizations.Authorizing)))
                                         foreach (SEWorkshop.Enums.Authorizations? auth in Enum.GetValues(typeof(SEWorkshop.Enums.Authorizations)))
                                         {
@@ -84,7 +84,7 @@
                                                     <div class="form-group">
                                                         <input type="hidden" name="storeName" value=@Model.Store.Name>
                                                         <input type="hidden" name="request" value="RemovePermission">
-                                                        <input type="hidden" name="username" value=@manager.Key.Username>
+                                                        <input type="hidden" name="username" value=@manager.user.Username>
                                                         <input type="hidden" name="authorization" value=@auth>
                                                         <label style="color:green">@auth Permission: Granted </label>
                                                         <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Remove</button>
@@ -97,7 +97,7 @@
                                                     <div class="form-group" style="text-align:center">
                                                         <input type="hidden" name="storeName" value=@Model.Store.Name>
                                                         <input type="hidden" name="request" value="AddPermission">
-                                                        <input type="hidden" name="username" value=@manager.Key.Username>
+                                                        <input type="hidden" name="username" value=@manager.user.Username>
                                                         <input type="hidden" name="authorization" value=@auth>
                                                         <label style="color:red">@auth Permission: Not Granted </label>
                                                         <button type="submit" asp-page-handler="PermissionHandler" class="form-control btn btn-primary" style="width:20%">Grant</button>
