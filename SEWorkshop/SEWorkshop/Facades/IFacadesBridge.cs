@@ -47,6 +47,7 @@ namespace SEWorkshop.Facades
         public void AddStoreManager(DataLoggedInUser user, string storeName, string username);
         public void SetPermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
         public void RemoveStoreManager(DataLoggedInUser user, string storeName, string username);
+        public void RemoveStoreOwner(DataLoggedInUser user, string storeName, string username);
         public IEnumerable<DataMessage> ViewMessage(DataLoggedInUser user, string storeNm);
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description);
         public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name);

@@ -186,15 +186,13 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
-
-
-            if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            if (management == default)
             {
-                throw new UserIsAlreadyStoreManagerException();
+                ownership.AddStoreOwner(newOwner);
+                return;
             }
-
-            ownership.AddStoreOwner(newOwner);
-            
+            management.AddStoreOwner(newOwner);
         }
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
@@ -221,6 +219,19 @@ namespace SEWorkshop.Models
                 return;
             }
             management.RemoveStoreManager(managerToRemove);
+        }
+
+        public void RemoveStoreOwner(Store store, LoggedInUser ownerToRemove)
+        {
+
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            if (management == default)
+            {
+                ownership.RemoveStoreOwner(ownerToRemove);
+                return;
+            }
+            management.RemoveStoreOwner(ownerToRemove);
         }
 
         public Message MessageReply(Message message, Store store, string description)
