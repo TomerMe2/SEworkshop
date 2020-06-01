@@ -40,6 +40,7 @@ namespace SEWorkshop.Models.Discounts
             return false;
         }
 
+        // returns amount of money to subtract from the original price
         public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
 
         public double ComposeDiscounts(ICollection<(Product, int)> itemsList)

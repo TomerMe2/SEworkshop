@@ -269,7 +269,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			bridge.Logout(DEF_SID);
 			bridge.Login(DEF_SID, "user1", "password");
 			bridge.AddProductToCart(DEF_SID, storeName, productName2, 4);
-			Assert.AreEqual(32, bridge.MyCart(DEF_SID).First().PriceAfterDiscount);
+			Assert.AreEqual(30*4, bridge.MyCart(DEF_SID).First().PriceAfterDiscount);
 		}
 
 		[Test, Order(23)]
