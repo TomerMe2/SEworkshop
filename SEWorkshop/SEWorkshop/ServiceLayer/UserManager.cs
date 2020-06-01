@@ -474,6 +474,12 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.RemoveStoreManager(GetLoggedInUser(sessionId), storeName, username);
         }
 
+        public void RemoveStoreOwner(string sessionId, string storeName, string username)
+        {
+            Log.Info(string.Format("RemoveStoreOwner    {0}    {1}", storeName, username));
+            FacadesBridge.RemoveStoreOwner(GetLoggedInUser(sessionId), storeName, username);
+        }
+
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeName)
         {
             Log.Info(string.Format("ViewMessage    {0}", storeName));
