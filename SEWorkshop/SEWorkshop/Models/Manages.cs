@@ -75,20 +75,20 @@ namespace SEWorkshop.Models
             }
             if (HasAuthorization(Authorizations.Owner))
             {
-                if (!Store.Owners.ContainsKey(ownerToRemove))
+                Owns? ownership = Store.GetOwnership(ownerToRemove);
+                if (ownership == null)
                 {
                     log.Info("The requested manager is not an owner");
                     throw new UserIsNotOwnerOfThisStore();
                 }
-                LoggedInUser appointer = Store.Owners[ownerToRemove];
+                LoggedInUser appointer = ownership.Appointer;
                 if (appointer != LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                Store.Owners.Remove(ownerToRemove);
-                var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
-                ownerToRemove.Owns.Remove(owning);
+                Store.Ownership.Remove(ownership);
+                ownerToRemove.Owns.Remove(ownership);
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -276,8 +276,8 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-            Store.Owners.Add(newOwner, LoggedInUser);
-            Owns owning = new Owns(newOwner, Store);
+            Owns owning = new Owns(newOwner, Store, LoggedInUser);
+            Store.Ownership.Add(owning);
             newOwner.Owns.Add(owning);
             log.Info("A new owner has been added successfully");
             return;

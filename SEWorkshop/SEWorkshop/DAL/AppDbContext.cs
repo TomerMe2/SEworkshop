@@ -20,6 +20,8 @@ namespace SEWorkshop.DAL
         public DbSet<LoggedInUser>? Users { get; set; }
         public DbSet<Administrator>? Admins { get; set; }
         public DbSet<Store>? Stores { get; set; }
+        public DbSet<Owns>? Ownership { get; set; }
+        public DbSet<Manages>? Management { get; set; }
         public DbSet<Product>? Products { get; set; }
         public DbSet<Purchase>? Purchases { get; set; }
         public DbSet<Message>? Messages { get; set; }

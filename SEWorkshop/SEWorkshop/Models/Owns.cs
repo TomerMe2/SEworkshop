@@ -103,23 +103,23 @@ namespace SEWorkshop.Models
                 log.Info("The requested owner is not an owner");
                 throw new UserIsNotOwnerOfThisStore();
             }
-
-            if (!Store.Owners.ContainsKey(ownerToRemove))
+            
+            Owns? ownership = Store.GetOwnership(ownerToRemove); 
+            if (ownership == null)
             {
                 log.Info("The requested owner is not an owner");
                 throw new UserIsNotOwnerOfThisStore();
             }
 
-            LoggedInUser appointer = Store.Owners[ownerToRemove];
+            LoggedInUser appointer = ownership.Appointer;
             if (appointer != LoggedInUser)
             {
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
 
-            Store.Owners.Remove(ownerToRemove);
-            var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
-            ownerToRemove.Owns.Remove(owning);
+            Store.Ownership.Remove(ownership);
+            ownerToRemove.Owns.Remove(ownership);
             log.Info("The owner has been removed successfully");
         }
 
