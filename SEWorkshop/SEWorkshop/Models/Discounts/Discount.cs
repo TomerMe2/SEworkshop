@@ -5,18 +5,20 @@ using System.Text;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Facades;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
     public abstract class Discount
     {
         private static int _nextId = 0;
+        [Key]
         public int DiscountId;
         public (Operator, Discount, Discount)? ComposedParts;
         public ComposedDiscount? Father;
-        
         public DateTime Deadline { get; set; }
-
+        [ForeignKey("Stores")]
         public Store Store { get; }
 
         public Discount(DateTime deadline, Store store)

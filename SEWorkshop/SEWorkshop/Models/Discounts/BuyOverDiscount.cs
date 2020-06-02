@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
+    [Table("BODiscount")]
     public class BuyOverDiscount : ConditionalDiscount
     {
        

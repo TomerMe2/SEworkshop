@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
+    [Table("SPDiscount")]
     public class SpecificProducDiscount : OpenDiscount
     {
         public SpecificProducDiscount(double percentage, DateTime deadline,
