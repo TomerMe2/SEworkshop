@@ -20,7 +20,9 @@ namespace SEWorkshop.DataModels
 
         public override string ToString()
         {
-            return "Buy " + BuySome + " Get "+ GetSome + " With: " + Percentage + "% Discount On Product: '" + this.Product.Name + "' Untill: " + Deadline.ToString();
+            if(GetSome == -1)
+                return "Buy " + BuySome + " " + Product.Name + " Get Limitless Amounf Of " + ProdUnderDiscount.Name + " With: " + Percentage + "% Discount Untill: " + Deadline.ToString();
+            return "Buy " + BuySome + " " + Product.Name + " Get "+ GetSome + " " + ProdUnderDiscount.Name + " With: " + Percentage + "% Discount Untill: " + Deadline.ToString();
         }
     }
 }
