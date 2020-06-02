@@ -21,10 +21,10 @@ namespace SEWorkshop.Models
             Owner = owner;
             NewOwner = newOwner;
             Answers = new List<(LoggedInUser, RequestState)>();
-            foreach (var ow in store.Owners.Keys)
+            foreach (var ow in store.Ownership)
             {
                 owner.WriteMessage(store,"ownership request", false);
-                Answers.Add((ow, RequestState.Pending));
+                Answers.Add((ow.LoggedInUser, RequestState.Pending));
             }
         }
         public RequestState GetRequestState()

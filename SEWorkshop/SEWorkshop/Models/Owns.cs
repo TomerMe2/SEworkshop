@@ -51,13 +51,14 @@ namespace SEWorkshop.Models
             newOwner.OwnershipRequests.Add(request);
             if (request.GetRequestState() == RequestState.Approved)
             {
-                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                if(Store.GetOwnership(newOwner) != null)
                 {
                     throw new UserIsAlreadyStoreOwnerException();
                 }
                 Store.OwnershipRequests.Remove(newOwner);
-                Owns ownership = new Owns(newOwner, Store);
+                Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                 newOwner.Owns.Add(ownership);
+                Store.Ownership.Add(ownership);
             }
         }
         public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
@@ -70,12 +71,13 @@ namespace SEWorkshop.Models
                 }
                 if (req.GetRequestState()==RequestState.Approved)
                 {
-                    if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                    if(Store.GetOwnership(newOwner) != null)
                     {
                         throw new UserIsAlreadyStoreOwnerException();
                     }
                     Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                     Store.Ownership.Add(ownership);
+                    Store.OwnershipRequests.Remove(newOwner);
                     newOwner.Owns.Add(ownership);
                     log.Info("A new owner has been added successfully");
                 }

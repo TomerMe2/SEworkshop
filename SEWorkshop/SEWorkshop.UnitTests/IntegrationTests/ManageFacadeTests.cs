@@ -522,14 +522,17 @@ namespace SEWorkshop.Tests.IntegrationTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
             Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
-            Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
+            Assert.IsFalse(store.GetOwnership(secondOwner) != null);
             Facade.AnswerOwnershipRequest(newOwner, store, secondOwner, RequestState.Denied);
-            Assert.IsFalse(store.Owners.ContainsKey(secondOwner) && store.OwnershipRequests.ContainsKey(secondOwner));
+            Assert.IsFalse(store.GetOwnership(secondOwner) != null && store.OwnershipRequests.ContainsKey(secondOwner));
         }
 
         [Test]
@@ -538,14 +541,17 @@ namespace SEWorkshop.Tests.IntegrationTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
             Store store = new Store(usr, STORE_NAME);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
+            store.Ownership.Add(ownership);
+            usr.Owns.Add(ownership);
             LoggedInUser newOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
-            Assert.IsFalse(store.Owners.ContainsKey(secondOwner));
+            Assert.IsFalse(store.GetOwnership(secondOwner) != null);
             Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
             Facade.AnswerOwnershipRequest(newOwner,store,secondOwner,RequestState.Approved);
-            Assert.IsTrue(store.Owners.ContainsKey(secondOwner));
+            Assert.IsTrue(store.GetOwnership(secondOwner) != null);
             Assert.IsFalse(store.OwnershipRequests.ContainsKey(secondOwner));
         }
 
