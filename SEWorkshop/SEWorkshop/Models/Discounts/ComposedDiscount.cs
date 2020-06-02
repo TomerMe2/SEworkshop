@@ -13,45 +13,43 @@ namespace SEWorkshop.Models.Discounts
                 throw new Exception();
             }
 
+            dis1.Father = this;
+            dis2.Father = this;
             ComposedParts = (op, dis1, dis2);
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
 
         public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
         {
-            if(ComposedParts == null)
-            {
-                throw new Exception("Null reference for composed parts");
-            }
-            return ComposedParts.Value.Item1 switch
-            {
-                Operator.And => ComposedParts.Value.Item2.ComputeDiscount(itemsList) + ComposedParts.Value.Item3.ComputeDiscount(itemsList),
-                Operator.Xor => ChooseCheaper(itemsList),
-                Operator.Implies => ApplyImplies(itemsList),
-                _ => throw new Exception("Should not get here"),
-            };
+            if (ComposedParts != null)
+                return ComposedParts.Value.Item1 switch
+                {
+                    Operator.And => ComposedParts.Value.Item2.ComputeDiscount(itemsList) +
+                                    ComposedParts.Value.Item3.ComputeDiscount(itemsList),
+                    Operator.Xor => ChooseCheaper(itemsList),
+                    Operator.Implies => ApplyImplies(itemsList),
+                    _ => throw new Exception("Should not get here"),
+                };
+            throw new Exception("should not get here");
         }
         
         public double ChooseCheaper(ICollection<(Product, int)> itemsList)
         {
-            if(ComposedParts == null)
-            {
-                throw new Exception("Null reference for composed parts");
-            }
-            return Math.Min(ComposedParts.Value.Item2.ComputeDiscount(itemsList),
-                ComposedParts.Value.Item3.ComputeDiscount(itemsList));
+            if (ComposedParts != null)
+                return Math.Min(ComposedParts.Value.Item2.ComputeDiscount(itemsList),
+                    ComposedParts.Value.Item3.ComputeDiscount(itemsList));
+            throw new Exception("should not get here");
         }
 
         public double ApplyImplies(ICollection<(Product, int)> itemsList)
         {
-            if(ComposedParts == null)
+            if (ComposedParts != null)
             {
-                throw new Exception("Null reference for composed parts");
-            }
-            double firstDiscount = ComposedParts.Value.Item2.ComputeDiscount(itemsList);
-            if (firstDiscount > 0)
-            {
-                return firstDiscount + ComposedParts.Value.Item3.ComputeDiscount(itemsList);
+                double firstDiscount = ComposedParts.Value.Item2.ComputeDiscount(itemsList);
+                if (firstDiscount > 0)
+                {
+                    return firstDiscount + ComposedParts.Value.Item3.ComputeDiscount(itemsList);
+                }
             }
             return 0;
         }

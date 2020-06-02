@@ -27,6 +27,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public abstract IEnumerable<DataPurchase> ManagingPurchaseHistory(string sid, string storeNm);
         public abstract DataProduct AddProduct(string sid, string storeNm, string productName, string description, string category, double price, int quantity);
         public abstract void RemoveProduct(string sid, string storeNm, string productName);
+        public abstract void AnswerOwnershipRequest(string sid,string store, string username, string answer);
         public abstract void AddStoreOwner(string sid, string storeNm, string username);
         public abstract void AddStoreManager(string sid, string storeNm, string username);
         public abstract void SetPermissionsOfManager(string sid, string storeNm, string username, string authorization);

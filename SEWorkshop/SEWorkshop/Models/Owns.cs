@@ -38,17 +38,53 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
-
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
             if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
+            if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
+            {
+                throw new OwnershipRequestAlreadyExistsException();
+            }
+            newOwner.OwnershipRequests.Add(request);
+            if (request.GetRequestState() == RequestState.Approved)
+            {
+                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                {
+                    throw new UserIsAlreadyStoreOwnerException();
+                }
+                Store.OwnershipRequests.Remove(newOwner);
+                Owns ownership = new Owns(newOwner, Store);
+                newOwner.Owns.Add(ownership);
+            }
+        }
+        public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
+        {
+            foreach (var req in newOwner.OwnershipRequests)
+            {
+                if (req.Store == Store)
+                {
+                    req.Answer(LoggedInUser, answer);
+                }
+                if (req.GetRequestState()==RequestState.Approved)
+                {
+                    if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                    {
+                        throw new UserIsAlreadyStoreOwnerException();
+                    }
+                    Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                    Store.Ownership.Add(ownership);
+                    newOwner.Owns.Add(ownership);
+                    log.Info("A new owner has been added successfully");
+                }
 
-            Owns ownership = new Owns(newOwner, Store, LoggedInUser);
-            Store.Ownership.Add(ownership);
-            newOwner.Owns.Add(ownership);
-            log.Info("A new owner has been added successfully");
+                if (req.GetRequestState() == RequestState.Denied)
+                {
+                    Store.OwnershipRequests.Remove(newOwner);
+                }
+            }
         }
 
         override public void AddStoreManager(LoggedInUser newManager)
@@ -340,47 +376,37 @@ namespace SEWorkshop.Models
                     {
                         if (toLeft)
                         {
-                            /*father.ComposedParts = existing.IsLeftChild()
-                                ? (father.ComposedParts.Value.Item1,
-                                    (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2),
-                                    father.ComposedParts.Value.Item3)
-                                : (father.ComposedParts.Value.Item1,
-                                    father.ComposedParts.Value.Item2,
-                                    (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3));*/
-                            if(father.ComposedParts != null)
+                            if (existing.IsLeftChild())
                             {
-                                if (existing.IsLeftChild())
+                                if (father.ComposedParts != null)
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
-                                    newDis.Father = father;
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
-                                    newDis.Father = father;
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
                                 }
                             }
                         }
                         else
                         {
-                            /*father.ComposedParts = existing.IsLeftChild()
-                                ? (father.ComposedParts.Value.Item1,
-                                    (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis),
-                                    father.ComposedParts.Value.Item3)
-                                : (father.ComposedParts.Value.Item1,
-                                    father.ComposedParts.Value.Item2,
-                                    (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis));*/
-                            if(father.ComposedParts != null)
+                            if (existing.IsLeftChild())
                             {
-                                if (existing.IsLeftChild())
+                                if (father.ComposedParts != null)
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
                                     newDis.Father = father;
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
                                     newDis.Father = father;
@@ -484,9 +510,9 @@ namespace SEWorkshop.Models
         {
             ComposeDiscount(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
+        public void AddBuySomeGetSomeDiscount(Operator op, Product prod1, Product prod2, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
         {
-            ComposeDiscount(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain, disId, toLeft);
+            ComposeDiscount(new BuySomeGetSomeDiscount(Store, buySome, getSome, percentage, deadline, prod1, prod2), op, indexInChain, disId, toLeft);
         }
 
 

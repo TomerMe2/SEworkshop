@@ -317,9 +317,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostGetDiscountHandler(string storeName, string buy, string get, string oper, string chosenProduct, string percent, string date, string index)
+        public IActionResult OnPostGetDiscountHandler(string storeName, string buy, string get, string oper, string buyProduct, string getProduct, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID, getCount;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -327,6 +328,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -353,10 +356,21 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
+                {
                     newIndex = DiscountNumber;
+                    innerID = 0;
+                }
                 else
+                {
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, chosenProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex, 0, true);
+                    innerID = Int32.Parse(innerid);
+                }
+                if (string.IsNullOrEmpty(get))
+                    getCount = -1;
+                else
+                    getCount = Int32.Parse(get);
+
+                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), getCount, sid, buyProduct, getProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
             }
             catch (Exception e)
             {
@@ -365,9 +379,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostOverDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index)
+        public IActionResult OnPostOverDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -375,6 +390,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -401,10 +418,16 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
+                {
                     newIndex = DiscountNumber;
+                    innerID = 0;
+                }
                 else
+                {
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, 0, true);
+                    innerID = Int32.Parse(innerid);
+                }
+                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
             }
             catch (Exception e)
             {

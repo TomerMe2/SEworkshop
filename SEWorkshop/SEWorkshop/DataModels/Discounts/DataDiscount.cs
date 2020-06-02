@@ -39,7 +39,9 @@ namespace SEWorkshop.DataModels
                 SpecificProducDiscount d => new DataOpenDiscount(d),
                 ProductCategoryDiscount d => new DataProductCategoryDiscount(d),
                 BuyOverDiscount d => new DataBuyOverDiscount(d),
-                BuySomeGetSomeFreeDiscount d => new DataBuySomeGetSomeFreeDiscount(d),
+                BuySomeGetSomeDiscount d => new DataBuySomeGetSomeDiscount(d),
+                /*PrimitiveDiscount d => new DataPrimitiveDiscount(d),*/
+                ComposedDiscount d => new DataComposedDiscount(d),
                 _ => throw new Exception("Should not get here"),
             };
         }

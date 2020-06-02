@@ -2,10 +2,10 @@
 
 namespace SEWorkshop.DataModels
 {
-    public class DataPrimitiveDiscount : DataDiscount
+    public abstract class DataPrimitiveDiscount : DataDiscount
     {
         public double Percentage => ((PrimitiveDiscount) InnerModel).Percentage;
-        public DataPrimitiveDiscount(Discount discount) : base(discount)
+        public DataPrimitiveDiscount(PrimitiveDiscount discount) : base(discount)
         {
         }
     }
