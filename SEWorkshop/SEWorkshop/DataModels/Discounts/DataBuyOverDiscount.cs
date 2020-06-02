@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataBuyOverDiscount : DataDiscount
+    public class DataBuyOverDiscount : DataPrimitiveDiscount
     {
         private BuyOverDiscount InnerBuyOverModel { get; }
         public double MinSum => InnerBuyOverModel.MinSum;

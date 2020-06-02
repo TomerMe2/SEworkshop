@@ -10,75 +10,32 @@ namespace SEWorkshop.Models.Discounts
 {
     public abstract class Discount
     {
-        public (Discount, Operator)? InnerDiscount { get; set; }
-        public double Percentage { get; private set; }
-
+        private static int _nextId = 0;
+        public int DiscountId;
+        public (Operator, Discount, Discount)? ComposedParts;
+        public ComposedDiscount? Father;
+        
         public DateTime Deadline { get; set; }
 
         public Store Store { get; }
 
-        public Discount(double percentage, DateTime deadline, Store store)
+        public Discount(DateTime deadline, Store store)
         {
-            if (SetDiscountPercentage(percentage))
-            {
-                Deadline = deadline;
-                Store = store;
-            }
-            else
-            {
-                throw new IllegalDiscountPercentageException();
-            }
+            Deadline = deadline;
+            Store = store;
+            DiscountId = _nextId++;
         }
 
-        public bool SetDiscountPercentage(double percentage)
+        public bool IsLeaf()
         {
-            if (percentage >= 0 && percentage <= 100)
-            {
-                Percentage = percentage;
-                return true;
-            }
-            return false;
+            return ComposedParts is null;
         }
 
-        public abstract double ApplyDiscount(ICollection<(Product, int)> itemsList);
-
-        public double ComposeDiscounts(ICollection<(Product, int)> itemsList)
+        public bool IsLeftChild()
         {
-            if (InnerDiscount is null)
-            {
-                return ApplyDiscount(itemsList);
-            }
-
-            return InnerDiscount.Value.Item2 switch
-            {
-                Operator.And => ApplyDiscount(itemsList) + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList),
-                Operator.Xor => ChooseCheaper(itemsList),
-                Operator.Implies => ApplyImplies(itemsList),
-                _ => throw new Exception("Should not get here"),
-            };
+            return Father?.ComposedParts?.Item2 == this;
         }
 
-        public double ChooseCheaper(ICollection<(Product, int)> itemsList)
-        {
-            if (InnerDiscount != null)
-            {
-                return Math.Min(ApplyDiscount(itemsList), InnerDiscount.Value.Item1.ComposeDiscounts(itemsList));
-            }
-            return ApplyDiscount(itemsList);
-        }
-
-        public double ApplyImplies(ICollection<(Product, int)> itemsList)
-        {
-            double firstDiscount = ApplyDiscount(itemsList);
-            if (firstDiscount > 0)
-            {
-                if (InnerDiscount != null)
-                {
-                    return firstDiscount + InnerDiscount.Value.Item1.ComposeDiscounts(itemsList);
-                }
-                return firstDiscount;
-            }
-            return 0;
-        }
+        public abstract double ComputeDiscount(ICollection<(Product, int)> itemsList);
     }
 }

@@ -9,21 +9,21 @@ namespace SEWorkshop.DataModels
 {
     public abstract class DataDiscount : DataModel<Discount>
     {
-        public double Percentage => InnerModel.Percentage;
-
         public DateTime Deadline => InnerModel.Deadline;
-
+        public int DiscountId => InnerModel.DiscountId;
         public DataStore Store { get; }
 
-        public (DataDiscount, Operator)? InnerDiscount
+        public (Operator, DataDiscount, DataDiscount)? ComposedParts
         {
             get
             {
-                if (InnerModel.InnerDiscount == null)
+                if (InnerModel.ComposedParts == null)
                 {
                     return null;
                 }
-                return (CreateDataFromDiscount(InnerModel.InnerDiscount.Value.Item1), InnerModel.InnerDiscount.Value.Item2);
+                return (InnerModel.ComposedParts.Value.Item1, 
+                    CreateDataFromDiscount(InnerModel.ComposedParts.Value.Item2), 
+                    CreateDataFromDiscount(InnerModel.ComposedParts.Value.Item3));
             }
         }
 
@@ -39,7 +39,9 @@ namespace SEWorkshop.DataModels
                 SpecificProducDiscount d => new DataOpenDiscount(d),
                 ProductCategoryDiscount d => new DataProductCategoryDiscount(d),
                 BuyOverDiscount d => new DataBuyOverDiscount(d),
-                BuySomeGetSomeFreeDiscount d => new DataBuySomeGetSomeFreeDiscount(d),
+                BuySomeGetSomeDiscount d => new DataBuySomeGetSomeDiscount(d),
+                /*PrimitiveDiscount d => new DataPrimitiveDiscount(d),*/
+                ComposedDiscount d => new DataComposedDiscount(d),
                 _ => throw new Exception("Should not get here"),
             };
         }

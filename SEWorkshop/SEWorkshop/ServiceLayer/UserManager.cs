@@ -607,33 +607,33 @@ namespace SEWorkshop.ServiceLayer
         }
 
         public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
             Log.Info(string.Format("AddProductCategoryDiscount    {0}    {1}    {2}    {3}    {4}    {5}",
                 storeName, categoryName, deadline, percentage, op, indexInChain));
-            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain);
+            FacadesBridge.AddProductCategoryDiscount(GetLoggedInUser(sessionId), storeName, categoryName, deadline, percentage, op, indexInChain, disId, toLeft);
         }
         public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
             Log.Info(string.Format("AddBuyOverDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}",
                   storeName, productName, deadline, percentage, op, indexInChain, minSum));
-            FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain);
+            FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProdName, string underDiscountProdName, string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
             Log.Info(string.Format("AddBuySomeGetSomeDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}    {7}",
-                    storeName, productName, deadline, percentage, op, indexInChain, buySome, getSome));
-            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain);
+                    storeName, conditionProdName, deadline, percentage, op, indexInChain, buySome, getSome));
+            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, conditionProdName, underDiscountProdName, buySome, getSome, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
             Log.Info(string.Format("AddSpecificProductDiscount    {0}    {1}    {2}    {3}    {4}    {5}",
                     storeName, productName, deadline, percentage, op, indexInChain));
-            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage, op, indexInChain);
+            FacadesBridge.AddSpecificProductDiscount(GetLoggedInUser(sessionId), storeName, productName, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(string sessionId, string storeName, int indexInChain)
