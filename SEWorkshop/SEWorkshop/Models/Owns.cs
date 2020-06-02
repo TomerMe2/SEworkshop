@@ -302,49 +302,45 @@ namespace SEWorkshop.Models
                     else
                     {
                         if (toLeft)
-                    {
-                        /*father.ComposedParts = existing.IsLeftChild()
-                            ? (father.ComposedParts.Value.Item1,
-                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2),
-                                father.ComposedParts.Value.Item3)
-                            : (father.ComposedParts.Value.Item1,
-                                father.ComposedParts.Value.Item2,
-                                (Discount)new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3));*/
-                        if (existing.IsLeftChild())
                         {
-                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                            if (existing.IsLeftChild())
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
                         }
                         else
                         {
-                            ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                            if (existing.IsLeftChild())
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
                         }
-                    }
-                    else
-                    {
-                        /*father.ComposedParts = existing.IsLeftChild()
-                            ? (father.ComposedParts.Value.Item1,
-                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis),
-                                father.ComposedParts.Value.Item3)
-                            : (father.ComposedParts.Value.Item1,
-                                father.ComposedParts.Value.Item2,
-                                (Discount)new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis));*/
-                        if (existing.IsLeftChild())
-                        {
-                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
-                        }
-                        else
-                        {
-                            ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
-                            newDis.Father = father;
-                            father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
-                        }
-                    }
                     }
                 }
             }
