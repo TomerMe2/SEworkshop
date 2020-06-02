@@ -73,8 +73,8 @@ namespace SEWorkshop.ServiceLayer
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
 
         public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
-        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int IndexInChain, int disId, bool toLeft);
-        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProdName, string underDiscountProdName, string storeName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft);
         public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft);

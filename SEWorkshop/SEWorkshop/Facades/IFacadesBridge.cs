@@ -68,7 +68,7 @@ namespace SEWorkshop.Facades
 
         public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
         public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
         public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);

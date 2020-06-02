@@ -601,12 +601,12 @@ namespace SEWorkshop.ServiceLayer
                   storeName, productName, deadline, percentage, op, indexInChain, minSum));
             FacadesBridge.AddBuyOverDiscount(GetLoggedInUser(sessionId), storeName, productName, minSum,deadline, percentage, op, indexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProdName, string underDiscountProdName, string storeName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft)
         {
             Log.Info(string.Format("AddBuySomeGetSomeDiscount    {0}    {1}    {2}    {3}    {4}    {5}    {6}    {7}",
-                    storeName, productName, deadline, percentage, op, indexInChain, buySome, getSome));
-            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, productName,buySome, getSome, deadline, percentage, op, indexInChain, disId, toLeft);
+                    storeName, conditionProdName, deadline, percentage, op, indexInChain, buySome, getSome));
+            FacadesBridge.AddBuySomeGetSomeDiscount(GetLoggedInUser(sessionId), storeName, conditionProdName, underDiscountProdName, buySome, getSome, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage,

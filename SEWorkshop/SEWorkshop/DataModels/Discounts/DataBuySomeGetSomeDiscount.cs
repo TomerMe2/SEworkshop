@@ -5,14 +5,15 @@ using SEWorkshop.Models.Discounts;
 
 namespace SEWorkshop.DataModels
 {
-    public class DataBuySomeGetSomeFreeDiscount : DataPrimitiveDiscount
+    public class DataBuySomeGetSomeDiscount : DataPrimitiveDiscount
     {
-        private BuySomeGetSomeFreeDiscount InnerBuySomeModel { get; }
+        private BuySomeGetSomeDiscount InnerBuySomeModel { get; }
         public int BuySome => InnerBuySomeModel.BuySome;
         public int GetSome => InnerBuySomeModel.GetSome;
         public DataProduct Product => new DataProduct(InnerBuySomeModel.Product);
+        public DataProduct ProdUnderDiscount => new DataProduct(InnerBuySomeModel.ProdUnderDiscount);
         
-        public DataBuySomeGetSomeFreeDiscount(BuySomeGetSomeFreeDiscount discount) : base(discount)
+        public DataBuySomeGetSomeDiscount(BuySomeGetSomeDiscount discount) : base(discount)
         {
             InnerBuySomeModel = discount;
         }

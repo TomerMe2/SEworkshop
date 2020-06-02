@@ -387,9 +387,9 @@ namespace SEWorkshop.Facades
             }
         }
 
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, buySome, getSome,op, indexInChain, disId, toLeft);
+            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,prod1Name), GetProduct(storeName, prod2Name), deadline, percentage, buySome, getSome,op, indexInChain, disId, toLeft);
         }
 
         public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)

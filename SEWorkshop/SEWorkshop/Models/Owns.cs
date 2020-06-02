@@ -437,9 +437,9 @@ namespace SEWorkshop.Models
         {
             ComposeDiscount(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
+        public void AddBuySomeGetSomeDiscount(Operator op, Product prod1, Product prod2, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
         {
-            ComposeDiscount(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain, disId, toLeft);
+            ComposeDiscount(new BuySomeGetSomeDiscount(Store, buySome, getSome, percentage, deadline, prod1, prod2), op, indexInChain, disId, toLeft);
         }
 
 

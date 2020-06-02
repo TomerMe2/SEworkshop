@@ -370,9 +370,9 @@ namespace SEWorkshop.Models
         {
             OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeFreeDiscount(Store store, Product product, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain, int disId, bool toLeft)
+        public void AddBuySomeGetSomeFreeDiscount(Store store, Product prod1, Product prod2, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain, int disId, bool toLeft)
         {
-            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, product, deadline, percentage, buySome, getSome, IndexInChain, disId, toLeft);
+            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, prod1, prod2, deadline, percentage, buySome, getSome, IndexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(Store store, int indexInChain)
