@@ -11,6 +11,7 @@ namespace SEWorkshop.Models
     public class LoggedInUser : User
     {
         public ICollection<Owns> Owns { get; private set; }
+        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
         public ICollection<Manages> Manage { get; private set; }
         public IList<Review> Reviews { get; private set; }
         public IList<Message> Messages { get; private set; }
@@ -23,6 +24,7 @@ namespace SEWorkshop.Models
         {
             Username = username;
             Password = password;
+            OwnershipRequests = new List<OwnershipRequest>();
             Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();
@@ -74,7 +76,17 @@ namespace SEWorkshop.Models
             store.Messages.Add(message);
             Messages.Add(message);
         }
-        
+
+        public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
+        {
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
+            {
+                throw new UserIsAlreadyStoreManagerException();
+            }
+            ownership.AnswerOwnershipRequest(newOwner, answer);
+        }
+
         public Product AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
             var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
@@ -86,7 +98,6 @@ namespace SEWorkshop.Models
                     throw new UserHasNoPermissionException();
                 }
                 return ownership.AddProduct(name, description, category, price, quantity);
-
             }
             return management.AddProduct(name, description, category, price, quantity);
         }
@@ -186,15 +197,13 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
-
-
-            if (Manage.Select(mng => mng.LoggedInUser == newOwner).Any())
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            if (management == default)
             {
-                throw new UserIsAlreadyStoreManagerException();
+                ownership.AddStoreOwner(newOwner);
+                return;
             }
-
-            ownership.AddStoreOwner(newOwner);
-            
+            management.AddStoreOwner(newOwner);
         }
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
@@ -221,6 +230,19 @@ namespace SEWorkshop.Models
                 return;
             }
             management.RemoveStoreManager(managerToRemove);
+        }
+
+        public void RemoveStoreOwner(Store store, LoggedInUser ownerToRemove)
+        {
+
+            var ownership = Owns.FirstOrDefault(man => man.Store == store);
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            if (management == default)
+            {
+                ownership.RemoveStoreOwner(ownerToRemove);
+                return;
+            }
+            management.RemoveStoreOwner(ownerToRemove);
         }
 
         public Message MessageReply(Message message, Store store, string description)

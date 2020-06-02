@@ -16,6 +16,7 @@ namespace SEWorkshop.Models
         public ICollection<Product> Products { get; private set; }
         public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
         public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
+        public IDictionary<LoggedInUser, LoggedInUser> OwnershipRequests { get; private set; }
         public IList<Message> Messages { get; private set; }
         public IList<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
@@ -34,6 +35,7 @@ namespace SEWorkshop.Models
             Products = new List<Product>();
             Managers = new Dictionary<LoggedInUser, LoggedInUser>();
             Owners = new Dictionary<LoggedInUser, LoggedInUser>();
+            OwnershipRequests=new Dictionary<LoggedInUser, LoggedInUser>();
             Messages = new List<Message>();
             IsOpen = true;
             Discounts = new List<Discount>();

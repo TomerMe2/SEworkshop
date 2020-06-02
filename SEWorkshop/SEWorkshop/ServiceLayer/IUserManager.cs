@@ -48,6 +48,7 @@ namespace SEWorkshop.ServiceLayer
         public void AddStoreManager(string sessionId, string storeNm, string username);
         public void SetPermissionsOfManager(string sessionId, string storeNm, string username, string authorization);
         public void RemoveStoreManager(string sessionId, string storeNm, string username);
+        public void RemoveStoreOwner(string sessionId, string storeNm, string username);
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeNm);
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeNm, string description);
         public void EditProductName(string sessionId, string storeName, string productName, string Name);
@@ -83,5 +84,7 @@ namespace SEWorkshop.ServiceLayer
         public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
+        public double GetIncomeInDate(string sessionId, DateTime date);
+
     }
 }

@@ -44,9 +44,11 @@ namespace SEWorkshop.Facades
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity);
         public void RemoveProduct(DataLoggedInUser user, string storeName, string productName);
         public void AddStoreOwner(DataLoggedInUser user, string storeName, string username);
+        public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, RequestState answer);
         public void AddStoreManager(DataLoggedInUser user, string storeName, string username);
         public void SetPermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
         public void RemoveStoreManager(DataLoggedInUser user, string storeName, string username);
+        public void RemoveStoreOwner(DataLoggedInUser user, string storeName, string username);
         public IEnumerable<DataMessage> ViewMessage(DataLoggedInUser user, string storeNm);
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description);
         public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name);
@@ -73,5 +75,7 @@ namespace SEWorkshop.Facades
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();
+        public double GetIncomeInDate(DateTime date);
+
     }
 }

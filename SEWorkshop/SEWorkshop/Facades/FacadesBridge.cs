@@ -96,6 +96,11 @@ namespace SEWorkshop.Facades
             ManageFacade.AddStoreOwner(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName));
         }
 
+        public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, RequestState answer)
+        {
+            ManageFacade.AnswerOwnershipRequest(GetLoggedInUsr(user), GetStore(storeName), GetLoggedInUsr(newOwnerUserName), answer);
+        }
+
         public IEnumerable<DataStore> BrowseStores()
         {
             return StoreFacade.BrowseStores().Select(store => new DataStore(store));
@@ -245,6 +250,12 @@ namespace SEWorkshop.Facades
         {
             LoggedInUser manager = UserFacade.GetLoggedInUser(username);
             ManageFacade.RemoveStoreManager(GetLoggedInUsr(user), GetStore(storeName), manager);
+        }
+
+        public void RemoveStoreOwner(DataLoggedInUser user, string storeName, string username)
+        {
+            LoggedInUser owner = UserFacade.GetLoggedInUser(username);
+            ManageFacade.RemoveStoreOwner(GetLoggedInUsr(user), GetStore(storeName), owner);
         }
 
         private IEnumerable<Product> SearchProducts(Func<Product, bool> pred)
@@ -399,6 +410,11 @@ namespace SEWorkshop.Facades
         public IEnumerable<string> GetRegisteredUsers()
         {
             return UserFacade.GetRegisteredUsers();
+        }
+
+        public double GetIncomeInDate(DateTime date)
+        {
+            return UserFacade.GetIncomeInDate(date);
         }
     }
 }

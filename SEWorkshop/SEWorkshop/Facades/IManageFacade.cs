@@ -11,9 +11,11 @@ namespace SEWorkshop.Facades
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity); //throws exception
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product product); //throws exception
         public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner); //throws exception
+        public void AnswerOwnershipRequest(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner, RequestState answer);
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager); //throws exception
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization); //throws exception
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove); //throws exception
+        public void RemoveStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser ownerToRemove); //throws exception
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store); //throws exception
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description); //throws exception
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store); //throws exception

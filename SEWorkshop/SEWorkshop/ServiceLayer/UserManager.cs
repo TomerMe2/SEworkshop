@@ -424,6 +424,19 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
+        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, string answer)
+        {
+            Log.Info(string.Format("AnswerOwnershipRequest    {0}    {1}    {2}", storeName, newOwnerUserName, answer));
+            var requestState = answer switch
+            {
+                "Denied" => RequestState.Denied,
+                "Approved" => RequestState.Approved,
+                "Pending" => RequestState.Pending,
+                _ => throw new AuthorizationDoesNotExistException(),
+            };
+            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId), storeName, newOwnerUserName, requestState);
+        }
+
         public void AddStoreOwner(string sessionId, string storeName, string username)
         {
             Log.Info(string.Format("AddStoreOwner    {0}    {1}", storeName, username));
@@ -472,6 +485,12 @@ namespace SEWorkshop.ServiceLayer
         {
             Log.Info(string.Format("RemoveStoreManager    {0}    {1}", storeName, username));
             FacadesBridge.RemoveStoreManager(GetLoggedInUser(sessionId), storeName, username);
+        }
+
+        public void RemoveStoreOwner(string sessionId, string storeName, string username)
+        {
+            Log.Info(string.Format("RemoveStoreOwner    {0}    {1}", storeName, username));
+            FacadesBridge.RemoveStoreOwner(GetLoggedInUser(sessionId), storeName, username);
         }
 
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeName)
@@ -631,6 +650,12 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv)
         {
             PurchaseObservers.Add(obsrv);
+        }
+
+        public double GetIncomeInDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetIncomeInDate(date);
         }
     }
 }

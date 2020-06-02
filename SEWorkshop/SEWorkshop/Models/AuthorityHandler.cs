@@ -21,6 +21,7 @@ namespace SEWorkshop.Models
 
         public abstract void AddStoreManager(LoggedInUser newManager);
         public abstract void RemoveStoreManager(LoggedInUser newManager);
+        public abstract void RemoveStoreOwner(LoggedInUser newOwner);
         abstract public Product AddProduct(string name, string description, string category, double price, int quantity);
         abstract public void RemoveProduct(Product productToRemove);
         abstract public void EditProductDescription(Product product, string description);
