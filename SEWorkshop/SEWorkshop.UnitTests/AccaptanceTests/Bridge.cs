@@ -49,12 +49,12 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public abstract void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry);
         public abstract void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity);
         public abstract void RemovePolicy(string sessionId, string storeName, int indexInChain);
-        public abstract void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public abstract void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public abstract void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain);
+        public abstract void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProductName, string underDiscountProductName, string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain, int disld, bool toLeft);
         public abstract void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain);
+                                                Operator op, int indexInChain, int disld, bool toLeft);
         public abstract void RemoveDiscount(string sessionId, string storeName, int indexInChain);
     }
 }

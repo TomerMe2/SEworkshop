@@ -217,24 +217,24 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.RemovePolicy(sessionId, storeName, indexInChain);
         }
 
-        public override void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public override void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft)
         {
-            userManager.AddProductCategoryDiscount(sessionId, storeName, categoryName, deadline, percentage, op, indexInChain);
+            userManager.AddProductCategoryDiscount(sessionId, storeName, categoryName, deadline, percentage, op, indexInChain, disld, toLeft);
         }
 
-        public override void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public override void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft)
         {
-            userManager.AddSpecificProductDiscount(sessionId, storeName, productName, deadline, percentage, op, indexInChain);
+            userManager.AddSpecificProductDiscount(sessionId, storeName, productName, deadline, percentage, op, indexInChain, disld, toLeft);
         }
 
-        public override void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public override void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProductName, string underDiscountProductName, string storeName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft)
         {
-            userManager.AddBuySomeGetSomeDiscount(buySome, getSome, sessionId, productName, storeName, deadline, percentage, op, indexInChain);
+            userManager.AddBuySomeGetSomeDiscount(buySome, getSome, sessionId, conditionProductName, underDiscountProductName, storeName, deadline, percentage, op, indexInChain, disld, toLeft);
         }
 
-        public override void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public override void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft)
         {
-            userManager.AddBuyOverDiscount(minSum, sessionId, storeName, productName, deadline, percentage, op, indexInChain);
+            userManager.AddBuyOverDiscount(minSum, sessionId, storeName, productName, deadline, percentage, op, indexInChain, disld, toLeft);
         }
 
         public override void RemoveDiscount(string sessionId, string storeName, int indexInChain)
