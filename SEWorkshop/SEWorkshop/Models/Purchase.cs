@@ -10,7 +10,7 @@ namespace SEWorkshop.Models
     public class Purchase
     {
         [ForeignKey("Users"), Key, Column(Order = 0)]
-        public User User {get; private set;}
+        public User? User {get; private set;}
         [ForeignKey("Baskets")]
         public Basket Basket { get; private set; }
         [ForeignKey("Addresses")]
