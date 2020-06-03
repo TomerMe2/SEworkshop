@@ -211,7 +211,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Address peb_address1 = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             try
             {
-                UsrFacade.Purchase(peb_user1, new Basket(peb_store1), peb_creditCardNumber, peb_address1);
+                UsrFacade.Purchase(peb_user1, new Basket(peb_store1, peb_user1.Cart), peb_creditCardNumber, peb_address1);
                 Assert.Fail();
             }
             catch (BasketIsEmptyException)

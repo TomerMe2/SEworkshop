@@ -10,10 +10,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
+    [Table("Discounts")]
     public abstract class Discount
     {
         private static int _nextId = 0;
-        [Key]
         public int DiscountId;
         public (Operator, Discount, Discount)? ComposedParts;
         public ComposedDiscount? Father;

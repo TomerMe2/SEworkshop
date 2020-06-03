@@ -14,7 +14,7 @@ namespace SEWorkshop.Models
 
         public User()
         {
-            Cart = new Cart();
+            Cart = new Cart(this);
         }
 
 
@@ -45,7 +45,7 @@ namespace SEWorkshop.Models
                 }
             }
             // if we got here, the correct basket doesn't exists now, so we should create it!
-            Basket newBasket = new Basket(product.Store);
+            Basket newBasket = new Basket(product.Store, cart);
             Cart.Baskets.Add(newBasket);
             newBasket.Products.Add((product, quantity));
         }

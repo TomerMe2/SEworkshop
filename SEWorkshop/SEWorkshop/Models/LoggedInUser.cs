@@ -212,9 +212,8 @@ namespace SEWorkshop.Models
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
         {
-
             var ownership = Owns.FirstOrDefault(man => man.Store == store);
-           var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
             if (management == default)
             {
                 ownership.AddStoreManager(newManager);

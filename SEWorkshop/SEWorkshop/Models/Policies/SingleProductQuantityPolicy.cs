@@ -6,9 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("SPQPolicies")]
+    [Table("SingleProductQuantityPolicies")]
     public class SingleProductQuantityPolicy : Policy
     {
+        [ForeignKey("Products")]
         public Product Prod { get; set; }
         public int MinQuantity { get; set; }
         public int MaxQuantity { get; set; }

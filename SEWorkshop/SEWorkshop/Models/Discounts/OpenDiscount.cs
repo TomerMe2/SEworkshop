@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
+    [Table("OpenDiscounts")]
     public abstract class OpenDiscount : PrimitiveDiscount
     {
         [ForeignKey("Products")]

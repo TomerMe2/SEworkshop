@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("UCityPolicies")]
+    [Table("UserCityPolicies")]
     public class UserCityPolicy : Policy
     {
         public string RequiredCity { get; set; }

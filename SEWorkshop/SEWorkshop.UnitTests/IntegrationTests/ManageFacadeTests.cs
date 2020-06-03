@@ -172,7 +172,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             LoggedInUser client = new LoggedInUser("client", SecurityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
+            Purchase purchase = new Purchase(client, new Basket(store, usr.Cart), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = Facade.ViewPurchaseHistory(usr, store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
@@ -501,7 +501,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.IsTrue(success && output1.Contains(message1));
 
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Watching);
-            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
+            Purchase purchase = new Purchase(client, new Basket(store, usr.Cart), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> output2 = new List<Purchase>();
             try
@@ -529,10 +529,10 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddStoreOwner(usr, store, newOwner);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
-            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
+            Assert.IsTrue(store.RequestExists(secondOwner));
             Assert.IsFalse(store.GetOwnership(secondOwner) != null);
             Facade.AnswerOwnershipRequest(newOwner, store, secondOwner, RequestState.Denied);
-            Assert.IsFalse(store.GetOwnership(secondOwner) != null && store.OwnershipRequests.ContainsKey(secondOwner));
+            Assert.IsFalse(store.GetOwnership(secondOwner) != null && store.RequestExists(secondOwner));
         }
 
         [Test]
@@ -549,10 +549,10 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser secondOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(usr, store, secondOwner);
             Assert.IsFalse(store.GetOwnership(secondOwner) != null);
-            Assert.IsTrue(store.OwnershipRequests.ContainsKey(secondOwner));
+            Assert.IsTrue(store.RequestExists(secondOwner));
             Facade.AnswerOwnershipRequest(newOwner,store,secondOwner,RequestState.Approved);
             Assert.IsTrue(store.GetOwnership(secondOwner) != null);
-            Assert.IsFalse(store.OwnershipRequests.ContainsKey(secondOwner));
+            Assert.IsFalse(store.RequestExists(secondOwner));
         }
 
 

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
-    [Table("BSGSDiscount")]
+    [Table("BuySomeGetSomeDiscounts")]
     public class BuySomeGetSomeDiscount : ConditionalDiscount
     {
         public int BuySome { get; set; }

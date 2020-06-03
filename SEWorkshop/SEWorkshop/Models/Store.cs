@@ -19,9 +19,7 @@ namespace SEWorkshop.Models
         public ICollection<Product> Products { get; private set; }
         public ICollection<Manages> Management { get; private set; }
         public ICollection<Owns> Ownership { get; private set; }
-    //    public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
-    //    public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> OwnershipRequests { get; private set; }
+        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
         public IList<Message> Messages { get; private set; }
         public IList<Discount> Discounts { get; private set; }
         public bool IsOpen { get; private set; }
@@ -41,7 +39,7 @@ namespace SEWorkshop.Models
             Products = new List<Product>();
             Management = new List<Manages>();
             Ownership = new List<Owns>();
-            OwnershipRequests=new Dictionary<LoggedInUser, LoggedInUser>();
+            OwnershipRequests=new List<OwnershipRequest>();
             Messages = new List<Message>();
             IsOpen = true;
             Discounts = new List<Discount>();
@@ -119,6 +117,11 @@ namespace SEWorkshop.Models
                 }
             }
             return null;
+        }
+
+        public bool RequestExists(LoggedInUser candidate)
+        {
+            return OwnershipRequests.Where(req => req.NewOwner.Equals(candidate)).Count() > 0;
         }
     }
 }

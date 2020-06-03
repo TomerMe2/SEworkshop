@@ -11,19 +11,10 @@ namespace SEWorkshop.DataModels
     {
         public IReadOnlyCollection<DataProduct> Products => InnerModel.Products.Select(prod =>
                         new DataProduct(prod)).ToList().AsReadOnly();
-    /*    public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Managers => InnerModel.Managers
-                .Select((item) =>
-                    (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
-                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Owners => InnerModel.Owners
-                .Select((item) =>
-                    (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
-                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
-    */  
         public IReadOnlyCollection<DataManages> Management => InnerModel.Management
                 .Select((item) =>
                     (new DataManages(new Manages(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
-        public IReadOnlyCollection<DataOwns> Ownership => InnerModel.Management
+        public IReadOnlyCollection<DataOwns> Ownership => InnerModel.Ownership
                 .Select((item) =>
                     (new DataOwns(new Owns(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
@@ -47,6 +38,7 @@ namespace SEWorkshop.DataModels
         {
             return user.IsManager(Management);
         }
+
         public bool IsOwner(DataLoggedInUser user)
         {
             return user.IsOwner(Ownership);        

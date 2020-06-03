@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop
 {
+    [Table("Addresses")]
     public class Address
     {
+        [Key, Column(Order = 0)]
         public string City { get; set; }
+        [Key, Column(Order = 1)]
         public string Street { get; set; }
+        [Key, Column(Order = 2)]
         public string HouseNumber { get; set; }
+        [Key, Column(Order = 3)]
         public string Country { get; set; }
 
         public Address(string country, string city, string street, string houseNumber)

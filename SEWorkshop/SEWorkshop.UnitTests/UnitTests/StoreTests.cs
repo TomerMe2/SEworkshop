@@ -67,7 +67,7 @@ namespace SEWorkshop.Tests.UnitTests
        
             pb_user1.AddProduct(pb_store1,"pb_prod1", "ninini", "cat1", 11.111, 1);
             var pb_prod1 = pb_store1.SearchProducts(product => product.Name.Equals("pb_prod1")).ElementAt(0);
-            Basket bskt = new Basket(pb_store1);
+            Basket bskt = new Basket(pb_store1, pb_user1.Cart);
             bskt.Products.Add((pb_prod1, 2));
             try
             {
@@ -94,7 +94,7 @@ namespace SEWorkshop.Tests.UnitTests
             pb_user2.Owns.Add(ownership);
             pb_user2.AddProduct(pb_store2,"pb_prod2", "ninini", "cat1", 11.111, 1);
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
-            Basket bskt = new Basket(pb_store2);
+            Basket bskt = new Basket(pb_store2, pb_user2.Cart);
             bskt.Products.Add((pb_prod2, 1));
             pb_store2.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, address, pb_user2);
             Assert.That(pb_prod2.Quantity, Is.EqualTo(0));

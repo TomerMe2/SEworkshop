@@ -41,7 +41,7 @@ namespace SEWorkshop.Tests.UnitTests
             Str.Products.Add(Prod4);
             Str.Products.Add(Prod5);
 
-            Bskt = new Basket(Str);
+            Bskt = new Basket(Str, Buyer.Cart);
             Buyer.Cart.Baskets.Add(Bskt);
 
             Deadline = DateTime.Now.AddMonths(1);

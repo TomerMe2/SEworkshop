@@ -36,25 +36,12 @@ namespace SEWorkshop.DataModels
 
         public bool IsManager(IReadOnlyCollection<DataManages> Management)
         {
-            foreach(var manager in Management)
-            {
-                if(manager.user.InnerLoggedInUser == InnerLoggedInUser)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Management.Where(mngr => mngr.Equals(this)).Count() > 0;
         }
+
         public bool IsOwner(IReadOnlyCollection<DataOwns> Ownership)
         {
-            foreach(var owner in Ownership)
-            {
-                if(owner.user.InnerLoggedInUser == InnerLoggedInUser)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Ownership.Where(ownr => ownr.Equals(this)).Count() > 0;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("SDPolicies")]
+    [Table("SystemDayPolicies")]
     public class SystemDayPolicy : Policy
     {
         public DayOfWeek CantBuyIn { get; set; }

@@ -21,6 +21,7 @@ namespace SEWorkshop.Models
         [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+        [ForeignKey("Users")]
         public LoggedInUser Appointer { get; private set;}
 
 
@@ -44,10 +45,11 @@ namespace SEWorkshop.Models
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
-            if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
+            if(Store.OwnershipRequests.Contains(request))
             {
                 throw new OwnershipRequestAlreadyExistsException();
             }
+            Store.OwnershipRequests.Add(request);
             newOwner.OwnershipRequests.Add(request);
             if (request.GetRequestState() == RequestState.Approved)
             {
@@ -55,7 +57,7 @@ namespace SEWorkshop.Models
                 {
                     throw new UserIsAlreadyStoreOwnerException();
                 }
-                Store.OwnershipRequests.Remove(newOwner);
+                Store.OwnershipRequests.Remove(request);
                 Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                 newOwner.Owns.Add(ownership);
                 Store.Ownership.Add(ownership);
@@ -77,14 +79,14 @@ namespace SEWorkshop.Models
                     }
                     Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                     Store.Ownership.Add(ownership);
-                    Store.OwnershipRequests.Remove(newOwner);
+                    Store.OwnershipRequests.Remove(req);
                     newOwner.Owns.Add(ownership);
                     log.Info("A new owner has been added successfully");
                 }
 
                 if (req.GetRequestState() == RequestState.Denied)
                 {
-                    Store.OwnershipRequests.Remove(newOwner);
+                    Store.OwnershipRequests.Remove(req);
                 }
             }
         }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
-    [Table("SPDiscount")]
+    [Table("SpecificProductDiscounts")]
     public class SpecificProducDiscount : OpenDiscount
     {
         public SpecificProducDiscount(double percentage, DateTime deadline,

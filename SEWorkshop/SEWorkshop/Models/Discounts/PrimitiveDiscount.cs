@@ -1,8 +1,10 @@
 ﻿using System;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
+    [Table("PrimitiveDiscounts")]
     public abstract class PrimitiveDiscount : Discount
     {
         public double Percentage { get; private set; }

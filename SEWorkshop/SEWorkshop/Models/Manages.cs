@@ -18,6 +18,7 @@ namespace SEWorkshop.Models
         [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+        [ForeignKey("Users")]
         public LoggedInUser Appointer { get; private set;}
 
 

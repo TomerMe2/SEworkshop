@@ -5,15 +5,19 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace SEWorkshop.Models
 {
     public class OwnershipRequest
     {
+        [ForeignKey("Stores"), Key, Column(Order = 0)]
         public Store Store { get; private set; }
         public ICollection<(LoggedInUser, RequestState )> Answers{ get; private set; }
         public LoggedInUser Owner { get; private set; }
+        [ForeignKey("Users"), Key, Column(Order = 1)]
         public LoggedInUser NewOwner { get; private set; }
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)
         {

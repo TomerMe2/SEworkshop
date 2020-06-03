@@ -387,7 +387,7 @@ namespace SEWorkshop.Tests.UnitTests
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store), DEF_ADRS);
+            Purchase purchase = new Purchase(client, new Basket(store, client.Cart), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
