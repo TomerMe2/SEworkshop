@@ -2,7 +2,7 @@
 
 namespace SEWorkshop.DataModels
 {
-    public class DataOpenDiscount : DataDiscount
+    public class DataOpenDiscount : DataPrimitiveDiscount
     {
         
         private OpenDiscount InnerOpenDiscount { get; }

@@ -21,7 +21,7 @@ namespace SEWorkshop.Facades
         public GuestUser CreateGuestUser();
         public Message WriteMessage(LoggedInUser user, Store store, string description);
         public void WriteReview(LoggedInUser user, Product product, string description);
-
         public IEnumerable<string> GetRegisteredUsers();
+        public double GetIncomeInDate(DateTime date);
     }
 }

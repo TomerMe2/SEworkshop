@@ -33,7 +33,7 @@ namespace SEWorkshop.Models
             double price = PriceWithoutDiscount();
             foreach (var dis in Store.Discounts)
             {
-                price -= dis.ComposeDiscounts(Products);
+                price -= dis.ComputeDiscount(Products);
             }
 
             return price;

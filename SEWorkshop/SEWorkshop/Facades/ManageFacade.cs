@@ -75,7 +75,12 @@ namespace SEWorkshop.Facades
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-           loggedInUser.RemoveStoreManager(store, managerToRemove);
+           loggedInUser.RemoveStoreManager(store, managerToRemove);  
+        }
+
+        public void RemoveStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser ownerToRemove)
+        {
+            loggedInUser.RemoveStoreOwner(store, ownerToRemove);
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
@@ -112,6 +117,11 @@ namespace SEWorkshop.Facades
         public void RemovePermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
             loggedInUser.RemovePermissionsOfManager(store, manager,authorization);
+        }
+
+        public void AnswerOwnershipRequest(LoggedInUser loggedInUser, Store store,LoggedInUser newOwner, RequestState answer)
+        {
+            loggedInUser.AnswerOwnershipRequest(store, newOwner,answer);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
             Discount dis = new ProductCategoryDiscount(50, Deadline, Str, "cat1");
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price * 0.5 * 3)); //prod2 is not under discount
         }
         
@@ -63,7 +63,7 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
             Discount dis = new SpecificProducDiscount(75, Deadline, Prod2, Str);
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod2.Price * 0.75 * 3)); //prod2 is not under discount
         }
 
@@ -72,9 +72,10 @@ namespace SEWorkshop.Tests.UnitTests
         {
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
-            Discount dis = new SpecificProducDiscount(50, Deadline, Prod2, Str);
-            dis.InnerDiscount = (new SpecificProducDiscount(50, Deadline, Prod1, Str), Operator.Xor);
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
+            Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
+            Discount composed = new ComposedDiscount(Operator.Xor, dis1, dis2);
+            double discount = composed.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price * 0.5 * 3)); //prod1 is cheaper after discount
         }
 
@@ -83,9 +84,10 @@ namespace SEWorkshop.Tests.UnitTests
         {
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
-            Discount dis = new SpecificProducDiscount(50, Deadline, Prod2, Str);
-            dis.InnerDiscount = (new SpecificProducDiscount(50, Deadline, Prod1, Str), Operator.And);
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
+            Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
+            Discount composed = new ComposedDiscount(Operator.And, dis1, dis2);
+            double discount = composed.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price* 0.5 * 3 + Prod2.Price * 0.5 * 3));
         }
 
@@ -94,9 +96,10 @@ namespace SEWorkshop.Tests.UnitTests
         {
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
-            Discount dis = new SpecificProducDiscount(50, Deadline, Prod2, Str);
-            dis.InnerDiscount = (new SpecificProducDiscount(50, Deadline, Prod1, Str), Operator.Implies);
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
+            Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
+            Discount composed = new ComposedDiscount(Operator.Implies, dis1, dis2);
+            double discount = composed.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price* 0.5 * 3 + Prod2.Price * 0.5 * 3));
         }
 
@@ -106,7 +109,7 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add((Prod1, 3));
             Bskt.Products.Add((Prod2, 3));
             Discount dis = new SpecificProducDiscount(50, new DateTime(2020, 5, 15), Prod2, Str);
-            double discount = dis.ComposeDiscounts(Bskt.Products);
+            double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(0));
         }
     }

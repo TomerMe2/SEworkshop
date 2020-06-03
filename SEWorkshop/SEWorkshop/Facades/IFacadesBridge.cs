@@ -44,9 +44,11 @@ namespace SEWorkshop.Facades
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity);
         public void RemoveProduct(DataLoggedInUser user, string storeName, string productName);
         public void AddStoreOwner(DataLoggedInUser user, string storeName, string username);
+        public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, RequestState answer);
         public void AddStoreManager(DataLoggedInUser user, string storeName, string username);
         public void SetPermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
         public void RemoveStoreManager(DataLoggedInUser user, string storeName, string username);
+        public void RemoveStoreOwner(DataLoggedInUser user, string storeName, string username);
         public IEnumerable<DataMessage> ViewMessage(DataLoggedInUser user, string storeNm);
         public DataMessage MessageReply(DataLoggedInUser user, DataMessage message, string storeName, string description);
         public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name);
@@ -66,12 +68,14 @@ namespace SEWorkshop.Facades
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
 
-        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain);
+        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();
+        public double GetIncomeInDate(DateTime date);
+
     }
 }

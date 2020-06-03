@@ -29,17 +29,54 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
-
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser ,newOwner);
+            if (Store.Owners.ContainsKey(newOwner))
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
+            if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
+            {
+                throw new OwnershipRequestAlreadyExistsException();
+            }
+            newOwner.OwnershipRequests.Add(request);
+            if (request.GetRequestState() == RequestState.Approved)
+            {
+                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                {
+                    throw new UserIsAlreadyStoreOwnerException();
+                }
+                Store.OwnershipRequests.Remove(newOwner);
+                Owns ownership = new Owns(newOwner, Store);
+                newOwner.Owns.Add(ownership);
+            }
+        }
+        public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
+        {
+            foreach (var req in newOwner.OwnershipRequests)
+            {
+                if (req.Store == Store)
+                {
+                    req.Answer(LoggedInUser, answer);
+                }
+                if (req.GetRequestState()==RequestState.Approved)
+                {
+                    if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                    {
+                        throw new UserIsAlreadyStoreOwnerException();
+                    }
+                    Owns ownership = new Owns(newOwner, Store);
+                    Store.OwnershipRequests.Remove(newOwner);
+                    newOwner.Owns.Add(ownership);
+                }
 
-            Owns ownership = new Owns(newOwner, Store);
-            newOwner.Owns.Add(ownership);
+                if (req.GetRequestState() == RequestState.Denied)
+                {
+                    Store.OwnershipRequests.Remove(newOwner);
+                }
 
-            log.Info("A new owner has been added successfully");
+
+            }
         }
 
         override public void AddStoreManager(LoggedInUser newManager)
@@ -85,6 +122,35 @@ namespace SEWorkshop.Models
             var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
             managerToRemove.Manage.Remove(management);
             log.Info("The manager has been removed successfully");
+        }
+
+        override public void RemoveStoreOwner(LoggedInUser ownerToRemove)
+        {
+            log.Info("User tries to remove the owner {0} from store", ownerToRemove.Username);
+            bool isStoreOwner = IsUserStoreOwner(ownerToRemove, Store);
+            if (!isStoreOwner)
+            {
+                log.Info("The requested owner is not an owner");
+                throw new UserIsNotOwnerOfThisStore();
+            }
+
+            if (!Store.Owners.ContainsKey(ownerToRemove))
+            {
+                log.Info("The requested owner is not an owner");
+                throw new UserIsNotOwnerOfThisStore();
+            }
+
+            LoggedInUser appointer = Store.Owners[ownerToRemove];
+            if (appointer != LoggedInUser)
+            {
+                log.Info("User has no permission for that action");
+                throw new UserHasNoPermissionException();
+            }
+
+            Store.Owners.Remove(ownerToRemove);
+            var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
+            ownerToRemove.Owns.Remove(owning);
+            log.Info("The owner has been removed successfully");
         }
 
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
@@ -274,7 +340,7 @@ namespace SEWorkshop.Models
             currPol.InnerPolicy = (pol, op);
         }
         
-        private void AddDiscountToEnd(Discount dis, Operator op, int indexInChain)
+        private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
         {
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
             {
@@ -282,17 +348,81 @@ namespace SEWorkshop.Models
             }
             else
             {
-                if (dis.InnerDiscount != null)
+                Discount? existing = SearchNode(Store.Discounts.ElementAt(indexInChain), disId);
+                if (existing != null)
                 {
-                    throw new PolicyCauseCycilicError();
+                    ComposedDiscount? father = existing.Father;
+                    if (father is null)
+                    {
+                        Store.Discounts.RemoveAt(indexInChain);
+                        if (toLeft)
+                        {
+                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, dis, existing));
+                        }
+                        else
+                        {
+                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, existing, dis));
+                        }
+                    }
+                    else
+                    {
+                        if (toLeft)
+                        {
+                            if (existing.IsLeftChild())
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (existing.IsLeftChild())
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                }
+                            }
+                            else
+                            {
+                                if (father.ComposedParts != null)
+                                {
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                                    newDis.Father = father;
+                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                }
+                            }
+                        }
+                    }
                 }
-                Discount currDis = Store.Discounts.ElementAt(indexInChain);
-                while(currDis.InnerDiscount != null)
-                {
-                    currDis = currDis.InnerDiscount.Value.Item1;
-                }
-                currDis.InnerDiscount = (dis, op);
             }
+        }
+
+        private Discount? SearchNode(Discount root, int disId)
+        {
+            if (root.DiscountId == disId)
+            {
+                return root;
+            }
+            if (root.ComposedParts is null)
+            {
+                return null;
+            }
+
+            return SearchNode(root.ComposedParts.Value.Item2, disId) ?? SearchNode(root.ComposedParts.Value.Item3, disId);
         }
 
         //All add policies are adding to the end
@@ -358,24 +488,23 @@ namespace SEWorkshop.Models
             }
         }
 
-        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain)
+        public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain);
+            ComposeDiscount(new ProductCategoryDiscount(percentage, deadline, Store, categoryName), op, indexInChain, disId, toLeft);
         }
 
-        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain)
+        public void AddSpecificProductDiscount(Operator op, Product product, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain);
+            ComposeDiscount(new SpecificProducDiscount(percentage, deadline, product, Store), op, indexInChain, disId, toLeft);
         }
 
-        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain)
+        public void AddBuyOverDiscount(Operator op, Product product, DateTime deadline, double percentage, double minSum, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain);
+            ComposeDiscount(new BuyOverDiscount(Store, minSum, percentage, deadline, product), op, indexInChain, disId, toLeft);
         }
-
-        public void AddBuySomeGetSomeDiscount(Operator op, Product product, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain)
+        public void AddBuySomeGetSomeDiscount(Operator op, Product prod1, Product prod2, DateTime deadline, double percentage, int buySome, int getSome, int indexInChain, int disId, bool toLeft)
         {
-            AddDiscountToEnd(new BuySomeGetSomeFreeDiscount(Store, buySome, getSome, percentage, deadline, product), op, indexInChain);
+            ComposeDiscount(new BuySomeGetSomeDiscount(Store, buySome, getSome, percentage, deadline, prod1, prod2), op, indexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(int indexInChain)

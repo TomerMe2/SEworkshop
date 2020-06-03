@@ -27,6 +27,11 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.AddStoreManager(sid, storeNm, username);
         }
 
+        public override void AnswerOwnershipRequest(string sid, string store, string username, string answer)
+        {
+            userManager.AnswerOwnershipRequest(sid,  store, username,  answer);
+        }
+        
         public override void AddStoreOwner(string sid, string storeNm, string username)
         {
             userManager.AddStoreOwner(sid, storeNm, username);

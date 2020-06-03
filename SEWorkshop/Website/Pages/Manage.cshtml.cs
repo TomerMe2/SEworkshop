@@ -84,6 +84,16 @@ namespace Website.Pages
             StoreName = storeName;
             switch (request)
             {
+                case "RemoveOwner":
+                    try
+                    {
+                        UserManager.RemoveStoreOwner(sid, StoreName, username);
+                    }
+                    catch (Exception e)
+                    {
+                        Error = e.ToString();
+                    }
+                    break;
                 case "RemoveManager":
                     try
                     {
@@ -243,9 +253,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index)
+        public IActionResult OnPostDiscountHandler(string storeName, string oper, string appliedTo, string chosenProduct, string chosenCategory, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -253,6 +264,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -279,16 +292,22 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
+                {
                     newIndex = DiscountNumber;
+                    innerID = 0;
+                }
                 else
+                {
                     newIndex = Int32.Parse(index);
+                    innerID = Int32.Parse(innerid);
+                }
                 if (appliedTo.Equals("Product"))
                 {
-                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+                    UserManager.AddSpecificProductDiscount(sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
                 }
                 else
                 {
-                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex);
+                    UserManager.AddProductCategoryDiscount(sid, storeName, chosenCategory, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
                 }
             }
             catch (Exception e)
@@ -298,9 +317,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostGetDiscountHandler(string storeName, string buy, string get, string oper, string chosenProduct, string percent, string date, string index)
+        public IActionResult OnPostGetDiscountHandler(string storeName, string buy, string get, string oper, string buyProduct, string getProduct, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID, getCount;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -308,6 +328,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -334,10 +356,21 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
+                {
                     newIndex = DiscountNumber;
+                    innerID = 0;
+                }
                 else
+                {
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), Int32.Parse(get), sid, chosenProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex);
+                    innerID = Int32.Parse(innerid);
+                }
+                if (string.IsNullOrEmpty(get))
+                    getCount = -1;
+                else
+                    getCount = Int32.Parse(get);
+
+                UserManager.AddBuySomeGetSomeDiscount(Int32.Parse(buy), getCount, sid, buyProduct, getProduct, storeName, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
             }
             catch (Exception e)
             {
@@ -346,9 +379,10 @@ namespace Website.Pages
             return RedirectToPage("./Manage", new { StoreName, Error });
         }
 
-        public IActionResult OnPostOverDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index)
+        public IActionResult OnPostOverDiscountHandler(string storeName, string buy, string oper, string chosenProduct, string percent, string date, string index, string innerid, string left)
         {
-            int newIndex;
+            int newIndex, innerID;
+            bool bindLeft = false;
             string sid = HttpContext.Session.Id;
             StoreName = storeName;
             if (string.IsNullOrEmpty(storeName) || string.IsNullOrEmpty(oper) || string.IsNullOrEmpty(percent) || string.IsNullOrEmpty(date))
@@ -356,6 +390,8 @@ namespace Website.Pages
                 Error = "Missing values";
                 return RedirectToPage("./Manage", new { StoreName, Error });
             }
+            if (left.Equals("Yes"))
+                bindLeft = true;
             DateTime dateTime;
             Operator op;
             try
@@ -382,10 +418,16 @@ namespace Website.Pages
                 Store = UserManager.SearchStore(storeName);
                 DiscountNumber = Store.Discounts.Count();
                 if (index == null)
+                {
                     newIndex = DiscountNumber;
+                    innerID = 0;
+                }
                 else
+                {
                     newIndex = Int32.Parse(index);
-                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex);
+                    innerID = Int32.Parse(innerid);
+                }
+                UserManager.AddBuyOverDiscount(Int32.Parse(buy), sid, storeName, chosenProduct, dateTime, Int32.Parse(percent), op, newIndex, innerID, bindLeft);
             }
             catch (Exception e)
             {
@@ -428,11 +470,11 @@ namespace Website.Pages
 
         private string StringDiscount(DataDiscount discount)
         {
-            if (!discount.InnerDiscount.HasValue)
+            if (!discount.ComposedParts.HasValue)
             {
-                return "" + discount.ToString();
+                return "[" + discount.DiscountId + "] " + discount.ToString();
             }
-            return discount.ToString() + " " + discount.InnerDiscount.Value.Item2.ToString() + " (" + StringDiscount(discount.InnerDiscount.Value.Item1) + ")";
+            return "(" + StringDiscount(discount.ComposedParts.Value.Item2) + ") " + discount.ComposedParts.Value.Item1.ToString() + " (" + StringDiscount(discount.ComposedParts.Value.Item3) + ")";
         }
 
         private void HandleMinMax(string min, string max)
