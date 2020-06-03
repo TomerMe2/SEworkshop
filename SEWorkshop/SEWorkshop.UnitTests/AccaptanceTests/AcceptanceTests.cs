@@ -1,8 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
-using SEWorkshop.Models;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
@@ -92,10 +90,10 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			bridge.Logout(DEF_SID);
 			Assert.Throws<ProductNotInTheStoreException>(delegate { bridge.AddProductToCart(DEF_SID, "store2", "tv", 1); });
 			Assert.Throws<NegativeQuantityException>(delegate { bridge.AddProductToCart(DEF_SID, "store1", "tv", -1); });
-			
+
+			bridge.Login(DEF_SID, "user", "1234");
 			Assert.That(() => bridge.AddProductToCart(DEF_SID, "store1", "tv", 1), Throws.Nothing);
 			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 1);
-			bridge.Login(DEF_SID, "user", "1234");
 			Assert.That(() => bridge.AddProductToCart(DEF_SID, "store1", "bisli", 1), Throws.Nothing);
 			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 2);
 		}
@@ -112,18 +110,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 2);
 			Assert.That(() => bridge.RemoveProductFromCart(DEF_SID, "store1", "bisli", 1), Throws.Nothing);
 			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 1);
-			bridge.Logout(DEF_SID);
-			Assert.That(() => bridge.MyCart(DEF_SID), Throws.Nothing);
-			Assert.IsTrue(bridge.MyCart(DEF_SID).Count() == 0);
-			bridge.AddProductToCart(DEF_SID, "store1", "tv", 1);
-			Assert.Throws<ProductIsNotInCartException>(delegate { bridge.RemoveProductFromCart(DEF_SID, "store1", "doritos", 1); });
-			Assert.Throws<ProductNotInTheStoreException>(delegate { bridge.RemoveProductFromCart(DEF_SID, "store2", "tv", 1); });
-			Assert.Throws<StoreNotInTradingSystemException>(delegate { bridge.RemoveProductFromCart(DEF_SID, "store3", "tv", 1); });
-			Assert.Throws<NegativeQuantityException>(delegate { bridge.RemoveProductFromCart(DEF_SID, "store1", "tv", -1); });
-			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 1);
-			Assert.That(() => bridge.RemoveProductFromCart(DEF_SID, "store1", "tv", 1), Throws.Nothing);
-			Assert.IsTrue(bridge.MyCart(DEF_SID).First().Products.Count() == 0);
-			bridge.Login(DEF_SID, "user", "1234");
 		}
 
 		[Test, Order(14)]

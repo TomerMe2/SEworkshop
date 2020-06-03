@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Adapters;
