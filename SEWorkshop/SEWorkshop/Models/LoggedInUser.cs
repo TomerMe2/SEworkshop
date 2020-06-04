@@ -379,22 +379,22 @@ namespace SEWorkshop.Models
             OwnsForStore(store).RemovePolicy(indexInChain);
         }
 
-        public void AddProductCategoryDiscount(Store store, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public void AddProductCategoryDiscount(Store store, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            OwnsForStore(store).AddProductCategoryDiscount(op, categoryName, deadline, percentage, indexInChain);
+            OwnsForStore(store).AddProductCategoryDiscount(op, categoryName, deadline, percentage, indexInChain, disId, toLeft);
         }
 
-        public void AddSpecificProductDiscount(Store store, Product product, DateTime deadline, double percentage, Operator op, int IndexInChain)
+        public void AddSpecificProductDiscount(Store store, Product product, DateTime deadline, double percentage, Operator op, int IndexInChain, int disId, bool toLeft)
         {
-            OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain);
+            OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain, disId, toLeft);
         }
-        public void AddBuyOverDiscountDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain)
+        public void AddBuyOverDiscountDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain, int disId, bool toLeft)
         {
-            OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain);
+            OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain, disId, toLeft);
         }
-        public void AddBuySomeGetSomeFreeDiscount(Store store, Product product, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain)
+        public void AddBuySomeGetSomeFreeDiscount(Store store, Product prod1, Product prod2, DateTime deadline, double percentage, int buySome, int getSome, Operator op, int IndexInChain, int disId, bool toLeft)
         {
-            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, product, deadline, percentage, buySome, getSome, IndexInChain);
+            OwnsForStore(store).AddBuySomeGetSomeDiscount(op, prod1, prod2, deadline, percentage, buySome, getSome, IndexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(Store store, int indexInChain)

@@ -73,12 +73,12 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
 
-        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain);
-        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int IndexInChain);
-        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string productName, string storeName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain);
+        public void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProdName, string underDiscountProdName, string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain, int disId, bool toLeft);
         public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain);
+                                                Operator op, int indexInChain, int disId, bool toLeft);
 
         public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
         public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);

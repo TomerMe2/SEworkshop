@@ -128,15 +128,15 @@ namespace SEWorkshop.Facades
         }
 
         public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddProductCategoryDiscount(GetStore(storeName), categoryName, deadline, percentage, op, indexInChain);
+            GetLoggedInUsr(user).AddProductCategoryDiscount(GetStore(storeName), categoryName, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage,
-                                                Operator op, int indexInChain)
+                                                Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddSpecificProductDiscount(GetStore(storeName), GetProduct(storeName, productName), deadline, percentage, op, indexInChain);
+            GetLoggedInUsr(user).AddSpecificProductDiscount(GetStore(storeName), GetProduct(storeName, productName), deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain)
@@ -404,14 +404,14 @@ namespace SEWorkshop.Facades
             }
         }
 
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string productName, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, buySome, getSome,op, indexInChain);
+            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,prod1Name), GetProduct(storeName, prod2Name), deadline, percentage, buySome, getSome,op, indexInChain, disId, toLeft);
         }
 
-        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain)
+        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddBuyOverDiscountDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, minSum, op, indexInChain);
+            GetLoggedInUsr(user).AddBuyOverDiscountDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, minSum, op, indexInChain, disId, toLeft);
         }
         public IEnumerable<string> GetRegisteredUsers()
         {
