@@ -43,7 +43,7 @@ namespace SEWorkshop.Facades
         public IEnumerable<DataPurchase> ManagingPurchaseHistory(DataLoggedInUser user, string storeName);
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity);
         public void RemoveProduct(DataLoggedInUser user, string storeName, string productName);
-        public void AddStoreOwner(DataLoggedInUser user, string storeName, string username);
+        public DataOwnershipRequest? AddStoreOwner(DataLoggedInUser user, string storeName, string username);
         public void AnswerOwnershipRequest(DataLoggedInUser user, string storeName, string newOwnerUserName, RequestState answer);
         public void AddStoreManager(DataLoggedInUser user, string storeName, string username);
         public void SetPermissionsOfManager(DataLoggedInUser user, string storeName, string username, Authorizations authorization);
