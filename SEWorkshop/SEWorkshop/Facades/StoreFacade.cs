@@ -3,6 +3,7 @@ using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SEWorkshop.DAL;
 using NLog;
 using SEWorkshop.TyposFix;
 
@@ -10,11 +11,13 @@ namespace SEWorkshop.Facades
 {
     public class StoreFacade : IStoreFacade
     {
-        private ICollection<Store> Stores { get; set; }
+        //private ICollection<Store> Stores { get; set; }
+        private AppDbContext DbContext { get; }
 
-        public StoreFacade()
+        public StoreFacade(AppDbContext dbContext)
         {
-            Stores = new List<Store>();
+            //Stores = new List<Store>();
+            DbContext = dbContext;
         }
 
         /// <summary>
@@ -29,9 +32,9 @@ namespace SEWorkshop.Facades
             {
                 throw new StoreWithThisNameAlreadyExistsException();
             }
-            Store newStore = new Store(owner, storeName);
-            Stores.Add(newStore);
-            Owns newOwnership = new Owns(owner, newStore, new LoggedInUser("DEMO", new Byte[0]));
+            Store newStore = new Store(owner, storeName, DbContext);
+            DbContext.Stores.Add(newStore);
+            Owns newOwnership = new Owns(owner, newStore, new LoggedInUser("DEMO", new Byte[0], DbContext), DbContext);
             owner.Owns.Add(newOwnership);
             newStore.Ownership.Add(newOwnership);
             return newStore;
@@ -39,7 +42,7 @@ namespace SEWorkshop.Facades
 
         public ICollection<Store> BrowseStores()
         {
-            return (from store in Stores
+            return (from store in DbContext.Stores
                     where store.IsOpen
                     select store).ToList();
         }
@@ -72,7 +75,7 @@ namespace SEWorkshop.Facades
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             ICollection<Product> searchResult = new List<Product>();
-            foreach (var store in Stores)
+            foreach (var store in DbContext.Stores)
             {
                 foreach (var prod in store.SearchProducts(pred))
                 {

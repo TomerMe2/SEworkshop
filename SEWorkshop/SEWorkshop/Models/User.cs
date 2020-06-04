@@ -5,16 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
     public abstract class User
     {
         public Cart Cart { get; set; }
+        private AppDbContext DbContext { get; }
 
-        public User()
+        public User(AppDbContext dbContext)
         {
             Cart = new Cart(this);
+            DbContext = dbContext;
         }
 
 
@@ -33,21 +36,21 @@ namespace SEWorkshop.Models
             {
                 if (product.Store == basket.Store)
                 {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (!(recordProd is null))
+                    var prod = basket.Products.FirstOrDefault(tup => tup.Product.Equals(product));
+                    if (!(prod is null))
                     {
-                        quantity = quantity + recordQuan;
+                        quantity = quantity + prod.Quantity;
                         // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
-                        basket.Products.Remove((recordProd, recordQuan));  //so we can add it later :)
+                        basket.Products.Remove(prod);  //so we can add it later :)
                     }
-                    basket.Products.Add((product, quantity));
+                    basket.Products.Add(new ProductsInBasket(basket, product, quantity));
                     return;  // basket found and updated. Nothing more to do here...
                 }
             }
             // if we got here, the correct basket doesn't exists now, so we should create it!
-            Basket newBasket = new Basket(product.Store, cart);
+            Basket newBasket = new Basket(product.Store, cart, DbContext);
             Cart.Baskets.Add(newBasket);
-            newBasket.Products.Add((product, quantity));
+            newBasket.Products.Add(new ProductsInBasket(newBasket, product, quantity));
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
@@ -60,21 +63,21 @@ namespace SEWorkshop.Models
             {
                 if (product.Store == basket.Store)
                 {
-                    var (recordProd, recordQuan) = basket.Products.FirstOrDefault(tup => tup.Item1 == product);
-                    if (recordProd is null)
+                    var prod = basket.Products.FirstOrDefault(tup => tup.Product.Equals(product));
+                    if (prod is null)
                     {
                         throw new ProductIsNotInCartException();
                     }
-                    int quantityDelta = recordQuan - quantity;
+                    int quantityDelta = prod.Quantity - quantity;
                     if (quantityDelta < 0)
                     {
                         throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
                     }
-                    basket.Products.Remove((recordProd, recordQuan));
+                    basket.Products.Remove(prod);
                     if (quantityDelta > 0)
                     {
                         // The item should still be in the basket because it still has a positive quantity
-                        basket.Products.Add((product, quantityDelta));
+                        basket.Products.Add(prod);
                     }
                     return;
                 }

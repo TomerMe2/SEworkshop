@@ -4,6 +4,7 @@ using NLog;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Adapters;
+using SEWorkshop.DAL;
 using System.Linq;
 
 namespace SEWorkshop.Facades
@@ -11,36 +12,36 @@ namespace SEWorkshop.Facades
     public class UserFacade : IUserFacade
     {
         private IStoreFacade StoreFacade { get; }
-        private ICollection<LoggedInUser> RegisteredUsers {get; }
+        //private ICollection<LoggedInUser> RegisteredUsers {get; }
         private ICollection<GuestUser> GuestUsers { get; }
-        private ICollection<LoggedInUser> Administrators { get; }
-        private ICollection<Purchase> Purchases {get; }
-
-
+        //private ICollection<LoggedInUser> Administrators { get; }
+        //private ICollection<Purchase> Purchases {get; }
+        private AppDbContext DbContext { get; }
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
 
-        public UserFacade(IStoreFacade storeFacade)
+        public UserFacade(IStoreFacade storeFacade, AppDbContext dbContext)
         {
             StoreFacade = storeFacade;
-            RegisteredUsers = new List<LoggedInUser>();
+            /*RegisteredUsers = new List<LoggedInUser>();
             Purchases = new List<Purchase>();
-            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
+            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};*/
             GuestUsers = new List<GuestUser>();
+            DbContext = dbContext;
         }
 
         public void AddPurchaseToList(Purchase p)
         {
-            Purchases.Add(p);
+            DbContext.Purchases.Add(p);
         }
 
         public LoggedInUser GetLoggedInUser(string username)
         {
-            var user = RegisteredUsers.FirstOrDefault(usr => usr.Username.Equals(username));
+            var user = DbContext.Users.FirstOrDefault(usr => usr.Username.Equals(username));
             if (user == null)
             {
-                var admin = Administrators.FirstOrDefault(usr => usr.Username.Equals(username));
+                var admin = DbContext.Admins.FirstOrDefault(usr => usr.Username.Equals(username));
                 if (admin == null)
                 {
                     throw new UserDoesNotExistException();
@@ -52,10 +53,10 @@ namespace SEWorkshop.Facades
 
         public LoggedInUser GetLoggedInUser(string username, byte[] password)
         {
-            var user = RegisteredUsers.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+            var user = DbContext.Users.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
             if (user == null)
             {
-                var admin = Administrators.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+                var admin = DbContext.Admins.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
                 if (admin == null)
                 {
                     throw new UserDoesNotExistException();
@@ -80,22 +81,22 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Register(string username, byte[] password)
         {
-            foreach(var user in RegisteredUsers)
+            foreach(var user in DbContext.Users)
             {
                 if(user.Username.Equals(username))
                 {
                     throw new UserAlreadyExistsException();
                 }
             }
-            foreach(var admin in Administrators)
+            foreach(var admin in DbContext.Admins)
             {
                 if(admin.Username.Equals(username))
                 {
                     throw new UserAlreadyExistsException();
                 }
             }
-            LoggedInUser newUser = new LoggedInUser(username, password);
-            RegisteredUsers.Add(newUser);
+            LoggedInUser newUser = new LoggedInUser(username, password, DbContext);
+            DbContext.Users.Add(newUser);
             return newUser;
         }
 
@@ -107,7 +108,7 @@ namespace SEWorkshop.Facades
         public IEnumerable<Purchase> PurchaseHistory(LoggedInUser user)
         {
             ICollection<Purchase> userPurchases = new List<Purchase>();
-            foreach(var purchase in Purchases)
+            foreach(var purchase in DbContext.Purchases)
             {
                 if(purchase.User == user)
                 {
@@ -124,11 +125,11 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
-            if (!Administrators.Contains(requesting))
+            if (!DbContext.Admins.Contains(requesting))
             {
                 throw new UserHasNoPermissionException();
             }
-            var user = RegisteredUsers.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
+            var user = DbContext.Users.Concat(DbContext.Admins).FirstOrDefault(user => user.Username.Equals(userNmToView));
             if(user is null)
             {
                 throw new UserDoesNotExistException();
@@ -156,12 +157,12 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
-            if (!Administrators.Contains(requesting))
+            if (!DbContext.Admins.Contains(requesting))
             {
                 throw new UserHasNoPermissionException();
             }
             ICollection<Purchase> purchaseHistory = new List<Purchase>();
-            foreach (var user in RegisteredUsers)
+            foreach (var user in DbContext.Users)
             {
                 foreach (var purchase in PurchaseHistory(user))
                 {
@@ -199,19 +200,19 @@ namespace SEWorkshop.Facades
 
         public GuestUser CreateGuestUser()
         {
-            var guest = new GuestUser();
+            var guest = new GuestUser(DbContext);
             GuestUsers.Add(guest);
             return guest;
         }
 
         public IEnumerable<string> GetRegisteredUsers()
         {
-            return RegisteredUsers.Select(user => user.Username);
+            return DbContext.Users.Select(user => user.Username);
         }
 
         public double GetIncomeInDate(DateTime date)
         {
-            var relevants = Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
+            var relevants = DbContext.Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
                                                     && prchs.TimeStamp.Month == date.Month
                                                     && prchs.TimeStamp.Day == date.Day);
             var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);

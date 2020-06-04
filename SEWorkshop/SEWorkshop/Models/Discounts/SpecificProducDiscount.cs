@@ -15,7 +15,7 @@ namespace SEWorkshop.Models.Discounts
 
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             if (DateTime.Now > Deadline)
             {
@@ -23,11 +23,11 @@ namespace SEWorkshop.Models.Discounts
             }
 
             double totalDiscount = 0;
-            foreach (var (prod, quantity) in itemsList)
+            foreach (var prod in itemsList)
             {
-                if (Product == prod)
+                if (prod.Product.Equals(prod))
                 {
-                    totalDiscount += (prod.Price * quantity) * (Percentage / 100);
+                    totalDiscount += (prod.Product.Price * prod.Quantity) * (Percentage / 100);
                 }
             }
 

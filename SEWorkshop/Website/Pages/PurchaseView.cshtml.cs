@@ -25,7 +25,7 @@ namespace Website.Pages
             TotalPrice = 0;
             foreach(var pair in Purchase.Basket.Products)
             {
-                TotalPrice += pair.Item1.Price * pair.Item2;
+                TotalPrice += pair.Product.Price * pair.Quantity;
             }
         }
         public void OnGet()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Facades;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
@@ -12,7 +13,7 @@ namespace SEWorkshop.Models
         private static object nextIdLock = new object();
         public int Id { get; }
 
-        public GuestUser() : base() 
+        public GuestUser(AppDbContext dbContext) : base(dbContext)
         {
             lock(nextIdLock)
             {
@@ -28,9 +29,9 @@ namespace SEWorkshop.Models
             Purchase purchase;
             purchase = new Purchase(this, basket, address);
             
-            foreach (var (prod, purchaseQuantity) in basket.Products)
+            foreach (var product in basket.Products)
             {
-                if (purchaseQuantity <= 0)
+                if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
             basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);

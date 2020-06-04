@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SEWorkshop.DAL;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,20 +14,15 @@ namespace SEWorkshop.Models
     [Table("Managers")]
     public class Manages : AuthorityHandler
     {
-        [ForeignKey("Users"), Key, Column(Order = 0)]
-        public LoggedInUser LoggedInUser { get; set; }
-        [ForeignKey("Stores"), Key, Column(Order = 1)]
-        public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         [ForeignKey("Users")]
         public LoggedInUser Appointer { get; private set;}
+        private AppDbContext DbContext { get; }
 
-
-        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base()
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, loggedInUser, store)
         {
-            AuthoriztionsOfUser.Add(Authorizations.Watching);
-            LoggedInUser = loggedInUser;
-            Store = store;
+            DbContext = dbContext;
+            AddAuthorization(Authorizations.Watching);
             Appointer = appointer;
         }
 
@@ -55,6 +51,7 @@ namespace SEWorkshop.Models
                 }
                 Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
+                DbContext.AuthorityHandlers.Remove(management);
                 log.Info("The manager has been removed successfully");
                 return;
             }
@@ -90,6 +87,7 @@ namespace SEWorkshop.Models
                 }
                 Store.Ownership.Remove(ownership);
                 ownerToRemove.Owns.Remove(ownership);
+                DbContext.AuthorityHandlers.Remove(ownership);
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -110,6 +108,7 @@ namespace SEWorkshop.Models
                 if (!StoreContainsProduct(newProduct, Store))
                 {
                     Store.Products.Add(newProduct);
+                    DbContext.Products.Add(newProduct);
                     log.Info("Product has been added to store successfully");
                     return newProduct;
                 }
@@ -133,6 +132,7 @@ namespace SEWorkshop.Models
                 if (StoreContainsProduct(productToRemove, Store))
                 {
                     Store.Products.Remove(productToRemove);
+                    DbContext.Products.Remove(productToRemove);
                     log.Info("Product has been removed from store successfully");
                     return;
                 }
@@ -240,7 +240,12 @@ namespace SEWorkshop.Models
     
         public bool HasAuthorization(Authorizations autho)
         {
-            return AuthoriztionsOfUser.Contains(autho);
+            foreach(var authority in AuthoriztionsOfUser)
+            {
+                if(authority.Authorization == autho)
+                    return true;
+            }
+            return false;
         }
 
         public override void AddStoreManager(LoggedInUser newManager)
@@ -256,9 +261,10 @@ namespace SEWorkshop.Models
                     log.Info("The requested user is already a store manager or owner");
                     throw new UserIsAlreadyStoreManagerException();
                 }
-                Manages mangement = new Manages(newManager, Store, LoggedInUser);
+                Manages mangement = new Manages(newManager, Store, LoggedInUser, DbContext);
                 Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
+                DbContext.AuthorityHandlers.Add(mangement);
                 log.Info("A new manager has been added successfully");
                 return;
 
@@ -277,9 +283,10 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-            Owns owning = new Owns(newOwner, Store, LoggedInUser);
+            Owns owning = new Owns(newOwner, Store, LoggedInUser, DbContext);
             Store.Ownership.Add(owning);
             newOwner.Owns.Add(owning);
+            DbContext.AuthorityHandlers.Add(owning);
             log.Info("A new owner has been added successfully");
             return;
 
@@ -303,12 +310,10 @@ namespace SEWorkshop.Models
                     throw new UserHasNoPermissionException();
                 }
 
-                ICollection<Authorizations> authorizations = management.AuthoriztionsOfUser;
-                
-                if (!authorizations.Contains(authorization))
+                if (!HasAuthorization(authorization))
                 {
                     log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);   
+                    management.AddAuthorization(authorization);   
                 }
                 return;
             }
@@ -332,11 +337,10 @@ namespace SEWorkshop.Models
                     throw new UserHasNoPermissionException();
                 }
 
-                ICollection<Authorizations> authorizations = management.AuthoriztionsOfUser;
-                if (authorizations.Contains(authorization))
+                if (HasAuthorization(authorization))
                 {
-                    log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
+                    log.Info("Permission has been granted successfully");
+                    management.RemoveAuthorization(authorization);   
                 }
                 return;
             }

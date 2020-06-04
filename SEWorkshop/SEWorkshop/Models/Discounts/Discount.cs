@@ -38,6 +38,6 @@ namespace SEWorkshop.Models.Discounts
             return Father?.ComposedParts?.Item2 == this;
         }
 
-        public abstract double ComputeDiscount(ICollection<(Product, int)> itemsList);
+        public abstract double ComputeDiscount(ICollection<ProductsInBasket> itemsList);
     }
 }

@@ -27,9 +27,9 @@ namespace SEWorkshop.Models.Policies
                 return true;
             }
             int counter = 0;
-            foreach (var tup in bskt.Products)
+            foreach (var prod in bskt.Products)
             {
-                counter += tup.Item2;
+                counter += prod.Quantity;
             }
             if (MinQuantity != -1 && MaxQuantity != -1)
             {

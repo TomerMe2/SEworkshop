@@ -8,6 +8,7 @@ using System.Text;
 using SEWorkshop.Models.Discounts;
 using Operator = SEWorkshop.Enums.Operator;
 using SEWorkshop.Enums;
+using SEWorkshop.DAL;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,31 +17,28 @@ namespace SEWorkshop.Models
     [Table("Owners")]
     public class Owns : AuthorityHandler
     {
-        [ForeignKey("Users"), Key, Column(Order = 0)]
-        public LoggedInUser LoggedInUser { get; set; }
-        [ForeignKey("Stores"), Key, Column(Order = 1)]
-        public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         [ForeignKey("Users")]
         public LoggedInUser Appointer { get; private set;}
+        private AppDbContext DbContext { get; }
 
 
-        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base()
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, loggedInUser, store)
         {
-            AuthoriztionsOfUser.Add(Authorizations.Authorizing);
-            AuthoriztionsOfUser.Add(Authorizations.Products);
-            AuthoriztionsOfUser.Add(Authorizations.Watching);
-            AuthoriztionsOfUser.Add(Authorizations.Manager);
-            AuthoriztionsOfUser.Add(Authorizations.Owner);
-            LoggedInUser = loggedInUser;
-            Store = store;
+            DbContext = dbContext;
+            AddAuthorization(Authorizations.Authorizing);
+            AddAuthorization(Authorizations.Replying);
+            AddAuthorization(Authorizations.Products);
+            AddAuthorization(Authorizations.Watching);
+            AddAuthorization(Authorizations.Manager);
+            AddAuthorization(Authorizations.Owner);
             Appointer = appointer;
         }
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner, DbContext);
             if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
@@ -58,7 +56,8 @@ namespace SEWorkshop.Models
                     throw new UserIsAlreadyStoreOwnerException();
                 }
                 Store.OwnershipRequests.Remove(request);
-                Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
+                DbContext.AuthorityHandlers.Add(ownership);
                 newOwner.Owns.Add(ownership);
                 Store.Ownership.Add(ownership);
             }
@@ -77,7 +76,7 @@ namespace SEWorkshop.Models
                     {
                         throw new UserIsAlreadyStoreOwnerException();
                     }
-                    Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                    Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
                     Store.Ownership.Add(ownership);
                     Store.OwnershipRequests.Remove(req);
                     newOwner.Owns.Add(ownership);
@@ -100,9 +99,10 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-            Manages mangement = new Manages(newManager, Store, LoggedInUser);
+            Manages mangement = new Manages(newManager, Store, LoggedInUser, DbContext);
             Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
+            DbContext.AuthorityHandlers.Add(mangement);
             log.Info("A new manager has been added successfully");
         }
 
@@ -131,6 +131,7 @@ namespace SEWorkshop.Models
             }
             Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
+            DbContext.AuthorityHandlers.Remove(management);
             log.Info("The manager has been removed successfully");
         }
 
@@ -160,6 +161,7 @@ namespace SEWorkshop.Models
 
             Store.Ownership.Remove(ownership);
             ownerToRemove.Owns.Remove(ownership);
+            DbContext.AuthorityHandlers.Remove(ownership);
             log.Info("The owner has been removed successfully");
         }
 
@@ -176,12 +178,10 @@ namespace SEWorkshop.Models
                 }
 
                 var man = manager.Manage.FirstOrDefault(man => man.Store == (Store));
-
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                if (!authorizations.Contains(authorization))
+                if (!man.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);
+                    man.AddAuthorization(authorization);
                 }
 
                 return;
@@ -200,6 +200,7 @@ namespace SEWorkshop.Models
             if (!StoreContainsProduct(newProduct, Store))
             {
                 Store.Products.Add(newProduct);
+                DbContext.Products.Add(newProduct);
                 log.Info("Product has been added to store successfully");
                 return newProduct;
             }
@@ -217,6 +218,7 @@ namespace SEWorkshop.Models
             {
                 productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
+                DbContext.Products.Remove(productToRemove);
                 log.Info("Product has been removed from store successfully");
                 return;
             }
@@ -323,11 +325,10 @@ namespace SEWorkshop.Models
 
                 var man = manager.Manage.FirstOrDefault(man => man.Store == (Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                if (authorizations.Contains(authorization))
+                if (!man.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
+                    man.HasAuthorization(authorization);
                 }
             }
         }
@@ -350,6 +351,7 @@ namespace SEWorkshop.Models
                 currPol = currPol.InnerPolicy.Value.Item1;
             }
             currPol.InnerPolicy = (pol, op);
+            DbContext.Policies.Add(pol);
         }
         
         private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
@@ -366,14 +368,20 @@ namespace SEWorkshop.Models
                     ComposedDiscount? father = existing.Father;
                     if (father is null)
                     {
+                        Discount toRemove = Store.Discounts.ElementAt(indexInChain);
                         Store.Discounts.RemoveAt(indexInChain);
+                        DbContext.Discounts.Remove(toRemove);
                         if (toLeft)
                         {
-                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, dis, existing));
+                            ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
+                            Store.Discounts.Insert(indexInChain, newDis);
+                            DbContext.Discounts.Add(newDis);
                         }
                         else
                         {
-                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, existing, dis));
+                            ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
+                            Store.Discounts.Insert(indexInChain, newDis);
+                            DbContext.Discounts.Add(newDis);
                         }
                     }
                     else
@@ -386,6 +394,7 @@ namespace SEWorkshop.Models
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    DbContext.Discounts.Add(newDis);
                                 }
                             }
                             else
@@ -394,6 +403,7 @@ namespace SEWorkshop.Models
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    DbContext.Discounts.Add(newDis);
                                 }
                             }
                         }
@@ -406,6 +416,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
                                     newDis.Father = father;
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    DbContext.Discounts.Add(newDis);
                                 }
                             }
                             else
@@ -415,6 +426,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
                                     newDis.Father = father;
                                     father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    DbContext.Discounts.Add(newDis);
                                 }
                             }
                         }
@@ -522,6 +534,7 @@ namespace SEWorkshop.Models
 
         public void RemoveDiscount(int indexInChain)
         {
+            DbContext.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }

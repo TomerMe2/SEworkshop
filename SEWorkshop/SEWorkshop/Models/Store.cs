@@ -10,6 +10,7 @@ using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
@@ -31,21 +32,29 @@ namespace SEWorkshop.Models
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
+        private AppDbContext DbContext { get; }
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Store(LoggedInUser owner, string name)
+        public Store(LoggedInUser owner, string name, AppDbContext dbContext)
         {
+            DbContext = dbContext;
             Products = new List<Product>();
-            Management = new List<Manages>();
-            Ownership = new List<Owns>();
+            Ownership = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
+                    ((Owns)handler).Store != null && ((Owns)handler).Store.Equals(this));
+            Management = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
+                    ((Manages)handler).Store != null && ((Manages)handler).Store.Equals(this));
             OwnershipRequests=new List<OwnershipRequest>();
-            Messages = new List<Message>();
+            Messages = (IList<Message>)dbContext.Messages.Select(message => message.ToStore != null && message.ToStore.Equals(this));
             IsOpen = true;
-            Discounts = new List<Discount>();
+            Discounts = (IList<Discount>)dbContext.Messages.Select(discount => discount.ToStore != null && discount.ToStore.Equals(this));
             Name = name;
-            Policy = new AlwaysTruePolicy(this);
-            Purchases = new List<Purchase>();
+            Policy = ((IList<Policy>)DbContext.Policies.Select(policy => policy.Store.Equals(this)))
+                    .OrderByDescending(policy => policy.Id).FirstOrDefault();
+            if(Policy == default)
+                Policy = new AlwaysTruePolicy(this);
+            Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.Basket.Store != null
+                    && purhcase.Basket.Store.Equals(this));
         }
 
         public void CloseStore()
@@ -67,9 +76,9 @@ namespace SEWorkshop.Models
             {
                 throw new PolicyIsFalse();
             }
-            foreach (var (prod, purchaseQuantity) in basket.Products)
+            foreach (var product in basket.Products)
             {
-                if (prod.Quantity - purchaseQuantity < 0)
+                if (product.Product.Quantity - product.Quantity < 0)
                 {
                     throw new NegativeInventoryException();
                 }
@@ -79,9 +88,9 @@ namespace SEWorkshop.Models
             {
                 supplyAdapter.Supply(basket.Products, address);
                 // Update the quantity in the product itself
-                foreach (var (prod, purchaseQuantity) in basket.Products)
+                foreach (var product in basket.Products)
                 {
-                    prod.Quantity = prod.Quantity - purchaseQuantity;
+                    product.Product.Quantity -= product.Quantity;
                 }
             }
             else

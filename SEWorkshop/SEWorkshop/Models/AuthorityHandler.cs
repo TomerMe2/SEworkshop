@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
@@ -14,13 +15,36 @@ namespace SEWorkshop.Models
     [Table("AuthorityHandlers")]
     public abstract class AuthorityHandler
     {
+        [ForeignKey("Users"), Key, Column(Order = 0)]
+        public LoggedInUser LoggedInUser { get; set; }
+        [ForeignKey("Stores"), Key, Column(Order = 1)]
+        public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public ICollection<Authorizations> AuthoriztionsOfUser { get; set; }
+        public ICollection<Authority> AuthoriztionsOfUser { get; set; }
+        private AppDbContext DbContext { get; }
 
-        public AuthorityHandler()
+        public AuthorityHandler(AppDbContext dbContext, LoggedInUser loggedInUser, Store store)
         {
-            AuthoriztionsOfUser = new List<Authorizations>();
+            DbContext = dbContext;
+            LoggedInUser = loggedInUser;
+            Store = store;
+            AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
+        }
+
+        public void AddAuthorization(Authorizations authorizations)
+        {
+            Authority authority = new Authority(this, authorizations);
+            AuthoriztionsOfUser.Add(authority);
+            DbContext.Authorities.Add(authority);
+        }
+
+        public void RemoveAuthorization(Authorizations authorizations)
+        {
+            Authority authority = ((IList<Authority>)DbContext.Authorities
+                .Select(auth => auth.Authorization == authorizations && auth.AuthHandler.Equals(this))).FirstOrDefault();
+            AuthoriztionsOfUser.Remove(authority);
+            DbContext.Authorities.Remove(authority);
         }
 
         public abstract void AddStoreManager(LoggedInUser newManager);

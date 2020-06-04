@@ -17,19 +17,19 @@ namespace SEWorkshop.Models.Discounts
             CatUnderDiscount = category;
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             double totalDiscount = 0;
 
-            foreach (var (prod, quantity) in itemsList)
+            foreach (var prod in itemsList)
             {
                 if (DateTime.Now > Deadline)
                 {
                     return 0;
                 }
-                if (prod.Category.Equals(CatUnderDiscount))
+                if (prod.Product.Category.Equals(CatUnderDiscount))
                 {
-                    totalDiscount += (prod.Price * quantity) * (Percentage / 100);
+                    totalDiscount += (prod.Product.Price * prod.Quantity) * (Percentage / 100);
                 }
             }
 

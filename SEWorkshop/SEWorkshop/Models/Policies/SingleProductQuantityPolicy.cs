@@ -29,11 +29,11 @@ namespace SEWorkshop.Models.Policies
             {
                 return true;
             }
-            foreach(var tup in bskt.Products)
+            foreach(var prod in bskt.Products)
             {
-                if (tup.Item1 == Prod)
+                if (prod.Product.Equals(Prod))
                 {
-                    int val = tup.Item2;
+                    int val = prod.Quantity;
                     if (MinQuantity != -1 && MaxQuantity != -1)
                     {
                         return val >= MinQuantity && val <= MaxQuantity;

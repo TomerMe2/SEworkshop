@@ -1,8 +1,10 @@
-﻿using System;
+﻿using NLog;
+using SEWorkshop.Exceptions;
 using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System;
 
 namespace SEWorkshop.Models
 {
@@ -11,9 +13,9 @@ namespace SEWorkshop.Models
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }
 
-        public Administrator(string username, byte[] password) : base(username, password)
+        public Administrator(string username, byte[] password, AppDbContext dbContext) : base(username, password, dbContext)
         {
-            PurchasesToView = new List<Purchase>();
+            PurchasesToView = (ICollection<Purchase>)dbContext.Purchases.Select(purhcase => true);
         }
     }
 }

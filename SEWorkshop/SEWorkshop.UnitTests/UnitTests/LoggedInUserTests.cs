@@ -8,6 +8,7 @@ using System.Linq;
 using SEWorkshop.Enums;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.UnitTests
 {
@@ -20,13 +21,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void WriteReview()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "writeReviewStore";
             const string USER_NAME = "WriteReviewUser";
             const string USER_PASSWORD = "1111";
             const string PROD_NAME = "writeReviewProd";
-            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD), DbContext);
+            Store str = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 11.11, 1);
@@ -39,12 +41,13 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void WriteMessage()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "writeMessageStore";
             const string USER_NAME = "WriteMessageUser";
             const string USER_PASSWORD = "1111";
-            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD), DbContext);
+            Store str = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             //Message is empty - Throw Exception
@@ -56,10 +59,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void AddProductTest_storeManagerAddsAProductToStore_productIsAddedToStore()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = usr.AddProduct(store, "BestApp", "Authentic One", "App", 4.00, 10);
@@ -81,10 +85,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void RemoveProduct_StoreOwnerRemovesAnExistingProduct_ProductIsRemovedFromStore()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = usr.AddProduct(store, "BestApp", "Authentic One", "App", 4.00, 10);
@@ -105,10 +110,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void EditProductDescription_StoreOwnerEditsDescription_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
@@ -121,10 +127,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void EditProductCategory_StoreOwnerEditsCategory_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
@@ -137,10 +144,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void EditProductName_StoreOwnerEditName_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product1 = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
@@ -165,10 +173,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void EditProductPrice_StoreOwnerEditsPrice_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
@@ -182,10 +191,11 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void EditProductQuantity_StoreOwnerEditsQuantity_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product product = new Product(store, "Whatsapp", "Great app!", "Personal Communication", 4.00, 100);
@@ -197,13 +207,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void SetPermissionsOfManager_setPermissionOfStoreManagerToSetPermission_PermissionIsAdded()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Replying);
             var management = newManager.Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
@@ -214,17 +225,18 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void SetPermissionsOfManager_SetPermissionsOfManagerReplying_repliyngAddedToManger()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
 
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Replying);
-            LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"), DbContext);
             Message message1 = new Message(client, store, "Great store!", true);
             store.Messages.Add(message1);
             Message reply1 = newManager.MessageReply(message1, store, "Thank you!");
@@ -236,16 +248,17 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void SetPermissionsOfManager_PermissionsOfManagerWatching_ManagercanWatch()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Watching);
-            LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser client = new LoggedInUser("client1", _securityAdapter.Encrypt("1234"), DbContext);
             Message message1 = new Message(client, store, "Great store!", true);
             store.Messages.Add(message1);
             IEnumerable<Message> output1 = newManager.GetMessage(store);
@@ -256,13 +269,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void SetPermissionsOfManager_SetPermissionsOfManagerTestProducts_managerHasPermission()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
             usr.SetPermissionsOfManager(store, newManager, Authorizations.Products);
             Product product;
@@ -274,13 +288,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void AddStoreOwner_storeOwnerAddAnotherLoggeinUserTbeStoreOwner_OwnerIsAdded()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newOwner = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newOwner = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreOwner(store, newOwner);
             Assert.IsTrue(store.GetOwnership(newOwner).Appointer == usr);
         }
@@ -290,13 +305,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void AddStoreManagerTest_StoreownerAddsAManagerToStore_ManagerIsAdded()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
             Assert.IsTrue(store.GetManagement(newManager).Appointer == usr);
             bool catched = false;
@@ -316,13 +332,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void RemoveStoreManager_storeOwnerRemovesStoreManager_MangerIsRemoved()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser newManager = new LoggedInUser("appmanager1", _securityAdapter.Encrypt("1234"), DbContext);
             usr.AddStoreManager(store, newManager);
             usr.RemoveStoreManager(store, newManager);
             Assert.IsTrue(store.GetManagement(newManager) == null);
@@ -341,13 +358,14 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void MessageReply_StoreOwnerReplyStoresMessage_replyhasbeenAdded()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
+            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"), DbContext);
             Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
             Message reply = usr.MessageReply(message, store, "Thank you!");
@@ -358,15 +376,16 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void getMassage_storeOwnerViewsaMessageOfStore_UserGetsMessage()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
 
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
 
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
+            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"), DbContext);
 
             Message message = new Message(client, store, "Great app", true);
             store.Messages.Add(message);
@@ -380,14 +399,15 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void ViewPurchaseHistory_storeOwnerviewPurchaseHistory_success()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Google Play";
-            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
-            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"));
-            Purchase purchase = new Purchase(client, new Basket(store, client.Cart), DEF_ADRS);
+            LoggedInUser client = new LoggedInUser("client", _securityAdapter.Encrypt("1324"), DbContext);
+            Purchase purchase = new Purchase(client, new Basket(store, client.Cart, DbContext), DEF_ADRS);
             store.Purchases.Add(purchase);
             IEnumerable<Purchase> purchases = usr.PurchaseHistory(store);
             Assert.IsTrue(purchases.Count() == 1 && purchases.First() == purchase);
@@ -397,11 +417,12 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void PurchasePolicyTest()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "Wello";
-            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
             Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
+            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             usr.Owns.Add(ownership);
             store.Ownership.Add(ownership);
             usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
@@ -419,11 +440,12 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void PurchaseDiscountTest()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "store1";
             DateTime deadline = DateTime.Now.AddMonths(1);
-            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"), DbContext);
+            Store store = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             usr.Owns.Add(ownership);
             store.Ownership.Add(ownership);
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
@@ -440,18 +462,19 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void BuyOverTest()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "writeReviewStore";
             const string USER_NAME = "WriteReviewUser";
             const string USER_PASSWORD = "1111";
             const string PROD_NAME = "writeReviewProd";
-            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD), DbContext);
+            Store str = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product prod = usr.AddProduct(str, PROD_NAME, "ninini", "cat1", 10.00, 5);
             BuyOverDiscount dis = new BuyOverDiscount(str, 9.90, 50, DateTime.Today, prod);
-            GuestUser customer = new GuestUser();
+            GuestUser customer = new GuestUser(DbContext);
             customer.AddProductToCart(prod, 1);
             var basket = customer.Cart.Baskets.ElementAt(0);
             Assert.AreEqual(dis.ComputeDiscount(basket.Products), 5.00);
@@ -461,20 +484,21 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void BuySomeGetSomeTest()
         {
+            AppDbContext DbContext = new AppDbContext();
             const string STORE_NAME = "buySomeGetSomeStore";
             const string USER_NAME = "BuySomeGetSomeUser";
             const string USER_PASSWORD = "1111";
             const string PROD1_NAME = "Nails";
             const string PROD2_NAME = "ScrewDriver";
-            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
+            LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD), DbContext);
+            Store str = new Store(usr, STORE_NAME, DbContext);
+            Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234"), DbContext), DbContext);
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
             Product nails = usr.AddProduct(str, PROD1_NAME, "ninini", "cat1", 10, 5);
             Product screwDriver = usr.AddProduct(str, PROD2_NAME, "ninini", "cat1", 10, 5);
             BuySomeGetSomeDiscount dis = new BuySomeGetSomeDiscount(str, 3, -1, 60, DateTime.Today, screwDriver, nails);
-            GuestUser customer = new GuestUser();
+            GuestUser customer = new GuestUser(DbContext);
             customer.AddProductToCart(nails, 3);
             customer.AddProductToCart(screwDriver, 2);
             var basket1 = customer.Cart.Baskets.ElementAt(0);

@@ -47,8 +47,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
             var cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1);
-            var (prod, quantity) = cart.First().Products.First();
-            Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 1);
+            var prod = cart.First().Products.First();
+            Assert.IsTrue(prod.Product.Name.Equals("CartTestItm1") && prod.Quantity == 1);
             bool isExceptionThrown = false;
             try
             {
@@ -63,8 +63,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
-            (prod, quantity) = cart.First().Products.First();
-            Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 2);
+            prod = cart.First().Products.First();
+            Assert.IsTrue(prod.Product.Name.Equals("CartTestItm1") && prod.Quantity == 2);
 
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm2", 3);
             cart = Manager.MyCart(DEF_ID);
@@ -73,12 +73,12 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 2);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 2);
-            Assert.IsTrue(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2") && tup.Item2 == 1).Any());
+            Assert.IsTrue(cart.First().Products.Where(tup => tup.Product.Name.Equals("CartTestItm2") && tup.Quantity == 1).Any());
 
             Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 1);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
-            Assert.IsFalse(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2")).Any());
+            Assert.IsFalse(cart.First().Products.Where(tup => tup.Product.Name.Equals("CartTestItm2")).Any());
         }
 
         [Test]

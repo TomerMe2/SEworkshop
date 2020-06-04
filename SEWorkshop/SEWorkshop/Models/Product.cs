@@ -4,6 +4,7 @@ using System.Text;
 using SEWorkshop.Models.Discounts;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
@@ -34,7 +35,8 @@ namespace SEWorkshop.Models
         public double PriceAfterDiscount()
         {
             double price = Price;
-            ICollection<(Product, int)> product = new List<(Product, int)>{(this, 1)};
+            ICollection<ProductsInBasket> product = new List<ProductsInBasket>
+                    {(new ProductsInBasket(new Basket(this.Store, new Cart(new GuestUser(new AppDbContext())), new AppDbContext()), this, 1))};
             foreach (var discount in Store.Discounts)
             {
                 if (discount is OpenDiscount)

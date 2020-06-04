@@ -16,12 +16,12 @@ namespace SEWorkshop.Models.Discounts
              MinSum = minSum;
         }
        
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             double sumBasket = 0;
             foreach (var product in itemsList)
             {
-                sumBasket = sumBasket + (product.Item1.Price * product.Item2);
+                sumBasket = sumBasket + (product.Product.Price * product.Quantity);
             }
             if (sumBasket >= MinSum)
             {

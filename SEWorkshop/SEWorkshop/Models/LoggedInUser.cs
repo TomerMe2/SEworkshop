@@ -6,6 +6,8 @@ using SEWorkshop.Facades;
 using SEWorkshop.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System.Data.Entity;
 using System;
 
 namespace SEWorkshop.Models
@@ -22,18 +24,25 @@ namespace SEWorkshop.Models
         public string Username { get; private set; }
         public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
         private ICollection<Purchase> Purchases { get; set; }
+        private AppDbContext DbContext { get; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public LoggedInUser(string username, byte[] password)
+        public LoggedInUser(string username, byte[] password, AppDbContext dbContext) : base(dbContext)
         {
             Username = username;
             Password = password;
-            OwnershipRequests = new List<OwnershipRequest>();
-            Owns = new List<Owns>();
-            Manage = new List<Manages>();
-            Reviews = new List<Review>();
-            Messages = new List<Message>();
-            Purchases = new List<Purchase>();
+            OwnershipRequests = (IList<OwnershipRequest>)dbContext.OwnershipRequests.Select(req => req.Owner != null && req.Owner.Equals(this));
+            Owns = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
+                    ((Owns)handler).LoggedInUser != null && ((Owns)handler).LoggedInUser.Equals(this));
+            Manage = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
+                    ((Manages)handler).LoggedInUser != null && ((Manages)handler).LoggedInUser.Equals(this));
+            Reviews = (IList<Review>)dbContext.Reviews.Select(review => review.Writer != null && review.Writer.Equals(this));
+            Messages = (IList<Message>)dbContext.Messages.Select(message => message.WrittenBy != null && message.WrittenBy.Equals(this));
+            Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.User != null && purhcase.User.Equals(this));
+            Cart = dbContext.Carts.FirstOrDefault(cart => cart.User.Equals(this));
+            if(Cart == default)
+                Cart = new Cart(this);
+            DbContext = dbContext;
         }
 
         public int AmountOfUnReadMessage
@@ -68,6 +77,7 @@ namespace SEWorkshop.Models
             Review review = new Review(this, description, product);
             product.Reviews.Add(review);
             Reviews.Add(review);
+            DbContext.Reviews.Add(review);
         }
        
         public void WriteMessage(Store store, string description, bool isClient)
@@ -79,6 +89,7 @@ namespace SEWorkshop.Models
             Message message = new Message(this, store, description, isClient);
             store.Messages.Add(message);
             Messages.Add(message);
+            DbContext.Messages.Add(message);
         }
 
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
@@ -194,7 +205,6 @@ namespace SEWorkshop.Models
                 ownership.SetPermissionsOfManager(manager, authorization);
                 return;
             }
-
             management.SetPermissionsOfManager(manager,authorization);
         }
 
@@ -256,7 +266,6 @@ namespace SEWorkshop.Models
             {
                 return ownership.MessageReply(this, store, message, description);
             }
-            
             return management.MessageReply(this,store,message,description);
         }
 
@@ -264,6 +273,7 @@ namespace SEWorkshop.Models
         {
             Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
+            DbContext.Messages.Add(message);
             log.Info("Reply has been published successfully");
             return reply;
         }
@@ -276,7 +286,6 @@ namespace SEWorkshop.Models
             {
                 return ownership.GetMessage(store, this);
             }
-
             return management.GetMessage(store, this);
         }
 
@@ -288,17 +297,7 @@ namespace SEWorkshop.Models
             {
                 return ownership.ViewPurchaseHistory(this, store);
             }
-
             return management.ViewPurchaseHistory(this, store);
-        }
-
-        public bool isManger(Store store)
-        {
-            if(Owns.FirstOrDefault(man => man.Store == store) != default)
-            {
-                return true;
-            }
-            return false;
         }
 
         override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
@@ -308,9 +307,9 @@ namespace SEWorkshop.Models
             Purchase purchase;
             purchase = new Purchase(this, basket, address);
             
-            foreach (var (prod, purchaseQuantity) in basket.Products)
+            foreach (var product in basket.Products)
             {
-                if (purchaseQuantity <= 0)
+                if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
             basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
@@ -318,6 +317,8 @@ namespace SEWorkshop.Models
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             facade.AddPurchaseToList(purchase);
+            DbContext.Purchases.Add(purchase);
+            DbContext.Addresses.Add(address);
             return purchase;
         }
 
@@ -331,7 +332,6 @@ namespace SEWorkshop.Models
                 ownership.RemovePermissionsOfManager(manager, authorization);
                 return;
             }
-
             management.RemovePermissionsOfManager(manager,authorization);
         }
 
@@ -343,7 +343,6 @@ namespace SEWorkshop.Models
                 throw new UserIsNotOwnerOfThisStore();
             }
             return res;
-
         }
 
         //All add policies are adding to the end

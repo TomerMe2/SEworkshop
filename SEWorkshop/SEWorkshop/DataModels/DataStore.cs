@@ -13,10 +13,10 @@ namespace SEWorkshop.DataModels
                         new DataProduct(prod)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataManages> Management => InnerModel.Management
                 .Select((item) =>
-                    (new DataManages(new Manages(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
+                    (new DataManages(item))).ToList();
         public IReadOnlyCollection<DataOwns> Ownership => InnerModel.Ownership
                 .Select((item) =>
-                    (new DataOwns(new Owns(item.LoggedInUser, item.Store, item.Appointer)))).ToList();
+                    (new DataOwns(item))).ToList();
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();

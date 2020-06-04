@@ -21,7 +21,7 @@ namespace SEWorkshop.Facades
 
             return (IsUserStoreOwner(loggedInUser, store)
                     || (IsUserStoreManager(loggedInUser, store)
-                        && management.AuthoriztionsOfUser.Contains(authorization)));
+                        && management.HasAuthorization(authorization)));
         }
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)

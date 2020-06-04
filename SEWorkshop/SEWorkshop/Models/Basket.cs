@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System.Linq;
 
 namespace SEWorkshop.Models
 {
@@ -15,14 +17,16 @@ namespace SEWorkshop.Models
         public Store Store { get; private set; }
         [ForeignKey("Carts"), Key, Column(Order = 1)]
         public Cart Cart { get; private set; }
+        private AppDbContext DbContext;
 
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
-        public ICollection<(Product, int)> Products { get; private set; }
+        public ICollection<ProductsInBasket> Products { get; private set; }
 
-        public Basket(Store store, Cart cart)
+        public Basket(Store store, Cart cart, AppDbContext dbContext)
         {
+            DbContext = dbContext;
             Store = store;
-            Products = new List<(Product, int)>();
+            Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
             Counter_ID++;
             Id = Counter_ID;
             Cart = cart;
@@ -31,9 +35,9 @@ namespace SEWorkshop.Models
         public double PriceWithoutDiscount()
         {
             double totalPrice = 0;
-            foreach (var (product, quantity) in Products)
+            foreach (var product in Products)
             {
-                totalPrice += product.Price * quantity;
+                totalPrice += product.Product.Price * product.Quantity;
             }
 
             return totalPrice;

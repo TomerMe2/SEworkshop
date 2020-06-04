@@ -21,7 +21,7 @@ namespace SEWorkshop.Models.Discounts
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             if (ComposedParts != null)
                 return ComposedParts.Value.Item1 switch
@@ -35,7 +35,7 @@ namespace SEWorkshop.Models.Discounts
             throw new Exception("should not get here");
         }
         
-        public double ChooseCheaper(ICollection<(Product, int)> itemsList)
+        public double ChooseCheaper(ICollection<ProductsInBasket> itemsList)
         {
             if (ComposedParts != null)
                 return Math.Min(ComposedParts.Value.Item2.ComputeDiscount(itemsList),
@@ -43,7 +43,7 @@ namespace SEWorkshop.Models.Discounts
             throw new Exception("should not get here");
         }
 
-        public double ApplyImplies(ICollection<(Product, int)> itemsList)
+        public double ApplyImplies(ICollection<ProductsInBasket> itemsList)
         {
             if (ComposedParts != null)
             {

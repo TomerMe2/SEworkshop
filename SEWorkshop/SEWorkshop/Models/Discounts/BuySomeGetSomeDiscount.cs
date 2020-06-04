@@ -20,27 +20,27 @@ namespace SEWorkshop.Models.Discounts
             ProdUnderDiscount = underDiscount;
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
-            foreach (var (product, quantity) in itemsList)
+            foreach (var prod in itemsList)
             {
-                if (product == Product)
+                if (prod.Product.Equals(Product))
                 {
-                    if (quantity >= BuySome)
+                    if (prod.Quantity >= BuySome)
                     {
-                        if (ProdUnderDiscount == Product && GetSome > quantity-BuySome)
+                        if (ProdUnderDiscount == Product && GetSome > prod.Quantity-BuySome)
                         {
                             return 0;
                         }
-                        foreach (var (prod, quant) in itemsList)
+                        foreach (var product in itemsList)
                         {
-                            if (prod == ProdUnderDiscount)
+                            if (product.Product.Equals(ProdUnderDiscount))
                             {
                                 if (GetSome == -1)
                                 {
-                                    return quant * prod.Price * (Percentage / 100);
+                                    return prod.Quantity * product.Product.Price * (Percentage / 100);
                                 }
-                                return GetSome * prod.Price * (Percentage / 100);
+                                return GetSome * product.Product.Price * (Percentage / 100);
                             }
                         }
                     }

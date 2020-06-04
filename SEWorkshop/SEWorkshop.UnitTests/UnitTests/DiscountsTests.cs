@@ -4,6 +4,7 @@ using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Models.Discounts;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.UnitTests
 {
@@ -18,6 +19,7 @@ namespace SEWorkshop.Tests.UnitTests
         private Product Prod3 { get; set; }
         private Product Prod4 { get; set; }
         private Product Prod5 { get; set; }
+        private AppDbContext DbContext;
 
         private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44");
         
@@ -26,9 +28,10 @@ namespace SEWorkshop.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
-            Buyer = new LoggedInUser("buyer", new byte[1] { 0 });
-            StoreOwner = new LoggedInUser("owner", new byte[1] { 0 });
-            Str = new Store(StoreOwner, "storenm");
+            DbContext = new AppDbContext();
+            Buyer = new LoggedInUser("buyer", new byte[1] { 0 }, DbContext);
+            StoreOwner = new LoggedInUser("owner", new byte[1] { 0 }, DbContext);
+            Str = new Store(StoreOwner, "storenm", DbContext);
             Prod1 = new Product(Str, "prod1", "desc1", "cat1", 1, 999);
             Prod2 = new Product(Str, "prod2", "desc2", "cat2", 2, 999);
             Prod3 = new Product(Str, "prod3", "desc3", "cat3", 3, 999);
@@ -41,7 +44,7 @@ namespace SEWorkshop.Tests.UnitTests
             Str.Products.Add(Prod4);
             Str.Products.Add(Prod5);
 
-            Bskt = new Basket(Str, Buyer.Cart);
+            Bskt = new Basket(Str, Buyer.Cart, DbContext);
             Buyer.Cart.Baskets.Add(Bskt);
 
             Deadline = DateTime.Now.AddMonths(1);
@@ -50,8 +53,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void ProductCategoryDiscountTest()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis = new ProductCategoryDiscount(50, Deadline, Str, "cat1");
             double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod1.Price * 0.5 * 3)); //prod2 is not under discount
@@ -60,8 +63,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void SpecificProductDiscountTest()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis = new SpecificProducDiscount(75, Deadline, Prod2, Str);
             double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(Prod2.Price * 0.75 * 3)); //prod2 is not under discount
@@ -70,8 +73,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void XorDiscountsTest()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
             Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
             Discount composed = new ComposedDiscount(Operator.Xor, dis1, dis2);
@@ -82,8 +85,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void AndDiscountTest()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
             Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
             Discount composed = new ComposedDiscount(Operator.And, dis1, dis2);
@@ -94,8 +97,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void ImpliesDiscountTest()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis1 = new SpecificProducDiscount(50, Deadline, Prod2, Str);
             Discount dis2 = (new SpecificProducDiscount(50, Deadline, Prod1, Str));
             Discount composed = new ComposedDiscount(Operator.Implies, dis1, dis2);
@@ -106,8 +109,8 @@ namespace SEWorkshop.Tests.UnitTests
         [Test]
         public void ExpiredDiscountException()
         {
-            Bskt.Products.Add((Prod1, 3));
-            Bskt.Products.Add((Prod2, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 3));
+            Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 3));
             Discount dis = new SpecificProducDiscount(50, new DateTime(2020, 5, 15), Prod2, Str);
             double discount = dis.ComputeDiscount(Bskt.Products);
             Assert.That(discount, Is.EqualTo(0));
