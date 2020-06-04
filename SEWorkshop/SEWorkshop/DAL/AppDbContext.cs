@@ -12,7 +12,7 @@ namespace SEWorkshop.DAL
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext() : base("name=AzamazonDB") 
+        public AppDbContext() : base() 
         {
             Addresses = Set<Address>();
             Admins = Set<Administrator>();;
