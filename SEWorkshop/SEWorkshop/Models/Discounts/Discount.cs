@@ -15,7 +15,9 @@ namespace SEWorkshop.Models.Discounts
     {
         private static int _nextId = 0;
         public int DiscountId;
-        public (Operator, Discount, Discount)? ComposedParts;
+        public Operator? Op;
+        public Discount? leftChild;
+        public Discount? rightChild;
         public ComposedDiscount? Father;
         public DateTime Deadline { get; set; }
         [ForeignKey("Stores")]
@@ -30,12 +32,12 @@ namespace SEWorkshop.Models.Discounts
 
         public bool IsLeaf()
         {
-            return ComposedParts is null;
+            return Op != null;
         }
 
         public bool IsLeftChild()
         {
-            return Father?.ComposedParts?.Item2 == this;
+            return Father?.leftChild == this;
         }
 
         public abstract double ComputeDiscount(ICollection<ProductsInBasket> itemsList);

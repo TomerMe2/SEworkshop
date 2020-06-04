@@ -12,8 +12,10 @@ namespace SEWorkshop.Models.Policies
     public abstract class Policy
     {
         public int Id {get;}
-        public (Policy, Operator)? InnerPolicy { get; set; }
-        [ForeignKey("Stores")]
+        [ForeignKey("Policies")]
+        public Policy? InnerPolicy { get; set; }
+        public Operator? InnerOperator { get; set; }
+        [ForeignKey("Stores"), Key]
         public Store Store { get; }
         
         public Policy(Store store)
@@ -34,8 +36,8 @@ namespace SEWorkshop.Models.Policies
             {
                 return IsThisPolicySatisfied(user, address);
             }
-            Policy other = InnerPolicy.Value.Item1;
-            return InnerPolicy.Value.Item2 switch
+            Policy other = InnerPolicy;
+            return InnerOperator switch
             {
                 Operator.And => IsThisPolicySatisfied(user, address) && other.CanPurchase(user, address),
                 Operator.Or => IsThisPolicySatisfied(user, address) || other.CanPurchase(user, address),

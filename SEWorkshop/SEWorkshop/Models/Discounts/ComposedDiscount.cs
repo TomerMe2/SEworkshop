@@ -17,17 +17,19 @@ namespace SEWorkshop.Models.Discounts
 
             dis1.Father = this;
             dis2.Father = this;
-            ComposedParts = (op, dis1, dis2);
+            Op = op;
+            leftChild = dis1;
+            rightChild = dis2;
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
 
         public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
-            if (ComposedParts != null)
-                return ComposedParts.Value.Item1 switch
+            if (Op != null && leftChild != null && rightChild != null)
+                return Op switch
                 {
-                    Operator.And => ComposedParts.Value.Item2.ComputeDiscount(itemsList) +
-                                    ComposedParts.Value.Item3.ComputeDiscount(itemsList),
+                    Operator.And => leftChild.ComputeDiscount(itemsList) +
+                                    rightChild.ComputeDiscount(itemsList),
                     Operator.Xor => ChooseCheaper(itemsList),
                     Operator.Implies => ApplyImplies(itemsList),
                     _ => throw new Exception("Should not get here"),
@@ -37,20 +39,20 @@ namespace SEWorkshop.Models.Discounts
         
         public double ChooseCheaper(ICollection<ProductsInBasket> itemsList)
         {
-            if (ComposedParts != null)
-                return Math.Min(ComposedParts.Value.Item2.ComputeDiscount(itemsList),
-                    ComposedParts.Value.Item3.ComputeDiscount(itemsList));
+            if (Op != null && leftChild != null && rightChild != null)
+                return Math.Min(leftChild.ComputeDiscount(itemsList),
+                    rightChild.ComputeDiscount(itemsList));
             throw new Exception("should not get here");
         }
 
         public double ApplyImplies(ICollection<ProductsInBasket> itemsList)
         {
-            if (ComposedParts != null)
+            if (Op != null && leftChild != null && rightChild != null)
             {
-                double firstDiscount = ComposedParts.Value.Item2.ComputeDiscount(itemsList);
+                double firstDiscount = leftChild.ComputeDiscount(itemsList);
                 if (firstDiscount > 0)
                 {
-                    return firstDiscount + ComposedParts.Value.Item3.ComputeDiscount(itemsList);
+                    return firstDiscount + rightChild.ComputeDiscount(itemsList);
                 }
             }
             return 0;

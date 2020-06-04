@@ -159,7 +159,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 7, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, -1, 9);
-            pol1.InnerPolicy = (pol2, Operator.Or);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Or;
             Assert.True(pol1.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -170,7 +171,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 7, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, 5, 9);
-            pol1.InnerPolicy = (pol2, Operator.Or);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Or;
             Assert.False(pol1.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -181,7 +183,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 7, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, -1, 9);
-            pol1.InnerPolicy = (pol2, Operator.Or);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Or;
             Assert.True(pol1.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -192,7 +195,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 5, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, 1, 9);
-            pol1.InnerPolicy = (pol2, Operator.Xor);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Xor;
             Assert.False(pol1.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -203,7 +207,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 5, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, 1, 9);
-            pol1.InnerPolicy = (pol2, Operator.Xor);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Xor;
             Assert.False(pol1.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -214,7 +219,8 @@ namespace SEWorkshop.Tests.UnitTests
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod1, 2));
             var pol1 = new SingleProductQuantityPolicy(Str, Prod3, 7, -1);
             var pol2 = new SingleProductQuantityPolicy(Str, Prod1, -1, 9);
-            pol1.InnerPolicy = (pol2, Operator.Or);
+            pol1.InnerPolicy = pol2;
+            pol1.InnerOperator = Operator.Or;
             Assert.True(pol1.CanPurchase(Buyer, DefAdrs));
         }
     }

@@ -348,9 +348,10 @@ namespace SEWorkshop.Models
             }
             while(currPol.InnerPolicy != null)
             {
-                currPol = currPol.InnerPolicy.Value.Item1;
+                currPol = currPol.InnerPolicy;
             }
-            currPol.InnerPolicy = (pol, op);
+            currPol.InnerPolicy = pol;
+            currPol.InnerOperator = op;
             DbContext.Policies.Add(pol);
         }
         
@@ -390,19 +391,19 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.leftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.leftChild);
+                                    father.leftChild = newDis;
                                     DbContext.Discounts.Add(newDis);
                                 }
                             }
                             else
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.rightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.rightChild);
+                                    father.rightChild = newDis;
                                     DbContext.Discounts.Add(newDis);
                                 }
                             }
@@ -411,21 +412,21 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.leftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.leftChild, dis);
                                     newDis.Father = father;
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    father.leftChild = newDis;
                                     DbContext.Discounts.Add(newDis);
                                 }
                             }
                             else
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.rightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.rightChild, dis);
                                     newDis.Father = father;
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    father.rightChild = newDis;
                                     DbContext.Discounts.Add(newDis);
                                 }
                             }
@@ -441,12 +442,12 @@ namespace SEWorkshop.Models
             {
                 return root;
             }
-            if (root.ComposedParts is null)
+            if (root.Op is null || root.leftChild is null || root.rightChild is null)
             {
                 return null;
             }
 
-            return SearchNode(root.ComposedParts.Value.Item2, disId) ?? SearchNode(root.ComposedParts.Value.Item3, disId);
+            return SearchNode(root.leftChild, disId) ?? SearchNode(root.rightChild, disId);
         }
 
         //All add policies are adding to the end
@@ -488,7 +489,7 @@ namespace SEWorkshop.Models
             while (currPol.InnerPolicy != null && i < indexInChain)
             {
                 prev = currPol;
-                currPol = currPol.InnerPolicy.Value.Item1;
+                currPol = currPol.InnerPolicy;
                 i++;
             }
             if (i != indexInChain)
@@ -503,7 +504,7 @@ namespace SEWorkshop.Models
                 }
                 else
                 {
-                    Store.Policy = currPol.InnerPolicy.Value.Item1;
+                    Store.Policy = currPol.InnerPolicy;
                 }
             }
             else

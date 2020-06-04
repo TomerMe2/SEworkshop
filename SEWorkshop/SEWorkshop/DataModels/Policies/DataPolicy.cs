@@ -10,15 +10,19 @@ namespace SEWorkshop.DataModels.Policies
 {
     public abstract class DataPolicy : DataModel<Policy>
     {
-        public (DataPolicy, Operator)? InnerPolicy
+        public DataPolicy? InnerPolicy
         {
             get
             {
-                if (InnerModel.InnerPolicy == null)
-                {
-                    return null;
-                }
-                return (CreateDataPolFromPol(InnerModel.InnerPolicy.Value.Item1), InnerModel.InnerPolicy.Value.Item2);
+                return InnerModel.InnerPolicy != null ? CreateDataPolFromPol(InnerModel.InnerPolicy) : null;
+            }
+        }
+
+        public Operator? InnerOperator
+        {
+            get
+            {
+                return InnerOperator;
             }
         }
 

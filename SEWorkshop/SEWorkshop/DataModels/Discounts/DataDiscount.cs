@@ -13,19 +13,10 @@ namespace SEWorkshop.DataModels
         public int DiscountId => InnerModel.DiscountId;
         public DataStore Store { get; }
 
-        public (Operator, DataDiscount, DataDiscount)? ComposedParts
-        {
-            get
-            {
-                if (InnerModel.ComposedParts == null)
-                {
-                    return null;
-                }
-                return (InnerModel.ComposedParts.Value.Item1, 
-                    CreateDataFromDiscount(InnerModel.ComposedParts.Value.Item2), 
-                    CreateDataFromDiscount(InnerModel.ComposedParts.Value.Item3));
-            }
-        }
+        public Operator? opeartor => InnerModel.Op;
+
+        public DataDiscount? leftChild => InnerModel.leftChild != null ? CreateDataFromDiscount(InnerModel.leftChild) : null;
+        public DataDiscount? rightChild => InnerModel.rightChild != null ? CreateDataFromDiscount(InnerModel.rightChild) : null;
 
         public DataDiscount(Discount discount) : base(discount)
         {
