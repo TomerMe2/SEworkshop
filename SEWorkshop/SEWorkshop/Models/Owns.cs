@@ -74,8 +74,6 @@ namespace SEWorkshop.Models
                 {
                     Store.OwnershipRequests.Remove(newOwner);
                 }
-
-
             }
         }
 
@@ -175,7 +173,6 @@ namespace SEWorkshop.Models
 
                 return;
             }
-
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
@@ -197,7 +194,6 @@ namespace SEWorkshop.Models
                 log.Info("Product is already exists in store");
                 throw new ProductAlreadyExistException();
             }
-
         }
 
         override public void RemoveProduct(Product productToRemove)

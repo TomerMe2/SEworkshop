@@ -251,8 +251,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			string productName2 = "pouch2";
 			bridge.AddProduct(DEF_SID, storeName, productName2, "very cool", "Pouches for women", 50, 300);
 			DateTime deadline = DateTime.Now.AddYears(1);
-			Assert.That(() => bridge.AddSpecificProductDiscount(DEF_SID, storeName, productName2, deadline, 20, Enums.Operator.And, 0), Throws.Nothing);
-			Assert.That(() => bridge.AddProductCategoryDiscount(DEF_SID, storeName, "Pouches for women", deadline, 20, Enums.Operator.And, 1), Throws.Nothing);
+			Assert.That(() => bridge.AddSpecificProductDiscount(DEF_SID, storeName, productName2, deadline, 20, Enums.Operator.And, -1, 0, true), Throws.Nothing);
+			Assert.That(() => bridge.AddProductCategoryDiscount(DEF_SID, storeName, "Pouches for women", deadline, 20, Enums.Operator.And, -1, 0, true), Throws.Nothing);
 
 			bridge.Logout(DEF_SID);
 			bridge.Login(DEF_SID, "user1", "password");
