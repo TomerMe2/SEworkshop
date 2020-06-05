@@ -8,7 +8,6 @@ using System;
 
 namespace SEWorkshop.Models
 {
-    [Table("Admins")]
     public class Administrator : LoggedInUser
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }

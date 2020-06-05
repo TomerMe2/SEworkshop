@@ -6,13 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
-    [Table("Reviews")]
     public class Review
     {
-        [ForeignKey("Users"), Key, Column(Order = 0)]
         public LoggedInUser Writer { get; private set; }
         public string Description;
-        [ForeignKey("Products"), Key, Column(Order = 1)]
         public Product Product;
 
         public Review(LoggedInUser writer, string description, Product product)

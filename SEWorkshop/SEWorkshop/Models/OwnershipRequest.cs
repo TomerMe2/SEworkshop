@@ -12,14 +12,11 @@ using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
-    [Table("OwnershipRequests")]
     public class OwnershipRequest
     {
-        [ForeignKey("Stores"), Key, Column(Order = 0)]
         public Store Store { get; private set; }
         public ICollection<OwnershipAnswer> Answers{ get; private set; }
         public LoggedInUser Owner { get; private set; }
-        [ForeignKey("Users"), Key, Column(Order = 1)]
         public LoggedInUser NewOwner { get; private set; }
         private AppDbContext DbContext { get; }
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner, AppDbContext dbContext)

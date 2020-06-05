@@ -4,10 +4,8 @@ using SEWorkshop.Enums;
 
 namespace SEWorkshop.Models
 {
-    [Table("Authorities")]
     public class Authority
     {
-        [ForeignKey("AuthorityHandlers"), Key, Column(Order = 0)]
         public AuthorityHandler AuthHandler { get; private set; }
         public Authorizations Authorization { get; private set; }
 

@@ -8,10 +8,8 @@ using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
-    [Table("Products")]
     public class Product
     {
-        [ForeignKey("Stores"), Key, Column(Order = 0)]
         public Store Store { get; private set; }
         [Key, Column(Order = 1)]
         public string Name { get; set; }

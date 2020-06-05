@@ -6,15 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
-    [Table("Messages")]
     public class Message
     {
         private static int counter = 0;
         private static object counterLock = new object();
         public int Id { get; }
-        [ForeignKey("Stores")]
         public Store ToStore { get; }
-        [ForeignKey("Users")]
         public LoggedInUser WrittenBy { get; private set; }
         public string Description {get; private set;}
         public Message? Prev { get; private set; }

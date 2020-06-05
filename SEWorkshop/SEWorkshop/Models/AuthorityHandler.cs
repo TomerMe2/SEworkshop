@@ -12,12 +12,9 @@ using SEWorkshop.DAL;
 namespace SEWorkshop.Models
 {
 
-    [Table("AuthorityHandlers")]
     public abstract class AuthorityHandler
     {
-        [ForeignKey("Users"), Key, Column(Order = 0)]
         public LoggedInUser LoggedInUser { get; set; }
-        [ForeignKey("Stores"), Key, Column(Order = 1)]
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 

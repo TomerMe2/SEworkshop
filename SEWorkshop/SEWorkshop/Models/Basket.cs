@@ -8,14 +8,11 @@ using System.Linq;
 
 namespace SEWorkshop.Models
 {
-    [Table("Baskets")]
     public class Basket
     {
         public static int Counter_ID = 0;
         public int Id {get; private set;}
-        [ForeignKey("Stores"), Key, Column(Order = 0)]
         public Store Store { get; private set; }
-        [ForeignKey("Carts"), Key, Column(Order = 1)]
         public Cart Cart { get; private set; }
         private AppDbContext DbContext;
 

@@ -14,11 +14,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
-    [Table("Owners")]
     public class Owns : AuthorityHandler
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        [ForeignKey("Users")]
         public LoggedInUser Appointer { get; private set;}
         private AppDbContext DbContext { get; }
 
