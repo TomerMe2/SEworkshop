@@ -8,13 +8,21 @@ namespace SEWorkshop.Models
 {
     public class Cart
     {
-        public ICollection<Basket> Baskets { get; private set; }
-        public User User { get; private set; }
+        public virtual int Id { get; set; }
+        public virtual ICollection<Basket> Baskets { get; private set; }
+        public virtual string? Username { get; private set; }
+        public virtual LoggedInUser? LoggedInUser { get; private set; }
+
+        public Cart()
+        {
+
+        }
 
         public Cart(User user)
         {
             Baskets = new List<Basket>();
-            User = user;
+            if (user is LoggedInUser)
+                LoggedInUser = (LoggedInUser)user;
         }
     }
 }

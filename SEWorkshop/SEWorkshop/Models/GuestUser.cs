@@ -11,7 +11,7 @@ namespace SEWorkshop.Models
     {
         private static int nextId = 0;
         private static object nextIdLock = new object();
-        public int Id { get; }
+        public virtual int Id { get; set; }
 
         public GuestUser(AppDbContext dbContext) : base(dbContext)
         {
@@ -27,7 +27,7 @@ namespace SEWorkshop.Models
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
-            purchase = new Purchase(this, basket, address);
+            purchase = new Purchase(null, basket, address);
             
             foreach (var product in basket.Products)
             {

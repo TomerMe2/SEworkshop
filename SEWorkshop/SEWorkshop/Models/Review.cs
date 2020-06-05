@@ -8,10 +8,15 @@ namespace SEWorkshop.Models
 {
     public class Review
     {
+        public virtual int Id { get; set; }
         public LoggedInUser Writer { get; private set; }
         public string Description;
         public Product Product;
 
+        public Review()
+        {
+
+        }
         public Review(LoggedInUser writer, string description, Product product)
         {
             Writer = writer;

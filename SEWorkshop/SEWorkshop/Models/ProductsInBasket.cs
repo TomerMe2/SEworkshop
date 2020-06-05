@@ -6,9 +6,17 @@ namespace SEWorkshop.Models
 {
     public class ProductsInBasket
     {
-        public Basket Basket { get; private set; }
-        public Product Product { get; private set; }
-        public int Quantity { get; private set; }
+        public virtual int BasketId { get; set; }
+        public virtual Basket Basket { get; private set; }
+        public virtual string ProductName { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Product Product { get; private set; }
+        public virtual int Quantity { get; private set; }
+
+        public ProductsInBasket()
+        {
+
+        }
 
         public ProductsInBasket(Basket basket, Product product, int quantity)
         {

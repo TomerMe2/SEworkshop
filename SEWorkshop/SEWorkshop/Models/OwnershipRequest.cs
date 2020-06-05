@@ -14,6 +14,7 @@ namespace SEWorkshop.Models
 {
     public class OwnershipRequest
     {
+        public virtual int Id { get; set; }
         public Store Store { get; private set; }
         public ICollection<OwnershipAnswer> Answers{ get; private set; }
         public LoggedInUser Owner { get; private set; }

@@ -34,11 +34,12 @@ namespace SEWorkshop.Facades
         public void AddPurchaseToList(Purchase p)
         {
             DbContext.Purchases.Add(p);
+            DbContext.SaveChanges();
         }
 
         public LoggedInUser GetLoggedInUser(string username)
         {
-            var user = DbContext.Users.FirstOrDefault(usr => usr.Username.Equals(username));
+            var user = DbContext.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals(username));
             if (user == null)
             {
                 var admin = DbContext.Admins.FirstOrDefault(usr => usr.Username.Equals(username));
@@ -53,7 +54,7 @@ namespace SEWorkshop.Facades
 
         public LoggedInUser GetLoggedInUser(string username, byte[] password)
         {
-            var user = DbContext.Users.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+            var user = DbContext.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
             if (user == null)
             {
                 var admin = DbContext.Admins.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
@@ -81,7 +82,7 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Register(string username, byte[] password)
         {
-            foreach(var user in DbContext.Users)
+            foreach(var user in DbContext.LoggedInUsers)
             {
                 if(user.Username.Equals(username))
                 {
@@ -96,7 +97,8 @@ namespace SEWorkshop.Facades
                 }
             }
             LoggedInUser newUser = new LoggedInUser(username, password, DbContext);
-            DbContext.Users.Add(newUser);
+            DbContext.LoggedInUsers.Add(newUser);
+            DbContext.SaveChanges();
             return newUser;
         }
 
@@ -129,7 +131,7 @@ namespace SEWorkshop.Facades
             {
                 throw new UserHasNoPermissionException();
             }
-            var user = DbContext.Users.Concat(DbContext.Admins).FirstOrDefault(user => user.Username.Equals(userNmToView));
+            var user = DbContext.LoggedInUsers.Concat(DbContext.Admins).FirstOrDefault(user => user.Username.Equals(userNmToView));
             if(user is null)
             {
                 throw new UserDoesNotExistException();
@@ -162,7 +164,7 @@ namespace SEWorkshop.Facades
                 throw new UserHasNoPermissionException();
             }
             ICollection<Purchase> purchaseHistory = new List<Purchase>();
-            foreach (var user in DbContext.Users)
+            foreach (var user in DbContext.LoggedInUsers)
             {
                 foreach (var purchase in PurchaseHistory(user))
                 {
@@ -207,7 +209,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<string> GetRegisteredUsers()
         {
-            return DbContext.Users.Select(user => user.Username);
+            return DbContext.LoggedInUsers.Select(user => user.Username);
         }
 
         public double GetIncomeInDate(DateTime date)

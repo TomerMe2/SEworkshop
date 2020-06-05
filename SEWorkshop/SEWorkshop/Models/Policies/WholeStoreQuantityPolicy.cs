@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("WholeStoreQuantityPolicies")]
     public class WholeStoreQuantityPolicy : Policy
     {
         public int MinQuantity { get; set; }

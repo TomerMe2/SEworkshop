@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
-    [Table("ProductCategoryDiscounts")]
     public class ProductCategoryDiscount : PrimitiveDiscount
     {
         public string CatUnderDiscount;

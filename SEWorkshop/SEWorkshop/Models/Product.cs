@@ -10,14 +10,20 @@ namespace SEWorkshop.Models
 {
     public class Product
     {
-        public Store Store { get; private set; }
-        [Key, Column(Order = 1)]
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }
-        public double Price { get; set; }
-        public int Quantity { get; set; }
-        public ICollection<Review> Reviews {get ; set;}
+        public virtual string StoreName { get; set; }
+        public virtual Store Store { get; private set; }
+        public virtual string Name { get; set; }
+        public virtual string Description { get; set; }
+        public virtual string Category { get; set; }
+        public virtual double Price { get; set; }
+        public virtual int Quantity { get; set; }
+        public virtual ICollection<ProductsInBasket> InBaskets {get ; set;}
+        public virtual ICollection<Review> Reviews {get ; set;}
+
+        public Product()
+        {
+
+        }
 
         public Product(Store store, string name, string description, string category, double price, int quantity)
         {

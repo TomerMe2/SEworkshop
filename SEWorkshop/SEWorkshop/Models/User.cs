@@ -11,15 +11,19 @@ namespace SEWorkshop.Models
 {
     public abstract class User
     {
-        public Cart Cart { get; set; }
+        public virtual int Id { get; set; }
+        public virtual Cart Cart { get; set; }
         private AppDbContext DbContext { get; }
 
+        public User()
+        {
+
+        }
         public User(AppDbContext dbContext)
         {
             Cart = new Cart(this);
             DbContext = dbContext;
         }
-
 
         public void AddProductToCart(Product product, int quantity)
         {

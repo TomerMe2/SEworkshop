@@ -8,10 +8,15 @@ namespace SEWorkshop
 {
     public class Address
     {
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string HouseNumber { get; set; }
-        public string Country { get; set; }
+        public virtual string City { get; set; }
+        public virtual string Street { get; set; }
+        public virtual string HouseNumber { get; set; }
+        public virtual string Country { get; set; }
+
+        public Address()
+        {
+
+        }
 
         public Address(string country, string city, string street, string houseNumber)
         {

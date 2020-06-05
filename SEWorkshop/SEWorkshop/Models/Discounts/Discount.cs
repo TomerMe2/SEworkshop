@@ -10,17 +10,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
-    [Table("Discounts")]
     public abstract class Discount
     {
         private static int _nextId = 0;
-        public int DiscountId;
+        public virtual int DiscountId { get; set; }
         public Operator? Op;
         public Discount? leftChild;
         public Discount? rightChild;
         public ComposedDiscount? Father;
         public DateTime Deadline { get; set; }
-        [ForeignKey("Stores")]
         public Store Store { get; }
 
         public Discount(DateTime deadline, Store store)

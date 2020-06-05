@@ -5,12 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
-    [Table("BuySomeGetSomeDiscounts")]
     public class BuySomeGetSomeDiscount : ConditionalDiscount
     {
         public int BuySome { get; set; }
         public int GetSome { get; set; }
-        [ForeignKey("Products")]
         public Product ProdUnderDiscount { get; set; }
 
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)

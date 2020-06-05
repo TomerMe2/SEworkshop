@@ -9,37 +9,49 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SEWorkshop.DAL;
 using System.Data.Entity;
 using System;
+using Microsoft.VisualBasic;
 
 namespace SEWorkshop.Models
 {
     public class LoggedInUser : User
     {
-        public ICollection<Owns> Owns { get; private set; }
-        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
-        public ICollection<Manages> Manage { get; private set; }
-        public IList<Review> Reviews { get; private set; }
-        public IList<Message> Messages { get; private set; }
-        public string Username { get; private set; }
-        public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
-        private ICollection<Purchase> Purchases { get; set; }
+        public virtual ICollection<Owns> Owns { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
+        public virtual ICollection<Manages> Manage { get; private set; }
+        public virtual ICollection<AuthorityHandler> Appointements { get; set; }
+        public virtual IList<Review> Reviews { get; private set; }
+        public virtual IList<Message> Messages { get; private set; }
+        public virtual string Username { get; private set; }
+        public virtual byte[] Password { get; private set; }   //it will be SHA256 encrypted password
+        public virtual ICollection<Purchase> Purchases { get; set; }
         private AppDbContext DbContext { get; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
+        public LoggedInUser() : base()
+        {
+        }
         public LoggedInUser(string username, byte[] password, AppDbContext dbContext) : base(dbContext)
         {
             Username = username;
             Password = password;
-            OwnershipRequests = (IList<OwnershipRequest>)dbContext.OwnershipRequests.Select(req => req.Owner != null && req.Owner.Equals(this));
-            Owns = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
-                    ((Owns)handler).LoggedInUser != null && ((Owns)handler).LoggedInUser.Equals(this));
-            Manage = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
-                    ((Manages)handler).LoggedInUser != null && ((Manages)handler).LoggedInUser.Equals(this));
-            Reviews = (IList<Review>)dbContext.Reviews.Select(review => review.Writer != null && review.Writer.Equals(this));
-            Messages = (IList<Message>)dbContext.Messages.Select(message => message.WrittenBy != null && message.WrittenBy.Equals(this));
-            Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.User != null && purhcase.User.Equals(this));
-            Cart = dbContext.Carts.FirstOrDefault(cart => cart.User.Equals(this));
-            if(Cart == default)
-                Cart = new Cart(this);
+            /*            OwnershipRequests = (IList<OwnershipRequest>)dbContext.OwnershipRequests.Select(req => req.Owner != null && req.Owner.Equals(this));
+                        Owns = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
+                                ((Owns)handler).LoggedInUser != null && ((Owns)handler).LoggedInUser.Equals(this));
+                        Manage = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
+                                ((Manages)handler).LoggedInUser != null && ((Manages)handler).LoggedInUser.Equals(this));
+                        Reviews = (IList<Review>)dbContext.Reviews.Select(review => review.Writer != null && review.Writer.Equals(this));
+                        Messages = (IList<Message>)dbContext.Messages.Select(message => message.WrittenBy != null && message.WrittenBy.Equals(this));
+                        Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.User != null && purhcase.User.Equals(this));
+                        Cart = dbContext.Carts.FirstOrDefault(cart => cart.LoggedInUser != null && cart.LoggedInUser.Equals(this));
+                        if(Cart == default)
+            */
+            Owns = new List<Owns>();
+            Manage = new List<Manages>();
+            Reviews = new List<Review>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Appointements = new List<AuthorityHandler>();
+            Cart = new Cart(this);
             DbContext = dbContext;
         }
 
@@ -76,6 +88,7 @@ namespace SEWorkshop.Models
             product.Reviews.Add(review);
             Reviews.Add(review);
             DbContext.Reviews.Add(review);
+            DbContext.SaveChanges();
         }
        
         public void WriteMessage(Store store, string description, bool isClient)
@@ -88,6 +101,7 @@ namespace SEWorkshop.Models
             store.Messages.Add(message);
             Messages.Add(message);
             DbContext.Messages.Add(message);
+            DbContext.SaveChanges();
         }
 
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
@@ -272,6 +286,7 @@ namespace SEWorkshop.Models
             Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
             DbContext.Messages.Add(message);
+            DbContext.SaveChanges();
             log.Info("Reply has been published successfully");
             return reply;
         }
@@ -317,6 +332,7 @@ namespace SEWorkshop.Models
             facade.AddPurchaseToList(purchase);
             DbContext.Purchases.Add(purchase);
             DbContext.Addresses.Add(address);
+            DbContext.SaveChanges();
             return purchase;
         }
 

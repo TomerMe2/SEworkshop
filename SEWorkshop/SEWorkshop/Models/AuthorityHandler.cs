@@ -8,25 +8,38 @@ using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SEWorkshop.DAL;
+using System.Data.Entity.Validation;
 
 namespace SEWorkshop.Models
 {
 
     public abstract class AuthorityHandler
     {
-        public LoggedInUser LoggedInUser { get; set; }
-        public Store Store { get; set; }
+        public static int CounterId = 0;
+        public virtual int Id { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Store Store { get; set; }
+        public virtual string AppointerName { get; set; }
+        public virtual LoggedInUser Appointer { get; set;}
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public ICollection<Authority> AuthoriztionsOfUser { get; set; }
+        public virtual ICollection<Authority> AuthoriztionsOfUser { get; set; }
         private AppDbContext DbContext { get; }
 
-        public AuthorityHandler(AppDbContext dbContext, LoggedInUser loggedInUser, Store store)
+        public AuthorityHandler()
+        {
+
+        }
+
+        public AuthorityHandler(AppDbContext dbContext, Store store, LoggedInUser appointer)
         {
             DbContext = dbContext;
-            LoggedInUser = loggedInUser;
             Store = store;
-            AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
+            CounterId++;
+            Id = CounterId;
+            //AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
+            AuthoriztionsOfUser = new List<Authority>();
+            Appointer = appointer;
         }
 
         public void AddAuthorization(Authorizations authorizations)
@@ -34,6 +47,22 @@ namespace SEWorkshop.Models
             Authority authority = new Authority(this, authorizations);
             AuthoriztionsOfUser.Add(authority);
             DbContext.Authorities.Add(authority);
+
+            try
+            {
+                DbContext.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                foreach (var errors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in errors.ValidationErrors)
+                    {
+                        // get the error message 
+                        string errorMessage = validationError.ErrorMessage;
+                    }
+                }
+            }
         }
 
         public void RemoveAuthorization(Authorizations authorizations)
@@ -42,6 +71,7 @@ namespace SEWorkshop.Models
                 .Select(auth => auth.Authorization == authorizations && auth.AuthHandler.Equals(this))).FirstOrDefault();
             AuthoriztionsOfUser.Remove(authority);
             DbContext.Authorities.Remove(authority);
+            DbContext.SaveChanges();
         }
 
         public abstract void AddStoreManager(LoggedInUser newManager);

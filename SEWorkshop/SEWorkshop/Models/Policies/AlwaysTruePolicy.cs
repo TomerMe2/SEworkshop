@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("AlwaysTruePolicies")]
     public class AlwaysTruePolicy : Policy
     {
         public AlwaysTruePolicy(Store store) : base(store) { }

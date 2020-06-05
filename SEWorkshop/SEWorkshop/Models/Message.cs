@@ -10,7 +10,7 @@ namespace SEWorkshop.Models
     {
         private static int counter = 0;
         private static object counterLock = new object();
-        public int Id { get; }
+        public virtual int Id { get; set; }
         public Store ToStore { get; }
         public LoggedInUser WrittenBy { get; private set; }
         public string Description {get; private set;}
@@ -18,6 +18,11 @@ namespace SEWorkshop.Models
         public Message? Next { get; set; }
         public bool StoreSawIt { get; set; }
         public bool ClientSawIt { get; set; }
+
+        public Message()
+        {
+
+        }
 
         public Message(LoggedInUser writtenBy, Store toStore, string description, bool isClient, Message? prev = null)
         {

@@ -34,6 +34,7 @@ namespace SEWorkshop.Facades
             }
             Store newStore = new Store(owner, storeName, DbContext);
             DbContext.Stores.Add(newStore);
+            DbContext.SaveChanges();
             Owns newOwnership = new Owns(owner, newStore, new LoggedInUser("DEMO", new Byte[0], DbContext), DbContext);
             owner.Owns.Add(newOwnership);
             newStore.Ownership.Add(newOwnership);

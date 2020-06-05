@@ -8,14 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
-    [Table("Policies")]
     public abstract class Policy
     {
-        public int Id {get;}
-        [ForeignKey("Policies")]
+        public virtual int Id { get; set; }
         public Policy? InnerPolicy { get; set; }
         public Operator? InnerOperator { get; set; }
-        [ForeignKey("Stores"), Key]
         public Store Store { get; }
         
         public Policy(Store store)

@@ -28,6 +28,7 @@ namespace SEWorkshop.Tests.UnitTests
             Store closeStore1 = new Store(new LoggedInUser("cs_user1", _securityAdapter.Encrypt("1111"), DbContext), "closeStore1", DbContext);
             closeStore1.CloseStore();
             Assert.That(closeStore1.IsOpen, Is.False);
+            DbContext.Database.Delete();
         }
 
         //Testing SearchProducts(Func<Product, bool> pred)
@@ -43,6 +44,7 @@ namespace SEWorkshop.Tests.UnitTests
             sp_user1.AddProduct(sp_store1,"sp_prod1", "ninini", "cat1", 11.11, 1);
             var result = sp_store1.SearchProducts(product => product.Name.Contains("2"));
             Assert.That(result, Is.Empty);
+            DbContext.Database.Delete();
         }
         
         [Test]

@@ -16,16 +16,18 @@ namespace SEWorkshop.Models
 {
     public class Store
     {
-        public ICollection<Product> Products { get; private set; }
-        public ICollection<Manages> Management { get; private set; }
-        public ICollection<Owns> Ownership { get; private set; }
+        public virtual int Id { get; set; }
+        public virtual ICollection<Product> Products { get; private set; }
+        public virtual ICollection<Manages> Management { get; private set; }
+        public virtual ICollection<Owns> Ownership { get; private set; }
+        public virtual ICollection<Basket> Baskets { get; private set; }
         public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
-        public IList<Message> Messages { get; private set; }
-        public IList<Discount> Discounts { get; private set; }
-        public bool IsOpen { get; private set; }
-        public string Name { get; private set; }
-        public Policy Policy { get; set; }
-        public ICollection<Purchase> Purchases {get; private set; }
+        public virtual IList<Message> Messages { get; private set; }
+        public virtual IList<Discount> Discounts { get; private set; }
+        public virtual bool IsOpen { get; private set; }
+        public virtual string Name { get; private set; }
+        public virtual Policy Policy { get; set; }
+        public virtual ICollection<Purchase> Purchases {get; private set; }
         
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
@@ -33,12 +35,15 @@ namespace SEWorkshop.Models
         private AppDbContext DbContext { get; }
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+        public Store()
+        {
+
+        }
 
         public Store(LoggedInUser owner, string name, AppDbContext dbContext)
         {
             DbContext = dbContext;
-            Products = new List<Product>();
-            Ownership = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
+            /*Ownership = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
                     ((Owns)handler).Store != null && ((Owns)handler).Store.Equals(this));
             Management = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
                     ((Manages)handler).Store != null && ((Manages)handler).Store.Equals(this));
@@ -50,9 +55,17 @@ namespace SEWorkshop.Models
             Policy = ((IList<Policy>)DbContext.Policies.Select(policy => policy.Store.Equals(this)))
                     .OrderByDescending(policy => policy.Id).FirstOrDefault();
             if(Policy == default)
-                Policy = new AlwaysTruePolicy(this);
             Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.Basket.Store != null
                     && purhcase.Basket.Store.Equals(this));
+            Discount = new List<Discount>();
+            Policy = new AlwaysTruePolicy(this);*/
+
+            Ownership = new List<Owns>();
+            Management = new List<Manages>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            Baskets = new List<Basket>();
         }
 
         public void CloseStore()

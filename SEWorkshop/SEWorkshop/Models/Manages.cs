@@ -13,17 +13,21 @@ namespace SEWorkshop.Models
 {
     public class Manages : AuthorityHandler
     {
+        public virtual string Username { get; set; }
+        public virtual LoggedInUser LoggedInUser { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        public LoggedInUser Appointer { get; private set;}
         private AppDbContext DbContext { get; }
 
-        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, loggedInUser, store)
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, store, appointer)
         {
             DbContext = dbContext;
+            LoggedInUser = loggedInUser;
             AddAuthorization(Authorizations.Watching);
-            Appointer = appointer;
         }
+        public Manages() : base()
+        {
 
+        }
         public override void RemoveStoreManager(LoggedInUser managerToRemove)
         {
             log.Info("User tries to remove the manager {0} from store", managerToRemove.Username);
@@ -50,6 +54,7 @@ namespace SEWorkshop.Models
                 Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
                 DbContext.AuthorityHandlers.Remove(management);
+                DbContext.SaveChanges();
                 log.Info("The manager has been removed successfully");
                 return;
             }
@@ -86,6 +91,7 @@ namespace SEWorkshop.Models
                 Store.Ownership.Remove(ownership);
                 ownerToRemove.Owns.Remove(ownership);
                 DbContext.AuthorityHandlers.Remove(ownership);
+                DbContext.SaveChanges();
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -107,6 +113,7 @@ namespace SEWorkshop.Models
                 {
                     Store.Products.Add(newProduct);
                     DbContext.Products.Add(newProduct);
+                    DbContext.SaveChanges();
                     log.Info("Product has been added to store successfully");
                     return newProduct;
                 }
@@ -131,6 +138,7 @@ namespace SEWorkshop.Models
                 {
                     Store.Products.Remove(productToRemove);
                     DbContext.Products.Remove(productToRemove);
+                    DbContext.SaveChanges();
                     log.Info("Product has been removed from store successfully");
                     return;
                 }
@@ -263,6 +271,7 @@ namespace SEWorkshop.Models
                 Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
                 DbContext.AuthorityHandlers.Add(mangement);
+                DbContext.SaveChanges();
                 log.Info("A new manager has been added successfully");
                 return;
 
@@ -285,6 +294,7 @@ namespace SEWorkshop.Models
             Store.Ownership.Add(owning);
             newOwner.Owns.Add(owning);
             DbContext.AuthorityHandlers.Add(owning);
+            DbContext.SaveChanges();
             log.Info("A new owner has been added successfully");
             return;
 

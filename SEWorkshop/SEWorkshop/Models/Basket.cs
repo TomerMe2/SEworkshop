@@ -11,13 +11,21 @@ namespace SEWorkshop.Models
     public class Basket
     {
         public static int Counter_ID = 0;
-        public int Id {get; private set;}
-        public Store Store { get; private set; }
-        public Cart Cart { get; private set; }
+        public virtual int Id {get; private set;}
+        public virtual Store Store { get; private set; }
+        public virtual Purchase? Purchase { get; set; }
+        public virtual Cart Cart { get; private set; }
+        public virtual int CartId { get; set; }
+        public virtual string StoreName { get; set; }
         private AppDbContext DbContext;
 
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
-        public ICollection<ProductsInBasket> Products { get; private set; }
+        public virtual ICollection<ProductsInBasket> Products { get; private set; }
+
+        public Basket()
+        {
+
+        }
 
         public Basket(Store store, Cart cart, AppDbContext dbContext)
         {

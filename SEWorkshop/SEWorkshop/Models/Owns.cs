@@ -16,21 +16,25 @@ namespace SEWorkshop.Models
 {
     public class Owns : AuthorityHandler
     {
+        public virtual string Username { get; set; }
+        public virtual LoggedInUser LoggedInUser { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        public LoggedInUser Appointer { get; private set;}
         private AppDbContext DbContext { get; }
 
+        public Owns() : base()
+        {
 
-        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, loggedInUser, store)
+        }
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, store, appointer)
         {
             DbContext = dbContext;
+            LoggedInUser = loggedInUser;
             AddAuthorization(Authorizations.Authorizing);
             AddAuthorization(Authorizations.Replying);
             AddAuthorization(Authorizations.Products);
             AddAuthorization(Authorizations.Watching);
             AddAuthorization(Authorizations.Manager);
             AddAuthorization(Authorizations.Owner);
-            Appointer = appointer;
         }
 
         public void AddStoreOwner(LoggedInUser newOwner)
@@ -58,6 +62,7 @@ namespace SEWorkshop.Models
                 DbContext.AuthorityHandlers.Add(ownership);
                 newOwner.Owns.Add(ownership);
                 Store.Ownership.Add(ownership);
+                DbContext.SaveChanges();
             }
         }
         public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
@@ -80,9 +85,9 @@ namespace SEWorkshop.Models
                     newOwner.Owns.Add(ownership);
                     log.Info("A new owner has been added successfully");
                 }
-
-                if (req.GetRequestState() == RequestState.Denied)
+                else if (req.GetRequestState() == RequestState.Denied)
                 {
+                    newOwner.OwnershipRequests.Remove(req);
                     Store.OwnershipRequests.Remove(req);
                 }
             }
@@ -101,6 +106,7 @@ namespace SEWorkshop.Models
             Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
             DbContext.AuthorityHandlers.Add(mangement);
+            DbContext.SaveChanges();
             log.Info("A new manager has been added successfully");
         }
 
@@ -130,6 +136,7 @@ namespace SEWorkshop.Models
             Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
             DbContext.AuthorityHandlers.Remove(management);
+            DbContext.SaveChanges();
             log.Info("The manager has been removed successfully");
         }
 
@@ -160,6 +167,7 @@ namespace SEWorkshop.Models
             Store.Ownership.Remove(ownership);
             ownerToRemove.Owns.Remove(ownership);
             DbContext.AuthorityHandlers.Remove(ownership);
+            DbContext.SaveChanges();
             log.Info("The owner has been removed successfully");
         }
 
@@ -199,6 +207,7 @@ namespace SEWorkshop.Models
             {
                 Store.Products.Add(newProduct);
                 DbContext.Products.Add(newProduct);
+                DbContext.SaveChanges();
                 log.Info("Product has been added to store successfully");
                 return newProduct;
             }
@@ -217,6 +226,7 @@ namespace SEWorkshop.Models
                 productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
                 DbContext.Products.Remove(productToRemove);
+                DbContext.SaveChanges();
                 log.Info("Product has been removed from store successfully");
                 return;
             }
@@ -351,6 +361,7 @@ namespace SEWorkshop.Models
             currPol.InnerPolicy = pol;
             currPol.InnerOperator = op;
             DbContext.Policies.Add(pol);
+            DbContext.SaveChanges();
         }
         
         private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
@@ -369,18 +380,20 @@ namespace SEWorkshop.Models
                     {
                         Discount toRemove = Store.Discounts.ElementAt(indexInChain);
                         Store.Discounts.RemoveAt(indexInChain);
-                        DbContext.Discounts.Remove(toRemove);
+                        DbContext.SaveChanges();
                         if (toLeft)
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
                             Store.Discounts.Insert(indexInChain, newDis);
                             DbContext.Discounts.Add(newDis);
+                            DbContext.SaveChanges();
                         }
                         else
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
                             Store.Discounts.Insert(indexInChain, newDis);
                             DbContext.Discounts.Add(newDis);
+                            DbContext.SaveChanges();
                         }
                     }
                     else
@@ -394,6 +407,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.leftChild);
                                     father.leftChild = newDis;
                                     DbContext.Discounts.Add(newDis);
+                                    DbContext.SaveChanges();
                                 }
                             }
                             else
@@ -403,6 +417,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.rightChild);
                                     father.rightChild = newDis;
                                     DbContext.Discounts.Add(newDis);
+                                    DbContext.SaveChanges();
                                 }
                             }
                         }
@@ -416,6 +431,7 @@ namespace SEWorkshop.Models
                                     newDis.Father = father;
                                     father.leftChild = newDis;
                                     DbContext.Discounts.Add(newDis);
+                                    DbContext.SaveChanges();
                                 }
                             }
                             else
@@ -426,6 +442,7 @@ namespace SEWorkshop.Models
                                     newDis.Father = father;
                                     father.rightChild = newDis;
                                     DbContext.Discounts.Add(newDis);
+                                    DbContext.SaveChanges();
                                 }
                             }
                         }
@@ -509,6 +526,8 @@ namespace SEWorkshop.Models
             {
                 prev.InnerPolicy = currPol.InnerPolicy;
             }
+            DbContext.Policies.Remove(currPol);
+            DbContext.SaveChanges();
         }
 
         public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)

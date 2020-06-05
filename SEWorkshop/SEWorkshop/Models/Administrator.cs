@@ -12,6 +12,10 @@ namespace SEWorkshop.Models
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }
 
+        public Administrator() : base()
+        {
+
+        }
         public Administrator(string username, byte[] password, AppDbContext dbContext) : base(username, password, dbContext)
         {
             PurchasesToView = (ICollection<Purchase>)dbContext.Purchases.Select(purhcase => true);
