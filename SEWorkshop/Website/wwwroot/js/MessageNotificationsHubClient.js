@@ -44,4 +44,11 @@ async function connectToAllHubs(userName) {
         }]
     ];
     ConnectToNotificationsHub(userName, "/purchasenotificationshub", handlersForPurchasHub);
+
+    const handlerForOwnershupHub = [
+        ["NewOwnershipRequest", showMsg => {
+            alert(showMsg);
+        }]
+    ];
+    ConnectToNotificationsHub(userName, "/ownershiprequesthub", handlerForOwnershupHub);
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.ObjectPool;
 using SEWorkshop.DataModels;
 using SEWorkshop.DataModels.Policies;
 using SEWorkshop.Enums;
+using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Models.Policies;
 using SEWorkshop.ServiceLayer;
@@ -45,8 +46,10 @@ namespace Website.Pages
             Policy = "";
             DiscountNumber = 0;
         }
+
         public IActionResult OnGet(string storeName, string error) 
         {
+            StoreName = storeName;
             try
             {
                 Store = UserManager.SearchStore(storeName);
@@ -136,6 +139,30 @@ namespace Website.Pages
                     break;
             }
             return RedirectToPage("./Manage", new { StoreName, Error });
+        }
+
+        public IActionResult OnPostAnswerOwnerRequest(string wannaBeOwnerName, string answer, string storeName)
+        {
+            StoreName = storeName;
+            string sid = HttpContext.Session.Id;
+            RequestState answerVal;
+            try
+            {
+                answerVal = answer switch
+                {
+                    "Denied" => RequestState.Denied,
+                    "Approved" => RequestState.Approved,
+                    "Pending" => RequestState.Pending,
+                    _ => throw new AuthorizationDoesNotExistException(),
+                };
+            }
+            catch(AuthorizationDoesNotExistException e)
+            {
+                Error = e.ToString();
+                return RedirectToPage("./Manage", new { storeName, Error });
+            }
+            UserManager.AnswerOwnershipRequest(sid, storeName, wannaBeOwnerName, answerVal);
+            return RedirectToPage("./Manage", new { storeName, Error });
         }
 
         public IActionResult OnPostPermissionHandler(string storeName, string request, string username, string authorization)

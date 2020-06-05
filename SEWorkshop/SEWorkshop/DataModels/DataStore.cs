@@ -20,6 +20,13 @@ namespace SEWorkshop.DataModels
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
+
+        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> OwnershipRequests => InnerModel.OwnershipRequests
+            .Select((item) =>
+                (new DataLoggedInUser(item.Owner), new DataLoggedInUser(item.NewOwner)))
+            .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+
+
         public bool IsOpen => InnerModel.IsOpen;
         public string Name => InnerModel.Name;
         public DataPolicy Policy => DataPolicy.CreateDataPolFromPol(InnerModel.Policy);

@@ -51,6 +51,8 @@ namespace SEWorkshop.Models
             }
             Store.OwnershipRequests.Add(request);
             newOwner.OwnershipRequests.Add(request);
+            // He wants him to be an owner, cus he suggested that
+            request.Answer(LoggedInUser, RequestState.Approved);
             if (request.GetRequestState() == RequestState.Approved)
             {
                 if(Store.GetOwnership(newOwner) != null)
@@ -58,6 +60,7 @@ namespace SEWorkshop.Models
                     throw new UserIsAlreadyStoreOwnerException();
                 }
                 Store.OwnershipRequests.Remove(request);
+                newOwner.OwnershipRequests.Remove(request);
                 Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
                 DbContext.AuthorityHandlers.Add(ownership);
                 newOwner.Owns.Add(ownership);
@@ -65,14 +68,13 @@ namespace SEWorkshop.Models
                 DbContext.SaveChanges();
             }
         }
+
         public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
         {
-            foreach (var req in newOwner.OwnershipRequests)
+            var req = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == Store);
+            if (req != null)
             {
-                if (req.Store == Store)
-                {
-                    req.Answer(LoggedInUser, answer);
-                }
+                req.Answer(LoggedInUser, answer);
                 if (req.GetRequestState()==RequestState.Approved)
                 {
                     if(Store.GetOwnership(newOwner) != null)
@@ -82,6 +84,7 @@ namespace SEWorkshop.Models
                     Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
                     Store.Ownership.Add(ownership);
                     Store.OwnershipRequests.Remove(req);
+                    newOwner.OwnershipRequests.Remove(req);
                     newOwner.Owns.Add(ownership);
                     log.Info("A new owner has been added successfully");
                 }
