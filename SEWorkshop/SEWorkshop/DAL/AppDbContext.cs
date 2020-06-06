@@ -58,10 +58,18 @@ namespace SEWorkshop.DAL
         {
             base.OnModelCreating(modelBuilder);
 
+            InstantiateKeys(modelBuilder);
+
+            DefineRelations(modelBuilder);
+        }
+
+        private void InstantiateKeys(DbModelBuilder modelBuilder)
+        {
+
             modelBuilder.Entity<Address>()
                     .ToTable("Addresses")
-                    .HasKey(address => new {address.City, address.Street, address.HouseNumber, address.Country});
-            
+                    .HasKey(address => new { address.City, address.Street, address.HouseNumber, address.Country });
+
             modelBuilder.Entity<Administrator>()
                     .ToTable("Administrators");
 
@@ -71,12 +79,12 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<AuthorityHandler>()
                     .ToTable("AuthorityHandlers")
-                    .HasKey(handler => new {handler.Id});
-            
+                    .HasKey(handler => new { handler.Id });
+
             modelBuilder.Entity<Basket>()
                     .ToTable("Baskets")
                     .HasKey(basket => basket.Id);
-            
+
             modelBuilder.Entity<Cart>()
                     .ToTable("Carts")
                     .HasKey(cart => cart.Id);
@@ -112,7 +120,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<LoggedInUser>()
                     .ToTable("LoggedInUsers")
                     .HasKey(user => user.Username);
-            
+
             modelBuilder.Entity<Manages>()
                     .ToTable("Managers");
 
@@ -155,12 +163,12 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Product>()
                     .ToTable("Products")
-                    .HasKey(product => new {product.Name, product.StoreName});
-            
+                    .HasKey(product => new { product.Name, product.StoreName });
+
             modelBuilder.Entity<ProductsInBasket>()
                     .ToTable("ProductsInBaskets")
-                    .HasKey(pb => new {pb.BasketId, pb.ProductName});
-            
+                    .HasKey(pb => new { pb.BasketId, pb.ProductName });
+
             modelBuilder.Entity<Purchase>()
                     .ToTable("Purchases")
                     .HasKey(purchase => purchase.BasketId);
@@ -172,13 +180,14 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Store>()
                     .ToTable("Stores")
                     .HasKey(store => store.Name);
+        }
 
-
-
+        private void DefineRelations(DbModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Authority>()
                     .HasRequired(auth => auth.AuthHandler)
                     .WithMany(handler => handler.AuthoriztionsOfUser)
-                    .HasForeignKey(auth => new {auth.AuthHandlerId});
+                    .HasForeignKey(auth => new { auth.AuthHandlerId });
 
             modelBuilder.Entity<Authority>()
                     .Property(auth => auth.Authorization)
@@ -187,18 +196,18 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<AuthorityHandler>()
                     .HasRequired(handler => handler.Appointer)
                     .WithMany(appointer => appointer.Appointements)
-                    .HasForeignKey(handler => new {handler.AppointerName });
+                    .HasForeignKey(handler => new { handler.AppointerName });
 
             modelBuilder.Entity<Basket>()
                     .HasRequired(basket => basket.Cart)
                     .WithMany(cart => cart.Baskets)
-                    .HasForeignKey(basket => new {basket.CartId});
-            
+                    .HasForeignKey(basket => new { basket.CartId });
+
             modelBuilder.Entity<Basket>()
                     .HasRequired(basket => basket.Store)
                     .WithMany(store => store.Baskets)
-                    .HasForeignKey(basket => new {basket.StoreName});
-            
+                    .HasForeignKey(basket => new { basket.StoreName });
+
             modelBuilder.Entity<Cart>()
                     .HasOptional(cart => cart.LoggedInUser)
                     .WithOptionalPrincipal(user => user.Cart);
@@ -238,12 +247,12 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.LoggedInUser)
                     .WithMany(handler => handler.Manage)
-                    .HasForeignKey(manager => new {manager.Username});
-            
+                    .HasForeignKey(manager => new { manager.Username });
+
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.Store)
                     .WithMany(store => store.Management)
-                    .HasForeignKey(manager => new {manager.StoreName});
+                    .HasForeignKey(manager => new { manager.StoreName });
 
             modelBuilder.Entity<Message>()
                     .HasRequired(message => message.ToStore)
@@ -295,12 +304,12 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Owns>()
                     .HasRequired(owner => owner.LoggedInUser)
                     .WithMany(handler => handler.Owns)
-                    .HasForeignKey(owner => new {owner.Username});
-        
+                    .HasForeignKey(owner => new { owner.Username });
+
             modelBuilder.Entity<Owns>()
                     .HasRequired(owner => owner.Store)
                     .WithMany(store => store.Ownership)
-                    .HasForeignKey(owner => new {owner.StoreName});
+                    .HasForeignKey(owner => new { owner.StoreName });
 
             modelBuilder.Entity<Policy>()
                     .HasOptional(policy => policy.InnerPolicy)
@@ -318,7 +327,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<SingleProductQuantityPolicy>()
                     .HasRequired(policy => policy.Prod)
                     .WithMany(prod => prod.ProductPolicies)
-                    .HasForeignKey(policy => new { policy.ProdName, policy.ProdStoreName } );
+                    .HasForeignKey(policy => new { policy.ProdName, policy.ProdStoreName });
 
             modelBuilder.Entity<SystemDayPolicy>()
                     .Property(policy => policy.CantBuyIn)
@@ -333,12 +342,12 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<ProductsInBasket>()
                     .HasRequired(pb => pb.Basket)
                     .WithMany(Basket => Basket.Products)
-                    .HasForeignKey(pb => new {pb.BasketId});
+                    .HasForeignKey(pb => new { pb.BasketId });
 
             modelBuilder.Entity<ProductsInBasket>()
                     .HasRequired(pb => pb.Product)
                     .WithMany(product => product.InBaskets)
-                    .HasForeignKey(pb => new {pb.ProductName, pb.StoreName});
+                    .HasForeignKey(pb => new { pb.ProductName, pb.StoreName });
 
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Basket)
