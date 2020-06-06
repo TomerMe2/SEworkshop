@@ -350,6 +350,11 @@ namespace SEWorkshop.DAL
                     .HasForeignKey(pb => new { pb.ProductName, pb.StoreName });
 
             modelBuilder.Entity<Purchase>()
+                    .HasRequired(purchase => purchase.Address)
+                    .WithMany(address => address.Purchases)
+                    .HasForeignKey(address => new { address.City, address.Street, address.HouseNumber, address.Country});
+
+            modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Basket)
                     .WithOptional(basket => basket.Purchase);
 

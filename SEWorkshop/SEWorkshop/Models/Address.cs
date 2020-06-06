@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.Models;
 
 namespace SEWorkshop
 {
@@ -12,6 +13,7 @@ namespace SEWorkshop
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
         public virtual string Country { get; set; }
+        public virtual ICollection<Purchase> Purchases { get; set;}
 
         public Address()
         {
