@@ -73,7 +73,6 @@ namespace Website
                 return nextMiddleware();
             });
 
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

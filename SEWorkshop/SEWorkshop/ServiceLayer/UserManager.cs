@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using SEWorkshop.Facades;
-using SEWorkshop.Exceptions;
 using NLog;
-using System.Linq;
 using SEWorkshop.Adapters;
-using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
+using SEWorkshop.Exceptions;
+using SEWorkshop.Facades;
+using SEWorkshop.TyposFix;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -41,6 +41,296 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
+            try
+            {
+                string[] actions = System.IO.File.ReadAllLines("ActionsFile.txt");
+                ReadActionsFile(actions);
+            }
+            catch(Exception)
+            {
+            }
+        }
+
+        // action line format: <ActionName>,<Arg1>,<Arg2>...
+        void ReadActionsFile(string[] actions)
+        {
+            // Read file on startup
+            //foreach (string line in lines) { Console.WriteLine("\t" + line); }
+            const string DEF_SID = "1";
+            foreach (string actionLine in actions)
+            {
+                string[] actionLineSplited = actionLine.Split(',');
+                switch (actionLineSplited[0])
+                {
+                    case "Register":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            Register(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "Login":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            Login(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "Logout":
+                        Logout(DEF_SID);
+                        break;
+                    case "AddProductToCart":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                        {
+                            if (int.TryParse(actionLineSplited[3], out int val1))
+                                AddProductToCart(DEF_SID, actionLineSplited[1], actionLineSplited[2], val1);
+                        }
+                        break;
+                    case "RemoveProductFromCart":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                        {
+                            if (int.TryParse(actionLineSplited[3], out int val2))
+                                RemoveProductFromCart(DEF_SID, actionLineSplited[1], actionLineSplited[2], val2);
+                        }
+                        break;
+                    case "Purchase":
+                        // action line format: <ActionName>,<StoreName>,<creditCardNumber>,<City>,<Street>,<HouseNumber>,<Country>
+                        if (actionLineSplited.Length == 7 && int.TryParse(actionLineSplited[2], out int val3))
+                        {
+                            // find the basket according to store name
+                            IEnumerable<DataBasket> baskets = MyCart(DEF_SID);
+                            Address address = new Address(actionLineSplited[6], actionLineSplited[3], actionLineSplited[4], actionLineSplited[5]);
+                            foreach (DataBasket basket in baskets)
+                                if (basket.Store.Name.Equals(actionLineSplited[1]))
+                                    Purchase(DEF_SID, basket, actionLineSplited[2], address);
+                        }
+                        break;
+                    case "OpenStore":
+                        if (actionLineSplited.Length == 2)
+                            OpenStore(DEF_SID, actionLineSplited[1]);
+                        break;
+                    case "WriteReview":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            WriteReview(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "WriteMessage":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            WriteMessage(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "AddProduct":
+                        // action line format: <storeName>,<productName>,<description>,<category>,<price>,<quantity>
+                        if (actionLineSplited.Length == 7 && CheckArgs(actionLineSplited))
+                            if (double.TryParse(actionLineSplited[5], out double price1) && int.TryParse(actionLineSplited[6], out int quantity1))
+                                AddProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3], actionLineSplited[4], price1, quantity1);
+                        break;
+                    case "EditProductName":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            EditProductName(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "EditProductCategory":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            EditProductCategory(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "EditProductDescription":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            EditProductDescription(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "EditProductPrice":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited) &&
+                            double.TryParse(actionLineSplited[3], out double price2))
+                            EditProductPrice(DEF_SID, actionLineSplited[1], actionLineSplited[2], price2);
+                        break;
+                    case "EditProductQuantity":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited) &&
+                            int.TryParse(actionLineSplited[3], out int quantity2))
+                            EditProductQuantity(DEF_SID, actionLineSplited[1], actionLineSplited[2], quantity2);
+                        break;
+                    case "RemoveProduct":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            RemoveProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "AddAlwaysTruePolicy":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[2]);
+                            if (op!=null)
+                                AddAlwaysTruePolicy(DEF_SID, actionLineSplited[1], (Operator)op);
+                        }
+                        break;
+                    case "AddSingleProductQuantityPolicy":
+                        if (actionLineSplited.Length == 6 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op1 = StringToOperator(actionLineSplited[2]);
+                            if (op1 != null && int.TryParse(actionLineSplited[4], out int minQuantity1) && int.TryParse(actionLineSplited[5], out int maxQuantity1))
+                                AddSingleProductQuantityPolicy(DEF_SID, actionLineSplited[1], (Operator)op1, actionLineSplited[3], minQuantity1, maxQuantity1);
+                        }
+                        break;
+                    case "AddSystemDayPolicy":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[2]);
+                            DayOfWeek? day = StringToDayOfWeek(actionLineSplited[3]);
+                            if (op != null && day!=null)
+                                AddSystemDayPolicy(DEF_SID, actionLineSplited[1], (Operator)op, (DayOfWeek)day);
+                        }
+                        break;
+                    case "AddUserCityPolicy":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[2]);
+                            if (op != null)
+                                AddUserCityPolicy(DEF_SID, actionLineSplited[1], (Operator)op, actionLineSplited[3]);
+                        }
+                        break;
+                    case "AddUserCountryPolicy":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[2]);
+                            if (op != null)
+                                AddUserCountryPolicy(DEF_SID, actionLineSplited[1], (Operator)op, actionLineSplited[3]);
+                        }
+                        break;
+                    case "AddWholeStoreQuantityPolicy":
+                        if (actionLineSplited.Length == 5 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[2]);
+                            if (op != null && int.TryParse(actionLineSplited[4], out int minQuantity)
+                                && int.TryParse(actionLineSplited[5], out int maxQuantity))
+                                AddWholeStoreQuantityPolicy(DEF_SID, actionLineSplited[1], (Operator)op, minQuantity, maxQuantity);
+                        }
+                        break;
+                    case "RemovePolicy":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                        {
+                            if (int.TryParse(actionLineSplited[2], out int indexInChain1))
+                                RemovePolicy(DEF_SID, actionLineSplited[1], indexInChain1);
+                        }
+                        break;
+                    case "AddProductCategoryDiscount":
+                        if (actionLineSplited.Length == 9 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[5]);
+                            DateTime deadline = DateTime.Parse(actionLineSplited[3]);
+                            bool toLeft = bool.Parse(actionLineSplited[8]);
+                            if (op != null
+                                && double.TryParse(actionLineSplited[4], out double percentage)
+                                && int.TryParse(actionLineSplited[6], out int indexInChain2)
+                                && int.TryParse(actionLineSplited[7], out int disId))
+                                AddProductCategoryDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
+                                    deadline, percentage, (Operator)op, indexInChain2, disId, toLeft);
+                        }
+                        break;
+                    case "AddSpecificProductDiscount":
+                        if (actionLineSplited.Length == 9 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[5]);
+                            DateTime deadline = DateTime.Parse(actionLineSplited[3]);
+                            bool toLeft = bool.Parse(actionLineSplited[8]);
+                            if (op != null
+                                && double.TryParse(actionLineSplited[4], out double percentage)
+                                && int.TryParse(actionLineSplited[6], out int indexInChain3)
+                                && int.TryParse(actionLineSplited[7], out int disId))
+                                AddSpecificProductDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
+                                    deadline, percentage, (Operator)op, indexInChain3, disId, toLeft);
+                        }
+                        break;
+                    case "AddBuySomeGetSomeDiscount":
+                        // <actionName>,<storeName>,<deadline>,<percentae>,<op>,<indexInChain>
+                        // ,<disId>,<toLeft>,<conditionProdName>,<underDiscountProdName>,<buySome>,<getSome>
+                        if (actionLineSplited.Length == 12 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[5]);
+                            DateTime deadline = DateTime.Parse(actionLineSplited[2]);
+                            bool toLeft = bool.Parse(actionLineSplited[8]);
+                            if (op != null
+                                && double.TryParse(actionLineSplited[3], out double percentage)
+                                && int.TryParse(actionLineSplited[5], out int indexInChain4)
+                                && int.TryParse(actionLineSplited[6], out int disId)
+                                && int.TryParse(actionLineSplited[10], out int buySome)
+                                && int.TryParse(actionLineSplited[11], out int getSome))
+                                AddBuySomeGetSomeDiscount(buySome, getSome, DEF_SID, actionLineSplited[8], actionLineSplited[9],
+                                    actionLineSplited[1], deadline, percentage, (Operator)op, indexInChain4, disId, toLeft);
+                        }
+                        break;
+                    case "AddBuyOverDiscount":
+                        // <actionName>,<storeName>,<productName>,<deadline>,<percentage>,<op>
+                        // ,<indexInChain>,<disId>,<toLeft>,<minSum>
+                        if (actionLineSplited.Length == 10 && CheckArgs(actionLineSplited))
+                        {
+                            Operator? op = StringToOperator(actionLineSplited[5]);
+                            DateTime deadline = DateTime.Parse(actionLineSplited[2]);
+                            bool toLeft = bool.Parse(actionLineSplited[8]);
+                            if (op != null
+                                && double.TryParse(actionLineSplited[3], out double percentage)
+                                && int.TryParse(actionLineSplited[5], out int indexInChain5)
+                                && int.TryParse(actionLineSplited[6], out int disId)
+                                && int.TryParse(actionLineSplited[9], out int minSum))
+                                AddBuyOverDiscount(minSum, DEF_SID, actionLineSplited[1], actionLineSplited[2],
+                                    deadline, percentage, (Operator)op, indexInChain5, disId, toLeft);
+                        }
+                        break;
+                    case "RemoveDiscount":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited)
+                            && int.TryParse(actionLineSplited[2], out int indexInChain6))
+                            RemoveDiscount(DEF_SID, actionLineSplited[1], indexInChain6);
+                        break;
+                    case "AddStoreOwner":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            AddStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "AddStoreManager":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            AddStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "SetPermissionsOfManager":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            SetPermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "RemovePermissionsOfManager":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            RemovePermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "RemoveStoreOwner":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            RemoveStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "RemoveStoreManager":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            RemoveStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        bool CheckArgs(string[] args)
+        {
+            foreach (string arg in args)
+                if (arg.Length <= 0)
+                    return false;
+            return true;
+        }
+
+        Operator? StringToOperator(string op)
+        {
+            return op switch
+            {
+                "And" => Operator.And,
+                "Or" => Operator.Or,
+                "Xor" => Operator.Xor,
+                "Implies" => Operator.Implies,
+                _ => null,
+            };
+        }
+
+        DayOfWeek? StringToDayOfWeek(string day)
+        {
+            return day switch
+            {
+                "Sunday" => DayOfWeek.Sunday,
+                "Monday" => DayOfWeek.Monday,
+                "Tuesday" => DayOfWeek.Tuesday,
+                "Wednesday" => DayOfWeek.Wednesday,
+                "Thursday" => DayOfWeek.Thursday,
+                "Friday" => DayOfWeek.Friday,
+                "Saturday" => DayOfWeek.Saturday,
+                _ => null,
+            };
         }
 
         public UserManager(IFacadesBridge facadesBridge)
@@ -665,6 +955,18 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
             OwnershipRequestObservers.Add(obsrv);
+        }
+
+        public string GetLoggedInUsername(string sessionId)
+        {
+            try
+            {
+                return GetDataLoggedInUser(sessionId).Username;
+            }
+            catch(UserIsNotLoggedInException)
+            {
+                return "";
+            }
         }
     }
 }
