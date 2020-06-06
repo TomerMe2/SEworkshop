@@ -8,7 +8,6 @@ using SEWorkshop.TyposFix;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -303,42 +302,29 @@ namespace SEWorkshop.ServiceLayer
 
         Operator? StringToOperator(string op)
         {
-            switch(op)
+            return op switch
             {
-                case "And":
-                    return Operator.And;
-                case "Or":
-                    return Operator.Or;
-                case "Xor":
-                    return Operator.Xor;
-                case "Implies":
-                    return Operator.Implies;
-                default:
-                    return null;
-            }
+                "And" => Operator.And,
+                "Or" => Operator.Or,
+                "Xor" => Operator.Xor,
+                "Implies" => Operator.Implies,
+                _ => null,
+            };
         }
 
         DayOfWeek? StringToDayOfWeek(string day)
         {
-            switch (day)
+            return day switch
             {
-                case "Sunday":
-                    return DayOfWeek.Sunday;
-                case "Monday":
-                    return DayOfWeek.Monday;
-                case "Tuesday":
-                    return DayOfWeek.Tuesday;
-                case "Wednesday":
-                    return DayOfWeek.Wednesday;
-                case "Thursday":
-                    return DayOfWeek.Thursday;
-                case "Friday":
-                    return DayOfWeek.Friday;
-                case "Saturday":
-                    return DayOfWeek.Saturday;
-                default:
-                    return null;
-            }
+                "Sunday" => DayOfWeek.Sunday,
+                "Monday" => DayOfWeek.Monday,
+                "Tuesday" => DayOfWeek.Tuesday,
+                "Wednesday" => DayOfWeek.Wednesday,
+                "Thursday" => DayOfWeek.Thursday,
+                "Friday" => DayOfWeek.Friday,
+                "Saturday" => DayOfWeek.Saturday,
+                _ => null,
+            };
         }
 
         public UserManager(IFacadesBridge facadesBridge)
