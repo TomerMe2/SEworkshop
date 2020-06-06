@@ -13,11 +13,6 @@ namespace SEWorkshop.Models
         public virtual string? Username { get; private set; }
         public virtual LoggedInUser? LoggedInUser { get; private set; }
 
-        public Cart()
-        {
-
-        }
-
         public Cart(User user)
         {
             Baskets = new List<Basket>();

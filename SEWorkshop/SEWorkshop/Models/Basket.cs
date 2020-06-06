@@ -17,14 +17,12 @@ namespace SEWorkshop.Models
         public virtual Cart Cart { get; private set; }
         public virtual int CartId { get; set; }
         public virtual string StoreName { get; set; }
-        private AppDbContext DbContext;
 
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
         public virtual ICollection<ProductsInBasket> Products { get; private set; }
 
-        public Basket(Store store, Cart cart, AppDbContext dbContext)
+        public Basket(Store store, Cart cart)
         {
-            DbContext = dbContext;
             Store = store;
             //Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
             Products = new List<ProductsInBasket>();
