@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using SEWorkshop.Facades;
-using SEWorkshop.Exceptions;
 using NLog;
-using System.Linq;
 using SEWorkshop.Adapters;
-using SEWorkshop.TyposFix;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
-using SEWorkshop.Models;
+using SEWorkshop.Exceptions;
+using SEWorkshop.Facades;
+using SEWorkshop.TyposFix;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -107,7 +107,7 @@ namespace SEWorkshop.ServiceLayer
                     case "AddProduct":
                         // action line format: <storeName>,<productName>,<description>,<category>,<price>,<quantity>
                         if (actionLineSplited.Length == 7 && CheckArgs(actionLineSplited))
-                            if (double.TryParse(actionLineSplited[2], out double price1) && int.TryParse(actionLineSplited[2], out int quantity1))
+                            if (double.TryParse(actionLineSplited[5], out double price1) && int.TryParse(actionLineSplited[6], out int quantity1))
                                 AddProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3], actionLineSplited[4], price1, quantity1);
                         break;
                     case "EditProductName":
@@ -181,15 +181,16 @@ namespace SEWorkshop.ServiceLayer
                         if (actionLineSplited.Length == 5 && CheckArgs(actionLineSplited))
                         {
                             Operator? op = StringToOperator(actionLineSplited[2]);
-                            if (op != null && int.TryParse(actionLineSplited[4], out int minQuantity) && int.TryParse(actionLineSplited[5], out int maxQuantity))
+                            if (op != null && int.TryParse(actionLineSplited[4], out int minQuantity)
+                                && int.TryParse(actionLineSplited[5], out int maxQuantity))
                                 AddWholeStoreQuantityPolicy(DEF_SID, actionLineSplited[1], (Operator)op, minQuantity, maxQuantity);
                         }
                         break;
                     case "RemovePolicy":
                         if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
                         {
-                            if (int.TryParse(actionLineSplited[2], out int indexInChain))
-                                RemovePolicy(DEF_SID, actionLineSplited[1], indexInChain);
+                            if (int.TryParse(actionLineSplited[2], out int indexInChain1))
+                                RemovePolicy(DEF_SID, actionLineSplited[1], indexInChain1);
                         }
                         break;
                     case "AddProductCategoryDiscount":
@@ -200,9 +201,10 @@ namespace SEWorkshop.ServiceLayer
                             bool toLeft = bool.Parse(actionLineSplited[8]);
                             if (op != null
                                 && double.TryParse(actionLineSplited[4], out double percentage)
-                                && int.TryParse(actionLineSplited[6], out int indexInChain)
+                                && int.TryParse(actionLineSplited[6], out int indexInChain2)
                                 && int.TryParse(actionLineSplited[7], out int disId))
-                                AddProductCategoryDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2], deadline, percentage, (Operator)op, indexInChain, disId, toLeft);
+                                AddProductCategoryDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
+                                    deadline, percentage, (Operator)op, indexInChain2, disId, toLeft);
                         }
                         break;
                     case "AddSpecificProductDiscount":
@@ -213,10 +215,10 @@ namespace SEWorkshop.ServiceLayer
                             bool toLeft = bool.Parse(actionLineSplited[8]);
                             if (op != null
                                 && double.TryParse(actionLineSplited[4], out double percentage)
-                                && int.TryParse(actionLineSplited[6], out int indexInChain)
+                                && int.TryParse(actionLineSplited[6], out int indexInChain3)
                                 && int.TryParse(actionLineSplited[7], out int disId))
                                 AddSpecificProductDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
-                                    deadline, percentage, (Operator)op, indexInChain, disId, toLeft);
+                                    deadline, percentage, (Operator)op, indexInChain3, disId, toLeft);
                         }
                         break;
                     case "AddBuySomeGetSomeDiscount":
@@ -229,12 +231,12 @@ namespace SEWorkshop.ServiceLayer
                             bool toLeft = bool.Parse(actionLineSplited[8]);
                             if (op != null
                                 && double.TryParse(actionLineSplited[3], out double percentage)
-                                && int.TryParse(actionLineSplited[5], out int indexInChain)
+                                && int.TryParse(actionLineSplited[5], out int indexInChain4)
                                 && int.TryParse(actionLineSplited[6], out int disId)
                                 && int.TryParse(actionLineSplited[10], out int buySome)
                                 && int.TryParse(actionLineSplited[11], out int getSome))
                                 AddBuySomeGetSomeDiscount(buySome, getSome, DEF_SID, actionLineSplited[8], actionLineSplited[9],
-                                    actionLineSplited[1], deadline, percentage, (Operator)op, indexInChain, disId, toLeft);
+                                    actionLineSplited[1], deadline, percentage, (Operator)op, indexInChain4, disId, toLeft);
                         }
                         break;
                     case "AddBuyOverDiscount":
@@ -247,12 +249,17 @@ namespace SEWorkshop.ServiceLayer
                             bool toLeft = bool.Parse(actionLineSplited[8]);
                             if (op != null
                                 && double.TryParse(actionLineSplited[3], out double percentage)
-                                && int.TryParse(actionLineSplited[5], out int indexInChain)
+                                && int.TryParse(actionLineSplited[5], out int indexInChain5)
                                 && int.TryParse(actionLineSplited[6], out int disId)
                                 && int.TryParse(actionLineSplited[9], out int minSum))
                                 AddBuyOverDiscount(minSum, DEF_SID, actionLineSplited[1], actionLineSplited[2],
-                                    deadline, percentage, (Operator)op, indexInChain, disId, toLeft);
+                                    deadline, percentage, (Operator)op, indexInChain5, disId, toLeft);
                         }
+                        break;
+                    case "RemoveDiscount":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited)
+                            && int.TryParse(actionLineSplited[2], out int indexInChain6))
+                            RemoveDiscount(DEF_SID, actionLineSplited[1], indexInChain6);
                         break;
                     case "AddStoreOwner":
                         if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
@@ -261,6 +268,22 @@ namespace SEWorkshop.ServiceLayer
                     case "AddStoreManager":
                         if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
                             AddStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "SetPermissionsOfManager":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            SetPermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "RemovePermissionsOfManager":
+                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
+                            RemovePermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        break;
+                    case "RemoveStoreOwner":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            RemoveStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        break;
+                    case "RemoveStoreManager":
+                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
+                            RemoveStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
                         break;
                     default:
                         continue;
@@ -931,6 +954,18 @@ namespace SEWorkshop.ServiceLayer
         {
             GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
             return FacadesBridge.GetIncomeInDate(date);
+        }
+
+        public string GetLoggedInUsername(string sessionId)
+        {
+            try
+            {
+                return GetDataLoggedInUser(sessionId).Username;
+            }
+            catch(UserIsNotLoggedInException)
+            {
+                return "";
+            }
         }
     }
 }

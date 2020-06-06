@@ -62,16 +62,16 @@ namespace SEWorkshop.ServiceLayer
                                                 Operator op, int indexInChain, int disId, bool toLeft);
         public void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft);
+        public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
         public void AddStoreOwner(string sessionId, string storeNm, string username);
         public void AddStoreManager(string sessionId, string storeNm, string username);
         public void SetPermissionsOfManager(string sessionId, string storeNm, string username, string authorization);
-        public void RemoveStoreManager(string sessionId, string storeNm, string username);
+        public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
         public void RemoveStoreOwner(string sessionId, string storeNm, string username);
+        public void RemoveStoreManager(string sessionId, string storeNm, string username);
         public IEnumerable<DataMessage> ViewMessage(string sessionId, string storeNm);
         public DataMessage MessageReply(string sessionId, DataMessage message, string storeNm, string description);
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg);
-        public void RemoveDiscount(string sessionId, string storeName, int indexInChain);
-        public void RemovePermissionsOfManager(string sessionId, string storeName, string username, string auth);
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
         public double GetIncomeInDate(string sessionId, DateTime date);
@@ -80,5 +80,6 @@ namespace SEWorkshop.ServiceLayer
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
+        public string GetLoggedInUsername(string sessionId);
     }
 }
