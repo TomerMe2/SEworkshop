@@ -1,4 +1,5 @@
 ﻿using System;
+using SEWorkshop.Enums;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,16 +8,16 @@ namespace SEWorkshop.Models.Policies
 {
     public class SystemDayPolicy : Policy
     {
-        public DayOfWeek CantBuyIn { get; set; }
+        public virtual Weekday CantBuyIn { get; set; }
 
-        public SystemDayPolicy (Store store, DayOfWeek cantBuyIn) : base(store)
+        public SystemDayPolicy (Store store, Weekday cantBuyIn) : base(store)
         {
             CantBuyIn = cantBuyIn;
         }
 
         protected override bool IsThisPolicySatisfied(User user, Address address)
         {
-            return DateTime.Now.DayOfWeek != CantBuyIn;
+            return (int)DateTime.Now.DayOfWeek != (int)CantBuyIn;
         }
     }
 }

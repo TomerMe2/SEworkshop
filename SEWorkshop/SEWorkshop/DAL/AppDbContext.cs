@@ -23,7 +23,7 @@ namespace SEWorkshop.DAL
             AuthorityHandlers = Set<AuthorityHandler>();
             Baskets = Set<Basket>();
             Carts = Set<Cart>();
-            Discounts = Set<Discount>();
+            //Discounts = Set<Discount>();
             Messages = Set<Message>();
             OwnershipRequests = Set<OwnershipRequest>();
             OwnershipAnswers = Set<OwnershipAnswer>();
@@ -67,7 +67,7 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Authority>()
                     .ToTable("Authorities")
-                    .HasKey(auth => new { auth.AuthHandlerName, auth.StoreName, auth.Authorization });
+                    .HasKey(auth => new { auth.AuthHandlerId, auth.StoreName, auth.Authorization });
 
             modelBuilder.Entity<AuthorityHandler>()
                     .ToTable("AuthorityHandlers")
@@ -81,6 +81,34 @@ namespace SEWorkshop.DAL
                     .ToTable("Carts")
                     .HasKey(cart => cart.Id);
 
+            modelBuilder.Entity<Discount>()
+                    .ToTable("Discounts")
+                    .HasKey(discount => discount.DiscountId);
+
+            modelBuilder.Entity<BuyOverDiscount>()
+                    .ToTable("BuyOverDiscounts");
+
+            modelBuilder.Entity<BuySomeGetSomeDiscount>()
+                    .ToTable("BuySomeGetSomeDiscounts");
+
+            modelBuilder.Entity<ComposedDiscount>()
+                    .ToTable("ComposedDiscounts");
+
+            modelBuilder.Entity<ConditionalDiscount>()
+                    .ToTable("ConditionalDiscounts");
+
+            modelBuilder.Entity<OpenDiscount>()
+                    .ToTable("OpenDiscounts");
+
+            modelBuilder.Entity<PrimitiveDiscount>()
+                    .ToTable("PrimitiveDiscounts");
+
+            modelBuilder.Entity<ProductCategoryDiscount>()
+                    .ToTable("ProductCategoryDiscounts");
+
+            modelBuilder.Entity<SpecificProducDiscount>()
+                    .ToTable("SpecificProducDiscounts");
+
             modelBuilder.Entity<LoggedInUser>()
                     .ToTable("LoggedInUsers")
                     .HasKey(user => user.Username);
@@ -91,9 +119,39 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Message>()
                     .ToTable("Messages")
                     .HasKey(message => message.Id);
-            
+
+            modelBuilder.Entity<OwnershipAnswer>()
+                    .ToTable("OwnershipAnswers")
+                    .HasKey(ans => ans.Id);
+
+            modelBuilder.Entity<OwnershipRequest>()
+                    .ToTable("OwnershipRequests")
+                    .HasKey(req => req.Id);
+
             modelBuilder.Entity<Owns>()
                     .ToTable("Owners");
+
+            modelBuilder.Entity<Policy>()
+                    .ToTable("Policies")
+                    .HasKey(policy => policy.Id);
+
+            modelBuilder.Entity<AlwaysTruePolicy>()
+                    .ToTable("AlwaysTruePolicies");
+
+            modelBuilder.Entity<SingleProductQuantityPolicy>()
+                    .ToTable("SingleProductQuantityPolicies");
+
+            modelBuilder.Entity<SystemDayPolicy>()
+                    .ToTable("SystemDayPolicies");
+
+            modelBuilder.Entity<UserCityPolicy>()
+                    .ToTable("UserCityPolicies");
+
+            modelBuilder.Entity<UserCountryPolicy>()
+                    .ToTable("UserCountryPolicies");
+
+            modelBuilder.Entity<WholeStoreQuantityPolicy>()
+                    .ToTable("WholeStoreQuantityPolicies");
 
             modelBuilder.Entity<Product>()
                     .ToTable("Products")
@@ -141,6 +199,38 @@ namespace SEWorkshop.DAL
                     .HasOptional(cart => cart.LoggedInUser)
                     .WithOptionalPrincipal(user => user.Cart);
 
+            modelBuilder.Entity<Discount>()
+                    .HasRequired(discount => discount.Store)
+                    .WithMany(store => store.Discounts)
+                    .HasForeignKey(discount => new { discount.StoreName });
+
+            modelBuilder.Entity<ComposedDiscount>()
+                    .HasOptional(discount => discount.rightChild)
+                    .WithOptionalPrincipal(discount => discount.Father);
+
+            modelBuilder.Entity<ComposedDiscount>()
+                    .HasOptional(discount => discount.leftChild)
+                    .WithOptionalPrincipal(discount => discount.Father);
+
+            modelBuilder.Entity<ComposedDiscount>()
+                    .Property(discount => discount.Op)
+                    .HasColumnType("tinyint");
+
+            modelBuilder.Entity<ConditionalDiscount>()
+                    .HasRequired(discount => discount.Product)
+                    .WithMany(product => product.ConditionalDiscounts)
+                    .HasForeignKey(discount => new { discount.ProdName });
+
+            modelBuilder.Entity<OpenDiscount>()
+                    .HasRequired(discount => discount.Product)
+                    .WithMany(product => product.OpenDiscounts)
+                    .HasForeignKey(discount => new { discount.ProdName });
+
+            modelBuilder.Entity<BuySomeGetSomeDiscount>()
+                    .HasRequired(discount => discount.ProdUnderDiscount)
+                    .WithMany(product => product.BuySomeGetSomeDiscounts)
+                    .HasForeignKey(discount => new { discount.ProdUnderDiscountName });
+
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.LoggedInUser)
                     .WithMany(handler => handler.Manage)
@@ -155,6 +245,39 @@ namespace SEWorkshop.DAL
                     .HasOptional(message => message.Prev)
                     .WithOptionalPrincipal(message => message.Next);
 
+            modelBuilder.Entity<OwnershipAnswer>()
+                    .Property(ans => ans.Answer)
+                    .HasColumnType("tinyint");
+
+            modelBuilder.Entity<OwnershipAnswer>()
+                    .HasRequired(ans => ans.Request)
+                    .WithMany(req => req.Answers)
+                    .HasForeignKey(ans => new { ans.RequestId });
+
+            modelBuilder.Entity<OwnershipAnswer>()
+                    .HasRequired(ans => ans.Owner)
+                    .WithMany(owner => owner.OwnershipAnswers)
+                    .HasForeignKey(ans => new { ans.Username });
+
+            modelBuilder.Entity<OwnershipAnswer>()
+                   .Property(auth => auth.Answer)
+                   .HasColumnType("tinyint");
+
+            modelBuilder.Entity<OwnershipRequest>()
+                    .HasRequired(req => req.Store)
+                    .WithMany(store => store.OwnershipRequests)
+                    .HasForeignKey(req => new { req.StoreName });
+
+            modelBuilder.Entity<OwnershipRequest>()
+                    .HasRequired(req => req.Owner)
+                    .WithMany(store => store.OwnershipRequestsFrom)
+                    .HasForeignKey(req => new { req.OwnerUsername });
+
+            modelBuilder.Entity<OwnershipRequest>()
+                    .HasRequired(req => req.NewOwner)
+                    .WithMany(store => store.OwnershipRequests)
+                    .HasForeignKey(req => new { req.NewOwnerUsername });
+
             modelBuilder.Entity<Owns>()
                     .HasRequired(owner => owner.LoggedInUser)
                     .WithMany(handler => handler.Owns)
@@ -164,6 +287,28 @@ namespace SEWorkshop.DAL
                     .HasRequired(owner => owner.Store)
                     .WithMany(store => store.Ownership)
                     .HasForeignKey(owner => new {owner.StoreName});
+
+            modelBuilder.Entity<Policy>()
+                    .HasOptional(policy => policy.InnerPolicy)
+                    .WithOptionalPrincipal(policy => policy.OuterPolicy);
+
+            modelBuilder.Entity<Policy>()
+                    .HasRequired(policy => policy.Store)
+                    .WithMany(store => store.Policies)
+                    .HasForeignKey(policy => new { policy.StoreName });
+
+            modelBuilder.Entity<Policy>()
+                    .Property(policy => policy.InnerOperator)
+                    .HasColumnType("tinyint");
+
+            modelBuilder.Entity<SingleProductQuantityPolicy>()
+                    .HasRequired(policy => policy.Prod)
+                    .WithMany(prod => prod.ProductPolicies)
+                    .HasForeignKey(policy => new { policy.ProdName, policy.ProdStoreName } );
+
+            modelBuilder.Entity<SystemDayPolicy>()
+                    .Property(policy => policy.CantBuyIn)
+                    .HasColumnType("tinyint");
 
             modelBuilder.Entity<Product>()
                     .HasRequired(product => product.Store)
@@ -182,8 +327,8 @@ namespace SEWorkshop.DAL
                     .HasForeignKey(pb => new {pb.ProductName, pb.StoreName});
 
             modelBuilder.Entity<Purchase>()
-                .HasRequired(purchase => purchase.Basket)
-                .WithOptional(basket => basket.Purchase);
+                    .HasRequired(purchase => purchase.Basket)
+                    .WithOptional(basket => basket.Purchase);
         }
     }
 }

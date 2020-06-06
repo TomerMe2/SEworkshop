@@ -15,12 +15,15 @@ namespace SEWorkshop.Models
     {
         public virtual string Username { get; set; }
         public virtual LoggedInUser LoggedInUser { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         private AppDbContext DbContext { get; }
 
-        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, store, appointer)
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, appointer)
         {
             DbContext = dbContext;
+            Store = store;
             LoggedInUser = loggedInUser;
             AddAuthorization(Authorizations.Watching);
         }

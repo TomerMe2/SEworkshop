@@ -11,6 +11,7 @@ using SEWorkshop.Enums;
 using SEWorkshop.DAL;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Validation;
 
 namespace SEWorkshop.Models
 {
@@ -18,6 +19,8 @@ namespace SEWorkshop.Models
     {
         public virtual string Username { get; set; }
         public virtual LoggedInUser LoggedInUser { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         private AppDbContext DbContext { get; }
 
@@ -25,10 +28,11 @@ namespace SEWorkshop.Models
         {
 
         }
-        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, store, appointer)
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, appointer)
         {
             DbContext = dbContext;
             LoggedInUser = loggedInUser;
+            Store = store;
             AddAuthorization(Authorizations.Authorizing);
             AddAuthorization(Authorizations.Replying);
             AddAuthorization(Authorizations.Products);
@@ -51,6 +55,9 @@ namespace SEWorkshop.Models
             }
             Store.OwnershipRequests.Add(request);
             newOwner.OwnershipRequests.Add(request);
+            LoggedInUser.OwnershipRequestsFrom.Add(request);
+            DbContext.OwnershipRequests.Add(request);
+            DbContext.SaveChanges();
             // He wants him to be an owner, cus he suggested that
             request.Answer(LoggedInUser, RequestState.Approved);
             if (request.GetRequestState() == RequestState.Approved)
@@ -61,6 +68,9 @@ namespace SEWorkshop.Models
                 }
                 Store.OwnershipRequests.Remove(request);
                 newOwner.OwnershipRequests.Remove(request);
+                request.Owner.OwnershipRequestsFrom.Remove(request);
+                DbContext.OwnershipRequests.Remove(request);
+                DbContext.SaveChanges();
                 Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
                 DbContext.AuthorityHandlers.Add(ownership);
                 newOwner.Owns.Add(ownership);
@@ -85,13 +95,20 @@ namespace SEWorkshop.Models
                     Store.Ownership.Add(ownership);
                     Store.OwnershipRequests.Remove(req);
                     newOwner.OwnershipRequests.Remove(req);
+                    req.Owner.OwnershipRequestsFrom.Remove(req);
                     newOwner.Owns.Add(ownership);
+                    DbContext.AuthorityHandlers.Add(ownership);
+                    DbContext.OwnershipRequests.Remove(req);
+                    DbContext.SaveChanges();
                     log.Info("A new owner has been added successfully");
                 }
                 else if (req.GetRequestState() == RequestState.Denied)
                 {
                     newOwner.OwnershipRequests.Remove(req);
                     Store.OwnershipRequests.Remove(req);
+                    req.Owner.OwnershipRequestsFrom.Remove(req);
+                    DbContext.OwnershipRequests.Remove(req);
+                    DbContext.SaveChanges();
                 }
             }
         }
@@ -460,12 +477,13 @@ namespace SEWorkshop.Models
             {
                 return root;
             }
-            if (root.Op is null || root.leftChild is null || root.rightChild is null)
+            if (!(root is ComposedDiscount) || ((ComposedDiscount)root).Op is null ||
+                    ((ComposedDiscount)root).leftChild is null || ((ComposedDiscount)root).rightChild is null)
             {
                 return null;
             }
 
-            return SearchNode(root.leftChild, disId) ?? SearchNode(root.rightChild, disId);
+            return SearchNode(((ComposedDiscount)root).leftChild, disId) ?? SearchNode(((ComposedDiscount)root).rightChild, disId);
         }
 
         //All add policies are adding to the end
@@ -479,7 +497,7 @@ namespace SEWorkshop.Models
             AddPolicyToEnd(new SingleProductQuantityPolicy(Store, product, minQuantity, maxQuantity), op);
         }
 
-        public void AddSystemDayPolicy(Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(Operator op, Weekday cantBuyIn)
         {
             AddPolicyToEnd(new SystemDayPolicy(Store, cantBuyIn), op);
         }

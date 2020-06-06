@@ -354,7 +354,7 @@ namespace SEWorkshop.Facades
                     GetProduct(storeName, productName), minQuantity, maxQuantity);
         }
 
-        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, Weekday cantBuyIn)
         {
             GetLoggedInUsr(user).AddSystemDayPolicy(GetStore(storeName), op, cantBuyIn);
         }

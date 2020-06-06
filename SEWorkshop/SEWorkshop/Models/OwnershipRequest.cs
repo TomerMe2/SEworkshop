@@ -15,10 +15,13 @@ namespace SEWorkshop.Models
     public class OwnershipRequest
     {
         public virtual int Id { get; set; }
-        public Store Store { get; private set; }
-        public ICollection<OwnershipAnswer> Answers{ get; private set; }
-        public LoggedInUser Owner { get; private set; }
-        public LoggedInUser NewOwner { get; private set; }
+        public virtual string StoreName { get; private set; }
+        public virtual Store Store { get; private set; }
+        public virtual ICollection<OwnershipAnswer> Answers{ get; private set; }
+        public virtual string OwnerUsername { get; private set; }
+        public virtual LoggedInUser Owner { get; private set; }
+        public virtual string NewOwnerUsername { get; private set; }
+        public virtual LoggedInUser NewOwner { get; private set; }
         private AppDbContext DbContext { get; }
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner, AppDbContext dbContext)
         {
@@ -29,8 +32,14 @@ namespace SEWorkshop.Models
             Answers = (IList<OwnershipAnswer>)DbContext.OwnershipAnswers.Select(ans => ans.Request.Equals(this));
             foreach(var ow in store.Ownership)
             {
-                if(!HasAnswered(ow.LoggedInUser))
-                    Answers.Add(new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending));
+                if (!HasAnswered(ow.LoggedInUser))
+                {
+                    OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
+                    Answers.Add(answer);
+                    owner.OwnershipAnswers.Add(answer);
+                    DbContext.OwnershipAnswers.Add(answer);
+                    DbContext.SaveChanges();
+                }
             }
         }
         public RequestState GetRequestState()

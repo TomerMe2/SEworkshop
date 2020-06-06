@@ -427,7 +427,7 @@ namespace SEWorkshop.Tests.UnitTests
             store.Ownership.Add(ownership);
             usr.AddWholeStoreQuantityPolicy(store, Enums.Operator.And, 2, 5);
             Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
-            usr.AddSystemDayPolicy(store, Enums.Operator.Xor, DayOfWeek.Monday);
+            usr.AddSystemDayPolicy(store, Enums.Operator.Xor, Weekday.Monday);
             Assert.IsInstanceOf<WholeStoreQuantityPolicy>(store.Policy);
             Assert.IsInstanceOf<SystemDayPolicy>(store.Policy.InnerPolicy);
             usr.RemovePolicy(store, 1);
@@ -453,7 +453,7 @@ namespace SEWorkshop.Tests.UnitTests
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
             int id = store.Discounts.ElementAt(0).DiscountId;
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0, id, false);
-            Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0).rightChild);
+            Assert.IsInstanceOf<SpecificProducDiscount>(((ComposedDiscount)store.Discounts.ElementAt(0)).rightChild);
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1, 1, true);
             usr.RemoveDiscount(store, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));

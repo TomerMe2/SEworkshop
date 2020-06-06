@@ -204,7 +204,7 @@ namespace Website.Pages
                 case "DayPolicy":
                     try
                     {
-                        UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (DayOfWeek)Enum.Parse(typeof(DayOfWeek), value2));
+                        UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (Weekday)Enum.Parse(typeof(Weekday), value2));
                     }
                     catch (Exception e)
                     {

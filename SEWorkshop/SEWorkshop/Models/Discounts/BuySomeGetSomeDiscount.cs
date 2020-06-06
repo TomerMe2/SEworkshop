@@ -7,9 +7,10 @@ namespace SEWorkshop.Models.Discounts
 {
     public class BuySomeGetSomeDiscount : ConditionalDiscount
     {
-        public int BuySome { get; set; }
-        public int GetSome { get; set; }
-        public Product ProdUnderDiscount { get; set; }
+        public virtual int BuySome { get; set; }
+        public virtual int GetSome { get; set; }
+        public virtual string ProdUnderDiscountName { get; set; }
+        public virtual Product ProdUnderDiscount { get; set; }
 
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)
         {

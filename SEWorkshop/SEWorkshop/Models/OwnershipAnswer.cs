@@ -7,9 +7,11 @@ namespace SEWorkshop.Models
     public class OwnershipAnswer
     {
         public virtual int Id { get; set; }
-        public OwnershipRequest Request { get; private set; }
-        public LoggedInUser Owner { get; private set; }
-        public RequestState Answer { get; private set; }
+        public virtual int RequestId { get; set; }
+        public virtual string Username { get; set; }
+        public virtual OwnershipRequest Request { get; private set; }
+        public virtual LoggedInUser Owner { get; private set; }
+        public virtual RequestState Answer { get; private set; }
 
         public OwnershipAnswer(OwnershipRequest request, LoggedInUser loggedInUser, RequestState answer)
         {

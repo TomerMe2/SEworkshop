@@ -8,7 +8,7 @@ namespace SEWorkshop.Models.Discounts
     public class BuyOverDiscount : ConditionalDiscount
     {
        
-        public double MinSum { get; set; }
+        public virtual double MinSum { get; set; }
 
         public BuyOverDiscount(Store store, double minSum, double percentage, DateTime deadline, Product product) : base(percentage, deadline, product, store)
         {

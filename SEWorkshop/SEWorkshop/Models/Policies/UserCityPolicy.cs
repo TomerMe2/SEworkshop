@@ -7,7 +7,7 @@ namespace SEWorkshop.Models.Policies
 {
     public class UserCityPolicy : Policy
     {
-        public string RequiredCity { get; set; }
+        public virtual string RequiredCity { get; set; }
 
         public UserCityPolicy(Store store, string requiredCity) : base(store)
         {

@@ -8,9 +8,11 @@ namespace SEWorkshop.Models.Policies
 {
     public class SingleProductQuantityPolicy : Policy
     {
-        public Product Prod { get; set; }
-        public int MinQuantity { get; set; }
-        public int MaxQuantity { get; set; }
+        public virtual string ProdName { get; set; }
+        public virtual string ProdStoreName { get; set; }
+        public virtual Product Prod { get; set; }
+        public virtual int MinQuantity { get; set; }
+        public virtual int MaxQuantity { get; set; }
 
         //-1 for quantity is ignoring this quantity
         public SingleProductQuantityPolicy(Store store, Product product, int minQuantity, int maxQuantity) : base(store)

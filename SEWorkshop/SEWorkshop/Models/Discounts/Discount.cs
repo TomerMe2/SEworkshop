@@ -14,12 +14,10 @@ namespace SEWorkshop.Models.Discounts
     {
         private static int _nextId = 0;
         public virtual int DiscountId { get; set; }
-        public Operator? Op;
-        public Discount? leftChild;
-        public Discount? rightChild;
-        public ComposedDiscount? Father;
-        public DateTime Deadline { get; set; }
-        public Store Store { get; }
+        public virtual string StoreName { get; set; }
+        public virtual ComposedDiscount? Father { get; set; }
+        public virtual DateTime Deadline { get; set; }
+        public virtual Store Store { get; set; }
 
         public Discount(DateTime deadline, Store store)
         {
@@ -30,7 +28,7 @@ namespace SEWorkshop.Models.Discounts
 
         public bool IsLeaf()
         {
-            return Op != null;
+            return !(this is ComposedDiscount);
         }
 
         public bool IsLeftChild()

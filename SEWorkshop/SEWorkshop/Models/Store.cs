@@ -21,12 +21,13 @@ namespace SEWorkshop.Models
         public virtual ICollection<Manages> Management { get; private set; }
         public virtual ICollection<Owns> Ownership { get; private set; }
         public virtual ICollection<Basket> Baskets { get; private set; }
-        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
         public virtual IList<Message> Messages { get; private set; }
         public virtual IList<Discount> Discounts { get; private set; }
         public virtual bool IsOpen { get; private set; }
         public virtual string Name { get; private set; }
         public virtual Policy Policy { get; set; }
+        public virtual IList<Policy> Policies { get; set; }
         public virtual ICollection<Purchase> Purchases {get; private set; }
         
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
@@ -66,6 +67,8 @@ namespace SEWorkshop.Models
             Purchases = new List<Purchase>();
             Products = new List<Product>();
             Baskets = new List<Basket>();
+            Discounts = new List<Discount>();
+            Name = name;
         }
 
         public void CloseStore()

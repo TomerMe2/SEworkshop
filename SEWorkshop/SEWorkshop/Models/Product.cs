@@ -5,6 +5,7 @@ using SEWorkshop.Models.Discounts;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SEWorkshop.DAL;
+using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Models
 {
@@ -17,6 +18,10 @@ namespace SEWorkshop.Models
         public virtual string Category { get; set; }
         public virtual double Price { get; set; }
         public virtual int Quantity { get; set; }
+        public virtual ICollection<BuySomeGetSomeDiscount> BuySomeGetSomeDiscounts { get; set; }
+        public virtual ICollection<OpenDiscount> OpenDiscounts { get; set; }
+        public virtual ICollection<ConditionalDiscount> ConditionalDiscounts { get; set; }
+        public virtual ICollection<SingleProductQuantityPolicy> ProductPolicies { get; set; }
         public virtual ICollection<ProductsInBasket> InBaskets {get ; set;}
         public virtual ICollection<Review> Reviews {get ; set;}
 

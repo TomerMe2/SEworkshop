@@ -7,6 +7,9 @@ namespace SEWorkshop.Models.Discounts
 {
     public class ComposedDiscount : Discount
     {
+        public virtual Operator? Op { get; set; }
+        public virtual Discount? leftChild { get; set; }
+        public virtual Discount? rightChild { get; set; }
         public ComposedDiscount(Operator op, Discount dis1, Discount dis2) : base(dis1.Deadline, dis1.Store)
         {
             if ((dis1.Store != dis2.Store) || (dis1.Deadline < DateTime.Today) || (dis2.Deadline < DateTime.Today))

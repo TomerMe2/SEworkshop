@@ -16,7 +16,9 @@ namespace SEWorkshop.Models
     public class LoggedInUser : User
     {
         public virtual ICollection<Owns> Owns { get; private set; }
+        public virtual ICollection<OwnershipAnswer> OwnershipAnswers { get; private set; }
         public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequestsFrom { get; private set; }
         public virtual ICollection<Manages> Manage { get; private set; }
         public virtual ICollection<AuthorityHandler> Appointements { get; set; }
         public virtual IList<Review> Reviews { get; private set; }
@@ -370,7 +372,7 @@ namespace SEWorkshop.Models
             OwnsForStore(store).AddSingleProductQuantityPolicy(op, product, minQuantity, maxQuantity);
         }
 
-        public void AddSystemDayPolicy(Store store, Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(Store store, Operator op, Weekday cantBuyIn)
         {
             OwnsForStore(store).AddSystemDayPolicy(op, cantBuyIn);
         }

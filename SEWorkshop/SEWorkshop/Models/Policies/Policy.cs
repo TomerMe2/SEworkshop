@@ -11,9 +11,11 @@ namespace SEWorkshop.Models.Policies
     public abstract class Policy
     {
         public virtual int Id { get; set; }
-        public Policy? InnerPolicy { get; set; }
-        public Operator? InnerOperator { get; set; }
-        public Store Store { get; }
+        public virtual string StoreName { get; set; }
+        public virtual Policy? OuterPolicy { get; set; }
+        public virtual Policy? InnerPolicy { get; set; }
+        public virtual Operator? InnerOperator { get; set; }
+        public virtual Store Store { get; set; }
         
         public Policy(Store store)
         {

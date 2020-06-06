@@ -17,8 +17,6 @@ namespace SEWorkshop.Models
     {
         public static int CounterId = 0;
         public virtual int Id { get; set; }
-        public virtual string StoreName { get; set; }
-        public virtual Store Store { get; set; }
         public virtual string AppointerName { get; set; }
         public virtual LoggedInUser Appointer { get; set;}
         private readonly Logger log = LogManager.GetCurrentClassLogger();
@@ -31,10 +29,9 @@ namespace SEWorkshop.Models
 
         }
 
-        public AuthorityHandler(AppDbContext dbContext, Store store, LoggedInUser appointer)
+        public AuthorityHandler(AppDbContext dbContext, LoggedInUser appointer)
         {
             DbContext = dbContext;
-            Store = store;
             CounterId++;
             Id = CounterId;
             //AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));

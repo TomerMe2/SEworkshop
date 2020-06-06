@@ -84,7 +84,7 @@ namespace SEWorkshop.Tests.UnitTests
         public void SystemDayRetTrue()
         {
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 8));
-            var pol = new SystemDayPolicy(Str, DateTime.Now.AddDays(1).DayOfWeek);  //can't buy tomorrow
+            var pol = new SystemDayPolicy(Str, (Weekday)((int)DateTime.Now.AddDays(1).DayOfWeek));  //can't buy tomorrow
             Assert.True(pol.CanPurchase(Buyer, DefAdrs));
         }
 
@@ -92,7 +92,7 @@ namespace SEWorkshop.Tests.UnitTests
         public void SystemDayRetFalse()
         {
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 8));
-            var pol = new SystemDayPolicy(Str, DateTime.Now.DayOfWeek);  //can't buy today
+            var pol = new SystemDayPolicy(Str, (Weekday)((int)DateTime.Now.DayOfWeek));  //can't buy today
             Assert.False(pol.CanPurchase(Buyer, DefAdrs));
         }
 
