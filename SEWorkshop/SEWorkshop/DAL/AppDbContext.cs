@@ -67,7 +67,7 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Authority>()
                     .ToTable("Authorities")
-                    .HasKey(auth => new { auth.AuthHandlerId, auth.StoreName, auth.Authorization });
+                    .HasKey(auth => new { auth.AuthHandlerId, auth.Authorization });
 
             modelBuilder.Entity<AuthorityHandler>()
                     .ToTable("AuthorityHandlers")
@@ -165,6 +165,10 @@ namespace SEWorkshop.DAL
                     .ToTable("Purchases")
                     .HasKey(purchase => purchase.BasketId);
 
+            modelBuilder.Entity<Review>()
+                    .ToTable("Reviews")
+                    .HasKey(review => review.Id);
+
             modelBuilder.Entity<Store>()
                     .ToTable("Stores")
                     .HasKey(store => store.Name);
@@ -240,6 +244,16 @@ namespace SEWorkshop.DAL
                     .HasRequired(manager => manager.Store)
                     .WithMany(store => store.Management)
                     .HasForeignKey(manager => new {manager.StoreName});
+
+            modelBuilder.Entity<Message>()
+                    .HasRequired(message => message.ToStore)
+                    .WithMany(store => store.Messages)
+                    .HasForeignKey(manager => new { manager.StoreName });
+
+            modelBuilder.Entity<Message>()
+                    .HasRequired(message => message.WrittenBy)
+                    .WithMany(user => user.Messages)
+                    .HasForeignKey(manager => new { manager.Writer });
 
             modelBuilder.Entity<Message>()
                     .HasOptional(message => message.Prev)
@@ -329,6 +343,16 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Basket)
                     .WithOptional(basket => basket.Purchase);
+
+            modelBuilder.Entity<Review>()
+                    .HasRequired(review => review.Writer)
+                    .WithMany(user => user.Reviews)
+                    .HasForeignKey(review => new { review.Username });
+
+            modelBuilder.Entity<Review>()
+                    .HasRequired(review => review.Product)
+                    .WithMany(product => product.Reviews)
+                    .HasForeignKey(review => new { review.ProdName, review.StoreName });
         }
     }
 }

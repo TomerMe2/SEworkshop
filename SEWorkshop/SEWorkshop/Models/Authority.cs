@@ -6,7 +6,6 @@ namespace SEWorkshop.Models
 {
     public class Authority
     {
-        public virtual string StoreName { get; set; }
         public virtual int AuthHandlerId { get; set; }
         public virtual AuthorityHandler AuthHandler { get; set; }
         public virtual Authorizations Authorization { get; set; }

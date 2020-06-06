@@ -11,13 +11,15 @@ namespace SEWorkshop.Models
         private static int counter = 0;
         private static object counterLock = new object();
         public virtual int Id { get; set; }
-        public Store ToStore { get; }
-        public LoggedInUser WrittenBy { get; private set; }
-        public string Description {get; private set;}
-        public Message? Prev { get; private set; }
-        public Message? Next { get; set; }
-        public bool StoreSawIt { get; set; }
-        public bool ClientSawIt { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Store ToStore { get; set; }
+        public virtual string Writer { get; set; }
+        public virtual LoggedInUser WrittenBy { get; set; }
+        public virtual string Description {get; set;}
+        public virtual Message? Prev { get; set; }
+        public virtual Message? Next { get; set; }
+        public virtual bool StoreSawIt { get; set; }
+        public virtual bool ClientSawIt { get; set; }
 
         public Message()
         {

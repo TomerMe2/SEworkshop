@@ -9,9 +9,12 @@ namespace SEWorkshop.Models
     public class Review
     {
         public virtual int Id { get; set; }
-        public LoggedInUser Writer { get; private set; }
-        public string Description;
-        public Product Product;
+        public virtual string Username { get; set; }
+        public virtual string ProdName { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual LoggedInUser Writer { get; set; }
+        public virtual string Description { get; set; }
+        public virtual Product Product { get; set; }
 
         public Review()
         {
