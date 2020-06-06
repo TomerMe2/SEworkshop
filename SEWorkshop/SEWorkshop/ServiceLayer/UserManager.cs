@@ -46,6 +46,9 @@ namespace SEWorkshop.ServiceLayer
                 string[] actions = System.IO.File.ReadAllLines("ActionsFile.txt");
                 ReadActionsFile(actions);
             }
+            catch(Exception)
+            {
+            }
         }
 
         // action line format: <ActionName>,<Arg1>,<Arg2>...
