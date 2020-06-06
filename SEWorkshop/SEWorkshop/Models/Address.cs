@@ -13,12 +13,7 @@ namespace SEWorkshop
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
         public virtual string Country { get; set; }
-        public virtual ICollection<Purchase> Purchases { get; set;}
-
-        public Address()
-        {
-
-        }
+        public virtual ICollection<Purchase> Purchases { get; private set;}
 
         public Address(string country, string city, string street, string houseNumber)
         {
@@ -26,6 +21,7 @@ namespace SEWorkshop
             this.Street = street;
             this.HouseNumber = houseNumber;
             this.Country = country;
+            Purchases = new List<Purchase>();
         }
 
         public override bool Equals(object? obj)

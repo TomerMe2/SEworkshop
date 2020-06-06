@@ -10,11 +10,6 @@ namespace SEWorkshop.Models
         public virtual AuthorityHandler AuthHandler { get; set; }
         public virtual Authorizations Authorization { get; set; }
 
-        public Authority()
-        {
-
-        }
-
         public Authority(AuthorityHandler authHandler, Authorizations authorization)
         {
             AuthHandler = authHandler;

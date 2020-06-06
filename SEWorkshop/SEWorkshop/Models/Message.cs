@@ -10,6 +10,7 @@ namespace SEWorkshop.Models
     {
         private static int counter = 0;
         private static object counterLock = new object();
+        //TODO: CHECK THIS PROPERTY
         public virtual int Id { get; set; }
         public virtual string StoreName { get; set; }
         public virtual Store ToStore { get; set; }
@@ -20,11 +21,6 @@ namespace SEWorkshop.Models
         public virtual Message? Next { get; set; }
         public virtual bool StoreSawIt { get; set; }
         public virtual bool ClientSawIt { get; set; }
-
-        public Message()
-        {
-
-        }
 
         public Message(LoggedInUser writtenBy, Store toStore, string description, bool isClient, Message? prev = null)
         {
@@ -37,6 +33,8 @@ namespace SEWorkshop.Models
             Description = description;
             Prev = prev;
             ToStore = toStore;
+            StoreName = toStore.Name;
+            Writer = writtenBy.Username;
             StoreSawIt = false;
             ClientSawIt = false;
             if (isClient)

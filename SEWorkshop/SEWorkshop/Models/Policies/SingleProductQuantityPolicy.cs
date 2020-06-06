@@ -20,6 +20,8 @@ namespace SEWorkshop.Models.Policies
             Prod = product;
             MinQuantity = minQuantity;
             MaxQuantity = maxQuantity;
+            ProdName = product.Name;
+            ProdStoreName = product.Store.Name;
         }
 
         protected override bool IsThisPolicySatisfied(User user, Address address)

@@ -24,6 +24,7 @@ namespace SEWorkshop.Models.Discounts
             Deadline = deadline;
             Store = store;
             DiscountId = _nextId++;
+            StoreName = store.Name;
         }
 
         public bool IsLeaf()
@@ -33,7 +34,7 @@ namespace SEWorkshop.Models.Discounts
 
         public bool IsLeftChild()
         {
-            return Father?.leftChild == this;
+            return Father?.LeftChild == this;
         }
 
         public abstract double ComputeDiscount(ICollection<ProductsInBasket> itemsList);

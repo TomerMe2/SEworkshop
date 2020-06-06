@@ -20,6 +20,7 @@ namespace SEWorkshop.Models.Policies
         public Policy(Store store)
         {
             Store = store;
+            StoreName = store.Name;
         }
 
         protected Basket? GetBasket(User user)

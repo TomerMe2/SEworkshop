@@ -16,15 +16,14 @@ namespace SEWorkshop.Models
         public virtual string Description { get; set; }
         public virtual Product Product { get; set; }
 
-        public Review()
-        {
-
-        }
         public Review(LoggedInUser writer, string description, Product product)
         {
             Writer = writer;
             Description = description;
             Product = product;
+            Username = writer.Username;
+            ProdName = product.Name;
+            StoreName = product.Store.Name;
         }
     }
 }

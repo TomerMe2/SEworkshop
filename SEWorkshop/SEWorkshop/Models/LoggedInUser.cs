@@ -26,13 +26,25 @@ namespace SEWorkshop.Models
         public virtual string Username { get; private set; }
         public virtual byte[] Password { get; private set; }   //it will be SHA256 encrypted password
         public virtual ICollection<Purchase> Purchases { get; set; }
-        private AppDbContext DbContext { get; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public LoggedInUser() : base()
         {
+            Username = "";
+            Password = new byte[] { 0 };
+            Owns = new List<Owns>();
+            Manage = new List<Manages>();
+            Reviews = new List<Review>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Appointements = new List<AuthorityHandler>();
+            Cart = new Cart(this);
+            OwnershipAnswers = new List<OwnershipAnswer>();
+            OwnershipRequests = new List<OwnershipRequest>();
+            OwnershipRequestsFrom = new List<OwnershipRequest>();
         }
-        public LoggedInUser(string username, byte[] password, AppDbContext dbContext) : base(dbContext)
+
+        public LoggedInUser(string username, byte[] password) : base()
         {
             Username = username;
             Password = password;
@@ -54,7 +66,9 @@ namespace SEWorkshop.Models
             Purchases = new List<Purchase>();
             Appointements = new List<AuthorityHandler>();
             Cart = new Cart(this);
-            DbContext = dbContext;
+            OwnershipAnswers = new List<OwnershipAnswer>();
+            OwnershipRequests = new List<OwnershipRequest>();
+            OwnershipRequestsFrom = new List<OwnershipRequest>();
         }
 
         public int AmountOfUnReadMessage
@@ -89,8 +103,8 @@ namespace SEWorkshop.Models
             Review review = new Review(this, description, product);
             product.Reviews.Add(review);
             Reviews.Add(review);
-            DbContext.Reviews.Add(review);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Reviews.Add(review);
+            DatabaseProxy.Instance.SaveChanges();
         }
        
         public void WriteMessage(Store store, string description, bool isClient)
@@ -102,8 +116,8 @@ namespace SEWorkshop.Models
             Message message = new Message(this, store, description, isClient);
             store.Messages.Add(message);
             Messages.Add(message);
-            DbContext.Messages.Add(message);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Messages.Add(message);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
@@ -287,8 +301,8 @@ namespace SEWorkshop.Models
         {
             Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
-            DbContext.Messages.Add(message);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Messages.Add(reply);
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("Reply has been published successfully");
             return reply;
         }
@@ -332,9 +346,8 @@ namespace SEWorkshop.Models
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             facade.AddPurchaseToList(purchase);
-            DbContext.Purchases.Add(purchase);
-            DbContext.Addresses.Add(address);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Purchases.Add(purchase);
+            DatabaseProxy.Instance.SaveChanges();
             return purchase;
         }
 

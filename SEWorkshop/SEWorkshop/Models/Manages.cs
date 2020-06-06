@@ -18,19 +18,16 @@ namespace SEWorkshop.Models
         public virtual string StoreName { get; set; }
         public virtual Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        private AppDbContext DbContext { get; }
 
-        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, appointer)
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(appointer)
         {
-            DbContext = dbContext;
             Store = store;
             LoggedInUser = loggedInUser;
             AddAuthorization(Authorizations.Watching);
+            Username = loggedInUser.Username;
+            StoreName = store.Name;
         }
-        public Manages() : base()
-        {
 
-        }
         public override void RemoveStoreManager(LoggedInUser managerToRemove)
         {
             log.Info("User tries to remove the manager {0} from store", managerToRemove.Username);
@@ -56,8 +53,8 @@ namespace SEWorkshop.Models
                 }
                 Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
-                DbContext.AuthorityHandlers.Remove(management);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.AuthorityHandlers.Remove(management);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("The manager has been removed successfully");
                 return;
             }
@@ -93,8 +90,8 @@ namespace SEWorkshop.Models
                 }
                 Store.Ownership.Remove(ownership);
                 ownerToRemove.Owns.Remove(ownership);
-                DbContext.AuthorityHandlers.Remove(ownership);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.AuthorityHandlers.Remove(ownership);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -115,8 +112,8 @@ namespace SEWorkshop.Models
                 if (!StoreContainsProduct(newProduct, Store))
                 {
                     Store.Products.Add(newProduct);
-                    DbContext.Products.Add(newProduct);
-                    DbContext.SaveChanges();
+                    DatabaseProxy.Instance.Products.Add(newProduct);
+                    DatabaseProxy.Instance.SaveChanges();
                     log.Info("Product has been added to store successfully");
                     return newProduct;
                 }
@@ -140,8 +137,8 @@ namespace SEWorkshop.Models
                 if (StoreContainsProduct(productToRemove, Store))
                 {
                     Store.Products.Remove(productToRemove);
-                    DbContext.Products.Remove(productToRemove);
-                    DbContext.SaveChanges();
+                    DatabaseProxy.Instance.Products.Remove(productToRemove);
+                    DatabaseProxy.Instance.SaveChanges();
                     log.Info("Product has been removed from store successfully");
                     return;
                 }
@@ -270,11 +267,11 @@ namespace SEWorkshop.Models
                     log.Info("The requested user is already a store manager or owner");
                     throw new UserIsAlreadyStoreManagerException();
                 }
-                Manages mangement = new Manages(newManager, Store, LoggedInUser, DbContext);
+                Manages mangement = new Manages(newManager, Store, LoggedInUser);
                 Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
-                DbContext.AuthorityHandlers.Add(mangement);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.AuthorityHandlers.Add(mangement);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("A new manager has been added successfully");
                 return;
 
@@ -293,11 +290,11 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-            Owns owning = new Owns(newOwner, Store, LoggedInUser, DbContext);
+            Owns owning = new Owns(newOwner, Store, LoggedInUser);
             Store.Ownership.Add(owning);
             newOwner.Owns.Add(owning);
-            DbContext.AuthorityHandlers.Add(owning);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.AuthorityHandlers.Add(owning);
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("A new owner has been added successfully");
             return;
 

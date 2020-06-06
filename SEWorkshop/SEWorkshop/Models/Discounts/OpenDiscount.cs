@@ -14,6 +14,8 @@ namespace SEWorkshop.Models.Discounts
                                                                                     base(percentage, deadline, store)
         {
             Product = product;
+            ProdName = product.Name;
+            ProdStoreName = product.Store.Name;
         }
     }
 }

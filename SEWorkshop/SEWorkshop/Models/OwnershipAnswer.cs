@@ -18,6 +18,7 @@ namespace SEWorkshop.Models
             Request = request;
             Owner = loggedInUser;
             Answer = answer;
+            Username = loggedInUser.Username;
         }
     }
 }

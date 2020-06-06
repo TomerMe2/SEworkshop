@@ -22,14 +22,17 @@ namespace SEWorkshop.Models
         public virtual LoggedInUser Owner { get; private set; }
         public virtual string NewOwnerUsername { get; private set; }
         public virtual LoggedInUser NewOwner { get; private set; }
-        private AppDbContext DbContext { get; }
-        public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner, AppDbContext dbContext)
+
+
+        public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)
         {
-            DbContext = dbContext;
             Store = store;
+            StoreName = Store.Name;
+            OwnerUsername = owner.Username;
+            NewOwnerUsername = newOwner.Username;
             Owner = owner;
             NewOwner = newOwner;
-            Answers = (IList<OwnershipAnswer>)DbContext.OwnershipAnswers.Select(ans => ans.Request.Equals(this));
+            Answers = new List<OwnershipAnswer>();
             foreach(var ow in store.Ownership)
             {
                 if (!HasAnswered(ow.LoggedInUser))
@@ -37,11 +40,10 @@ namespace SEWorkshop.Models
                     OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
                     Answers.Add(answer);
                     owner.OwnershipAnswers.Add(answer);
-                    DbContext.OwnershipAnswers.Add(answer);
-                    DbContext.SaveChanges();
                 }
             }
         }
+
         public RequestState GetRequestState()
         {
             if (IsDenied())

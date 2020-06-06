@@ -22,19 +22,16 @@ namespace SEWorkshop.Models
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
         public virtual ICollection<ProductsInBasket> Products { get; private set; }
 
-        public Basket()
-        {
-
-        }
-
         public Basket(Store store, Cart cart, AppDbContext dbContext)
         {
             DbContext = dbContext;
             Store = store;
-            Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
+            //Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
+            Products = new List<ProductsInBasket>();
             Counter_ID++;
             Id = Counter_ID;
             Cart = cart;
+            StoreName = store.Name;
         }
 
         public double PriceWithoutDiscount()

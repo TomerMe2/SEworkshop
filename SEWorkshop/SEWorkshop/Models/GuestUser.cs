@@ -11,15 +11,19 @@ namespace SEWorkshop.Models
     {
         private static int nextId = 0;
         private static object nextIdLock = new object();
-        public virtual int Id { get; set; }
+        
+        //TODO: CHECK THIS
+        //public virtual int Id { get; set; }
 
-        public GuestUser(AppDbContext dbContext) : base(dbContext)
+        public GuestUser() : base()
         {
+            /*
             lock(nextIdLock)
             {
                 Id = nextId;
                 nextId++;
             }
+            */
         }
         
         override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)

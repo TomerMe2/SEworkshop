@@ -15,39 +15,30 @@ namespace SEWorkshop.Models
 
     public abstract class AuthorityHandler
     {
-        public static int CounterId = 0;
-        public virtual int Id { get; set; }
+        public virtual int Id { get; private set; }
         public virtual string AppointerName { get; set; }
         public virtual LoggedInUser Appointer { get; set;}
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public virtual ICollection<Authority> AuthoriztionsOfUser { get; set; }
-        private AppDbContext DbContext { get; }
 
-        public AuthorityHandler()
+        public AuthorityHandler(LoggedInUser appointer)
         {
-
-        }
-
-        public AuthorityHandler(AppDbContext dbContext, LoggedInUser appointer)
-        {
-            DbContext = dbContext;
-            CounterId++;
-            Id = CounterId;
             //AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
             AuthoriztionsOfUser = new List<Authority>();
             Appointer = appointer;
+            AppointerName = appointer.Username;
         }
 
         public void AddAuthorization(Authorizations authorizations)
         {
             Authority authority = new Authority(this, authorizations);
             AuthoriztionsOfUser.Add(authority);
-            DbContext.Authorities.Add(authority);
+            DatabaseProxy.Instance.Authorities.Add(authority);
 
             try
             {
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.SaveChanges();
             }
             catch (DbEntityValidationException ex)
             {
@@ -64,11 +55,14 @@ namespace SEWorkshop.Models
 
         public void RemoveAuthorization(Authorizations authorizations)
         {
-            Authority authority = ((IList<Authority>)DbContext.Authorities
-                .Select(auth => auth.Authorization == authorizations && auth.AuthHandler.Equals(this))).FirstOrDefault();
-            AuthoriztionsOfUser.Remove(authority);
-            DbContext.Authorities.Remove(authority);
-            DbContext.SaveChanges();
+            Authority? authority = (DatabaseProxy.Instance.Authorities
+                .Where(auth => auth.Authorization == authorizations && auth.AuthHandler.Equals(this))).FirstOrDefault();
+            if (authority != null)
+            {
+                AuthoriztionsOfUser.Remove(authority);
+                DatabaseProxy.Instance.Authorities.Remove(authority);
+                DatabaseProxy.Instance.SaveChanges();
+            }
         }
 
         public abstract void AddStoreManager(LoggedInUser newManager);

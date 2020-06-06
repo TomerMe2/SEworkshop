@@ -18,6 +18,8 @@ namespace SEWorkshop.Models.Discounts
             BuySome = buySome;
             GetSome = getSome;
             ProdUnderDiscount = underDiscount;
+            ProdUnderDiscountName = conditionProd.Name;
+            ProdUnderDiscountStoreName = conditionProd.Store.Name;
         }
 
         public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)

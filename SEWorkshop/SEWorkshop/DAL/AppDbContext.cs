@@ -13,10 +13,11 @@ using System.Collections.Immutable;
 
 namespace SEWorkshop.DAL
 {
-    public class AppDbContext : DbContext
+    public abstract class AppDbContext : DbContext
     {
-        public AppDbContext() : base("Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename=\"C:\\Users\\Ravid\\Desktop\\1st Degree\\3rd Year\\Semester F\\Workshop for SE Project\\Code\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\AzamazonLocal.mdf\";Integrated Security = True") 
+        public AppDbContext(string conString) : base(conString)
         {
+            /*
             Addresses = Set<Address>();
             Admins = Set<Administrator>();;
             Authorities = Set<Authority>();
@@ -34,34 +35,37 @@ namespace SEWorkshop.DAL
             Reviews = Set<Review>();
             Stores = Set<Store>();
             LoggedInUsers = Set<LoggedInUser>();
+            */
         }
 
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Administrator> Admins { get; set; }
-        public DbSet<Authority> Authorities { get; set; }
-        public DbSet<AuthorityHandler> AuthorityHandlers { get; set; }
-        public DbSet<Basket> Baskets { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<Discount> Discounts { get; set; }
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<OwnershipRequest> OwnershipRequests { get; set; }
-        public DbSet<OwnershipAnswer> OwnershipAnswers { get; set; }
-        public DbSet<Policy> Policies { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<ProductsInBasket> ProductsInBaskets { get; set; }
-        public DbSet<Purchase> Purchases { get; set; }
-        public DbSet<Review> Reviews { get; set; }
-        public DbSet<Store> Stores { get; set; }
-        public DbSet<LoggedInUser> LoggedInUsers { get; set; }
+        public DbSet<Address> Addresses { get; set; } = null!;
+        public DbSet<Administrator> Admins { get; set; } = null!;
+        public DbSet<Authority> Authorities { get; set; } = null!;
+        public DbSet<AuthorityHandler> AuthorityHandlers { get; set; } = null!;
+        public DbSet<Basket> Baskets { get; set; } = null!;
+        public DbSet<Cart> Carts { get; set; } = null!;
+        public DbSet<Discount> Discounts { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<OwnershipRequest> OwnershipRequests { get; set; } = null!;
+        public DbSet<OwnershipAnswer> OwnershipAnswers { get; set; } = null!;
+        public DbSet<Policy> Policies { get; set; } = null!;
+        public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<ProductsInBasket> ProductsInBaskets { get; set; } = null!;
+        public DbSet<Purchase> Purchases { get; set; } = null!;
+        public DbSet<Review> Reviews { get; set; } = null!;
+        public DbSet<Store> Stores { get; set; } = null!;
+        public DbSet<LoggedInUser> LoggedInUsers { get; set; } = null!;
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            InstantiateKeys(modelBuilder);
+            //InstantiateKeys(modelBuilder);
 
-            DefineRelations(modelBuilder);
+            //DefineRelations(modelBuilder);
         }
+
+        /*
 
         private void InstantiateKeys(DbModelBuilder modelBuilder)
         {
@@ -368,5 +372,6 @@ namespace SEWorkshop.DAL
                     .WithMany(product => product.Reviews)
                     .HasForeignKey(review => new { review.ProdName, review.StoreName });
         }
+        */
     }
 }

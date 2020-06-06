@@ -8,10 +8,11 @@ namespace SEWorkshop.Models.Discounts
     public class ComposedDiscount : Discount
     {
         public virtual Operator? Op { get; set; }
-        public virtual int? leftChildId { get; set; }
-        public virtual int? rightChildId { get; set; }
-        public virtual Discount? leftChild { get; set; }
-        public virtual Discount? rightChild { get; set; }
+        public virtual int? LeftChildId { get; set; }
+        public virtual int? RightChildId { get; set; }
+        public virtual Discount? LeftChild { get; set; }
+        public virtual Discount? RightChild { get; set; }
+
         public ComposedDiscount(Operator op, Discount dis1, Discount dis2) : base(dis1.Deadline, dis1.Store)
         {
             if ((dis1.Store != dis2.Store) || (dis1.Deadline < DateTime.Today) || (dis2.Deadline < DateTime.Today))
@@ -22,18 +23,18 @@ namespace SEWorkshop.Models.Discounts
             dis1.Father = this;
             dis2.Father = this;
             Op = op;
-            leftChild = dis1;
-            rightChild = dis2;
+            LeftChild = dis1;
+            RightChild = dis2;
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
 
         public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
-            if (Op != null && leftChild != null && rightChild != null)
+            if (Op != null && LeftChild != null && RightChild != null)
                 return Op switch
                 {
-                    Operator.And => leftChild.ComputeDiscount(itemsList) +
-                                    rightChild.ComputeDiscount(itemsList),
+                    Operator.And => LeftChild.ComputeDiscount(itemsList) +
+                                    RightChild.ComputeDiscount(itemsList),
                     Operator.Xor => ChooseCheaper(itemsList),
                     Operator.Implies => ApplyImplies(itemsList),
                     _ => throw new Exception("Should not get here"),
@@ -43,20 +44,20 @@ namespace SEWorkshop.Models.Discounts
         
         public double ChooseCheaper(ICollection<ProductsInBasket> itemsList)
         {
-            if (Op != null && leftChild != null && rightChild != null)
-                return Math.Min(leftChild.ComputeDiscount(itemsList),
-                    rightChild.ComputeDiscount(itemsList));
+            if (Op != null && LeftChild != null && RightChild != null)
+                return Math.Min(LeftChild.ComputeDiscount(itemsList),
+                    RightChild.ComputeDiscount(itemsList));
             throw new Exception("should not get here");
         }
 
         public double ApplyImplies(ICollection<ProductsInBasket> itemsList)
         {
-            if (Op != null && leftChild != null && rightChild != null)
+            if (Op != null && LeftChild != null && RightChild != null)
             {
-                double firstDiscount = leftChild.ComputeDiscount(itemsList);
+                double firstDiscount = LeftChild.ComputeDiscount(itemsList);
                 if (firstDiscount > 0)
                 {
-                    return firstDiscount + rightChild.ComputeDiscount(itemsList);
+                    return firstDiscount + RightChild.ComputeDiscount(itemsList);
                 }
             }
             return 0;

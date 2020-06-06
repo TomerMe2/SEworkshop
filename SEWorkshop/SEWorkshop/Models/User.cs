@@ -13,16 +13,11 @@ namespace SEWorkshop.Models
     {
         public virtual int Id { get; set; }
         public virtual Cart Cart { get; set; }
-        private AppDbContext DbContext { get; }
+
 
         public User()
         {
-
-        }
-        public User(AppDbContext dbContext)
-        {
             Cart = new Cart(this);
-            DbContext = dbContext;
         }
 
         public void AddProductToCart(Product product, int quantity)
@@ -52,7 +47,7 @@ namespace SEWorkshop.Models
                 }
             }
             // if we got here, the correct basket doesn't exists now, so we should create it!
-            Basket newBasket = new Basket(product.Store, cart, DbContext);
+            Basket newBasket = new Basket(product.Store, cart);
             Cart.Baskets.Add(newBasket);
             newBasket.Products.Add(new ProductsInBasket(newBasket, product, quantity));
         }

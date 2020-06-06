@@ -15,6 +15,8 @@ namespace SEWorkshop.Models.Discounts
         protected ConditionalDiscount(double percentage, DateTime deadline, Product product, Store store) : base(percentage, deadline, store)
         {
             Product = product;
+            ProdName = product.Name;
+            ProdStoreName = product.Store.Name;
         }
     }
 }

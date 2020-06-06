@@ -27,23 +27,16 @@ namespace SEWorkshop.Models
         public virtual bool IsOpen { get; private set; }
         public virtual string Name { get; private set; }
         public virtual Policy Policy { get; set; }
-        public virtual IList<Policy> Policies { get; set; }
         public virtual ICollection<Purchase> Purchases {get; private set; }
         
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
-        private AppDbContext DbContext { get; }
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        public Store()
-        {
 
-        }
-
-        public Store(LoggedInUser owner, string name, AppDbContext dbContext)
+        public Store(LoggedInUser owner, string name)
         {
-            DbContext = dbContext;
             /*Ownership = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
                     ((Owns)handler).Store != null && ((Owns)handler).Store.Equals(this));
             Management = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
@@ -69,6 +62,10 @@ namespace SEWorkshop.Models
             Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = name;
+            //TODO: SAVE POLICY IN DB
+            Policy = new AlwaysTruePolicy(this);
+            OwnershipRequests = new List<OwnershipRequest>();
+            
         }
 
         public void CloseStore()

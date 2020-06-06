@@ -22,16 +22,13 @@ namespace SEWorkshop.Models
         public virtual string StoreName { get; set; }
         public virtual Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        private AppDbContext DbContext { get; }
 
-        public Owns() : base()
-        {
 
-        }
-        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer, AppDbContext dbContext) : base(dbContext, appointer)
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(appointer)
         {
-            DbContext = dbContext;
             LoggedInUser = loggedInUser;
+            Username = loggedInUser.Username;
+            StoreName = store.Name;
             Store = store;
             AddAuthorization(Authorizations.Authorizing);
             AddAuthorization(Authorizations.Replying);
@@ -44,7 +41,7 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner, DbContext);
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
             if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
@@ -56,8 +53,8 @@ namespace SEWorkshop.Models
             Store.OwnershipRequests.Add(request);
             newOwner.OwnershipRequests.Add(request);
             LoggedInUser.OwnershipRequestsFrom.Add(request);
-            DbContext.OwnershipRequests.Add(request);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.OwnershipRequests.Add(request);
+            DatabaseProxy.Instance.SaveChanges();
             // He wants him to be an owner, cus he suggested that
             request.Answer(LoggedInUser, RequestState.Approved);
             if (request.GetRequestState() == RequestState.Approved)
@@ -69,13 +66,12 @@ namespace SEWorkshop.Models
                 Store.OwnershipRequests.Remove(request);
                 newOwner.OwnershipRequests.Remove(request);
                 request.Owner.OwnershipRequestsFrom.Remove(request);
-                DbContext.OwnershipRequests.Remove(request);
-                DbContext.SaveChanges();
-                Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
-                DbContext.AuthorityHandlers.Add(ownership);
+                var ownership = new Owns(newOwner, Store, LoggedInUser);
                 newOwner.Owns.Add(ownership);
                 Store.Ownership.Add(ownership);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.OwnershipRequests.Remove(request);
+                DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+                DatabaseProxy.Instance.SaveChanges();
             }
         }
 
@@ -91,15 +87,15 @@ namespace SEWorkshop.Models
                     {
                         throw new UserIsAlreadyStoreOwnerException();
                     }
-                    Owns ownership = new Owns(newOwner, Store, LoggedInUser, DbContext);
+                    Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                     Store.Ownership.Add(ownership);
                     Store.OwnershipRequests.Remove(req);
                     newOwner.OwnershipRequests.Remove(req);
                     req.Owner.OwnershipRequestsFrom.Remove(req);
                     newOwner.Owns.Add(ownership);
-                    DbContext.AuthorityHandlers.Add(ownership);
-                    DbContext.OwnershipRequests.Remove(req);
-                    DbContext.SaveChanges();
+                    DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+                    DatabaseProxy.Instance.OwnershipRequests.Remove(req);
+                    DatabaseProxy.Instance.SaveChanges();
                     log.Info("A new owner has been added successfully");
                 }
                 else if (req.GetRequestState() == RequestState.Denied)
@@ -107,8 +103,8 @@ namespace SEWorkshop.Models
                     newOwner.OwnershipRequests.Remove(req);
                     Store.OwnershipRequests.Remove(req);
                     req.Owner.OwnershipRequestsFrom.Remove(req);
-                    DbContext.OwnershipRequests.Remove(req);
-                    DbContext.SaveChanges();
+                    DatabaseProxy.Instance.OwnershipRequests.Remove(req);
+                    DatabaseProxy.Instance.SaveChanges();
                 }
             }
         }
@@ -122,11 +118,11 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-            Manages mangement = new Manages(newManager, Store, LoggedInUser, DbContext);
+            Manages mangement = new Manages(newManager, Store, LoggedInUser);
             Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
-            DbContext.AuthorityHandlers.Add(mangement);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.AuthorityHandlers.Add(mangement);
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("A new manager has been added successfully");
         }
 
@@ -155,8 +151,8 @@ namespace SEWorkshop.Models
             }
             Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
-            DbContext.AuthorityHandlers.Remove(management);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.AuthorityHandlers.Remove(management);
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("The manager has been removed successfully");
         }
 
@@ -186,8 +182,8 @@ namespace SEWorkshop.Models
 
             Store.Ownership.Remove(ownership);
             ownerToRemove.Owns.Remove(ownership);
-            DbContext.AuthorityHandlers.Remove(ownership);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.AuthorityHandlers.Remove(ownership);
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("The owner has been removed successfully");
         }
 
@@ -226,8 +222,8 @@ namespace SEWorkshop.Models
             if (!StoreContainsProduct(newProduct, Store))
             {
                 Store.Products.Add(newProduct);
-                DbContext.Products.Add(newProduct);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.Products.Add(newProduct);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product has been added to store successfully");
                 return newProduct;
             }
@@ -245,8 +241,8 @@ namespace SEWorkshop.Models
             {
                 productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
-                DbContext.Products.Remove(productToRemove);
-                DbContext.SaveChanges();
+                DatabaseProxy.Instance.Products.Remove(productToRemove);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product has been removed from store successfully");
                 return;
             }
@@ -380,10 +376,11 @@ namespace SEWorkshop.Models
             }
             currPol.InnerPolicy = pol;
             currPol.InnerOperator = op;
-            DbContext.Policies.Add(pol);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Policies.Add(pol);
+            DatabaseProxy.Instance.SaveChanges();
         }
         
+        //TODO: THIS FUNCTION WITH RESPECTS TO DB.
         private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
         {
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
@@ -400,20 +397,21 @@ namespace SEWorkshop.Models
                     {
                         Discount toRemove = Store.Discounts.ElementAt(indexInChain);
                         Store.Discounts.RemoveAt(indexInChain);
-                        DbContext.SaveChanges();
+                        DatabaseProxy.Instance.Discounts.Remove(toRemove);
+                        DatabaseProxy.Instance.SaveChanges();
                         if (toLeft)
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
                             Store.Discounts.Insert(indexInChain, newDis);
-                            DbContext.Discounts.Add(newDis);
-                            DbContext.SaveChanges();
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                         else
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
                             Store.Discounts.Insert(indexInChain, newDis);
-                            DbContext.Discounts.Add(newDis);
-                            DbContext.SaveChanges();
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                     }
                     else
@@ -422,22 +420,22 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.Op != null && father.leftChild != null)
+                                if (father.Op != null && father.LeftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.leftChild);
-                                    father.leftChild = newDis;
-                                    DbContext.Discounts.Add(newDis);
-                                    DbContext.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.LeftChild);
+                                    father.LeftChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
                             {
-                                if (father.Op != null && father.rightChild != null)
+                                if (father.Op != null && father.RightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.rightChild);
-                                    father.rightChild = newDis;
-                                    DbContext.Discounts.Add(newDis);
-                                    DbContext.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.RightChild);
+                                    father.RightChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }
@@ -445,24 +443,24 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.Op != null && father.leftChild != null)
+                                if (father.Op != null && father.LeftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.leftChild, dis);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.LeftChild, dis);
                                     newDis.Father = father;
-                                    father.leftChild = newDis;
-                                    DbContext.Discounts.Add(newDis);
-                                    DbContext.SaveChanges();
+                                    father.LeftChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
                             {
-                                if (father.Op != null && father.rightChild != null)
+                                if (father.Op != null && father.RightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.rightChild, dis);
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.RightChild, dis);
                                     newDis.Father = father;
-                                    father.rightChild = newDis;
-                                    DbContext.Discounts.Add(newDis);
-                                    DbContext.SaveChanges();
+                                    father.RightChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }
@@ -478,12 +476,12 @@ namespace SEWorkshop.Models
                 return root;
             }
             if (!(root is ComposedDiscount) || ((ComposedDiscount)root).Op is null ||
-                    ((ComposedDiscount)root).leftChild is null || ((ComposedDiscount)root).rightChild is null)
+                    ((ComposedDiscount)root).LeftChild is null || ((ComposedDiscount)root).RightChild is null)
             {
                 return null;
             }
 
-            return SearchNode(((ComposedDiscount)root).leftChild, disId) ?? SearchNode(((ComposedDiscount)root).rightChild, disId);
+            return SearchNode(((ComposedDiscount)root).LeftChild, disId) ?? SearchNode(((ComposedDiscount)root).RightChild, disId);
         }
 
         //All add policies are adding to the end
@@ -547,8 +545,8 @@ namespace SEWorkshop.Models
             {
                 prev.InnerPolicy = currPol.InnerPolicy;
             }
-            DbContext.Policies.Remove(currPol);
-            DbContext.SaveChanges();
+            DatabaseProxy.Instance.Policies.Remove(currPol);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
@@ -573,7 +571,8 @@ namespace SEWorkshop.Models
 
         public void RemoveDiscount(int indexInChain)
         {
-            DbContext.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
+            DatabaseProxy.Instance.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
+            DatabaseProxy.Instance.SaveChanges();
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }

@@ -13,16 +13,14 @@ namespace SEWorkshop.Models
         public virtual Product Product { get; private set; }
         public virtual int Quantity { get; private set; }
 
-        public ProductsInBasket()
-        {
-
-        }
 
         public ProductsInBasket(Basket basket, Product product, int quantity)
         {
             Basket = basket;
             Product = product;
             Quantity = quantity;
+            ProductName = product.Name;
+            StoreName = basket.StoreName;
         }
     }
 }
