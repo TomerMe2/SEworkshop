@@ -5,7 +5,6 @@ using SEWorkshop.DataModels;
 using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
-using NLog;
 using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades

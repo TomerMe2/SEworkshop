@@ -1,12 +1,9 @@
 ﻿using System;
 using NUnit.Framework;
-using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
-using SEWorkshop.Models;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
-using SEWorkshop.DataModels;
 
 namespace SEWorkshop.Tests.AcceptanceTests
 {
