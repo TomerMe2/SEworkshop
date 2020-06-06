@@ -27,7 +27,6 @@
             <th style="border:solid;border-color:black;border-width:1px">Assigned By</th>
             <th style="border:solid;border-color:black;border-width:1px">Action</th>
         </tr>
-
         @{
             if (Model.Store != null)
             {
@@ -45,19 +44,19 @@
                             <th style="border:solid;border-color:black;border-width:1px">@owner.Value.Username</th>
                         }
                         <th style="border:solid;border-color:black;border-width:1px">
-                             @{
+                            @{
                                 if (owner.Value.Equals(Model.LoggedUser))
                                 {
-                                <form id="removeOwner" method="post" style="text-align:center">
-                                    <div class="form-group">
-                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                        <input type="hidden" name="request" value="RemoveOwner">
-                                        <input type="hidden" name="username" value=@owner.Key.Username>
-                                        <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:35%">Remove Owner</button>
-                                    </div>
-                                </form>
+                                    <form id="removeOwner" method="post" style="text-align:center">
+                                        <div class="form-group">
+                                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                            <input type="hidden" name="request" value="RemoveOwner">
+                                            <input type="hidden" name="username" value=@owner.Key.Username>
+                                            <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:35%">Remove Owner</button>
+                                        </div>
+                                    </form>
                                 }
-                             }
+                            }
                         </th>
                     </tr>
                 }
@@ -127,186 +126,252 @@
             }
         }
     </table>
-    if (Model.LoggedUser != null && Model.Store != null)
+    if (isOwner && Model.Store != null)
     {
-        var auths = Model.LoggedUser.Manages.ContainsKey(Model.Store) ? Model.LoggedUser.Manages[Model.Store] : null;
-        @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Owner))))
-        {
-            <h3>Add Owner</h3>
-            <form id="addOwner" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="AddOwner">
-                    <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
-                    <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Owner</button>
-                </div>
-            </form>
-        }
-
-        @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Manager))))
-        {
-            <h3>Add Manager</h3>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="AddManager">
-                    <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
-                    <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
-                </div>
-            </form>
-        }
-    }
-
-
-
-    @if (isOwner)
-    {
-        <h3>Manage Policies</h3>
-        <h4>Current Policy:</h4>
-        <h5>@Model.Policy</h5>
-
-        @if (Model.PolicyNumber > 0 && Model.Store != null)
-        {
-            <h4>Remove Policy</h4>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="RemovePolicy">
-                    <label for="index">Index:</label>
-                    <input type="number" id="index" name="value" min="1" max=@Model.PolicyNumber>
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Remove</button>
-                </div>
-            </form>
-        }
-
-        @if (Model.Store != null)
-        {
-            <h4>Add Day Policy</h4>
-            <form id="dayPolicy" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="DayPolicy">
-                    <select id="value" name="value">
-                        <option value="And">And</option>
-                        <option value="Or">Or</option>
-                        <option value="Xor">Xor</option>
-                    </select>
-                    <select id="value2" name="value2">
-                        <option value="Sunday">Sunday</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                    </select>
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
-                </div>
-            </form>
-
-            <h4>Add Country Policy</h4>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="CountryPolicy">
-                    <select id="value" name="value">
-                        <option value="And">And</option>
-                        <option value="Or">Or</option>
-                        <option value="Xor">Xor</option>
-                    </select>
-                    <select id="value2" name="value2">
-                        @foreach (var s in Model.countries)
-                        {
-                            <option value=@s>@s</option>
-                        }
-                    </select>
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
-                </div>
-            </form>
-
-            <h4>Add City Policy</h4>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="CityPolicy">
-                    <select id="value" name="value">
-                        <option value="And">And</option>
-                        <option value="Or">Or</option>
-                        <option value="Xor">Xor</option>
-                    </select>
-                    <input name="value2" type="text" placeholder="City" style="width: 15%">
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
-                </div>
-            </form>
-
-            <h4>Add Whole Store Policy</h4>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="StoreQuantityPolicy">
-                    <select id="value" name="value">
-                        <option value="And">And</option>
-                        <option value="Or">Or</option>
-                        <option value="Xor">Xor</option>
-                    </select>
-                    <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
-                    <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
-                </div>
-            </form>
-
-            <h4>Add Single Product Policy</h4>
-            <form id="addManager" method="post">
-                <div class="form-group">
-                    <input type="hidden" name="storeName" value=@Model.Store.Name>
-                    <input type="hidden" name="request" value="ProductQuantityPolicy">
-                    <select id="value" name="value">
-                        <option value="And">And</option>
-                        <option value="Or">Or</option>
-                        <option value="Xor">Xor</option>
-                    </select>
-                    <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
-                    <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
-                    <input name="value4" type="text" placeholder="Product" style="width: 15%">
-                    <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
-                </div>
-            </form>
-
-            <h3>Manage Discounts</h3>
-            <h4>Current Discount:</h4>
-            @if (Model.DiscountNumber > 0)
-            {
-            <table style="width:80%;border:solid;border-color:black;border-width:1px">
-                <tr style="border:solid;border-color:black;border-width:1px">
-                    <th style="border:solid;border-color:black;border-width:1px">Index</th>
-                    <th style="border:solid;border-color:black;border-width:1px">Discount</th>
-                    <th style="border:solid;border-color:black;border-width:1px;width:20%">Action</th>
-                </tr>
-                @{ 
-                    int index = 0;
-                    foreach (var d in Model.discounts)
-                    {
-                        <tr>
-                            <th style="border:solid;border-color:black;border-width:1px">@index</th>
-                            <th style="border:solid;border-color:black;border-width:1px">@d</th>
-                            <th style="border:solid;border-color:black;border-width:1px">
-                                <form id="removeDiscount" method="post" style="text-align:center">
-                                    <div class="form-group">
-                                        <input type="hidden" name="storeName" value=@Model.Store.Name>
-                                        <input type="hidden" name="index" value=@index>
-                                        <button type="submit" asp-page-handler="RemoveDiscountHandler" class="form-control btn btn-primary" style="width:80%">Remove</button>
-                                    </div>
-                                </form>
-                            </th>
-                        </tr>
-                        index++;
-                    }
+        @:<h4>Pending New Owner Requests:</h4>
+        <table style="width:80%;border:solid;border-color:black;border-width:1px">
+            <tr style="border:solid;border-color:black;border-width:1px">
+                <th style="border:solid;border-color:black;border-width:1px">Wanna Be Owner</th>
+                <th style="border:solid;border-color:black;border-width:1px">Assigned By</th>
+                <th style="border:solid;border-color:black;border-width:1px">Your Answer</th>
+                <th style="border:solid;border-color:black;border-width:1px;width:25%">Approve</th>
+                <th style="border:solid;border-color:black;border-width:1px;width:25%">Deny</th>
+            </tr>
+            @{ 
+                foreach(var keyVal in Model.Store.OwnershipRequests)
+                {
+                    var appointer = keyVal.Value;
+                    var wannaBeOwner = keyVal.Key;
+                    var request = wannaBeOwner.OwnershipRequests.First(request => request.Store.Equals(Model.Store));
+                    var answer = request.Answers.First(request => request.Item1.Equals(Model.LoggedUser)).Item2;
+                    <tr style="border:solid;border-color:black;border-width:1px">
+                        <th style="border:solid;border-color:black;border-width:1px">@wannaBeOwner.Username</th>
+                        <th style="border:solid;border-color:black;border-width:1px">@appointer.Username</th>
+                        <th style="border:solid;border-color:black;border-width:1px">@answer.ToString()</th>
+                        <th style="border:solid;border-color:black;border-width:1px">
+                            @{
+                                if (answer == SEWorkshop.Enums.RequestState.Pending)
+                                {
+                                    <form method="post">
+                                        <div class="form-group" style="text-align:center">
+                                            <input type="hidden" name="wannaBeOwnerName" value=@wannaBeOwner.Username>
+                                            <input type="hidden" name="answer" value="Approved">
+                                            <input type="hidden" name="storeName" value="@Model.StoreName">
+                                            <button type="submit" asp-page-handler="AnswerOwnerRequest" class="form-control btn btn-success" style="width:80%">Approve</button>
+                                        </div>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <center><div>-----</div></center>
+                                }
+                            }
+                        </th>
+                        <th style="border:solid;border-color:black;border-width:1px">
+                            @{
+                                if (answer == SEWorkshop.Enums.RequestState.Pending)
+                                {
+                                    <form method="post">
+                                        <div class="form-group" style="text-align:center">
+                                            <input type="hidden" name="wannaBeOwnerName" value=@wannaBeOwner.Username>
+                                            <input type="hidden" name="answer" value="Denied">
+                                            <input type="hidden" name="storeName" value="@Model.StoreName">
+                                            <button type="submit" asp-page-handler="AnswerOwnerRequest" class="form-control btn btn-danger" style="width:80%">Deny</button>
+                                        </div>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <center><div>-----</div></center>
+                                }
+                            }
+                        </th>
+                    </tr>
                 }
-            </table>
+            }
+        </table>
+
+            }
+            if (Model.LoggedUser != null && Model.Store != null)
+            {
+            var auths = Model.LoggedUser.Manages.ContainsKey(Model.Store) ? Model.LoggedUser.Manages[Model.Store] : null;
+            @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Owner))))
+            {
+                <h3>Add Owner</h3>
+                <form id="addOwner" method="post">
+                    <div class="form-group">
+                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                        <input type="hidden" name="request" value="AddOwner">
+                        <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
+                        <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Owner</button>
+                    </div>
+                </form>
+            }
+
+            @if ((isOwner || (isManager && auths != null && auths.Contains(SEWorkshop.Enums.Authorizations.Manager))))
+            {
+                <h3>Add Manager</h3>
+                <form id="addManager" method="post">
+                    <div class="form-group">
+                        <input type="hidden" name="storeName" value=@Model.Store.Name>
+                        <input type="hidden" name="request" value="AddManager">
+                        <input class="form-control" name="username" type="text" placeholder="Username" style="width: 15%">
+                        <button type="submit" asp-page-handler="OwnerManagerHandler" class="form-control btn btn-primary" style="width:15%">Add Manager</button>
+                    </div>
+                </form>
+            }
+            }
+
+
+
+            @if (isOwner)
+            {
+                <h3>Manage Policies</h3>
+                <h4>Current Policy:</h4>
+                <h5>@Model.Policy</h5>
+
+                @if (Model.PolicyNumber > 0 && Model.Store != null)
+                {
+                    <h4>Remove Policy</h4>
+                    <form id="addManager" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="RemovePolicy">
+                            <label for="index">Index:</label>
+                            <input type="number" id="index" name="value" min="1" max=@Model.PolicyNumber>
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Remove</button>
+                        </div>
+                    </form>
+                }
+
+                @if (Model.Store != null)
+                {
+                    <h4>Add Day Policy</h4>
+                    <form id="dayPolicy" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="DayPolicy">
+                            <select id="value" name="value">
+                                <option value="And">And</option>
+                                <option value="Or">Or</option>
+                                <option value="Xor">Xor</option>
+                            </select>
+                            <select id="value2" name="value2">
+                                <option value="Sunday">Sunday</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                            </select>
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                        </div>
+                    </form>
+
+                    <h4>Add Country Policy</h4>
+                    <form id="addManager" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="CountryPolicy">
+                            <select id="value" name="value">
+                                <option value="And">And</option>
+                                <option value="Or">Or</option>
+                                <option value="Xor">Xor</option>
+                            </select>
+                            <select id="value2" name="value2">
+                                @foreach (var s in Model.countries)
+                                {
+                                    <option value=@s>@s</option>
+                                }
+                            </select>
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                        </div>
+                    </form>
+
+                    <h4>Add City Policy</h4>
+                    <form id="addManager" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="CityPolicy">
+                            <select id="value" name="value">
+                                <option value="And">And</option>
+                                <option value="Or">Or</option>
+                                <option value="Xor">Xor</option>
+                            </select>
+                            <input name="value2" type="text" placeholder="City" style="width: 15%">
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                        </div>
+                    </form>
+
+                    <h4>Add Whole Store Policy</h4>
+                    <form id="addManager" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="StoreQuantityPolicy">
+                            <select id="value" name="value">
+                                <option value="And">And</option>
+                                <option value="Or">Or</option>
+                                <option value="Xor">Xor</option>
+                            </select>
+                            <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
+                            <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                        </div>
+                    </form>
+
+                    <h4>Add Single Product Policy</h4>
+                    <form id="addManager" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="storeName" value=@Model.Store.Name>
+                            <input type="hidden" name="request" value="ProductQuantityPolicy">
+                            <select id="value" name="value">
+                                <option value="And">And</option>
+                                <option value="Or">Or</option>
+                                <option value="Xor">Xor</option>
+                            </select>
+                            <input name="value2" type="text" placeholder="Minimum" style="width: 8%">
+                            <input name="value3" type="text" placeholder="Maximum" style="width: 8%">
+                            <input name="value4" type="text" placeholder="Product" style="width: 15%">
+                            <button type="submit" asp-page-handler="PolicyHandler" class="form-control btn btn-primary" style="width:15%">Add Policy</button>
+                        </div>
+                    </form>
+
+                    <h3>Manage Discounts</h3>
+                    <h4>Current Discount:</h4>
+                    @if (Model.DiscountNumber > 0)
+                    {
+                        <table style="width:80%;border:solid;border-color:black;border-width:1px">
+                            <tr style="border:solid;border-color:black;border-width:1px">
+                                <th style="border:solid;border-color:black;border-width:1px">Index</th>
+                                <th style="border:solid;border-color:black;border-width:1px">Discount</th>
+                                <th style="border:solid;border-color:black;border-width:1px;width:20%">Action</th>
+                            </tr>
+                            @{
+                                int index = 0;
+                                foreach (var d in Model.discounts)
+                                {
+                                    <tr>
+                                        <th style="border:solid;border-color:black;border-width:1px">@index</th>
+                                        <th style="border:solid;border-color:black;border-width:1px">@d</th>
+                                        <th style="border:solid;border-color:black;border-width:1px">
+                                            <form id="removeDiscount" method="post" style="text-align:center">
+                                                <div class="form-group">
+                                                    <input type="hidden" name="storeName" value=@Model.Store.Name>
+                                                    <input type="hidden" name="index" value=@index>
+                                                    <button type="submit" asp-page-handler="RemoveDiscountHandler" class="form-control btn btn-primary" style="width:80%">Remove</button>
+                                                </div>
+                                            </form>
+                                        </th>
+                                    </tr>
+                                    index++;
+                                }
+                            }
+                        </table>
                     }
                     else
                     {
-                <h5>None</h5>
+                        <h5>None</h5>
                     }
 
                 <h6>Leave Index Field Empty For New Discount</h6>
@@ -328,11 +393,9 @@
                             {
                                 <option value=@s>@s</option>
                             }
-                        </select>
-                        <select id="chosenCategory" name="chosenCategory" style="display:none;width:8%">
-                            @foreach (var s in Model.categories)
-                            {
-                                <option value=@s>@s</option>
+                            else if (val == "Category") {
+                                $('#chosenProduct').hide();
+                                $('#chosenCategory').show();
                             }
                         </select>
                         <label for="percent">Discount:</label>
@@ -445,17 +508,8 @@
                             $('#chosenCategory').hide();
                             $('#chosenProduct').show();
                         }
-                        else if (val == "Category") {
-                            $('#chosenProduct').hide();
-                            $('#chosenCategory').show();
-                        }
-                        else if (val == 0) {
-                            $('#chosenProduct').show();
-                            $('#chosenCategory').hide();
-                        }
-                    }
-                </script>
+                    </script>
 
                 }
-                }
-                }
+            }
+            }

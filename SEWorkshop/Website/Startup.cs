@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,7 @@ namespace Website
             services.AddSingleton<IUserManager, UserManager>();
             services.AddSingleton(typeof(MessagesObserver), typeof(MessagesObserver));
             services.AddSingleton(typeof(PurchaseObserver), typeof(PurchaseObserver));
+            services.AddSingleton(typeof(OwnershipRequestObserver), typeof(OwnershipRequestObserver));
             services.AddSignalR();
         }
 
@@ -77,6 +79,7 @@ namespace Website
                 endpoints.MapRazorPages();
                 endpoints.MapHub<MessagesNotificationsHub>("/notificationshub");
                 endpoints.MapHub<PurchasesNotificationsHub>("/purchasenotificationshub");
+                endpoints.MapHub<OwnershipRequestHub>("/ownershiprequesthub");
             });
         }
     }

@@ -46,7 +46,7 @@ namespace SEWorkshop.Models
                         if (run.ClientSawIt != true)
                         {
                             counter++;
-                            continue;
+                            break;
                         }
                         run = run.Next;
                     }

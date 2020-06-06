@@ -30,7 +30,7 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser ,newOwner);
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
             if (Store.Owners.ContainsKey(newOwner))
             {
                 throw new UserIsAlreadyStoreOwnerException();
@@ -40,6 +40,8 @@ namespace SEWorkshop.Models
                 throw new OwnershipRequestAlreadyExistsException();
             }
             newOwner.OwnershipRequests.Add(request);
+            // He wants him to be an owner, cus he suggested that
+            request.Answer(LoggedInUser, RequestState.Approved);
             if (request.GetRequestState() == RequestState.Approved)
             {
                 if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
@@ -47,33 +49,35 @@ namespace SEWorkshop.Models
                     throw new UserIsAlreadyStoreOwnerException();
                 }
                 Store.OwnershipRequests.Remove(newOwner);
+                newOwner.OwnershipRequests.Remove(request);
                 Owns ownership = new Owns(newOwner, Store);
                 newOwner.Owns.Add(ownership);
             }
         }
+
         public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
         {
-            foreach (var req in newOwner.OwnershipRequests)
+            var req = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == Store);
+            if (req == null)
             {
-                if (req.Store == Store)
+                return;
+            }
+            req.Answer(LoggedInUser, answer);
+            if (req.GetRequestState() == RequestState.Approved)
+            {
+                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
                 {
-                    req.Answer(LoggedInUser, answer);
+                    throw new UserIsAlreadyStoreOwnerException();
                 }
-                if (req.GetRequestState()==RequestState.Approved)
-                {
-                    if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
-                    {
-                        throw new UserIsAlreadyStoreOwnerException();
-                    }
-                    Owns ownership = new Owns(newOwner, Store);
-                    Store.OwnershipRequests.Remove(newOwner);
-                    newOwner.Owns.Add(ownership);
-                }
-
-                if (req.GetRequestState() == RequestState.Denied)
-                {
-                    Store.OwnershipRequests.Remove(newOwner);
-                }
+                Owns ownership = new Owns(newOwner, Store);
+                Store.OwnershipRequests.Remove(newOwner);
+                newOwner.OwnershipRequests.Remove(req);
+                newOwner.Owns.Add(ownership);
+            }
+            else if (req.GetRequestState() == RequestState.Denied)
+            {
+                newOwner.OwnershipRequests.Remove(req);
+                Store.OwnershipRequests.Remove(newOwner);
             }
         }
 

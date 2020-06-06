@@ -23,7 +23,6 @@ namespace SEWorkshop.Models
             Answers = new List<(LoggedInUser, RequestState)>();
             foreach (var ow in store.Owners.Keys)
             {
-                owner.WriteMessage(store,"ownership request", false);
                 Answers.Add((ow, RequestState.Pending));
             }
         }

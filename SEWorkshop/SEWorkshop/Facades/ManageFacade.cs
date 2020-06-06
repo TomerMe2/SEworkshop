@@ -58,9 +58,10 @@ namespace SEWorkshop.Facades
            loggedInUser.EditProductQuantity(store, product, quantity);
         }
 
-        public void AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
+        public OwnershipRequest? AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
             loggedInUser.AddStoreOwner(store, newOwner);
+            return newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == store);
         }
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
