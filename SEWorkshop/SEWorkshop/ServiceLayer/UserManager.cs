@@ -41,14 +41,17 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
-            ReadActionsFile();
+            try
+            {
+                string[] actions = System.IO.File.ReadAllLines("ActionsFile.txt");
+                ReadActionsFile(actions);
+            }
         }
 
         // action line format: <ActionName>,<Arg1>,<Arg2>...
-        void ReadActionsFile()
+        void ReadActionsFile(string[] actions)
         {
             // Read file on startup
-            string[] actions = System.IO.File.ReadAllLines("ActionsFile.txt");
             //foreach (string line in lines) { Console.WriteLine("\t" + line); }
             const string DEF_SID = "1";
             foreach (string actionLine in actions)
