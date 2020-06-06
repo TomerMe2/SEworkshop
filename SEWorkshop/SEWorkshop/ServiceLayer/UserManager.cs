@@ -27,6 +27,7 @@ namespace SEWorkshop.ServiceLayer
         private object UserDictLock { get; }
         private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; }
         private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
+        private ICollection<IServiceObserver<DataOwnershipRequest>> OwnershipRequestObservers { get; }
 
         public UserManager()
         {
@@ -40,6 +41,7 @@ namespace SEWorkshop.ServiceLayer
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
+            OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
             ReadActionsFile();
         }
 
@@ -351,6 +353,7 @@ namespace SEWorkshop.ServiceLayer
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
+            OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
         }
 
         private static void ConfigLog()
@@ -722,23 +725,24 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.EditProductQuantity(GetLoggedInUser(sessionId), storeName, productName, quantity);
         }
 
-        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, string answer)
+        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer)
         {
-            Log.Info(string.Format("AnswerOwnershipRequest    {0}    {1}    {2}", storeName, newOwnerUserName, answer));
-            var requestState = answer switch
-            {
-                "Denied" => RequestState.Denied,
-                "Approved" => RequestState.Approved,
-                "Pending" => RequestState.Pending,
-                _ => throw new AuthorizationDoesNotExistException(),
-            };
-            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId), storeName, newOwnerUserName, requestState);
+            Log.Info(string.Format("AnswerOwnershipRequest    {0}    {1}    {2}", storeName, newOwnerUserName, nameof(answer)));
+            FacadesBridge.AnswerOwnershipRequest(GetLoggedInUser(sessionId), storeName, newOwnerUserName, answer);
         }
 
         public void AddStoreOwner(string sessionId, string storeName, string username)
         {
             Log.Info(string.Format("AddStoreOwner    {0}    {1}", storeName, username));
-            FacadesBridge.AddStoreOwner(GetLoggedInUser(sessionId), storeName, username);
+            var request = FacadesBridge.AddStoreOwner(GetLoggedInUser(sessionId), storeName, username);
+            if (request == null)
+            {
+                return;
+            }
+            foreach(var obsrv in OwnershipRequestObservers)
+            {
+                obsrv.Notify(request);
+            }
         }
 
         public void AddStoreManager(string sessionId, string storeName, string username)
@@ -954,6 +958,11 @@ namespace SEWorkshop.ServiceLayer
         {
             GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
             return FacadesBridge.GetIncomeInDate(date);
+        }
+
+        public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
+        {
+            OwnershipRequestObservers.Add(obsrv);
         }
 
         public string GetLoggedInUsername(string sessionId)

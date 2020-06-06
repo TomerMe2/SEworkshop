@@ -75,6 +75,10 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
         public double GetIncomeInDate(string sessionId, DateTime date);
+        public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer);
+        public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv);
+
+
         public DataUser GetUser(string sessionId);
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
         public bool IsLoggedIn(string sessionId);

@@ -18,6 +18,9 @@ namespace SEWorkshop.DataModels
                                                                               new DataReview(review)).ToList().AsReadOnly();
         public IReadOnlyList<DataMessage> Messages => InnerLoggedInUser.Messages.Select(message =>
                                                                                 new DataMessage(message)).ToList().AsReadOnly();
+        public IReadOnlyCollection<DataOwnershipRequest> OwnershipRequests => InnerLoggedInUser.OwnershipRequests.Select(request =>
+                                                                                new DataOwnershipRequest(request)).ToList().AsReadOnly();
+
         public string Username => InnerLoggedInUser.Username;
         public byte[] Password => InnerLoggedInUser.Password;
         public int AmountOfUnreadMessages => InnerLoggedInUser.AmountOfUnReadMessage;
