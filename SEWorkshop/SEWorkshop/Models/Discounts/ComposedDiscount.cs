@@ -8,6 +8,8 @@ namespace SEWorkshop.Models.Discounts
     public class ComposedDiscount : Discount
     {
         public virtual Operator? Op { get; set; }
+        public virtual int? leftChildId { get; set; }
+        public virtual int? rightChildId { get; set; }
         public virtual Discount? leftChild { get; set; }
         public virtual Discount? rightChild { get; set; }
         public ComposedDiscount(Operator op, Discount dis1, Discount dis2) : base(dis1.Deadline, dis1.Store)

@@ -219,11 +219,11 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<ComposedDiscount>()
                     .HasOptional(discount => discount.rightChild)
-                    .WithOptionalPrincipal(discount => discount.Father);
+                    .WithOptionalPrincipal(child => child.Father);
 
             modelBuilder.Entity<ComposedDiscount>()
                     .HasOptional(discount => discount.leftChild)
-                    .WithOptionalPrincipal(discount => discount.Father);
+                    .WithOptionalPrincipal(child => child.Father);
 
             modelBuilder.Entity<ComposedDiscount>()
                     .Property(discount => discount.Op)
@@ -232,17 +232,17 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<ConditionalDiscount>()
                     .HasRequired(discount => discount.Product)
                     .WithMany(product => product.ConditionalDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdName });
+                    .HasForeignKey(discount => new { discount.ProdName, discount.ProdStoreName });
 
             modelBuilder.Entity<OpenDiscount>()
                     .HasRequired(discount => discount.Product)
                     .WithMany(product => product.OpenDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdName });
+                    .HasForeignKey(discount => new { discount.ProdName, discount.ProdStoreName });
 
             modelBuilder.Entity<BuySomeGetSomeDiscount>()
                     .HasRequired(discount => discount.ProdUnderDiscount)
                     .WithMany(product => product.BuySomeGetSomeDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdUnderDiscountName });
+                    .HasForeignKey(discount => new { discount.ProdUnderDiscountName, discount.ProdUnderDiscountStoreName });
 
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.LoggedInUser)

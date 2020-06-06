@@ -17,7 +17,6 @@ namespace SEWorkshop.Models
         public virtual string HouseNumber { get; set; }
         public virtual string Country { get; set; }
         public virtual Address Address { get; set;  }
-        [Timestamp]
         public virtual DateTime TimeStamp { get; set;  }
         public virtual double MoneyPaid { get; set; }
 
