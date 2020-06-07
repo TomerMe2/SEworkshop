@@ -8,7 +8,7 @@ using System.Linq;
 using SEWorkshop.Enums;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
-using SEWorkshop.Tests.TestsDB;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.UnitTests
 {
@@ -17,6 +17,12 @@ namespace SEWorkshop.Tests.UnitTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
         private Address DEF_ADRS = new Address("1", "1", "1", "1");
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            DatabaseProxy.MoveToTestDb();
+        }
 
         [Test]
         public void WriteReview()

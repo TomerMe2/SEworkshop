@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
 using SEWorkshop.DataModels;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.AcceptanceTests
 {
@@ -16,7 +17,13 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		private Bridge bridge = new ProxyServiceLayer();
         private const string DEF_SID = "1";
 
-		[Test, Order(1)]
+        [OneTimeSetUp]
+        public void Init()
+        {
+            DatabaseProxy.MoveToTestDb();
+        }
+
+        [Test, Order(1)]
 		public void Test_2_2()
         {
 			Assert.That(() => bridge.Register(DEF_SID, "user", "1234"), Throws.Nothing);

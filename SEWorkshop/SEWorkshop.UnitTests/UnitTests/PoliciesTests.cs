@@ -25,6 +25,12 @@ namespace SEWorkshop.Tests.UnitTests
 
         private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44");
 
+        [OneTimeSetUp]
+        public void Init()
+        {
+            DatabaseProxy.MoveToTestDb();
+        }
+
 
         [SetUp]
         public void Setup()

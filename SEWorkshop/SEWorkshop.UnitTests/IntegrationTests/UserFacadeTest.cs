@@ -29,9 +29,10 @@ namespace SEWorkshop.Tests.IntegrationTests
         [OneTimeSetUp]
         public void SetUp()
         {
+            DatabaseProxy.MoveToTestDb();
             MngrFacade = new ManageFacade();
-            StrFacade = new StoreFacade(DatabaseProxy.Instance);
-            UsrFacade = new UserFacade(StrFacade, DatabaseProxy.Instance);
+            StrFacade = new StoreFacade();
+            UsrFacade = new UserFacade(StrFacade);
         }
 
         //public LoggedInUser GetUser(string username)

@@ -118,7 +118,7 @@ namespace SEWorkshop.Facades
 
         public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            return user.Purchase(basket, creditCardNumber, address, this);
+            return user.Purchase(basket, creditCardNumber, address);
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)

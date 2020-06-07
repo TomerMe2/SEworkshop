@@ -22,6 +22,12 @@ namespace SEWorkshop.Tests.UnitTests
         const string COUNTRY_STUB = "Israel";
         Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
 
+        [OneTimeSetUp]
+        public void Init()
+        {
+            DatabaseProxy.MoveToTestDb();
+        }
+
         [SetUp]
         public void Setup()
         {
