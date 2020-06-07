@@ -69,7 +69,7 @@ namespace SEWorkshop.Facades
         private Product GetProduct(string storeName, string productName)
         {
             Store store = GetStore(storeName);
-            Product? product = store.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
+            Product? product = store.Products.ToList().FirstOrDefault(prod => prod.Name.Equals(productName));
             if (product is null)
             {
                 throw new ProductNotInTheStoreException();
@@ -79,7 +79,7 @@ namespace SEWorkshop.Facades
 
         public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
-            var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            Store store = GetStore(storeName);
             if (store is null)
             {
                 throw new StoreNotInTradingSystemException();

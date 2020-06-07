@@ -59,7 +59,6 @@ namespace SEWorkshop.Models
                         Cart = dbContext.Carts.FirstOrDefault(cart => cart.LoggedInUser != null && cart.LoggedInUser.Equals(this));
                         if(Cart == default)
             */
-            //Owns = DatabaseProxy.Instance.AuthorityHandlers.OfType<Owns>().Where(owns => owns.Username.Equals(username)).ToList();
             Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();

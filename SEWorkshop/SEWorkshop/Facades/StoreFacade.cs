@@ -86,7 +86,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Product> AllActiveProducts()
         {
-            return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products));
+            return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products.ToList()));
         }
 
         /// <summary>

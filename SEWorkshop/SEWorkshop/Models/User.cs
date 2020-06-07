@@ -44,15 +44,24 @@ namespace SEWorkshop.Models
                         quantity = quantity + prod.Quantity;
                         // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
                         basket.Products.Remove(prod);  //so we can add it later :)
+                        DatabaseProxy.Instance.ProductsInBaskets.Remove(prod);
+                        DatabaseProxy.Instance.SaveChanges();
                     }
-                    basket.Products.Add(new ProductsInBasket(basket, product, quantity));
+                    ProductsInBasket newPib = new ProductsInBasket(basket, product, quantity);
+                    basket.Products.Add(newPib);
+                    DatabaseProxy.Instance.ProductsInBaskets.Add(newPib);
+                    DatabaseProxy.Instance.SaveChanges();
                     return;  // basket found and updated. Nothing more to do here...
                 }
             }
             // if we got here, the correct basket doesn't exists now, so we should create it!
             Basket newBasket = new Basket(product.Store, cart);
             Cart.Baskets.Add(newBasket);
-            newBasket.Products.Add(new ProductsInBasket(newBasket, product, quantity));
+            ProductsInBasket pib = new ProductsInBasket(newBasket, product, quantity);
+            newBasket.Products.Add(pib);
+            DatabaseProxy.Instance.Baskets.Add(newBasket);
+            DatabaseProxy.Instance.ProductsInBaskets.Add(pib);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
