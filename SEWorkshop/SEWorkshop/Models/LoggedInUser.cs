@@ -48,17 +48,6 @@ namespace SEWorkshop.Models
         {
             Username = username;
             Password = password;
-            /*            OwnershipRequests = (IList<OwnershipRequest>)dbContext.OwnershipRequests.Select(req => req.Owner != null && req.Owner.Equals(this));
-                        Owns = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
-                                ((Owns)handler).LoggedInUser != null && ((Owns)handler).LoggedInUser.Equals(this));
-                        Manage = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
-                                ((Manages)handler).LoggedInUser != null && ((Manages)handler).LoggedInUser.Equals(this));
-                        Reviews = (IList<Review>)dbContext.Reviews.Select(review => review.Writer != null && review.Writer.Equals(this));
-                        Messages = (IList<Message>)dbContext.Messages.Select(message => message.WrittenBy != null && message.WrittenBy.Equals(this));
-                        Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.User != null && purhcase.User.Equals(this));
-                        Cart = dbContext.Carts.FirstOrDefault(cart => cart.LoggedInUser != null && cart.LoggedInUser.Equals(this));
-                        if(Cart == default)
-            */
             Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();
@@ -71,6 +60,7 @@ namespace SEWorkshop.Models
             OwnershipRequestsFrom = new List<OwnershipRequest>();
         }
 
+        [NotMapped()]
         public int AmountOfUnReadMessage
         {
             get
@@ -132,8 +122,8 @@ namespace SEWorkshop.Models
 
         public Product AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
-            var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));  
+            var ownership = Owns.FirstOrDefault(man =>(man.Store.Name.Equals(store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));  
             if(management == null)
             {
                 if (ownership == null)
@@ -185,21 +175,19 @@ namespace SEWorkshop.Models
         public void EditProductName(Store store, Product product, string name)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductName(product, name);
                 return;
             }
             management.EditProductName(product, name);
-
         }
         
         public void EditProductPrice(Store store, Product product, double price)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-              var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductPrice(product, price);
@@ -214,7 +202,7 @@ namespace SEWorkshop.Models
         public void EditProductQuantity(Store store, Product product, int quantity)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductQuantity(product, quantity);
@@ -227,7 +215,7 @@ namespace SEWorkshop.Models
         public void SetPermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 ownership.SetPermissionsOfManager(manager, authorization);
@@ -238,8 +226,8 @@ namespace SEWorkshop.Models
 
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.AddStoreOwner(newOwner);
@@ -250,8 +238,8 @@ namespace SEWorkshop.Models
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.AddStoreManager(newManager);
@@ -263,8 +251,8 @@ namespace SEWorkshop.Models
         public void RemoveStoreManager(Store store, LoggedInUser managerToRemove)
         {
 
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.RemoveStoreManager(managerToRemove);
@@ -276,8 +264,8 @@ namespace SEWorkshop.Models
         public void RemoveStoreOwner(Store store, LoggedInUser ownerToRemove)
         {
 
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.RemoveStoreOwner(ownerToRemove);
@@ -288,8 +276,8 @@ namespace SEWorkshop.Models
 
         public Message MessageReply(Message message, Store store, string description)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 return ownership.MessageReply(this, store, message, description);
@@ -309,8 +297,8 @@ namespace SEWorkshop.Models
 
         public IEnumerable<Message> GetMessage(Store store)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 return ownership.GetMessage(store, this);
@@ -320,8 +308,8 @@ namespace SEWorkshop.Models
 
         public IEnumerable<Purchase> PurchaseHistory(Store store)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 return ownership.ViewPurchaseHistory(this, store);
@@ -329,7 +317,7 @@ namespace SEWorkshop.Models
             return management.ViewPurchaseHistory(this, store);
         }
 
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -345,7 +333,6 @@ namespace SEWorkshop.Models
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
-            facade.AddPurchaseToList(purchase);
             DatabaseProxy.Instance.Purchases.Add(purchase);
             DatabaseProxy.Instance.SaveChanges();
             return purchase;
@@ -355,7 +342,7 @@ namespace SEWorkshop.Models
         public void RemovePermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 ownership.RemovePermissionsOfManager(manager, authorization);

@@ -169,5 +169,15 @@ namespace SEWorkshop.Models
         {
             return OwnershipRequests.Where(req => req.NewOwner.Equals(candidate)).Count() > 0;
         }
+
+        public bool Equals(object other)
+        {
+            if (other is Store)
+            {
+                Store otherStore = (Store)other;
+                return otherStore.Name.Equals(Name);
+            }
+            return false;
+        }
     }
 }

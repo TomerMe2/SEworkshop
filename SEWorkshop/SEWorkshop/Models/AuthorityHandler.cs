@@ -38,7 +38,6 @@ namespace SEWorkshop.Models
 
         public AuthorityHandler(LoggedInUser loggedInUser, Store store, LoggedInUser appointer)
         {
-            //AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
             AuthoriztionsOfUser = new List<Authority>();
             Appointer = appointer;
             AppointerName = appointer.Username;
@@ -52,7 +51,7 @@ namespace SEWorkshop.Models
         {
             Authority authority = new Authority(this, authorizations);
             AuthoriztionsOfUser.Add(authority);
-            //DatabaseProxy.Instance.Authorities.Add(authority);
+            DatabaseProxy.Instance.Authorities.Add(authority);
             return authority;
         }
 

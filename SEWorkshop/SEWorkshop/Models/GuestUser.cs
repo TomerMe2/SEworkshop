@@ -26,7 +26,7 @@ namespace SEWorkshop.Models
             
         }
         
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();

@@ -32,12 +32,12 @@ namespace SEWorkshop.Models
 
         public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
         {
-            AddAuthorization(Authorizations.Authorizing);
-            AddAuthorization(Authorizations.Replying);
-            AddAuthorization(Authorizations.Products);
-            AddAuthorization(Authorizations.Watching);
-            AddAuthorization(Authorizations.Manager);
-            AddAuthorization(Authorizations.Owner);
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Authorizing));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Replying));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Products));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Watching));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Manager));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Owner));
         }
 
         public void AddStoreOwner(LoggedInUser newOwner)
@@ -264,6 +264,7 @@ namespace SEWorkshop.Models
             }
 
             product.Description = description;
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's description has been modified successfully");
         }
 
@@ -278,6 +279,7 @@ namespace SEWorkshop.Models
             }
 
             product.Category = category;
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's category has been modified successfully");
             return;
         }
@@ -285,7 +287,6 @@ namespace SEWorkshop.Models
         override public void EditProductName(Product product, string name)
         {
             log.Info("User tries to modify product's name");
-            Product demo = new Product(Store, name, "", "", 0, 0);
 
             if (!StoreContainsProduct(product, Store))
             {
@@ -293,13 +294,14 @@ namespace SEWorkshop.Models
                 throw new ProductNotInTradingSystemException();
             }
 
-            if (StoreContainsProduct(demo, Store))
+            if (Store.Products.Any(prod => prod.Name.Equals(product.Name)))
             {
                 log.Info("Product name is already taken in store");
                 throw new StoreWithThisNameAlreadyExistsException();
             }
 
             product.Name = name;
+            DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's category has been modified successfully");
             return;
         }
@@ -316,6 +318,7 @@ namespace SEWorkshop.Models
                 }
 
                 product.Price = price;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's price has been modified successfully");
                 return;
             }
@@ -332,9 +335,9 @@ namespace SEWorkshop.Models
                 throw new ProductNotInTradingSystemException();
             }
 
-            log.Info("Product's quantity has been modified successfully");
             product.Quantity = quantity;
-
+            DatabaseProxy.Instance.SaveChanges();
+            log.Info("Product's quantity has been modified successfully");
         }
 
         public void RemovePermissionsOfManager(LoggedInUser manager, Authorizations authorization)
@@ -399,21 +402,20 @@ namespace SEWorkshop.Models
                     {
                         Discount toRemove = Store.Discounts.ElementAt(indexInChain);
                         Store.Discounts.RemoveAt(indexInChain);
-                        //TODO: HERE
-                        //DatabaseProxy.Instance.Discounts.Remove(toRemove);
+                        DatabaseProxy.Instance.Discounts.Remove(toRemove);
                         DatabaseProxy.Instance.SaveChanges();
                         if (toLeft)
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
                             Store.Discounts.Insert(indexInChain, newDis);
-                            //DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
                             DatabaseProxy.Instance.SaveChanges();
                         }
                         else
                         {
                             ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
                             Store.Discounts.Insert(indexInChain, newDis);
-                            //DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
                             DatabaseProxy.Instance.SaveChanges();
                         }
                     }
@@ -427,7 +429,7 @@ namespace SEWorkshop.Models
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.LeftChild);
                                     father.LeftChild = newDis;
-                                    //DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
@@ -437,7 +439,7 @@ namespace SEWorkshop.Models
                                 {
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.RightChild);
                                     father.RightChild = newDis;
-                                    //DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
@@ -451,7 +453,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.LeftChild, dis);
                                     newDis.Father = father;
                                     father.LeftChild = newDis;
-                                    //DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
@@ -462,7 +464,7 @@ namespace SEWorkshop.Models
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.RightChild, dis);
                                     newDis.Father = father;
                                     father.RightChild = newDis;
-                                    //DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
@@ -574,9 +576,10 @@ namespace SEWorkshop.Models
 
         public void RemoveDiscount(int indexInChain)
         {
-            //DatabaseProxy.Instance.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
+            var toRemove = Store.Discounts.ElementAt(indexInChain);
+            Store.Discounts.Remove(toRemove);
+            DatabaseProxy.Instance.Discounts.Remove(toRemove);
             DatabaseProxy.Instance.SaveChanges();
-            Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }
 

@@ -26,7 +26,7 @@ namespace SEWorkshop.Models
 
         public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
         {
-            AddAuthorization(Authorizations.Watching);
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Watching));
         }
 
         public override void RemoveStoreManager(LoggedInUser managerToRemove)

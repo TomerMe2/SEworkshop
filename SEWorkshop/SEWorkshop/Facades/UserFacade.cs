@@ -29,12 +29,6 @@ namespace SEWorkshop.Facades
             GuestUsers = new List<GuestUser>();
         }
 
-        public void AddPurchaseToList(Purchase p)
-        {
-            DatabaseProxy.Instance.Purchases.Add(p);
-            DatabaseProxy.Instance.SaveChanges();
-        }
-
         public LoggedInUser GetLoggedInUser(string username)
         {
             var user = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals(username));

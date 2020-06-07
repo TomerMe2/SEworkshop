@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Enums;
 using System;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Facades
 {
@@ -62,12 +63,18 @@ namespace SEWorkshop.Facades
         public OwnershipRequest? AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
             loggedInUser.AddStoreOwner(store, newOwner);
-            return newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == store);
+            var request = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == store);
+            if (request != null)
+            {
+                DatabaseProxy.Instance.OwnershipRequests.Add(request);
+                DatabaseProxy.Instance.SaveChanges();
+            }
+            return request;
         }
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
-           loggedInUser.AddStoreManager(store, newManager);
+            loggedInUser.AddStoreManager(store, newManager);
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
