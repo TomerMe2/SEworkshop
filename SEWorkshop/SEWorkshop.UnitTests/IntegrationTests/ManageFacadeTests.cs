@@ -572,14 +572,14 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser forthOwner = new LoggedInUser("appdevloper4", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(firstOwner, store, forthOwner);
             
-            Assert.IsFalse(store.Owners.ContainsKey(forthOwner));
-            Assert.IsTrue(store.OwnershipRequests.ContainsKey(forthOwner));
+            Assert.IsFalse(store.GetOwnership(forthOwner) != null);
+            Assert.IsTrue(store.RequestExists(forthOwner));
 
             Facade.AnswerOwnershipRequest(secondOwner, store, forthOwner, RequestState.Approved);
             Facade.AnswerOwnershipRequest(thirdOwner, store, forthOwner, RequestState.Approved);
 
-            Assert.IsTrue(store.Owners.ContainsKey(forthOwner));
-            Assert.IsFalse(store.OwnershipRequests.ContainsKey(forthOwner));
+            Assert.IsTrue(store.GetOwnership(forthOwner) != null);
+            Assert.IsFalse(store.RequestExists(forthOwner));
         }
 
 

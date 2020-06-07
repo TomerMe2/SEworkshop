@@ -192,7 +192,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.AddSingleProductQuantityPolicy(sessionId, storeName, op, productName, minQuantity, maxQuantity);
         }
 
-        public override void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        public override void AddSystemDayPolicy(string sessionId, string storeName, Operator op, Weekday cantBuyIn)
         {
             userManager.AddSystemDayPolicy(sessionId, storeName, op, cantBuyIn);
         }
