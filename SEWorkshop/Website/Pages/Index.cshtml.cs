@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SEWorkshop.DataModels;
-using SEWorkshop.Exceptions;
 using SEWorkshop.ServiceLayer;
 
 namespace Website.Pages
@@ -19,7 +16,7 @@ namespace Website.Pages
         public IndexModel(IUserManager userManager)
         {
             UserManager = userManager;
-            Username = UserManager.GetLoggedInUsername(HttpContext.Session.Id);
+            Username = "";
         }
 
         public void OnGet()
