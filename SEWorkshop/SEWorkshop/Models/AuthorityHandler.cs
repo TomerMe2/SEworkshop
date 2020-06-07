@@ -92,7 +92,7 @@ namespace SEWorkshop.Models
 
         public bool UserHasPermission(Store store ,LoggedInUser loggedInUser, Authorizations authorization)
         {
-            var management =loggedInUser.Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = loggedInUser.Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
 
             // to add a product it is required that the user who want to add the proudct is a store owner or a manager
             return (IsUserStoreOwner(loggedInUser, store)
@@ -103,7 +103,7 @@ namespace SEWorkshop.Models
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
         {
             log.Info("User tries to view purchase history of store {0}", store.Name);
-            if (UserHasPermission(store, loggedInUser ,Authorizations.Watching))
+            if (UserHasPermission(store, loggedInUser, Authorizations.Watching))
             {
                 log.Info("Data has been fetched successfully");
                 return store.Purchases;

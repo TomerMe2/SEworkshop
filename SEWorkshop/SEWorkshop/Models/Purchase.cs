@@ -12,12 +12,6 @@ namespace SEWorkshop.Models
         public virtual LoggedInUser? User { get; private set;}
         public virtual int BasketId { get; set; }
         public virtual Basket Basket { get; private set; }
-        /*
-        public virtual string City { get; set; }
-        public virtual string Street { get; set; }
-        public virtual string HouseNumber { get; set; }
-        public virtual string Country { get; set; }
-        */
         public virtual Address Address { get; set;  }
         public virtual DateTime TimeStamp { get; set;  }
         public virtual double MoneyPaid { get; set; }

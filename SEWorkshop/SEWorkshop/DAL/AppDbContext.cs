@@ -193,6 +193,10 @@ namespace SEWorkshop.DAL
                     .ToTable("Messages")
                     .HasKey(message => message.Id);
 
+            modelBuilder.Entity<Message>()
+                .Property(message => message.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
             modelBuilder.Entity<OwnershipAnswer>()
                     .ToTable("OwnershipAnswers")
                     .HasKey(ans => ans.Id);

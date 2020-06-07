@@ -47,11 +47,9 @@ namespace SEWorkshop.Models
             {
                 if (!HasAnswered(ow.LoggedInUser))
                 {
-                    //TODO: CHECK THAT THIS IS FINE. IT'S WEIRD BECAUSE THIS IS NOT "READY" YET
                     OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
                     Answers.Add(answer);
                     owner.OwnershipAnswers.Add(answer);
-                    DatabaseProxy.Instance.OwnershipAnswers.Add(answer);
                 }
             }
         }
@@ -74,6 +72,7 @@ namespace SEWorkshop.Models
             where ans.Owner.Username != Owner.Username
             select ans).ToList().Count() > 0);
 
+        //TODO: SEE THAT THIS FUNCTION WAS CHANGED. NOW THERE'S AN ITERATOR CHANGE INSIDE FOREACH
         public void Answer(LoggedInUser owner, RequestState decision)
         {
             foreach (var answer in Answers)

@@ -19,7 +19,6 @@ namespace SEWorkshop.Models
 
         public Administrator(string username, byte[] password) : base(username, password)
         {
-            //PurchasesToView = (ICollection<Purchase>)dbContext.Purchases.Select(purhcase => true);
             PurchasesToView = new List<Purchase>();
         }
     }
