@@ -298,7 +298,6 @@ namespace SEWorkshop.Models
             DatabaseProxy.Instance.SaveChanges();
             log.Info("A new owner has been added successfully");
             return;
-
         }
 
 

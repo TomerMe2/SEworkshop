@@ -68,8 +68,6 @@ namespace SEWorkshop.Facades
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
            loggedInUser.AddStoreManager(store, newManager);
-          
-           
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)

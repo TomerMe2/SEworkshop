@@ -43,6 +43,7 @@ namespace SEWorkshop.Facades
 
             Owns ownership = new Owns(owner, newStore, demo);
             newStore.Ownership.Add(ownership);
+            owner.Owns.Add(ownership);
             DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
             foreach(var auth in ownership.AuthoriztionsOfUser)
             {
