@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System.Linq;
 
 namespace SEWorkshop.Models
 {
     public class Purchase
     {
+        public virtual Administrator Admin { get; set; }
+        public virtual string AdminUserName { get; set; }
         public virtual string? Username { get; set; }
         public virtual LoggedInUser? User { get; private set;}
         public virtual int BasketId { get; set; }
@@ -30,6 +34,8 @@ namespace SEWorkshop.Models
             City = "";
             Street = "";
             HouseNumber = "";
+            AdminUserName = Administrator.ADMIN_USER_NAME;
+            Admin = null!;
         }
 
 
@@ -41,6 +47,8 @@ namespace SEWorkshop.Models
             Address = adrs;
             MoneyPaid = basket.PriceAfterDiscount();
             Basket.Purchase = this;
+            AdminUserName = Administrator.ADMIN_USER_NAME;
+            Admin = DatabaseProxy.Instance.Administrators.First();
 
             Country = adrs.Country;
             City = adrs.City;

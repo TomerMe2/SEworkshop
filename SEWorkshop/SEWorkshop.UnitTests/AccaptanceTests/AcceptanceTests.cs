@@ -12,13 +12,14 @@ namespace SEWorkshop.Tests.AcceptanceTests
 	[TestFixture]
 	public class AcceptanceTests
 	{
-		private Bridge bridge = new ProxyServiceLayer();
+		private Bridge bridge { get; set; }
         private const string DEF_SID = "1";
 
         [OneTimeSetUp]
         public void Init()
         {
             DatabaseProxy.MoveToTestDb();
+            bridge = new ProxyServiceLayer();
         }
 
         [Test, Order(1)]

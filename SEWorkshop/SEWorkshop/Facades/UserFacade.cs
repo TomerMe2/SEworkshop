@@ -26,6 +26,10 @@ namespace SEWorkshop.Facades
             Purchases = new List<Purchase>();
             Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};*/
             GuestUsers = new List<GuestUser>();
+            if (!DatabaseProxy.Instance.Administrators.Any())
+            {
+                DatabaseProxy.Instance.Administrators.Add(new Administrator(Administrator.ADMIN_USER_NAME, securityAdapter.Encrypt("sadnaTeam" )));
+            }
         }
 
         public LoggedInUser GetLoggedInUser(string username)

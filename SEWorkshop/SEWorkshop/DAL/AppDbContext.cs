@@ -78,7 +78,7 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Administrator>()
                     .ToTable("Administrators")
-                    .HasKey(admin => admin.Id);
+                    .HasKey(admin => admin.Username);
 
             modelBuilder.Entity<Authority>()
                     .ToTable("Authorities")
@@ -306,6 +306,8 @@ namespace SEWorkshop.DAL
          
         private void DefineRelations(DbModelBuilder modelBuilder)
         {
+            
+
             modelBuilder.Entity<Authority>()
                     .HasRequired(auth => auth.AuthHandler)
                     .WithMany(handler => handler.AuthoriztionsOfUser)
@@ -327,6 +329,12 @@ namespace SEWorkshop.DAL
                     .WithMany(cart => cart.Baskets)
                     .HasForeignKey(basket => new { basket.CartId })
                     .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Purchase>()
+                .HasRequired(prchs => prchs.Admin)
+                .WithMany(admin => admin.PurchasesToView)
+                .HasForeignKey(prchs => prchs.AdminUserName)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Basket>()
                     .HasRequired(basket => basket.Store)

@@ -10,6 +10,7 @@ namespace SEWorkshop.Models
 {
     public class Administrator : LoggedInUser
     {
+        public static readonly string ADMIN_USER_NAME = "admin";
         public ICollection<Purchase> PurchasesToView { get; private set; }
 
         private Administrator() : base()
