@@ -19,7 +19,6 @@ namespace SEWorkshop.Tests.UnitTests
         private Product Prod3 { get; set; }
         private Product Prod4 { get; set; }
         private Product Prod5 { get; set; }
-        private AppDbContext DbContext;
 
         private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44");
         
@@ -28,10 +27,9 @@ namespace SEWorkshop.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
-            DbContext = new AppDbContext();
-            Buyer = new LoggedInUser("buyer", new byte[1] { 0 }, DbContext);
-            StoreOwner = new LoggedInUser("owner", new byte[1] { 0 }, DbContext);
-            Str = new Store(StoreOwner, "storenm", DbContext);
+            Buyer = new LoggedInUser("buyer", new byte[1] { 0 });
+            StoreOwner = new LoggedInUser("owner", new byte[1] { 0 });
+            Str = new Store(StoreOwner, "storenm");
             Prod1 = new Product(Str, "prod1", "desc1", "cat1", 1, 999);
             Prod2 = new Product(Str, "prod2", "desc2", "cat2", 2, 999);
             Prod3 = new Product(Str, "prod3", "desc3", "cat3", 3, 999);
@@ -44,7 +42,7 @@ namespace SEWorkshop.Tests.UnitTests
             Str.Products.Add(Prod4);
             Str.Products.Add(Prod5);
 
-            Bskt = new Basket(Str, Buyer.Cart, DbContext);
+            Bskt = new Basket(Str, Buyer.Cart);
             Buyer.Cart.Baskets.Add(Bskt);
 
             Deadline = DateTime.Now.AddMonths(1);
