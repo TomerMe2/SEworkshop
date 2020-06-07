@@ -3,8 +3,8 @@ using NUnit.Framework;
 using SEWorkshop.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
-using SEWorkshop.Tests.AccaptanceTests;
 using SEWorkshop.DataModels;
+using SEWorkshop.Tests.AccaptanceTests;
 
 namespace SEWorkshop.Tests.AcceptanceTests
 {
