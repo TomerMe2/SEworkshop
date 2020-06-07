@@ -1,0 +1,5 @@
+Register,Noa Kirel,1234
+Login,Noa Kirel,1234
+OpenStore,Waist Pouches
+AddProduct,Waist Pouches,Pouch1,pink,Women Pouches,50,300
+Logout

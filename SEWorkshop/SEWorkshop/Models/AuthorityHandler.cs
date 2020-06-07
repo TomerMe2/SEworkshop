@@ -86,7 +86,7 @@ namespace SEWorkshop.Models
                                                                        where manager.LoggedInUser == loggedInUser
                                                                        select manager).ToList().Count() > 0);
 
-        public bool StoreContainsProduct(Product product, Store store) => ((from pr in store.Products
+        public bool StoreContainsProduct(Product product, Store store) => ((from pr in store.Products.ToList()
                                                                where pr.Name == product.Name
                                                                select product).ToList().Count() > 0);
 

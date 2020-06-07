@@ -557,6 +557,31 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.IsFalse(store.RequestExists(secondOwner));
         }
 
+        [Test]
+        public void AddingAndApprovingNewStoreOwner3Owners()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser firstOwner = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
+            Store store = new Store(firstOwner, STORE_NAME);
+            LoggedInUser secondOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
+            Facade.AddStoreOwner(firstOwner, store, secondOwner);
+            LoggedInUser thirdOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
+            Facade.AddStoreOwner(firstOwner, store, thirdOwner);
+            Facade.AnswerOwnershipRequest(secondOwner, store, thirdOwner, RequestState.Approved);
+
+            LoggedInUser forthOwner = new LoggedInUser("appdevloper4", SecurityAdapter.Encrypt("1234"));
+            Facade.AddStoreOwner(firstOwner, store, forthOwner);
+            
+            Assert.IsFalse(store.GetOwnership(forthOwner) != null);
+            Assert.IsTrue(store.RequestExists(forthOwner));
+
+            Facade.AnswerOwnershipRequest(secondOwner, store, forthOwner, RequestState.Approved);
+            Facade.AnswerOwnershipRequest(thirdOwner, store, forthOwner, RequestState.Approved);
+
+            Assert.IsTrue(store.GetOwnership(forthOwner) != null);
+            Assert.IsFalse(store.RequestExists(forthOwner));
+        }
+
 
         [Test]
         public void RemovePermissionsOfManager()

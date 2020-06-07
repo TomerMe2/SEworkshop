@@ -5,7 +5,6 @@ using SEWorkshop.DataModels;
 using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
-using NLog;
 using SEWorkshop.Enums;
 using SEWorkshop.DAL;
 
@@ -68,9 +67,8 @@ namespace SEWorkshop.Facades
 
         private Product GetProduct(string storeName, string productName)
         {
-            Store store = GetStore(storeName);
-            Product? product = store.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
-            if (product is null)
+            Product? product = DatabaseProxy.Instance.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
+            if (product is null || !product.Store.Name.Equals(storeName))
             {
                 throw new ProductNotInTheStoreException();
             }
@@ -79,7 +77,7 @@ namespace SEWorkshop.Facades
 
         public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
-            var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            Store store = GetStore(storeName);
             if (store is null)
             {
                 throw new StoreNotInTradingSystemException();
@@ -168,9 +166,9 @@ namespace SEWorkshop.Facades
         public DataLoggedInUser GetLoggedInUserAndApplyCart(string username, byte[] password, DataGuestUser userAsGuest)
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
-            Cart cart = GetUser(userAsGuest).Cart;
+            //Cart cart = GetUser(userAsGuest).Cart;
             LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
-            loggedIn.Cart = cart;
+            //loggedIn.Cart = cart;
             if (loggedIn is Administrator)
                 return new DataAdministrator((Administrator)loggedIn);
             return new DataLoggedInUser(loggedIn);
