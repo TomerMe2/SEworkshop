@@ -13,8 +13,8 @@ namespace SEWorkshop.Models
         public virtual int Id {get; private set;}
         public virtual Store Store { get; private set; }
         public virtual Purchase? Purchase { get; set; }
-        public virtual Cart Cart { get; private set; }
-        public virtual int CartId { get; set; }
+        public virtual Cart? Cart { get; private set; }
+        public virtual int? CartId { get; set; }
         public virtual string StoreName { get; set; }
 
         // Every element in this collection is a 2-tuple: (product, amountToBuy)

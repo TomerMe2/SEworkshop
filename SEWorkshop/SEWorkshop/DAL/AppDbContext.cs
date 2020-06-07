@@ -325,7 +325,7 @@ namespace SEWorkshop.DAL
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Basket>()
-                    .HasRequired(basket => basket.Cart)
+                    .HasOptional(basket => basket.Cart)
                     .WithMany(cart => cart.Baskets)
                     .HasForeignKey(basket => new { basket.CartId })
                     .WillCascadeOnDelete(false);
