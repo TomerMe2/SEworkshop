@@ -10,7 +10,6 @@ namespace SEWorkshop.Models
 {
     public class Basket
     {
-        public static int Counter_ID = 0;
         public virtual int Id {get; private set;}
         public virtual Store Store { get; private set; }
         public virtual Purchase? Purchase { get; set; }
@@ -21,13 +20,19 @@ namespace SEWorkshop.Models
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
         public virtual ICollection<ProductsInBasket> Products { get; private set; }
 
+        private Basket()
+        {
+            Products = new List<ProductsInBasket>();
+            Cart = null!;
+            StoreName = "";
+            Store = null!;
+        }
+
         public Basket(Store store, Cart cart)
         {
             Store = store;
             //Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
             Products = new List<ProductsInBasket>();
-            Counter_ID++;
-            Id = Counter_ID;
             Cart = cart;
             StoreName = store.Name;
         }

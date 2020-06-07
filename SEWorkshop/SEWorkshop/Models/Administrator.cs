@@ -12,6 +12,10 @@ namespace SEWorkshop.Models
     {
         public ICollection<Purchase> PurchasesToView { get; private set; }
 
+        private Administrator() : base()
+        {
+            PurchasesToView = new List<Purchase>();
+        }
 
         public Administrator(string username, byte[] password) : base(username, password)
         {

@@ -16,6 +16,12 @@ namespace SEWorkshop.Models.Policies
         public virtual Policy? InnerPolicy { get; set; }
         public virtual Operator? InnerOperator { get; set; }
         public virtual Store Store { get; set; }
+
+        protected Policy()
+        {
+            Store = null!;
+            StoreName = "";
+        }
         
         public Policy(Store store)
         {

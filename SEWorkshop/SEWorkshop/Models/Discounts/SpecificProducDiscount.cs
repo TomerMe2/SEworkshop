@@ -7,6 +7,12 @@ namespace SEWorkshop.Models.Discounts
 {
     public class SpecificProducDiscount : OpenDiscount
     {
+
+        protected SpecificProducDiscount() : base()
+        {
+
+        }
+
         public SpecificProducDiscount(double percentage, DateTime deadline,
             Product product, Store store) :
             base(percentage, deadline, product, store)

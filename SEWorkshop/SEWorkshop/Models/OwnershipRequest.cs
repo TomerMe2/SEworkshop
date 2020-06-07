@@ -23,6 +23,16 @@ namespace SEWorkshop.Models
         public virtual string NewOwnerUsername { get; private set; }
         public virtual LoggedInUser NewOwner { get; private set; }
 
+        private OwnershipRequest()
+        {
+            Store = null!;
+            Owner = null!;
+            NewOwner = null!;
+            Answers = new List<OwnershipAnswer>();
+            StoreName = "";
+            OwnerUsername = "";
+            NewOwnerUsername = "";
+        }
 
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)
         {
@@ -37,9 +47,11 @@ namespace SEWorkshop.Models
             {
                 if (!HasAnswered(ow.LoggedInUser))
                 {
+                    //TODO: CHECK THAT THIS IS FINE. IT'S WEIRD BECAUSE THIS IS NOT "READY" YET
                     OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
                     Answers.Add(answer);
                     owner.OwnershipAnswers.Add(answer);
+                    DatabaseProxy.Instance.OwnershipAnswers.Add(answer);
                 }
             }
         }

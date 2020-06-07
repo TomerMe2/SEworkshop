@@ -10,6 +10,11 @@ namespace SEWorkshop.Models.Policies
     {
         public virtual Weekday CantBuyIn { get; set; }
 
+        protected SystemDayPolicy() : base()
+        {
+            CantBuyIn = default;
+        }
+
         public SystemDayPolicy (Store store, Weekday cantBuyIn) : base(store)
         {
             CantBuyIn = cantBuyIn;

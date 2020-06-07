@@ -14,6 +14,14 @@ namespace SEWorkshop.Models.Policies
         public virtual int MinQuantity { get; set; }
         public virtual int MaxQuantity { get; set; }
 
+        protected SingleProductQuantityPolicy() : base()
+        {
+            Prod = null!;
+            ProdName = "";
+            ProdStoreName = "";
+        }
+
+
         //-1 for quantity is ignoring this quantity
         public SingleProductQuantityPolicy(Store store, Product product, int minQuantity, int maxQuantity) : base(store)
         {

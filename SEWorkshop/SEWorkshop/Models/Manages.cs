@@ -13,19 +13,20 @@ namespace SEWorkshop.Models
 {
     public class Manages : AuthorityHandler
     {
-        public virtual string Username { get; set; }
-        public virtual LoggedInUser LoggedInUser { get; set; }
-        public virtual string StoreName { get; set; }
-        public virtual Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(appointer)
+        public Manages() : base()
         {
-            Store = store;
-            LoggedInUser = loggedInUser;
+            Store = null!;
+            LoggedInUser = null!;
+            Username = "";
+            StoreName = "";
+
+        }
+
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
+        {
             AddAuthorization(Authorizations.Watching);
-            Username = loggedInUser.Username;
-            StoreName = store.Name;
         }
 
         public override void RemoveStoreManager(LoggedInUser managerToRemove)

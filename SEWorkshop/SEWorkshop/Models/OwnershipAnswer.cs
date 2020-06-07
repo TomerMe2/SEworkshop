@@ -13,6 +13,14 @@ namespace SEWorkshop.Models
         public virtual LoggedInUser Owner { get; private set; }
         public virtual RequestState Answer { get; private set; }
 
+        private OwnershipAnswer()
+        {
+            Request = null!;
+            Owner = null!;
+            Answer = default;
+            Username = "";
+        }
+
         public OwnershipAnswer(OwnershipRequest request, LoggedInUser loggedInUser, RequestState answer)
         {
             Request = request;

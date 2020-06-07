@@ -15,42 +15,45 @@ namespace SEWorkshop.Models
 
     public abstract class AuthorityHandler
     {
-        public virtual int Id { get; private set; }
+        public virtual string Username { get; set; }
+        public virtual LoggedInUser LoggedInUser { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual Store Store { get; set; }
         public virtual string AppointerName { get; set; }
         public virtual LoggedInUser Appointer { get; set;}
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
         public virtual ICollection<Authority> AuthoriztionsOfUser { get; set; }
 
-        public AuthorityHandler(LoggedInUser appointer)
+        protected AuthorityHandler()
+        {
+            AuthoriztionsOfUser = new List<Authority>();
+            Appointer = null!;
+            AppointerName = "";
+            LoggedInUser = null!;
+            Store = null!;
+            Username = "";
+            StoreName = "";
+        }
+
+        public AuthorityHandler(LoggedInUser loggedInUser, Store store, LoggedInUser appointer)
         {
             //AuthoriztionsOfUser = (IList<Authority>)DbContext.Authorities.Select(auth => auth.AuthHandler.Equals(this));
             AuthoriztionsOfUser = new List<Authority>();
             Appointer = appointer;
             AppointerName = appointer.Username;
+            LoggedInUser = loggedInUser;
+            Store = store;
+            Username = loggedInUser.Username;
+            StoreName = store.Name;
         }
 
-        public void AddAuthorization(Authorizations authorizations)
+        public Authority AddAuthorization(Authorizations authorizations)
         {
             Authority authority = new Authority(this, authorizations);
             AuthoriztionsOfUser.Add(authority);
-            DatabaseProxy.Instance.Authorities.Add(authority);
-
-            try
-            {
-                DatabaseProxy.Instance.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
-                foreach (var errors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in errors.ValidationErrors)
-                    {
-                        // get the error message 
-                        string errorMessage = validationError.ErrorMessage;
-                    }
-                }
-            }
+            //DatabaseProxy.Instance.Authorities.Add(authority);
+            return authority;
         }
 
         public void RemoveAuthorization(Authorizations authorizations)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SEWorkshop.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -10,8 +11,14 @@ namespace SEWorkshop.Models.Discounts
         public virtual Operator? Op { get; set; }
         public virtual int? LeftChildId { get; set; }
         public virtual int? RightChildId { get; set; }
+
         public virtual Discount? LeftChild { get; set; }
-        public virtual Discount? RightChild { get; set; }
+        public virtual Discount? RightChild {get; set;}
+
+        protected ComposedDiscount() : base()
+        {
+
+        }
 
         public ComposedDiscount(Operator op, Discount dis1, Discount dis2) : base(dis1.Deadline, dis1.Store)
         {
@@ -21,10 +28,14 @@ namespace SEWorkshop.Models.Discounts
             }
 
             dis1.Father = this;
+            dis1.FatherId = DiscountId;
             dis2.Father = this;
+            dis2.FatherId = DiscountId;
             Op = op;
+
             LeftChild = dis1;
             RightChild = dis2;
+            //Childs = new List<Discount>() { dis1, dis2 };
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
 

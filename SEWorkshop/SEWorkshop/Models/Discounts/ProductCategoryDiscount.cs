@@ -8,6 +8,11 @@ namespace SEWorkshop.Models.Discounts
     public class ProductCategoryDiscount : PrimitiveDiscount
     {
         public virtual string CatUnderDiscount { get; set; }
+
+        protected ProductCategoryDiscount() : base()
+        {
+            CatUnderDiscount = "";
+        }
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 
                                          Store store, string category) : 

@@ -12,12 +12,10 @@ namespace SEWorkshop.Facades
     public class StoreFacade : IStoreFacade
     {
         //private ICollection<Store> Stores { get; set; }
-        private AppDbContext DbContext { get; }
 
-        public StoreFacade(AppDbContext dbContext)
+        public StoreFacade()
         {
             //Stores = new List<Store>();
-            DbContext = dbContext;
         }
 
         /// <summary>
@@ -32,18 +30,38 @@ namespace SEWorkshop.Facades
             {
                 throw new StoreWithThisNameAlreadyExistsException();
             }
-            Store newStore = new Store(owner, storeName, DbContext);
-            DbContext.Stores.Add(newStore);
-            DbContext.SaveChanges();
-            Owns newOwnership = new Owns(owner, newStore, new LoggedInUser("DEMO", new Byte[0], DbContext), DbContext);
-            owner.Owns.Add(newOwnership);
-            newStore.Ownership.Add(newOwnership);
+            Store newStore = new Store(owner, storeName);
+            var demo = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals("DEMO"));
+            if (demo == null)
+            {
+                demo = new LoggedInUser("DEMO", new byte[] { 0 });
+                DatabaseProxy.Instance.LoggedInUsers.Add(demo);
+            }
+            DatabaseProxy.Instance.Stores.Add(newStore);
+            DatabaseProxy.Instance.Policies.Add(newStore.AlwaysTruePolicies.First());
+            DatabaseProxy.Instance.SaveChanges();
+
+            Owns ownership = new Owns(owner, newStore, demo);
+            newStore.Ownership.Add(ownership);
+            DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+            foreach(var auth in ownership.AuthoriztionsOfUser)
+            {
+                DatabaseProxy.Instance.Authorities.Add(auth);
+            }
+            DatabaseProxy.Instance.SaveChanges();
+
+            //TODO: CHECK THIS WITH RAVID. LIKE CODE IN Manages.cs line 293
+            //Owns newOwnership = new Owns(owner, newStore, demo);
+            //owner.Owns.Add(newOwnership);
+            //newStore.Ownership.Add(newOwnership);
+            //DatabaseProxy.Instance.AuthorityHandlers.Add(newOwnership);
+            //DatabaseProxy.Instance.SaveChanges();
             return newStore;
         }
 
         public ICollection<Store> BrowseStores()
         {
-            return (from store in DbContext.Stores
+            return (from store in DatabaseProxy.Instance.Stores
                     where store.IsOpen
                     select store).ToList();
         }
@@ -76,7 +94,7 @@ namespace SEWorkshop.Facades
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
             ICollection<Product> searchResult = new List<Product>();
-            foreach (var store in DbContext.Stores)
+            foreach (var store in DatabaseProxy.Instance.Stores)
             {
                 foreach (var prod in store.SearchProducts(pred))
                 {

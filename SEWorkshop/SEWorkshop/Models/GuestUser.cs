@@ -9,10 +9,9 @@ namespace SEWorkshop.Models
 {
     public class GuestUser : User
     {
-        private static int nextId = 0;
+        //private static int nextId = 0;
         private static object nextIdLock = new object();
         
-        //TODO: CHECK THIS
         //public virtual int Id { get; set; }
 
         public GuestUser() : base()
@@ -24,6 +23,7 @@ namespace SEWorkshop.Models
                 nextId++;
             }
             */
+            
         }
         
         override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)

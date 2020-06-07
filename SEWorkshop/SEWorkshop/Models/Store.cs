@@ -26,14 +26,34 @@ namespace SEWorkshop.Models
         public virtual IList<Discount> Discounts { get; private set; }
         public virtual bool IsOpen { get; private set; }
         public virtual string Name { get; private set; }
+
+        [NotMapped()]
         public virtual Policy Policy { get; set; }
+
+        public virtual ICollection<AlwaysTruePolicy> AlwaysTruePolicies { get; set; }
         public virtual ICollection<Purchase> Purchases {get; private set; }
-        
+        public virtual ICollection<Policy> Policies { get; private set; }
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+
+        private Store()
+        {
+            Ownership = new List<Owns>();
+            Management = new List<Manages>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            Baskets = new List<Basket>();
+            Discounts = new List<Discount>();
+            Name = "";
+            Policy = null!;
+            OwnershipRequests = new List<OwnershipRequest>();
+            Policies = new List<Policy>();
+            AlwaysTruePolicies = new List<AlwaysTruePolicy>();
+        }
 
         public Store(LoggedInUser owner, string name)
         {
@@ -54,6 +74,8 @@ namespace SEWorkshop.Models
             Discount = new List<Discount>();
             Policy = new AlwaysTruePolicy(this);*/
 
+            //TODO: FILL OWNERSHIP OUTSIDE OF CONSTRUCTOR
+            IsOpen = true;
             Ownership = new List<Owns>();
             Management = new List<Manages>();
             Messages = new List<Message>();
@@ -62,10 +84,14 @@ namespace SEWorkshop.Models
             Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = name;
-            //TODO: SAVE POLICY IN DB
-            Policy = new AlwaysTruePolicy(this);
+            AlwaysTruePolicies = new List<AlwaysTruePolicy>();
+            var alwaysTrue = new AlwaysTruePolicy(this);
+            Policy = alwaysTrue;
+            AlwaysTruePolicies.Add(alwaysTrue);
+            //DatabaseProxy.Instance.Policies.Add(Policy);
             OwnershipRequests = new List<OwnershipRequest>();
-            
+            Policies = new List<Policy>();
+
         }
 
         public void CloseStore()

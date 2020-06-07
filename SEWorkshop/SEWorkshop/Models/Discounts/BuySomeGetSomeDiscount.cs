@@ -13,6 +13,13 @@ namespace SEWorkshop.Models.Discounts
         public virtual string ProdUnderDiscountStoreName { get; set; }
         public virtual Product ProdUnderDiscount { get; set; }
 
+        protected BuySomeGetSomeDiscount() : base()
+        {
+            ProdUnderDiscountName = "";
+            ProdUnderDiscountStoreName = "";
+            ProdUnderDiscount = null!;
+        }
+
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)
         {
             BuySome = buySome;

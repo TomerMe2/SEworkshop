@@ -16,7 +16,6 @@ namespace SEWorkshop.Tests.IntegrationTests
         private IUserFacade UsrFacade { get; set; }
         private IManageFacade MngrFacade { get; set; }
         private IStoreFacade StrFacade { get; set; }
-        private AppDbContext DbContext { get; set; }
 
         private ISecurityAdapter securityAdaprer = new SecurityAdapter();
         

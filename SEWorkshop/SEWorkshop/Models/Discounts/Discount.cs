@@ -12,18 +12,24 @@ namespace SEWorkshop.Models.Discounts
 {
     public abstract class Discount
     {
-        private static int _nextId = 0;
         public virtual int DiscountId { get; set; }
         public virtual string StoreName { get; set; }
         public virtual ComposedDiscount? Father { get; set; }
+        public virtual int? FatherId { get; set; }
         public virtual DateTime Deadline { get; set; }
         public virtual Store Store { get; set; }
+
+        protected Discount()
+        {
+            Deadline = default;
+            Store = null!;
+            StoreName = "";
+        }
 
         public Discount(DateTime deadline, Store store)
         {
             Deadline = deadline;
             Store = store;
-            DiscountId = _nextId++;
             StoreName = store.Name;
         }
 

@@ -6,12 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SEWorkshop.DAL;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
     public abstract class User
     {
         public virtual int Id { get; set; }
+
         public virtual Cart Cart { get; set; }
 
 

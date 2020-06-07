@@ -16,6 +16,16 @@ namespace SEWorkshop.Models
         public virtual string Description { get; set; }
         public virtual Product Product { get; set; }
 
+        private Review()
+        {
+            Writer = null!;
+            Description = "";
+            Product = null!;
+            Username = "";
+            ProdName = "";
+            StoreName = "";
+        }
+
         public Review(LoggedInUser writer, string description, Product product)
         {
             Writer = writer;

@@ -7,6 +7,9 @@ namespace SEWorkshop.Models.Policies
 {
     public class AlwaysTruePolicy : Policy
     {
+
+        protected AlwaysTruePolicy() : base() { }
+
         public AlwaysTruePolicy(Store store) : base(store) { }
 
         protected override bool IsThisPolicySatisfied(User user, Address address)

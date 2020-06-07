@@ -15,6 +15,15 @@ namespace SEWorkshop
         public virtual string Country { get; set; }
         public virtual ICollection<Purchase> Purchases { get; private set;}
 
+        private Address()
+        {
+            City = "";
+            Street = "";
+            HouseNumber = "";
+            Country = "";
+            Purchases = new List<Purchase>();
+        }
+
         public Address(string country, string city, string street, string houseNumber)
         {
             this.City = city;

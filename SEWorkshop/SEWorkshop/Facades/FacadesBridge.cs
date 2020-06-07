@@ -16,14 +16,12 @@ namespace SEWorkshop.Facades
         private IUserFacade UserFacade { get; }
         private IManageFacade ManageFacade { get; }
         private IStoreFacade StoreFacade { get; }
-        private AppDbContext DbContext { get; }
 
         public FacadesBridge()
         {
-            DbContext = new AppDbContext();
             ManageFacade = new ManageFacade();
-            StoreFacade = new StoreFacade(DbContext);
-            UserFacade = new UserFacade(StoreFacade, DbContext);
+            StoreFacade = new StoreFacade();
+            UserFacade = new UserFacade(StoreFacade);
         }
 
         public DataProduct AddProduct(DataLoggedInUser user, string storeName, string productName, string description, string category, double price, int quantity)

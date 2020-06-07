@@ -8,6 +8,11 @@ namespace SEWorkshop.Models.Discounts
     {
         public virtual double Percentage { get; private set; }
 
+        protected PrimitiveDiscount() : base()
+        {
+            
+        }
+
         public PrimitiveDiscount(double percentage, DateTime deadline, Store store) : base(deadline, store)
         {
             if (!SetDiscountPercentage(percentage))

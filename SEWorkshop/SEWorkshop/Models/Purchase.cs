@@ -22,6 +22,22 @@ namespace SEWorkshop.Models
         public virtual DateTime TimeStamp { get; set;  }
         public virtual double MoneyPaid { get; set; }
 
+        public virtual string Country { get; set; }
+        public virtual string City { get; set; }
+        public virtual string Street { get; set; }
+        public virtual string HouseNumber { get; set; }
+
+        private Purchase()
+        {
+            Basket = null!;
+            Address = null!;
+            TimeStamp = default;
+            Country = "";
+            City = "";
+            Street = "";
+            HouseNumber = "";
+        }
+
 
         public Purchase(LoggedInUser? user, Basket basket, Address adrs)
         {
@@ -31,6 +47,11 @@ namespace SEWorkshop.Models
             Address = adrs;
             MoneyPaid = basket.PriceAfterDiscount();
             Basket.Purchase = this;
+
+            Country = adrs.Country;
+            City = adrs.City;
+            Street = adrs.Street;
+            HouseNumber = adrs.HouseNumber;
         }
     }
 }
