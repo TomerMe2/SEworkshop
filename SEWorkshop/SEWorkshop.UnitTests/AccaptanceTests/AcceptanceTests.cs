@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using SEWorkshop.Exceptions;
 using System.Collections.Generic;
+using SEWorkshop.DataModels;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
 
