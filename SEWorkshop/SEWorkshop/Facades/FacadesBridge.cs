@@ -166,9 +166,9 @@ namespace SEWorkshop.Facades
         public DataLoggedInUser GetLoggedInUserAndApplyCart(string username, byte[] password, DataGuestUser userAsGuest)
         {
             //preserve loggedIn user's cart that he gathered as a GuestUser.
-            Cart cart = GetUser(userAsGuest).Cart;
+            //Cart cart = GetUser(userAsGuest).Cart;
             LoggedInUser loggedIn = UserFacade.GetLoggedInUser(username, password);
-            loggedIn.Cart = cart;
+            //loggedIn.Cart = cart;
             if (loggedIn is Administrator)
                 return new DataAdministrator((Administrator)loggedIn);
             return new DataLoggedInUser(loggedIn);

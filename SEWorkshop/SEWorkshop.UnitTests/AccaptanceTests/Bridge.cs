@@ -42,5 +42,19 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public abstract void EditProductDescription(string sid, string storeName, string productName, string description);
         public abstract void RegisterPurchaseObserver(ServiceLayer.IServiceObserver<DataPurchase> obsrv);
 
+        public abstract void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op);
+        public abstract void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
+        public abstract void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public abstract void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity);
+        public abstract void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry);
+        public abstract void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity);
+        public abstract void RemovePolicy(string sessionId, string storeName, int indexInChain);
+        public abstract void AddProductCategoryDiscount(string sessionId, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void AddSpecificProductDiscount(string sessionId, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void AddBuySomeGetSomeDiscount(int buySome, int getSome, string sessionId, string conditionProductName, string underDiscountProductName, string storeName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void AddBuyOverDiscount(double minSum, string sessionId, string storeName, string productName, DateTime deadline, double percentage,
+                                                Operator op, int indexInChain, int disld, bool toLeft);
+        public abstract void RemoveDiscount(string sessionId, string storeName, int indexInChain);
     }
 }

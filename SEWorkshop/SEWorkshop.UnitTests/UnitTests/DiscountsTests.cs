@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using SEWorkshop.Enums;
-using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Models.Discounts;
 
