@@ -17,7 +17,6 @@ namespace SEWorkshop.Models
         public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-
         public Owns(LoggedInUser loggedInUser, Store store) : base()
         {
             AuthoriztionsOfUser.Add(Authorizations.Authorizing);
@@ -178,7 +177,6 @@ namespace SEWorkshop.Models
 
                 return;
             }
-
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
@@ -200,7 +198,6 @@ namespace SEWorkshop.Models
                 log.Info("Product is already exists in store");
                 throw new ProductAlreadyExistException();
             }
-
         }
 
         override public void RemoveProduct(Product productToRemove)
@@ -510,13 +507,9 @@ namespace SEWorkshop.Models
             ComposeDiscount(new BuySomeGetSomeDiscount(Store, buySome, getSome, percentage, deadline, prod1, prod2), op, indexInChain, disId, toLeft);
         }
 
-
         public void RemoveDiscount(int indexInChain)
         {
             Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
         }
     }
-
 }
-
-

@@ -1,6 +1,5 @@
 using SEWorkshop.Models;
 using SEWorkshop.Exceptions;
-using NLog;
 using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Enums;
@@ -68,8 +67,6 @@ namespace SEWorkshop.Facades
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
            loggedInUser.AddStoreManager(store, newManager);
-          
-           
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
@@ -83,8 +80,8 @@ namespace SEWorkshop.Facades
         }
 
         public void RemoveStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser ownerToRemove)
-        {
-            loggedInUser.RemoveStoreOwner(store, ownerToRemove);
+        {
+            loggedInUser.RemoveStoreOwner(store, ownerToRemove);
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
