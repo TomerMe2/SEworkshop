@@ -234,7 +234,6 @@ namespace SEWorkshop.Models
                 log.Info("Product is already exists in store");
                 throw new ProductAlreadyExistException();
             }
-
         }
 
         override public void RemoveProduct(Product productToRemove)
