@@ -51,7 +51,7 @@ namespace SEWorkshop.Facades
             if (user == null)
             {
                 var admin = DatabaseProxy.Instance.Administrators.FirstOrDefault(usr => 
-                                        usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+                                        usr.Username.Equals(username) && usr.Password == password);
                 if (admin == null)
                 {
                     throw new UserDoesNotExistException();

@@ -314,7 +314,7 @@ namespace SEWorkshop.ServiceLayer
                 "Or" => Operator.Or,
                 "Xor" => Operator.Xor,
                 "Implies" => Operator.Implies,
-                _ => null,
+                _ => default,
             };
         }
 
@@ -329,7 +329,7 @@ namespace SEWorkshop.ServiceLayer
                 "Thursday" => DayOfWeek.Thursday,
                 "Friday" => DayOfWeek.Friday,
                 "Saturday" => DayOfWeek.Saturday,
-                _ => null,
+                _ => default,
             };
         }
 
