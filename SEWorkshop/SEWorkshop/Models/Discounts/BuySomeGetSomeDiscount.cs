@@ -9,14 +9,11 @@ namespace SEWorkshop.Models.Discounts
     {
         public virtual int BuySome { get; set; }
         public virtual int GetSome { get; set; }
-        public virtual string ProdUnderDiscountName { get; set; }
-        public virtual string ProdUnderDiscountStoreName { get; set; }
+        public virtual int ProductIdUnderDiscount { get; set; }
         public virtual Product ProdUnderDiscount { get; set; }
 
         protected BuySomeGetSomeDiscount() : base()
         {
-            ProdUnderDiscountName = "";
-            ProdUnderDiscountStoreName = "";
             ProdUnderDiscount = null!;
         }
 
@@ -25,8 +22,7 @@ namespace SEWorkshop.Models.Discounts
             BuySome = buySome;
             GetSome = getSome;
             ProdUnderDiscount = underDiscount;
-            ProdUnderDiscountName = conditionProd.Name;
-            ProdUnderDiscountStoreName = conditionProd.Store.Name;
+            ProductIdUnderDiscount = conditionProd.Id;
         }
 
         public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)

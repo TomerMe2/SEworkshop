@@ -10,8 +10,7 @@ namespace SEWorkshop.Models
     {
         public virtual int Id { get; set; }
         public virtual string Username { get; set; }
-        public virtual string ProdName { get; set; }
-        public virtual string StoreName { get; set; }
+        public virtual int ProductId { get; set; }
         public virtual LoggedInUser Writer { get; set; }
         public virtual string Description { get; set; }
         public virtual Product Product { get; set; }
@@ -22,8 +21,6 @@ namespace SEWorkshop.Models
             Description = "";
             Product = null!;
             Username = "";
-            ProdName = "";
-            StoreName = "";
         }
 
         public Review(LoggedInUser writer, string description, Product product)
@@ -32,8 +29,7 @@ namespace SEWorkshop.Models
             Description = description;
             Product = product;
             Username = writer.Username;
-            ProdName = product.Name;
-            StoreName = product.Store.Name;
+            ProductId = product.Id;
         }
     }
 }

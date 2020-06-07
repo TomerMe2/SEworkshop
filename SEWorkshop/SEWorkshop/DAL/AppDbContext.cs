@@ -275,11 +275,15 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Product>()
                     .ToTable("Products")
-                    .HasKey(product => new { product.Name, product.StoreName });
+                    .HasKey(product => product.Id);
+
+            modelBuilder.Entity<Product>()
+                .Property(prod => prod.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             modelBuilder.Entity<ProductsInBasket>()
                     .ToTable("ProductsInBaskets")
-                    .HasKey(pb => new { pb.BasketId, pb.ProductName });
+                    .HasKey(pb => new { pb.BasketId, pb.ProductId });
 
             modelBuilder.Entity<Purchase>()
                     .ToTable("Purchases")
@@ -368,20 +372,26 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<ConditionalDiscount>()
                     .HasRequired(discount => discount.Product)
                     .WithMany(product => product.ConditionalDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdName, discount.ProdStoreName })
+                    .HasForeignKey(discount => discount.ProductId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<OpenDiscount>()
                     .HasRequired(discount => discount.Product)
                     .WithMany(product => product.OpenDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdName, discount.ProdStoreName })
+                    .HasForeignKey(discount => discount.ProductId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<BuySomeGetSomeDiscount>()
                     .HasRequired(discount => discount.ProdUnderDiscount)
                     .WithMany(product => product.BuySomeGetSomeDiscounts)
-                    .HasForeignKey(discount => new { discount.ProdUnderDiscountName, discount.ProdUnderDiscountStoreName })
+                    .HasForeignKey(discount => discount.ProductIdUnderDiscount)
                     .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<BuySomeGetSomeDiscount>()
+            //        .HasRequired(discount => discount.ProdUnderDiscount)
+            //        .WithMany(product => product.BuySomeGetSomeDiscounts)
+            //        .HasForeignKey(discount => discount.ProductId)
+            //        .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.LoggedInUser)
@@ -487,7 +497,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<SingleProductQuantityPolicy>()
                     .HasRequired(policy => policy.Prod)
                     .WithMany(prod => prod.ProductPolicies)
-                    .HasForeignKey(policy => new { policy.ProdName, policy.ProdStoreName })
+                    .HasForeignKey(policy => policy.ProductId)
                     .WillCascadeOnDelete(false);
 
             //modelBuilder.Entity<SystemDayPolicy>()
@@ -509,7 +519,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<ProductsInBasket>()
                     .HasRequired(pb => pb.Product)
                     .WithMany(product => product.InBaskets)
-                    .HasForeignKey(pb => new { pb.ProductName, pb.StoreName })
+                    .HasForeignKey(pb => pb.ProductId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Purchase>()
@@ -532,7 +542,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Review>()
                     .HasRequired(review => review.Product)
                     .WithMany(product => product.Reviews)
-                    .HasForeignKey(review => new { review.ProdName, review.StoreName })
+                    .HasForeignKey(review => review.ProductId)
                     .WillCascadeOnDelete(false);
 
            

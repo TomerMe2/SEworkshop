@@ -8,8 +8,7 @@ namespace SEWorkshop.Models.Policies
 {
     public class SingleProductQuantityPolicy : Policy
     {
-        public virtual string ProdName { get; set; }
-        public virtual string ProdStoreName { get; set; }
+        public virtual int ProductId { get; set; }
         public virtual Product Prod { get; set; }
         public virtual int MinQuantity { get; set; }
         public virtual int MaxQuantity { get; set; }
@@ -17,8 +16,6 @@ namespace SEWorkshop.Models.Policies
         protected SingleProductQuantityPolicy() : base()
         {
             Prod = null!;
-            ProdName = "";
-            ProdStoreName = "";
         }
 
 
@@ -28,8 +25,7 @@ namespace SEWorkshop.Models.Policies
             Prod = product;
             MinQuantity = minQuantity;
             MaxQuantity = maxQuantity;
-            ProdName = product.Name;
-            ProdStoreName = product.Store.Name;
+            ProductId = product.Id;
         }
 
         protected override bool IsThisPolicySatisfied(User user, Address address)

@@ -66,6 +66,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			string food = "food";
 			Assert.That(() => bridge.SearchProductsByCategory(ref food), Throws.Nothing);
+            var deb = bridge.SearchProductsByCategory(ref food).ToList();
 			Assert.AreEqual(bridge.SearchProductsByCategory(ref food).Count(), 2);
 		}
 
@@ -199,7 +200,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			string bamba = "bamba";
 			string bamba2 = "bamba2";
-			var bamb = bridge.SearchProductsByName(ref bamba).First();
+			
+            var bamb = bridge.SearchProductsByName(ref bamba).First();
 			Assert.That(() => bridge.EditProductName(DEF_SID, "store1", "bamba", "bamba2"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductCategory(DEF_SID, "store1", "bamba2", "electronics"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductPrice(DEF_SID, "store1", "bamba2", 215), Throws.Nothing);

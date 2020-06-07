@@ -297,7 +297,7 @@ namespace SEWorkshop.Models
                 throw new ProductNotInTradingSystemException();
             }
 
-            if (Store.Products.Any(prod => prod.Name.Equals(product.Name)))
+            if (Store.Products.Any(prod => prod.Name.Equals(name)))
             {
                 log.Info("Product name is already taken in store");
                 throw new StoreWithThisNameAlreadyExistsException();

@@ -8,8 +8,7 @@ namespace SEWorkshop.Models
     {
         public virtual int BasketId { get; set; }
         public virtual Basket Basket { get; private set; }
-        public virtual string ProductName { get; set; }
-        public virtual string StoreName { get; set; }
+        public virtual int ProductId { get; set; }
         public virtual Product Product { get; private set; }
         public virtual int Quantity { get; private set; }
 
@@ -17,8 +16,6 @@ namespace SEWorkshop.Models
         {
             Basket = null!;
             Product = null!;
-            ProductName = "";
-            StoreName = "";
         }
 
         public ProductsInBasket(Basket basket, Product product, int quantity)
@@ -26,8 +23,7 @@ namespace SEWorkshop.Models
             Basket = basket;
             Product = product;
             Quantity = quantity;
-            ProductName = product.Name;
-            StoreName = basket.StoreName;
+            ProductId = product.Id;
         }
     }
 }
