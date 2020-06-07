@@ -67,9 +67,8 @@ namespace SEWorkshop.Facades
 
         private Product GetProduct(string storeName, string productName)
         {
-            Store store = GetStore(storeName);
-            Product? product = store.Products.ToList().FirstOrDefault(prod => prod.Name.Equals(productName));
-            if (product is null)
+            Product? product = DatabaseProxy.Instance.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
+            if (product is null || !product.Store.Name.Equals(storeName))
             {
                 throw new ProductNotInTheStoreException();
             }

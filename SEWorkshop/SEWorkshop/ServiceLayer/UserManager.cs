@@ -165,7 +165,7 @@ namespace SEWorkshop.ServiceLayer
                             Operator? op = StringToOperator(actionLineSplited[2]);
                             DayOfWeek? day = StringToDayOfWeek(actionLineSplited[3]);
                             if (op != null && day!=null)
-                                AddSystemDayPolicy(DEF_SID, actionLineSplited[1], (Operator)op, (DayOfWeek)day);
+                                AddSystemDayPolicy(DEF_SID, actionLineSplited[1], (Operator)op, (Weekday)((int)day));
                         }
                         break;
                     case "AddUserCityPolicy":
