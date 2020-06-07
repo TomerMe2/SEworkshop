@@ -15,14 +15,12 @@ namespace SEWorkshop.Tests.IntegrationTests
     class StoreFacadeTests
     {
         private IStoreFacade Facade { get; set; }
-        private ISecurityAdapter SecurityAdapter { get; set; } 
-        private AppDbContext DbContext { get; set; }
+        private ISecurityAdapter SecurityAdapter { get; set; }
 
         [OneTimeSetUp]
         public void Init()
         {
-            DbContext = new AppDbContext();
-            Facade = new StoreFacade(DbContext);
+            Facade = new StoreFacade(DatabaseProxy.Instance);
             SecurityAdapter = new SecurityAdapter();
         }
 
@@ -30,7 +28,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void CreateStoreTest()
         {
             const string STORE_NAME = "Elit Factory Store";
-            LoggedInUser usr = new LoggedInUser("check1", SecurityAdapter.Encrypt("1234"), DbContext);
+            LoggedInUser usr = new LoggedInUser("check1", SecurityAdapter.Encrypt("1234"));
             Store store = Facade.CreateStore(usr, STORE_NAME);
             Assert.IsTrue(Facade.SearchStore(str => str == store).Any());
             //check that the same store name cannot be opened
@@ -49,8 +47,8 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void BrowseStoresTest()
         {
-            LoggedInUser usr1 = new LoggedInUser("checkNiNi", SecurityAdapter.Encrypt("789"), DbContext);
-            LoggedInUser usr2 = new LoggedInUser("checkNaNa", SecurityAdapter.Encrypt("910"), DbContext);
+            LoggedInUser usr1 = new LoggedInUser("checkNiNi", SecurityAdapter.Encrypt("789"));
+            LoggedInUser usr2 = new LoggedInUser("checkNaNa", SecurityAdapter.Encrypt("910"));
             Store store1 = Facade.CreateStore(usr1, "Nini");
             Store store2 = Facade.CreateStore(usr2, "Nana");
             var stores = Facade.BrowseStores();
@@ -60,8 +58,8 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void SearchStoreTest()
         {
-            LoggedInUser usr1 = new LoggedInUser("SearchNiNi", SecurityAdapter.Encrypt("789"), DbContext);
-            LoggedInUser usr2 = new LoggedInUser("SearchNaNa", SecurityAdapter.Encrypt("910"), DbContext);
+            LoggedInUser usr1 = new LoggedInUser("SearchNiNi", SecurityAdapter.Encrypt("789"));
+            LoggedInUser usr2 = new LoggedInUser("SearchNaNa", SecurityAdapter.Encrypt("910"));
             Store store1 = Facade.CreateStore(usr1, "StrNini");
             Store store2 = Facade.CreateStore(usr2, "StrNana");
             var result = Facade.SearchStore(store => store.GetOwnership(usr1) != null);
@@ -75,7 +73,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void IsProductExistTest()
         {
-            LoggedInUser usr = new LoggedInUser("IsProductExistTest", SecurityAdapter.Encrypt("555555555"), DbContext);
+            LoggedInUser usr = new LoggedInUser("IsProductExistTest", SecurityAdapter.Encrypt("555555555"));
             Store store = Facade.CreateStore(usr, "ProductExistStore");
             Product prod1 = new Product(store, "Bamba", "Ahla shel hatif", "Snacks", 3.5, 100);
             Product prod2 = new Product(store, "Bisli", "Pahot ahla shel hatif", "Snacks", 3.7, 81);
@@ -89,9 +87,9 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void SearchProducts()
         {
-            LoggedInUser usr1 = new LoggedInUser("SearchProduct1", SecurityAdapter.Encrypt("123456789"), DbContext);
+            LoggedInUser usr1 = new LoggedInUser("SearchProduct1", SecurityAdapter.Encrypt("123456789"));
             Store store1 = Facade.CreateStore(usr1, "SearchProducts1");
-            LoggedInUser usr2 = new LoggedInUser("SearchProduct2", SecurityAdapter.Encrypt("123456789"), DbContext);
+            LoggedInUser usr2 = new LoggedInUser("SearchProduct2", SecurityAdapter.Encrypt("123456789"));
             Store store2 = Facade.CreateStore(usr2, "SearchProduct2");
             Product prod1 = new Product(store1, "Search1", "nini", "nana", 123, 7);
             Product prod2 = new Product(store1, "Search2", "wello", "wallak", 777, 1);
@@ -110,8 +108,8 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void FilterProductsTest()
         {
-            LoggedInUser usr1 = new LoggedInUser("Filter1", SecurityAdapter.Encrypt("12345677777"), DbContext);
-            LoggedInUser usr2 = new LoggedInUser("Filter2", SecurityAdapter.Encrypt("789999"), DbContext);
+            LoggedInUser usr1 = new LoggedInUser("Filter1", SecurityAdapter.Encrypt("12345677777"));
+            LoggedInUser usr2 = new LoggedInUser("Filter2", SecurityAdapter.Encrypt("789999"));
             Store store1 = Facade.CreateStore(usr1, "Filter1Str");
             Store store2 = Facade.CreateStore(usr1, "Filter2Str");
             Store store3 = Facade.CreateStore(usr2, "Filter3Str");

@@ -6,6 +6,7 @@ using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
 using System.Linq;
 using SEWorkshop.Models;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
