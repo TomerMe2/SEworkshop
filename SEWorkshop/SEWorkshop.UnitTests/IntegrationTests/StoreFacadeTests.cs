@@ -20,7 +20,8 @@ namespace SEWorkshop.Tests.IntegrationTests
         [OneTimeSetUp]
         public void Init()
         {
-            Facade = new StoreFacade(DatabaseProxy.Instance);
+            DatabaseProxy.MoveToTestDb();
+            Facade = new StoreFacade();
             SecurityAdapter = new SecurityAdapter();
         }
 

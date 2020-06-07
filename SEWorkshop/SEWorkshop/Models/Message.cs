@@ -8,9 +8,6 @@ namespace SEWorkshop.Models
 {
     public class Message
     {
-        private static int counter = 0;
-        private static object counterLock = new object();
-        //TODO: CHECK THIS PROPERTY
         public virtual int Id { get; set; }
         public virtual string StoreName { get; set; }
         public virtual Store ToStore { get; set; }
@@ -33,11 +30,6 @@ namespace SEWorkshop.Models
 
         public Message(LoggedInUser writtenBy, Store toStore, string description, bool isClient, Message? prev = null)
         {
-            lock(counterLock)
-            {
-                Id = counter;
-                counter++;
-            }
             WrittenBy = writtenBy;
             Description = description;
             Prev = prev;

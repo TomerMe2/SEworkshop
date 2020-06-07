@@ -26,7 +26,7 @@ namespace SEWorkshop.Models
 
         public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
         {
-            AddAuthorization(Authorizations.Watching);
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Watching));
         }
 
         public override void RemoveStoreManager(LoggedInUser managerToRemove)
@@ -164,6 +164,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Description = description;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's description has been modified successfully");
                 return;
             }
@@ -183,6 +184,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Category = category;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's category has been modified successfully");
                 return;
             }
@@ -206,6 +208,7 @@ namespace SEWorkshop.Models
                     throw new StoreWithThisNameAlreadyExistsException();
                 }
                 product.Name = name;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's category has been modified successfully");
             }
         }
@@ -220,6 +223,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Price = price;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's price has been modified successfully");
                 return;
             }
@@ -236,8 +240,9 @@ namespace SEWorkshop.Models
                     log.Info("Product does not exist in store");
                     throw new ProductNotInTradingSystemException();
                 }
-                log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
+                DatabaseProxy.Instance.SaveChanges();
+                log.Info("Product's quantity has been modified successfully");
             }
             else
             {

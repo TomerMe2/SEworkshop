@@ -19,6 +19,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         [OneTimeSetUp]
         public void Init()
         {
+            DatabaseProxy.MoveToTestDb();
             Manager = new UserManager();
         }
 

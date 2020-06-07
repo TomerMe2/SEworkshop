@@ -8,25 +8,14 @@ using SEWorkshop.DAL;
 namespace SEWorkshop.Models
 {
     public class GuestUser : User
-    {
-        //private static int nextId = 0;
-        private static object nextIdLock = new object();
-        
-        //public virtual int Id { get; set; }
+    {        
 
         public GuestUser() : base()
-        {
-            /*
-            lock(nextIdLock)
-            {
-                Id = nextId;
-                nextId++;
-            }
-            */
-            
+        { 
+
         }
         
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -41,6 +30,8 @@ namespace SEWorkshop.Models
             basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
+            DatabaseProxy.Instance.Purchases.Add(purchase);
+            DatabaseProxy.Instance.SaveChanges();
             return purchase;
         }
     }

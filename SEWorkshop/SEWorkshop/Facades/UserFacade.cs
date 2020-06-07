@@ -28,12 +28,6 @@ namespace SEWorkshop.Facades
             GuestUsers = new List<GuestUser>();
         }
 
-        public void AddPurchaseToList(Purchase p)
-        {
-            DatabaseProxy.Instance.Purchases.Add(p);
-            DatabaseProxy.Instance.SaveChanges();
-        }
-
         public LoggedInUser GetLoggedInUser(string username)
         {
             var user = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals(username));
@@ -123,7 +117,7 @@ namespace SEWorkshop.Facades
 
         public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            return user.Purchase(basket, creditCardNumber, address, this);
+            return user.Purchase(basket, creditCardNumber, address);
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
