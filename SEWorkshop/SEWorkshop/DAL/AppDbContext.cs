@@ -449,13 +449,13 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Owns>()
                     .HasRequired(owner => owner.LoggedInUser)
                     .WithMany(handler => handler.Owns)
-                    .HasForeignKey(owner => new { owner.Username })
+                    .HasForeignKey(owner => owner.Username)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Owns>()
                     .HasRequired(owner => owner.Store)
                     .WithMany(store => store.Ownership)
-                    .HasForeignKey(owner => new { owner.StoreName })
+                    .HasForeignKey(owner => owner.StoreName)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Policy>()
