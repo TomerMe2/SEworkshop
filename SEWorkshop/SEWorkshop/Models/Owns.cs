@@ -394,10 +394,12 @@ namespace SEWorkshop.Models
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
             {
                 Store.Discounts.Add(dis);
+                DatabaseProxy.Instance.Discounts.Add(dis);
+                DatabaseProxy.Instance.SaveChanges();
             }
             else
             {
-                Discount? existing = SearchNode(Store.Discounts.ElementAt(indexInChain), disId);
+                Discount? existing = DatabaseProxy.Instance.Discounts.FirstOrDefault(dis => dis.DiscountId == disId);
                 if (existing != null)
                 {
                     ComposedDiscount? father = existing.Father;
