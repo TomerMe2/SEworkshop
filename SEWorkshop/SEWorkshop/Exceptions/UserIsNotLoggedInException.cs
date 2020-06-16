@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserIsNotLoggedInException : System.Exception
+    public class UserIsNotLoggedInException : SystemException
     {
         public UserIsNotLoggedInException() { }
         public UserIsNotLoggedInException(string message) : base(message) { }

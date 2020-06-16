@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserDoesNotExistException : System.Exception
+    public class UserDoesNotExistException : SystemException
     {
         public UserDoesNotExistException() { }
         public UserDoesNotExistException(string message) : base(message) { }

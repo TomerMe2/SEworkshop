@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class NegativeInventoryException : Exception
+    public class NegativeInventoryException : SystemException
     {
         public NegativeInventoryException() { }
         public NegativeInventoryException(string message) : base(message) { }

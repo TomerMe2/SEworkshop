@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class ReviewIsEmptyException : System.Exception
+    public class ReviewIsEmptyException : SystemException
     {
         public ReviewIsEmptyException() { }
         public ReviewIsEmptyException(string message) : base(message) { }

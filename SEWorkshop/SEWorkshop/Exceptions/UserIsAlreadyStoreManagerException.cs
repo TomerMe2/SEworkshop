@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserIsAlreadyStoreManagerException : System.Exception
+    public class UserIsAlreadyStoreManagerException : SystemException
     {
         public UserIsAlreadyStoreManagerException() { }
         public UserIsAlreadyStoreManagerException(string message) : base(message) { }

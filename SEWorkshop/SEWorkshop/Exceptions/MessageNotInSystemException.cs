@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class MessageNotInSystemException : Exception
+    public class MessageNotInSystemException : SystemException
     {
         public MessageNotInSystemException() { }
         public MessageNotInSystemException(string message) : base(message) { }

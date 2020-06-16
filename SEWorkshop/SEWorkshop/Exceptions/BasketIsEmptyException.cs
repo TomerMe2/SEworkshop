@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class BasketIsEmptyException : System.Exception
+    public class BasketIsEmptyException : SystemException
     {
         public BasketIsEmptyException() { }
         public BasketIsEmptyException(string message) : base(message) { }
