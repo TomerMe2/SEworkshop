@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class BasketNotInSystemException : Exception
+    public class BasketNotInSystemException : TradingSystemException
     {
         public BasketNotInSystemException() { }
         public BasketNotInSystemException(string message) : base(message) { }

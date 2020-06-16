@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class PolicyIsFalse : Exception
+    public class PolicyIsFalse : TradingSystemException
     {
         public PolicyIsFalse() { }
         public PolicyIsFalse(string message) : base(message) { }

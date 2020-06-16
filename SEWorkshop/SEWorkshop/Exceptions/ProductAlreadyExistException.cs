@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class ProductAlreadyExistException : Exception
+    public class ProductAlreadyExistException : TradingSystemException
     {
         public ProductAlreadyExistException() { }
         public ProductAlreadyExistException(string message) : base(message) { }

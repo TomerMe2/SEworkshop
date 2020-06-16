@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserAlreadyLoggedInException : System.Exception
+    public class UserAlreadyLoggedInException : TradingSystemException
     {
         public UserAlreadyLoggedInException() { }
         public UserAlreadyLoggedInException(string message) : base(message) { }

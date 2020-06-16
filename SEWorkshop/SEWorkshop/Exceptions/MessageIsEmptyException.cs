@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class MessageIsEmptyException : System.Exception
+    public class MessageIsEmptyException : TradingSystemException
     {
         public MessageIsEmptyException() { }
         public MessageIsEmptyException(string message) : base(message) { }

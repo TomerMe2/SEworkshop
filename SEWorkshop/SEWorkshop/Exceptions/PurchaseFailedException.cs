@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    class PurchaseFailedException : Exception
+    class PurchaseFailedException : TradingSystemException
     {
         public PurchaseFailedException() { }
         public PurchaseFailedException(string message) : base(message) { }

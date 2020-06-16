@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    class PolicyCauseCycilicError : Exception
+    class PolicyCauseCycilicError : TradingSystemException
     {
         public PolicyCauseCycilicError() { }
         public PolicyCauseCycilicError(string message) : base(message) { }
