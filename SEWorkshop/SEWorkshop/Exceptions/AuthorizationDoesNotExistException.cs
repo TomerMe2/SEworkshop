@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class AuthorizationDoesNotExistException : SystemException
+    public class AuthorizationDoesNotExistException : TradingSystemException
     {
         public AuthorizationDoesNotExistException() { }
         public AuthorizationDoesNotExistException(string message) : base(message) { }

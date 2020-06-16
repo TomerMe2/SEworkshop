@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserIsAlreadyStoreOwnerException : SystemException
+    public class UserIsAlreadyStoreOwnerException : TradingSystemException
     {
         public UserIsAlreadyStoreOwnerException() { }
         public UserIsAlreadyStoreOwnerException(string message) : base(message) { }

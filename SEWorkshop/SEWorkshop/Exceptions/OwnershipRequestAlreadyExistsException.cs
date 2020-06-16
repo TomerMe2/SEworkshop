@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    class OwnershipRequestAlreadyExistsException : SystemException
+    class OwnershipRequestAlreadyExistsException : TradingSystemException
     {
         public OwnershipRequestAlreadyExistsException() { }
         public OwnershipRequestAlreadyExistsException(string message) : base(message) { }

@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    class PurchaseFailedException : SystemException
+    class PurchaseFailedException : TradingSystemException
     {
         public PurchaseFailedException() { }
         public PurchaseFailedException(string message) : base(message) { }

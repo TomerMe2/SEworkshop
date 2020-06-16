@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserIsNotMangerOfTheStoreException : SystemException
+    public class UserIsNotMangerOfTheStoreException : TradingSystemException
     {
         public UserIsNotMangerOfTheStoreException() { }
         public UserIsNotMangerOfTheStoreException(string message) : base(message) { }

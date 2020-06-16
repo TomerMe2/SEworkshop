@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class NegativeQuantityException : SystemException
+    public class NegativeQuantityException : TradingSystemException
     {
         public NegativeQuantityException() { }
         public NegativeQuantityException(string message) : base(message) { }
