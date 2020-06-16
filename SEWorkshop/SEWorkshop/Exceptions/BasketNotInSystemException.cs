@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class BasketNotInSystemException : SystemException
+    public class BasketNotInSystemException : TradingSystemException
     {
         public BasketNotInSystemException() { }
         public BasketNotInSystemException(string message) : base(message) { }

@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    class CantRemoveTheOnlyPolicy : SystemException
+    class CantRemoveTheOnlyPolicy : TradingSystemException
     {
         public CantRemoveTheOnlyPolicy() { }
         public CantRemoveTheOnlyPolicy(string message) : base(message) { }

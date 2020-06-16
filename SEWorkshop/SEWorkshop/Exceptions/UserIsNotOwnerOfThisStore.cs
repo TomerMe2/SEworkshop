@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class UserIsNotOwnerOfThisStore : SystemException
+    public class UserIsNotOwnerOfThisStore : TradingSystemException
     {
         public UserIsNotOwnerOfThisStore() { }
         public UserIsNotOwnerOfThisStore(string message) : base(message) { }

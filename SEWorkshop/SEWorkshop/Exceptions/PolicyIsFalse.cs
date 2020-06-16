@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class PolicyIsFalse : SystemException
+    public class PolicyIsFalse : TradingSystemException
     {
         public PolicyIsFalse() { }
         public PolicyIsFalse(string message) : base(message) { }

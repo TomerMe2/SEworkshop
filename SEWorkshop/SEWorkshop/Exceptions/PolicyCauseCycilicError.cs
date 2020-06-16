@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    class PolicyCauseCycilicError : SystemException
+    class PolicyCauseCycilicError : TradingSystemException
     {
         public PolicyCauseCycilicError() { }
         public PolicyCauseCycilicError(string message) : base(message) { }

@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class NegativeInventoryException : SystemException
+    public class NegativeInventoryException : TradingSystemException
     {
         public NegativeInventoryException() { }
         public NegativeInventoryException(string message) : base(message) { }

@@ -48,9 +48,9 @@ namespace SEWorkshop.ServiceLayer
             }
             catch(System.IO.FileNotFoundException)
             {
-                Console.WriteLine("File not found. File name should be 'ActionsFile.txt' and it should be located in "); 
+                Console.WriteLine("File not found.\nFile name should be 'ActionsFile.txt' and it should be located in SEWorkshop\\Website"); 
             }
-            catch (SystemException e)
+            catch (TradingSystemException e)
             {
                 Console.WriteLine(e.ToString());
             }

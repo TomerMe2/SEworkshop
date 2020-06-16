@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class StoreNotInTradingSystemException : SystemException
+    public class StoreNotInTradingSystemException : TradingSystemException
     {
         public StoreNotInTradingSystemException() { }
         public StoreNotInTradingSystemException(string message) : base(message) { }

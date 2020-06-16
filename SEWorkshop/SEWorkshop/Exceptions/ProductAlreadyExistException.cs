@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class ProductAlreadyExistException : SystemException
+    public class ProductAlreadyExistException : TradingSystemException
     {
         public ProductAlreadyExistException() { }
         public ProductAlreadyExistException(string message) : base(message) { }

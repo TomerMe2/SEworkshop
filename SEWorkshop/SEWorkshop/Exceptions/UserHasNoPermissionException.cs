@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserHasNoPermissionException : SystemException
+    public class UserHasNoPermissionException : TradingSystemException
     {
         public UserHasNoPermissionException() { }
         public UserHasNoPermissionException(string message) : base(message) { }

@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class IllegalDiscountPercentageException : SystemException
+    public class IllegalDiscountPercentageException : TradingSystemException
     {
         public IllegalDiscountPercentageException() { }
         public IllegalDiscountPercentageException(string message) : base(message) { }

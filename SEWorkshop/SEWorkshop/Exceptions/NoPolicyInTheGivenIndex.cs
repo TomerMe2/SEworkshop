@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.Exceptions
 {
-    public class NoPolicyInTheGivenIndex : SystemException
+    public class NoPolicyInTheGivenIndex : TradingSystemException
     {
         public NoPolicyInTheGivenIndex() { }
         public NoPolicyInTheGivenIndex(string message) : base(message) { }

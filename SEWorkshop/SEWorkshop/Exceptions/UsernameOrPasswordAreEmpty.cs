@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UsernameOrPasswordAreEmpty : SystemException
+    public class UsernameOrPasswordAreEmpty : TradingSystemException
     {
         public UsernameOrPasswordAreEmpty() { }
         public UsernameOrPasswordAreEmpty(string message) : base(message) { }

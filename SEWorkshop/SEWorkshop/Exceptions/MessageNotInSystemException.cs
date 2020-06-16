@@ -1,6 +1,6 @@
 ﻿namespace SEWorkshop.Exceptions
 {
-    public class MessageNotInSystemException : SystemException
+    public class MessageNotInSystemException : TradingSystemException
     {
         public MessageNotInSystemException() { }
         public MessageNotInSystemException(string message) : base(message) { }
