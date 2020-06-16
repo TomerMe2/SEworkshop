@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    class OwnershipRequestAlreadyExistsException : System.Exception
+    class OwnershipRequestAlreadyExistsException : SystemException
     {
         public OwnershipRequestAlreadyExistsException() { }
         public OwnershipRequestAlreadyExistsException(string message) : base(message) { }

@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserHasNoPermissionException : System.Exception
+    public class UserHasNoPermissionException : SystemException
     {
         public UserHasNoPermissionException() { }
         public UserHasNoPermissionException(string message) : base(message) { }

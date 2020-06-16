@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class ProductNotInTheStoreException : System.Exception
+    public class ProductNotInTheStoreException : SystemException
     {
         public ProductNotInTheStoreException() { }
         public ProductNotInTheStoreException(string message) : base(message) { }

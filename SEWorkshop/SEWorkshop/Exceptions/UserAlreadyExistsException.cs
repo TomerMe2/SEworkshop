@@ -1,7 +1,7 @@
 namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class UserAlreadyExistsException : System.Exception
+    public class UserAlreadyExistsException : SystemException
     {
         public UserAlreadyExistsException() { }
         public UserAlreadyExistsException(string message) : base(message) { }

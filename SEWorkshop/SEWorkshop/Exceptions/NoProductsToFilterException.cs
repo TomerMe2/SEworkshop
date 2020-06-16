@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class NoProductsToFilterException : System.Exception
+    public class NoProductsToFilterException : SystemException
     {
         public NoProductsToFilterException() { }
         public NoProductsToFilterException(string message) : base(message) { }
