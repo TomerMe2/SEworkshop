@@ -46,8 +46,13 @@ namespace SEWorkshop.ServiceLayer
                 string[] actions = System.IO.File.ReadAllLines("ActionsFile.txt");
                 ReadActionsFile(actions);
             }
-            catch(Exception)
+            catch(System.IO.FileNotFoundException)
             {
+                Console.WriteLine("File not found. File name should be 'ActionsFile.txt' and it should be located in "); 
+            }
+            catch (SystemException e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
