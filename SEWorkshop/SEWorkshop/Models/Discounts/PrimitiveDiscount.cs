@@ -1,6 +1,7 @@
 ﻿using System;
 using SEWorkshop.Exceptions;
 using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -29,6 +30,13 @@ namespace SEWorkshop.Models.Discounts
                 return true;
             }
             return false;
+        }
+
+        public override void SelfDestruct()
+        {
+            Store.Discounts.Remove(this);
+            DatabaseProxy.Instance.Discounts.Remove(this);
+            DatabaseProxy.Instance.SaveChanges();
         }
     }
 }

@@ -405,21 +405,29 @@ namespace SEWorkshop.Models
                     ComposedDiscount? father = existing.Father;
                     if (father is null)
                     {
-                        Discount toRemove = Store.Discounts.ElementAt(indexInChain);
-                        Store.Discounts.RemoveAt(indexInChain);
-                        DatabaseProxy.Instance.Discounts.Remove(toRemove);
-                        DatabaseProxy.Instance.SaveChanges();
+                        //Discount toRemove = Store.Discounts.ElementAt(indexInChain);
+                        //Store.Discounts.RemoveAt(indexInChain);
+                        //DatabaseProxy.Instance.Discounts.Remove(toRemove);
+                        //DatabaseProxy.Instance.SaveChanges();
                         if (toLeft)
                         {
+                            Store.Discounts.Add(dis);
+                            DatabaseProxy.Instance.Discounts.Add(dis);
+                            DatabaseProxy.Instance.SaveChanges();
                             ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
-                            Store.Discounts.Insert(indexInChain, newDis);
+                            //Store.Discounts.Insert(indexInChain, newDis);
+                            Store.Discounts.Add(newDis);
                             DatabaseProxy.Instance.Discounts.Add(newDis);
                             DatabaseProxy.Instance.SaveChanges();
                         }
                         else
                         {
+                            Store.Discounts.Add(dis);
+                            DatabaseProxy.Instance.Discounts.Add(dis);
+                            DatabaseProxy.Instance.SaveChanges();
                             ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
-                            Store.Discounts.Insert(indexInChain, newDis);
+                            //Store.Discounts.Insert(indexInChain, newDis);
+                            Store.Discounts.Add(newDis);
                             DatabaseProxy.Instance.Discounts.Add(newDis);
                             DatabaseProxy.Instance.SaveChanges();
                         }
@@ -432,8 +440,12 @@ namespace SEWorkshop.Models
                             {
                                 if (father.Op != null && father.LeftChild != null)
                                 {
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.LeftChild);
                                     father.LeftChild = newDis;
+                                    newDis.Father = father;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
@@ -442,8 +454,12 @@ namespace SEWorkshop.Models
                             {
                                 if (father.Op != null && father.RightChild != null)
                                 {
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.RightChild);
                                     father.RightChild = newDis;
+                                    newDis.Father = father;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
                                     DatabaseProxy.Instance.SaveChanges();
                                 }
@@ -455,6 +471,9 @@ namespace SEWorkshop.Models
                             {
                                 if (father.Op != null && father.LeftChild != null)
                                 {
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.LeftChild, dis);
                                     newDis.Father = father;
                                     father.LeftChild = newDis;
@@ -466,6 +485,9 @@ namespace SEWorkshop.Models
                             {
                                 if (father.Op != null && father.RightChild != null)
                                 {
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.RightChild, dis);
                                     newDis.Father = father;
                                     father.RightChild = newDis;
@@ -479,7 +501,7 @@ namespace SEWorkshop.Models
             }
         }
 
-        private Discount? SearchNode(Discount root, int disId)
+/*        private Discount? SearchNode(Discount root, int disId)
         {
             if (root.DiscountId == disId)
             {
@@ -492,7 +514,7 @@ namespace SEWorkshop.Models
             }
 
             return SearchNode(((ComposedDiscount)root).LeftChild, disId) ?? SearchNode(((ComposedDiscount)root).RightChild, disId);
-        }
+        }*/
 
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(Operator op)
@@ -582,9 +604,11 @@ namespace SEWorkshop.Models
         public void RemoveDiscount(int indexInChain)
         {
             var toRemove = Store.Discounts.ElementAt(indexInChain);
-            Store.Discounts.Remove(toRemove);
-            DatabaseProxy.Instance.Discounts.Remove(toRemove);
-            DatabaseProxy.Instance.SaveChanges();
+            while(!(toRemove.Father is null))
+            {
+                toRemove = toRemove.Father;
+            }
+            toRemove.SelfDestruct();
         }
     }
 

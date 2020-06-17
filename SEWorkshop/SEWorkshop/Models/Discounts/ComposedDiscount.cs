@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SEWorkshop.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models.Discounts
 {
@@ -35,6 +36,8 @@ namespace SEWorkshop.Models.Discounts
 
             LeftChild = dis1;
             RightChild = dis2;
+            LeftChildId = dis1.DiscountId;
+            RightChildId = dis2.DiscountId;
             //Childs = new List<Discount>() { dis1, dis2 };
             Deadline = dis1.Deadline > dis2.Deadline ? dis2.Deadline : dis1.Deadline;
         }
@@ -72,6 +75,22 @@ namespace SEWorkshop.Models.Discounts
                 }
             }
             return 0;
+        }
+
+        public override void SelfDestruct()
+        {
+            if(LeftChild != null)
+            {
+                LeftChild.SelfDestruct();
+                
+            }
+            if(RightChild != null)
+            {
+                RightChild.SelfDestruct();
+            }
+            Store.Discounts.Remove(this);
+            DatabaseProxy.Instance.Discounts.Remove(this);
+            DatabaseProxy.Instance.SaveChanges();
         }
     }
 }

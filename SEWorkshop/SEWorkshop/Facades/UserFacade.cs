@@ -29,6 +29,7 @@ namespace SEWorkshop.Facades
             if (!DatabaseProxy.Instance.Administrators.Any())
             {
                 DatabaseProxy.Instance.Administrators.Add(new Administrator(Administrator.ADMIN_USER_NAME, securityAdapter.Encrypt("sadnaTeam" )));
+                DatabaseProxy.Instance.SaveChanges();
             }
         }
 

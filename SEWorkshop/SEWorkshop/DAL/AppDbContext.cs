@@ -369,6 +369,11 @@ namespace SEWorkshop.DAL
                     .WithMany()
                     .HasForeignKey(discount => discount.LeftChildId)
                     .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Discount>()
+                    .HasOptional(discount => discount.Father)
+                    .WithMany()
+                    .HasForeignKey(discount => discount.FatherId)
+                    .WillCascadeOnDelete(false);
             //.Map(config => config.ToTable("Discounts"))
 
             //.WithOptionalPrincipal(child => child.Father);

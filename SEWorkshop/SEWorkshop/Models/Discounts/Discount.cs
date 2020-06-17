@@ -44,5 +44,7 @@ namespace SEWorkshop.Models.Discounts
         }
 
         public abstract double ComputeDiscount(ICollection<ProductsInBasket> itemsList);
+
+        public abstract void SelfDestruct();
     }
 }
