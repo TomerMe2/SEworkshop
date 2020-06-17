@@ -1,0 +1,47 @@
+﻿@page
+@model Website.Pages.AllPurchasesModel
+@{
+    ViewData["Title"] = "AllPurchases";
+}
+
+<h1>AllPurchases</h1>
+
+@{
+    if (!Model.UserManager.IsAdministrator(Model.HttpContext.Session.Id))
+    {
+        <h1>You are not an admin. Go Away.</h1>
+    }
+    else
+    {
+        var i = 0;
+        foreach (var purchases in Model.Purchases)
+        {
+            <h3>Store: @Model.Stores.ElementAt(i).Name</h3>
+            if (purchases.Count == 0)
+            {
+                <h5>No Purchases</h5>
+            }
+            else
+            {
+                foreach (SEWorkshop.DataModels.DataPurchase purchase in purchases)
+                {
+                    var adrs = purchase.Address;
+                    var addressStr = $"{adrs.Country}, {adrs.City}, {adrs.Street}, {adrs.HouseNumber}";
+                    <div class="card" style="width: 100%">
+                        <div class="card-body">
+                            <h5 class="card-title">@addressStr</h5>
+                            <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
+                            @foreach (var (product, amount) in purchase.Basket.Products)
+                            {
+                                <h5 class="card-title">Product name: @product.Name</h5>
+                                <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
+                                <h6 class="card-subtitle mb-2">Amount: @amount</h6>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            i++;
+        }
+    }
+}
