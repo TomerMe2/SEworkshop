@@ -1,0 +1,12 @@
+[
+  {
+    "command": "Register",
+    "username": "Noa",
+    "password": "1234"
+  },
+  {
+    "command": "Register",
+    "username": "Noa2",
+    "password": "12345"
+  }
+]
