@@ -21,6 +21,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void Init()
         {
             DatabaseProxy.MoveToTestDb();
+            DatabaseProxy.ClearDB();
             Facade = new StoreFacade();
             SecurityAdapter = new SecurityAdapter();
         }

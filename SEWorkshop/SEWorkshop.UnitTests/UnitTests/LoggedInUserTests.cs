@@ -24,6 +24,12 @@ namespace SEWorkshop.Tests.UnitTests
             DatabaseProxy.MoveToTestDb();
         }
 
+        [SetUp]
+        public void Setup()
+        {
+            DatabaseProxy.ClearDB();
+        }
+
         [Test]
         public void WriteReview()
         {

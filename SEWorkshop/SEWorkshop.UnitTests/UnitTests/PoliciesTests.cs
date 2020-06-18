@@ -7,6 +7,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Models.Policies;
 using SEWorkshop.Enums;
 using SEWorkshop.DAL;
+using System.Data.Entity;
 
 namespace SEWorkshop.Tests.UnitTests
 {
@@ -35,6 +36,7 @@ namespace SEWorkshop.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
+            DatabaseProxy.ClearDB();
             Buyer = new LoggedInUser("buyer", new byte[1] { 0 });
             StoreOwner = new LoggedInUser("owner", new byte[1] { 0 });
             Str = Store.StoreBuilder(StoreOwner, "storenm");
