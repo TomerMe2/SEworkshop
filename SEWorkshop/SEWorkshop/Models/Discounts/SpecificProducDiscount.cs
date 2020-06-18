@@ -30,7 +30,7 @@ namespace SEWorkshop.Models.Discounts
             double totalDiscount = 0;
             foreach (var prod in itemsList)
             {
-                if (prod.Product.Equals(prod))
+                if (prod.Product.Equals(Product))
                 {
                     totalDiscount += (prod.Product.Price * prod.Quantity) * (Percentage / 100);
                 }

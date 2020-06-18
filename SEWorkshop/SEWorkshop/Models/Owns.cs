@@ -56,11 +56,13 @@ namespace SEWorkshop.Models
             newOwner.OwnershipRequests.Add(request);
             LoggedInUser.OwnershipRequestsFrom.Add(request);
             DatabaseProxy.Instance.OwnershipRequests.Add(request);
-            foreach(var answer in request.Answers)
+            DatabaseProxy.Instance.SaveChanges();
+            foreach (var answer in request.Answers)
             {
                 DatabaseProxy.Instance.OwnershipAnswers.Add(answer);
+                DatabaseProxy.Instance.SaveChanges();
             }
-            DatabaseProxy.Instance.SaveChanges();
+            /*DatabaseProxy.Instance.SaveChanges();*/
             // He wants him to be an owner, cus he suggested that
             request.Answer(LoggedInUser, RequestState.Approved);
             if (request.GetRequestState() == RequestState.Approved)
