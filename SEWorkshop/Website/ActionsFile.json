@@ -28,16 +28,8 @@
     "quantity": 80
   },
   {
-    "command": "Logout"
-  },
-  {
-    "command": "Login",
-    "username": "Idan",
-    "password": "1234"
-  },
-  {
-    "command": "WriteMessage",
-    "message": "great store, love it!",
-    "storeName": "Zara"
+    "command": "AddAlwaysTruePolicy",
+    "storeName": "Zara",
+    "operator": "And"
   }
 ]

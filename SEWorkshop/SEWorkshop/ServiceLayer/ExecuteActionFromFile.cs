@@ -105,36 +105,19 @@ namespace SEWorkshop.ServiceLayer
                     case "EditProductQuantity":
                         HandleEditProductQuantity(action, valuesDictionary);
                         break;
-                    /*
                     case "RemoveProduct":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.RemoveProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        HandleRemoveProduct(action, valuesDictionary);
                         break;
                     case "AddAlwaysTruePolicy":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[2]);
-                            if (op != null)
-                                userManager.AddAlwaysTruePolicy(DEF_SID, actionLineSplited[1], (Operator)op);
-                        }
+                        HandleAddAlwaysTruePolicy(action, valuesDictionary);
                         break;
                     case "AddSingleProductQuantityPolicy":
-                        if (actionLineSplited.Length == 6 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op1 = StringToOperator(actionLineSplited[2]);
-                            if (op1 != null && int.TryParse(actionLineSplited[4], out int minQuantity1) && int.TryParse(actionLineSplited[5], out int maxQuantity1))
-                                userManager.AddSingleProductQuantityPolicy(DEF_SID, actionLineSplited[1], (Operator)op1, actionLineSplited[3], minQuantity1, maxQuantity1);
-                        }
+                        HandleAddSingleProductQuantityPolicy(action, valuesDictionary);
                         break;
                     case "AddSystemDayPolicy":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[2]);
-                            DayOfWeek? day = StringToDayOfWeek(actionLineSplited[3]);
-                            if (op != null && day != null)
-                                userManager.AddSystemDayPolicy(DEF_SID, actionLineSplited[1], (Operator)op, (DayOfWeek)day);
-                        }
+                        HandleAddSystemDayPolicy(action, valuesDictionary);
                         break;
+                    /*
                     case "AddUserCityPolicy":
                         if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
                         {
@@ -795,6 +778,168 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductQuantity(DEF_SID, storeName, productName, newQuantity);
         }
 
+        [Obsolete]
+        void HandleRemoveProduct(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemoveProduct',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveProduct invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+            }
+            userManager.RemoveProduct(DEF_SID, storeName, productName);
+        }
+
+        [Obsolete]
+        void HandleAddAlwaysTruePolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddAlwaysTruePolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddAlwaysTruePolicy invalid." +
+                   "Required properties:" +
+                   "command      type: string" +
+                   "storeName    type: string" +
+                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                   "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            Operator op = Operator.And;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+            }
+            userManager.AddAlwaysTruePolicy(DEF_SID, storeName, op);
+        }
+
+        [Obsolete]
+        void HandleAddSingleProductQuantityPolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddSingleProductQuantityPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'minQuantity': { 'type': 'integer', 'required': 'true'},
+                    'minQuantity': { 'type': 'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddSingleProductQuantityPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "productName  type: string" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "minQuantity  type: integer" +
+                  "maxQuantity  type: integer" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            Operator op = Operator.And;
+            int minQuantity = 0;
+            int maxQuantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+                if (property.Key.Equals("minQuantity"))
+                    minQuantity = (int)(long)property.Value;
+                if (property.Key.Equals("maxQuantity"))
+                    maxQuantity = (int)(long)property.Value;
+            }
+            userManager.AddSingleProductQuantityPolicy(DEF_SID, storeName, op, productName, minQuantity, maxQuantity);
+        }
+
+        [Obsolete]
+        void HandleAddSystemDayPolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddSystemDayPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'dayOfWeek': {'type': 'string', 'enum': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddSystemDayPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "dayOfWeek    type: enum ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            Operator op = Operator.And;
+            DayOfWeek dayOfWeek = DayOfWeek.Sunday;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+                if (property.Key.Equals("dayOfWeek"))
+                    dayOfWeek = StringToDayOfWeek((string)property.Value);
+            }
+            userManager.AddSystemDayPolicy(DEF_SID, storeName, op, dayOfWeek);
+        }
+
         bool CheckArgs(string[] args)
         {
             foreach (string arg in args)
@@ -803,7 +948,7 @@ namespace SEWorkshop.ServiceLayer
             return true;
         }
 
-        Operator? StringToOperator(string op)
+        Operator StringToOperator(string op)
         {
             return op switch
             {
@@ -811,11 +956,11 @@ namespace SEWorkshop.ServiceLayer
                 "Or" => Operator.Or,
                 "Xor" => Operator.Xor,
                 "Implies" => Operator.Implies,
-                _ => null,
+                _ => Operator.And,
             };
         }
 
-        DayOfWeek? StringToDayOfWeek(string day)
+        DayOfWeek StringToDayOfWeek(string day)
         {
             return day switch
             {
@@ -826,7 +971,7 @@ namespace SEWorkshop.ServiceLayer
                 "Thursday" => DayOfWeek.Thursday,
                 "Friday" => DayOfWeek.Friday,
                 "Saturday" => DayOfWeek.Saturday,
-                _ => null,
+                _ => DayOfWeek.Sunday,
             };
         }
     }
