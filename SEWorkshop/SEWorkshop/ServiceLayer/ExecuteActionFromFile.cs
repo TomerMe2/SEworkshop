@@ -87,39 +87,25 @@ namespace SEWorkshop.ServiceLayer
                     case "WriteMessage":
                         HandleWriteMessage(action, valuesDictionary);
                         break;
-                    /*
                     case "AddProduct":
-                        // action line format: <storeName>,<productName>,<description>,<category>,<price>,<quantity>
-                        if (actionLineSplited.Length == 7 && CheckArgs(actionLineSplited))
-                        {
-                            if (double.TryParse(actionLineSplited[5], out double price1) && int.TryParse(actionLineSplited[6], out int quantity1))
-                                userManager.AddProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3], actionLineSplited[4], price1, quantity1);
-                        }
-                        else
-                            Console.WriteLine("AddProduct action is invalid, correct structure is: AddProduct,StoreName,ProductName,Description,Category,Price,Quantity");
+                        HandleAddProduct(action, valuesDictionary);
                         break;
                     case "EditProductName":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.EditProductName(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        HandleEditProductName(action, valuesDictionary);
                         break;
                     case "EditProductCategory":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.EditProductCategory(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        HandleEditProductCategory(action, valuesDictionary);
                         break;
                     case "EditProductDescription":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.EditProductDescription(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        HandleEditProductDescription(action, valuesDictionary);
                         break;
                     case "EditProductPrice":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited) &&
-                            double.TryParse(actionLineSplited[3], out double price2))
-                            userManager.EditProductPrice(DEF_SID, actionLineSplited[1], actionLineSplited[2], price2);
+                        HandleEditProductPrice(action, valuesDictionary);
                         break;
                     case "EditProductQuantity":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited) &&
-                            int.TryParse(actionLineSplited[3], out int quantity2))
-                            userManager.EditProductQuantity(DEF_SID, actionLineSplited[1], actionLineSplited[2], quantity2);
+                        HandleEditProductQuantity(action, valuesDictionary);
                         break;
+                    /*
                     case "RemoveProduct":
                         if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
                             userManager.RemoveProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
@@ -585,6 +571,228 @@ namespace SEWorkshop.ServiceLayer
                     message = (string)property.Value;
             }
             userManager.WriteMessage(DEF_SID, storeName, message);
+        }
+
+        [Obsolete]
+        void HandleAddProduct(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddProduct',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'description': {'type':'string', 'required': 'true'},
+                    'category': {'type':'string', 'required': 'true'},
+                    'price': {'type':'number', 'required': 'true'},
+                    'quantity': {'type':'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddProduct invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"description\":_, \"category\":_, \"price\":_, \"quantity\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            string description = "";
+            string category = "";
+            double price = 0;
+            int quantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("description"))
+                    description = (string)property.Value;
+                if (property.Key.Equals("category"))
+                    category = (string)property.Value;
+                if (property.Key.Equals("price"))
+                    price = (double)property.Value;
+                if (property.Key.Equals("quantity"))
+                    quantity = (int)(long)property.Value;
+            }
+            userManager.AddProduct(DEF_SID, storeName, productName, description, category, price, quantity);
+        }
+
+        [Obsolete]
+        void HandleEditProductName(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'EditProductName',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'newName': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! EditProductName invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newName\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            string newName = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("newName"))
+                    newName = (string)property.Value;
+            }
+            userManager.EditProductName(DEF_SID, storeName, productName, newName);
+        }
+
+        [Obsolete]
+        void HandleEditProductCategory(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'EditProductCategory',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'newCategory': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! EditProductCategory invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newCategory\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            string newCategory = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("newCategory"))
+                    newCategory = (string)property.Value;
+            }
+            userManager.EditProductCategory(DEF_SID, storeName, productName, newCategory);
+        }
+
+        [Obsolete]
+        void HandleEditProductDescription(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'EditProductDescription',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'newDescription': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! EditProductDescription invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newDescription\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            string newDescription = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("newDescription"))
+                    newDescription = (string)property.Value;
+            }
+            userManager.EditProductDescription(DEF_SID, storeName, productName, newDescription);
+        }
+
+        [Obsolete]
+        void HandleEditProductPrice(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'EditProductPrice',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'newPrice': {'type':'number', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! EditProductPrice invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newPrice\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            double newPrice = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("newPrice"))
+                    newPrice = (double)property.Value;
+            }
+            userManager.EditProductPrice(DEF_SID, storeName, productName, newPrice);
+        }
+
+        [Obsolete]
+        void HandleEditProductQuantity(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'EditProductQuantity',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'newQuantity': {'type':'number', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! EditProductQuantity invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newQuantity\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            int newQuantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("newQuantity"))
+                    newQuantity = (int)(long)property.Value;
+            }
+            userManager.EditProductQuantity(DEF_SID, storeName, productName, newQuantity);
         }
 
         bool CheckArgs(string[] args)
