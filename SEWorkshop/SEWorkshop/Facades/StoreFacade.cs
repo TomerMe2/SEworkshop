@@ -30,7 +30,7 @@ namespace SEWorkshop.Facades
             {
                 throw new StoreWithThisNameAlreadyExistsException();
             }
-            Store newStore = CreateStore(owner, storeName);
+            Store newStore = Store.StoreBuilder(owner, storeName);
             return newStore;
         }
 
