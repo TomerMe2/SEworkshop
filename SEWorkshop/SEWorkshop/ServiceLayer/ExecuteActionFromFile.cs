@@ -770,7 +770,7 @@ namespace SEWorkshop.ServiceLayer
                     'command': { 'type': 'string', 'required': 'true'},
                     'storeName': { 'type': 'string', 'required': 'true'},
                     'productName': {'type':'string', 'required': 'true'},
-                    'newQuantity': {'type':'number', 'required': 'true'}
+                    'newQuantity': {'type':'integer', 'required': 'true'}
                 },
                 'additionalProperties': false
             }";
