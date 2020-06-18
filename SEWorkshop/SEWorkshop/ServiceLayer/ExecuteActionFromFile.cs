@@ -7,7 +7,6 @@ using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SEWorkshop.ServiceLayer
 {
@@ -35,13 +34,9 @@ namespace SEWorkshop.ServiceLayer
             }
             catch (System.IO.FileNotFoundException)
             {
-                Console.WriteLine("File not found.\nFile name should be 'ActionsFile.json' and it should be located in SEWorkshop\\Website");
+                Console.WriteLine("Error! File not found.\nFile name should be 'ActionsFile.json' and it should be located in SEWorkshop\\Website");
             }
             catch (TradingSystemException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
@@ -51,68 +46,38 @@ namespace SEWorkshop.ServiceLayer
         [Obsolete]
         void ReadActionsFile(List<JObject> jobjectsList, List<Dictionary<string, object>> dictionariesList)
         {
-            // Read file on startup
-            //foreach (string line in lines) { Console.WriteLine("\t" + line); }
             int index = -1;
             foreach (JObject action in jobjectsList)
             {
                 index++;
                 Dictionary<string, object> valuesDictionary = dictionariesList.ElementAt(index);
+                if (!valuesDictionary.ElementAt(0).Key.Equals("command"))
+                {
+                    Console.WriteLine("Error! \"command\" property should be first");
+                    continue;
+                }
                 switch (valuesDictionary.ElementAt(0).Value)
                 {
                     case "Register":
                         HandleRegister(action, valuesDictionary);
                         break;
-                    /*
                     case "Login":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.Login(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
-                        else
-                            Console.WriteLine("Login action is invalid, correct structure is: Login,Username,Password");
+                        HandleLogin(action, valuesDictionary);
                         break;
-
                     case "Logout":
-                        userManager.Logout(DEF_SID);
+                        HandleLogout(action, valuesDictionary);
                         break;
                     case "AddProductToCart":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                        {
-                            if (int.TryParse(actionLineSplited[3], out int val1))
-                                userManager.AddProductToCart(DEF_SID, actionLineSplited[1], actionLineSplited[2], val1);
-                            else
-                                Console.WriteLine("AddProductToCart action is invalid, Quantity should be integer");
-                        }
-                        else
-                            Console.WriteLine("AddProductToCart action is invalid, correct structure is: AddProductToCart,StoreName,ProductName,Quantity");
+                        HandleAddProductToCart(action, valuesDictionary);
                         break;
                     case "RemoveProductFromCart":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                        {
-                            if (int.TryParse(actionLineSplited[3], out int val2))
-                                userManager.RemoveProductFromCart(DEF_SID, actionLineSplited[1], actionLineSplited[2], val2);
-                            else
-                                Console.WriteLine("RemoveProductFromCart action is invalid, Quantity should be integer");
-                        }
-                        else
-                            Console.WriteLine("RemoveProductFromCart action is invalid, correct structure is: RemoveProductFromCart,StoreName,ProductName,Quantity");
+                        HandleRemoveProductFromCart(action, valuesDictionary);
                         break;
                     case "Purchase":
                         // action line format: <ActionName>,<StoreName>,<creditCardNumber>,<City>,<Street>,<HouseNumber>,<Country>
-                        if (actionLineSplited.Length == 7 && int.TryParse(actionLineSplited[2], out int val3))
-                        {
-                            // find the basket according to store name
-                            IEnumerable<DataBasket> baskets = userManager.MyCart(DEF_SID);
-                            Address address = new Address(actionLineSplited[6], actionLineSplited[3], actionLineSplited[4], actionLineSplited[5]);
-                            foreach (DataBasket basket in baskets)
-                                if (basket.Store.Name.Equals(actionLineSplited[1]))
-                                {
-                                    userManager.Purchase(DEF_SID, basket, actionLineSplited[2], address);
-                                }
-                            Console.WriteLine("Purchase action is invalid, basket in the StoreName is not found");
-                        }
-                        else
-                            Console.WriteLine("Purchase action is invalid, correct structure is: Purchase,StoreName,CreditCardNumber,City,Street,HouseNumber,Country");
+                        HandlePurchase(action, valuesDictionary);
                         break;
+                    /*
                     case "OpenStore":
                         if (actionLineSplited.Length == 2)
                             userManager.OpenStore(DEF_SID, actionLineSplited[1]);
@@ -137,7 +102,6 @@ namespace SEWorkshop.ServiceLayer
                         {
                             if (double.TryParse(actionLineSplited[5], out double price1) && int.TryParse(actionLineSplited[6], out int quantity1))
                                 userManager.AddProduct(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3], actionLineSplited[4], price1, quantity1);
-
                         }
                         else
                             Console.WriteLine("AddProduct action is invalid, correct structure is: AddProduct,StoreName,ProductName,Description,Category,Price,Quantity");
@@ -319,14 +283,14 @@ namespace SEWorkshop.ServiceLayer
                         break;
                     */
                     default:
-                        Console.WriteLine("action name is illegal");
+                        Console.WriteLine("Error! command name is illegal");
                         continue;
                 }
             }
         }
 
         [Obsolete]
-        void HandleRegister(JObject action, Dictionary<string,object> valuesDictionary)
+        void HandleRegister(JObject action, Dictionary<string,object> properties)
         {
             string schemaJson = @"{
                 'description': 'Register',
@@ -341,10 +305,202 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (action.IsValid(schema))
             {
-                userManager.Register(DEF_SID, (string)valuesDictionary.ElementAt(1).Value, (string)valuesDictionary.ElementAt(2).Value);
+                string username = "";
+                string password = "";
+                foreach (var property in properties)
+                {
+                    if (property.Key.Equals("username"))
+                        username = (string)property.Value;
+                    if (property.Key.Equals("username"))
+                        password = (string)property.Value;
+                }
+                userManager.Register(DEF_SID, username, password);
+            }
+            else
+            {
+                Console.WriteLine("Error! Register invalid. required properties: { \"command\":_, \"username\":_, \"password\":_ }");
             }
         }
 
+        [Obsolete]
+        void HandleLogin(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'Login',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'username': {'type':'string', 'required': 'true'},
+                    'password': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (action.IsValid(schema))
+            {
+                string username = "";
+                string password = "";
+                foreach (var property in properties)
+                {
+                    if (property.Key.Equals("username"))
+                        username = (string)property.Value;
+                    if (property.Key.Equals("username"))
+                        password = (string)property.Value;
+                }
+                userManager.Login(DEF_SID, username, password);
+            }
+            else
+            {
+                Console.WriteLine("Error! Login invalid. required properties: { \"command\":_, \"username\":_, \"password\":_ }");
+            }
+        }
+
+        [Obsolete]
+        void HandleLogout(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'Logout',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (action.IsValid(schema))
+            {
+                userManager.Logout(DEF_SID);
+            }
+            else
+            {
+                Console.WriteLine("Error! Logout invalid. There are no properties in this command");
+            }
+        }
+
+        [Obsolete]
+        void HandleAddProductToCart(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddProductToCart',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'quantity': {'type':'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddProductToCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            int quantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("quantity"))
+                    quantity = (int)(long)property.Value;
+            }
+            userManager.AddProductToCart(DEF_SID, storeName, productName, quantity);
+        }
+
+        [Obsolete]
+        void HandleRemoveProductFromCart(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemoveProductFromCart',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'quantity': {'type':'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveProductFromCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            int quantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("quantity"))
+                    quantity = (int)(long)property.Value;
+            }
+            userManager.RemoveProductFromCart(DEF_SID, storeName, productName, quantity);
+        }
+
+        [Obsolete]
+        void HandlePurchase(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'Purchase',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'creditCardNumber': {'type':'string', 'required': 'true'},
+                    'city': {'type':'string', 'required': 'true'},
+                    'street': {'type':'string', 'required': 'true'},
+                    'houseNumber': {'type':'string', 'required': 'true'},
+                    'country': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveProductFromCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                return;
+            }
+            string storeName = "";
+            string creditCardNumber = "";
+            string city = "";
+            string street = "";
+            string houseNumber = "";
+            string country = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("creditCardNumber"))
+                    creditCardNumber = (string)property.Value;
+                if (property.Key.Equals("city"))
+                    city = (string)property.Value;
+                if (property.Key.Equals("street"))
+                    street = (string)property.Value;
+                if (property.Key.Equals("houseNumber"))
+                    houseNumber = (string)property.Value;
+                if (property.Key.Equals("country"))
+                    country = (string)property.Value;
+            }
+            IEnumerable<DataBasket> baskets = userManager.MyCart(DEF_SID);
+            Address address = new Address(country, city, street, houseNumber);
+            foreach (DataBasket basket in baskets)
+                if (basket.Store.Name.Equals(storeName))
+                {
+                    userManager.Purchase(DEF_SID, basket, creditCardNumber, address);
+                    return;
+                }
+            Console.WriteLine("Purchase action is invalid, basket in the StoreName is not found");
+        }
 
         bool CheckArgs(string[] args)
         {
