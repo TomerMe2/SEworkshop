@@ -4,6 +4,7 @@ using Newtonsoft.Json.Schema;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
+using SEWorkshop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,25 +78,16 @@ namespace SEWorkshop.ServiceLayer
                         // action line format: <ActionName>,<StoreName>,<creditCardNumber>,<City>,<Street>,<HouseNumber>,<Country>
                         HandlePurchase(action, valuesDictionary);
                         break;
-                    /*
                     case "OpenStore":
-                        if (actionLineSplited.Length == 2)
-                            userManager.OpenStore(DEF_SID, actionLineSplited[1]);
-                        else
-                            Console.WriteLine("OpenStore action is invalid, correct structure is: OpenStore,StoreName");
+                        HandleOpenStore(action, valuesDictionary);
                         break;
                     case "WriteReview":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.WriteReview(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
-                        else
-                            Console.WriteLine("WriteReview action is invalid, correct structure is: WriteReview,StoreName,ProductName,Review");
+                        HandleWriteReview(action, valuesDictionary);
                         break;
                     case "WriteMessage":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.WriteMessage(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
-                        else
-                            Console.WriteLine("WriteMessage action is invalid, correct structure is: WriteMessage,StoreName,ProductName,Message");
+                        HandleWriteMessage(action, valuesDictionary);
                         break;
+                    /*
                     case "AddProduct":
                         // action line format: <storeName>,<productName>,<description>,<category>,<price>,<quantity>
                         if (actionLineSplited.Length == 7 && CheckArgs(actionLineSplited))
@@ -311,7 +303,7 @@ namespace SEWorkshop.ServiceLayer
                 {
                     if (property.Key.Equals("username"))
                         username = (string)property.Value;
-                    if (property.Key.Equals("username"))
+                    if (property.Key.Equals("password"))
                         password = (string)property.Value;
                 }
                 userManager.Register(DEF_SID, username, password);
@@ -344,7 +336,7 @@ namespace SEWorkshop.ServiceLayer
                 {
                     if (property.Key.Equals("username"))
                         username = (string)property.Value;
-                    if (property.Key.Equals("username"))
+                    if (property.Key.Equals("password"))
                         password = (string)property.Value;
                 }
                 userManager.Login(DEF_SID, username, password);
@@ -467,7 +459,7 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! RemoveProductFromCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                Console.WriteLine("Error! Purchase invalid. required properties: { \"command\":_, \"storeName\":_, \"creditCardNumber\":_, \"city\":_, \"street\":_, \"houseNumber\":_, \"country\":_ }");
                 return;
             }
             string storeName = "";
@@ -499,7 +491,100 @@ namespace SEWorkshop.ServiceLayer
                     userManager.Purchase(DEF_SID, basket, creditCardNumber, address);
                     return;
                 }
-            Console.WriteLine("Purchase action is invalid, basket in the StoreName is not found");
+            Console.WriteLine("Purchase invalid, couldn't find a basket in the Store: " + storeName);
+        }
+
+        [Obsolete]
+        void HandleOpenStore(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'OpenStore',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! OpenStore invalid. required properties: { \"command\":_, \"storeName\":_ }");
+                return;
+            }
+            string storeName = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+            }
+            userManager.OpenStore(DEF_SID, storeName);
+        }
+
+        [Obsolete]
+        void HandleWriteReview(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'WriteReview',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': {'type':'string', 'required': 'true'},
+                    'review': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! WriteReview invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"review\":_ }");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            string review = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("productName"))
+                    productName = (string)property.Value;
+                if (property.Key.Equals("review"))
+                    review = (string)property.Value;
+            }
+            userManager.WriteReview(DEF_SID, storeName, productName, review);
+        }
+
+        [Obsolete]
+        void HandleWriteMessage(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'WriteReview',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'message': {'type':'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! WriteReview invalid. required properties: { \"command\":_, \"storeName\":_, \"message\":_ }");
+                return;
+            }
+            string storeName = "";
+            string message = "";
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("message"))
+                    message = (string)property.Value;
+            }
+            userManager.WriteMessage(DEF_SID, storeName, message);
         }
 
         bool CheckArgs(string[] args)
