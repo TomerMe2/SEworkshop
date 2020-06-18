@@ -84,7 +84,7 @@ namespace SEWorkshop.Models
             Policies = new List<Policy>();
         }
 
-        private Store(string name)
+        public Store(string name)
         {
             IsOpen = true;
             Ownership = new List<Owns>();
@@ -95,10 +95,10 @@ namespace SEWorkshop.Models
             Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = name;
+            Policies = new List<Policy>();
             var alwaysTrue = new AlwaysTruePolicy(this);
             Policies.Add(alwaysTrue);
             OwnershipRequests = new List<OwnershipRequest>();
-            Policies = new List<Policy>();
         }
 
         public void CloseStore()
