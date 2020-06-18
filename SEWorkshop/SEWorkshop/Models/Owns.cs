@@ -65,7 +65,7 @@ namespace SEWorkshop.Models
             req.Answer(LoggedInUser, answer);
             if (req.GetRequestState() == RequestState.Approved)
             {
-                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
+                if (!Store.Owners.TryAdd(newOwner, req.Owner))
                 {
                     throw new UserIsAlreadyStoreOwnerException();
                 }

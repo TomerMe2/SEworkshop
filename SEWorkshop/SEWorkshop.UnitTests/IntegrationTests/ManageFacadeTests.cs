@@ -513,6 +513,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AnswerOwnershipRequest(thirdOwner, store, forthOwner, RequestState.Approved);
 
             Assert.IsTrue(store.Owners.ContainsKey(forthOwner));
+            Assert.IsTrue(store.Owners.TryGetValue(forthOwner,out firstOwner));
             Assert.IsFalse(store.OwnershipRequests.ContainsKey(forthOwner));
         }
 
