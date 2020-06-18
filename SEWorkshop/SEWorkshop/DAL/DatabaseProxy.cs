@@ -43,5 +43,20 @@ namespace SEWorkshop.DAL
                 instance = new TestDbContext();
             }
         }
+
+        //Clear all the data that the tables contains. Doesn't delete the tables themselves
+        public static void ClearDB()
+        {
+            //Clear the DB only if it's a test context
+            if(Instance is TestDbContext)
+            {
+                var tableNames = Instance.Database.SqlQuery<string>("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME NOT LIKE '%Migration%'").ToList();
+                foreach (var tableName in tableNames)
+                {
+                    Instance.Database.ExecuteSqlCommand(string.Format("DELETE FROM {0}", tableName));
+                }
+                Instance.SaveChanges();
+            }
+        }
     }
 }

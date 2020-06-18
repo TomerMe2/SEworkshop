@@ -28,9 +28,15 @@ namespace SEWorkshop.Models
         public virtual string Name { get; private set; }
 
         [NotMapped()]
-        public virtual Policy Policy { get; set; }
+        public virtual Policy Policy
+        {
+            get
+            {
+                // The first (and hopefuly only) policy without a father in the list
+                return Policies.First(pol => pol.OuterPolicy is null);
+            }
+        }
 
-        public virtual ICollection<AlwaysTruePolicy> AlwaysTruePolicies { get; set; }
         public virtual ICollection<Purchase> Purchases {get; private set; }
         public virtual ICollection<Policy> Policies { get; private set; }
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
@@ -38,6 +44,31 @@ namespace SEWorkshop.Models
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
+
+        public static Store StoreBuilder(LoggedInUser owner, string name)
+        {
+            Store newStore = new Store(name);
+            var demo = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals("DEMO"));
+            if (demo == null)
+            {
+                demo = new LoggedInUser("DEMO", new byte[] { 0 });
+                DatabaseProxy.Instance.LoggedInUsers.Add(demo);
+            }
+            DatabaseProxy.Instance.Stores.Add(newStore);
+            DatabaseProxy.Instance.Policies.Add(newStore.Policies.First());   //it will be the first and only policy
+            DatabaseProxy.Instance.SaveChanges();
+
+            Owns ownership = new Owns(owner, newStore, demo);
+            newStore.Ownership.Add(ownership);
+            owner.Owns.Add(ownership);
+            DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+            foreach (var auth in ownership.AuthoriztionsOfUser)
+            {
+                DatabaseProxy.Instance.Authorities.Add(auth);
+            }
+            DatabaseProxy.Instance.SaveChanges();
+            return newStore;
+        }
 
         private Store()
         {
@@ -49,32 +80,12 @@ namespace SEWorkshop.Models
             Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = "";
-            Policy = null!;
             OwnershipRequests = new List<OwnershipRequest>();
             Policies = new List<Policy>();
-            AlwaysTruePolicies = new List<AlwaysTruePolicy>();
         }
 
-        public Store(LoggedInUser owner, string name)
+        private Store(string name)
         {
-            /*Ownership = (IList<Owns>)dbContext.AuthorityHandlers.Select(handler => handler is Owns &&
-                    ((Owns)handler).Store != null && ((Owns)handler).Store.Equals(this));
-            Management = (IList<Manages>)dbContext.AuthorityHandlers.Select(handler => handler is Manages &&
-                    ((Manages)handler).Store != null && ((Manages)handler).Store.Equals(this));
-            OwnershipRequests=new List<OwnershipRequest>();
-            Messages = (IList<Message>)dbContext.Messages.Select(message => message.ToStore != null && message.ToStore.Equals(this));
-            IsOpen = true;
-            Discounts = (IList<Discount>)dbContext.Messages.Select(discount => discount.ToStore != null && discount.ToStore.Equals(this));
-            Name = name;
-            Policy = ((IList<Policy>)DbContext.Policies.Select(policy => policy.Store.Equals(this)))
-                    .OrderByDescending(policy => policy.Id).FirstOrDefault();
-            if(Policy == default)
-            Purchases = (IList<Purchase>)dbContext.Purchases.Select(purhcase => purhcase.Basket.Store != null
-                    && purhcase.Basket.Store.Equals(this));
-            Discount = new List<Discount>();
-            Policy = new AlwaysTruePolicy(this);*/
-
-            //TODO: FILL OWNERSHIP OUTSIDE OF CONSTRUCTOR
             IsOpen = true;
             Ownership = new List<Owns>();
             Management = new List<Manages>();
@@ -84,14 +95,10 @@ namespace SEWorkshop.Models
             Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = name;
-            AlwaysTruePolicies = new List<AlwaysTruePolicy>();
             var alwaysTrue = new AlwaysTruePolicy(this);
-            Policy = alwaysTrue;
-            AlwaysTruePolicies.Add(alwaysTrue);
-            //DatabaseProxy.Instance.Policies.Add(Policy);
+            Policies.Add(alwaysTrue);
             OwnershipRequests = new List<OwnershipRequest>();
             Policies = new List<Policy>();
-
         }
 
         public void CloseStore()

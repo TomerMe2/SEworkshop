@@ -208,7 +208,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void Purchase_EmptyBasket_ThrowsException()
         {
             LoggedInUser peb_user1 = UsrFacade.Register("peb_user1", securityAdaprer.Encrypt("1111"));
-            Store peb_store1 = new Store(peb_user1, "peb_store1");
+            Store peb_store1 = Store.StoreBuilder(peb_user1, "peb_store1");
             string peb_creditCardNumber = "1234";
             Address peb_address1 = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             try
@@ -342,7 +342,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void StorePurchaseHistory_RequestingNotAdministrator_ThrowsException()
         {
             LoggedInUser sphrna_user1 = UsrFacade.Register("sphrna_user1", securityAdaprer.Encrypt("1111"));
-            Store sphrna_store1 = new Store(sphrna_user1, "sphrna_store1");
+            Store sphrna_store1 = Store.StoreBuilder(sphrna_user1, "sphrna_store1");
             try
             {
                 UsrFacade.StorePurchaseHistory(sphrna_user1, sphrna_store1);
@@ -362,7 +362,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void StorePurchaseHistory_NoPurchasesForStore_ReturnEmpyList()
         {
             LoggedInUser sphnp_user1 = UsrFacade.Register("sphnp_user1", securityAdaprer.Encrypt("1111"));
-            Store sphnp_store1 = new Store(sphnp_user1, "sphnp_store1");
+            Store sphnp_store1 = Store.StoreBuilder(sphnp_user1, "sphnp_store1");
             LoggedInUser sphnp_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));
             Assert.That(UsrFacade.StorePurchaseHistory(sphnp_admin1, sphnp_store1), Is.Empty);
         }
@@ -373,7 +373,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             bool passed = false;
             LoggedInUser wrhp_user1 = UsrFacade.Register("wrhp_user1", securityAdaprer.Encrypt("1111"));
-            Store wrhp_store1 = new Store(wrhp_user1, "wrhp_store1");
+            Store wrhp_store1 = Store.StoreBuilder(wrhp_user1, "wrhp_store1");
             Product wrhp_product1 = new Product(wrhp_store1, "wrhp_product2", "blablabla", "cat1", 11.11, 1);
             UsrFacade.WriteReview(wrhp_user1, wrhp_product1, "This is a bad book :(");
 
@@ -394,7 +394,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void WriteMessage_NoPermission_ThrowsException()
         {
             LoggedInUser wmnp_user1 = UsrFacade.Register("wmnp_user1", securityAdaprer.Encrypt("1111"));
-            Store wmnp_store1 = new Store(wmnp_user1, "wmnp_store1");
+            Store wmnp_store1 = Store.StoreBuilder(wmnp_user1, "wmnp_store1");
             try
             {
                 UsrFacade.WriteMessage(wmnp_user1, wmnp_store1, "Do you have any bananas?");
@@ -413,7 +413,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             bool passed = false;
             LoggedInUser wmhp_user1 = UsrFacade.Register("wmhp_user1", securityAdaprer.Encrypt("1111"));
-            Store wmhp_store1 = new Store(wmhp_user1, "wmhp_store1");
+            Store wmhp_store1 = Store.StoreBuilder(wmhp_user1, "wmhp_store1");
 
             UsrFacade.WriteMessage(wmhp_user1, wmhp_store1, "I love your store");
 

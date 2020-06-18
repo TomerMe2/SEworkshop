@@ -32,7 +32,7 @@ namespace SEWorkshop.Tests.UnitTests
             const string USER_PASSWORD = "1111";
             const string PROD_NAME = "writeReviewProd";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
+            Store str = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -50,7 +50,7 @@ namespace SEWorkshop.Tests.UnitTests
             const string USER_NAME = "WriteMessageUser";
             const string USER_PASSWORD = "1111";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
+            Store str = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -65,7 +65,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -90,7 +90,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -114,7 +114,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -130,7 +130,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -146,7 +146,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -174,7 +174,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -191,7 +191,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -206,7 +206,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -223,7 +223,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -245,7 +245,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -265,7 +265,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -283,7 +283,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -299,7 +299,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -325,7 +325,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -350,7 +350,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -369,7 +369,7 @@ namespace SEWorkshop.Tests.UnitTests
 
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
 
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -389,7 +389,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -406,7 +406,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             const string STORE_NAME = "Wello";
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Assert.IsInstanceOf<AlwaysTruePolicy>(store.Policy);
             Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
             usr.Owns.Add(ownership);
@@ -429,7 +429,7 @@ namespace SEWorkshop.Tests.UnitTests
             const string STORE_NAME = "store1";
             DateTime deadline = DateTime.Now.AddMonths(1);
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
             usr.Owns.Add(ownership);
             store.Ownership.Add(ownership);
@@ -452,7 +452,7 @@ namespace SEWorkshop.Tests.UnitTests
             const string USER_PASSWORD = "1111";
             const string PROD_NAME = "writeReviewProd";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
+            Store str = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -474,7 +474,7 @@ namespace SEWorkshop.Tests.UnitTests
             const string PROD1_NAME = "Nails";
             const string PROD2_NAME = "ScrewDriver";
             LoggedInUser usr = new LoggedInUser(USER_NAME, _securityAdapter.Encrypt(USER_PASSWORD));
-            Store str = new Store(usr, STORE_NAME);
+            Store str = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, str, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             str.Ownership.Add(ownership);
             usr.Owns.Add(ownership);

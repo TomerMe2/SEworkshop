@@ -46,7 +46,7 @@ namespace SEWorkshop.Tests.UnitTests
             LoggedInUser sp_user1 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             //DbContext.LoggedInUsers.Add(sp_user1);
             //DbContext.SaveChanges();
-            Store closeStore1 = new Store(sp_user1, "sp_store1");
+            Store closeStore1 = Store.StoreBuilder(sp_user1, "sp_store1");
             //DbContext.Stores.Add(closeStore1);
             //DbContext.SaveChanges();
             closeStore1.CloseStore();
@@ -60,7 +60,7 @@ namespace SEWorkshop.Tests.UnitTests
             LoggedInUser sp_user1 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
             //DbContext.LoggedInUsers.Add(sp_user1);
             //DbContext.SaveChanges();
-            Store sp_store1 = new Store(sp_user1, "sp_store1");
+            Store sp_store1 = Store.StoreBuilder(sp_user1, "sp_store1");
             //DbContext.Stores.Add(sp_store1);
             //DbContext.SaveChanges();
             Owns ownership = new Owns(sp_user1, sp_store1, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
@@ -76,7 +76,7 @@ namespace SEWorkshop.Tests.UnitTests
         public void SearchProducts_ProductsExistsInStore_ReturnListOfProducts()
         {
             LoggedInUser sp_user2 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
-            Store sp_store2 = new Store(sp_user2, "sp_store2");
+            Store sp_store2 = Store.StoreBuilder(sp_user2, "sp_store2");
             Owns ownership = new Owns(sp_user2, sp_store2, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             sp_store2.Ownership.Add(ownership);
             sp_user2.Owns.Add(ownership);
@@ -90,7 +90,7 @@ namespace SEWorkshop.Tests.UnitTests
         public void PurchaseBasket_NegativeInventory_ThrowException()
         {
             LoggedInUser pb_user1 = new LoggedInUser("pb_user1", _securityAdapter.Encrypt("1111"));
-            Store pb_store1 = new Store(pb_user1, "pb_store2");
+            Store pb_store1 = Store.StoreBuilder(pb_user1, "pb_store2");
             Owns ownership = new Owns(pb_user1, pb_store1, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             pb_store1.Ownership.Add(ownership);
             pb_user1.Owns.Add(ownership);
@@ -118,7 +118,7 @@ namespace SEWorkshop.Tests.UnitTests
         public void PurchaseBasket_AllQuantitiesAreValid_PurchaseSuccessful()
         {
             LoggedInUser pb_user2 = new LoggedInUser("pb_user2", _securityAdapter.Encrypt("1111"));
-            Store pb_store2 = new Store(pb_user2, "pb_store2");
+            Store pb_store2 = Store.StoreBuilder(pb_user2, "pb_store2");
             Owns ownership = new Owns(pb_user2, pb_store2, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             pb_store2.Ownership.Add(ownership);
             pb_user2.Owns.Add(ownership);

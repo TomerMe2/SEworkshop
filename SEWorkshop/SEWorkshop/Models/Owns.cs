@@ -377,7 +377,11 @@ namespace SEWorkshop.Models
             if (currPol is AlwaysTruePolicy && currPol.InnerPolicy is null)
             {
                 //The owner wants different policy, and allways true should be removed
-                Store.Policy = pol;
+                Store.Policies.Add(pol);
+                DatabaseProxy.Instance.Policies.Add(pol);
+                Store.Policies.Remove(currPol);
+                DatabaseProxy.Instance.Policies.Remove(currPol);
+                DatabaseProxy.Instance.SaveChanges();
                 return;
             }
             while(currPol.InnerPolicy != null)
@@ -568,17 +572,19 @@ namespace SEWorkshop.Models
             {
                 if (currPol.InnerPolicy == null)
                 {
-                    Store.Policy = new AlwaysTruePolicy(Store);
+                    var newPol = new AlwaysTruePolicy(Store);
+                    Store.Policies.Add(newPol);
                 }
                 else
                 {
-                    Store.Policy = currPol.InnerPolicy;
+                    currPol.InnerPolicy.OuterPolicy = null;
                 }
             }
             else
             {
                 prev.InnerPolicy = currPol.InnerPolicy;
             }
+            //TODO: REMOVE THE POLICIES THAT NO ONE POINTS AT THEM
             DatabaseProxy.Instance.Policies.Remove(currPol);
             DatabaseProxy.Instance.SaveChanges();
         }

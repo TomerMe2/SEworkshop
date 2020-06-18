@@ -306,17 +306,11 @@ namespace SEWorkshop.DAL
          
         private void DefineRelations(DbModelBuilder modelBuilder)
         {
-            
-
             modelBuilder.Entity<Authority>()
                     .HasRequired(auth => auth.AuthHandler)
                     .WithMany(handler => handler.AuthoriztionsOfUser)
                     .HasForeignKey(auth => new { auth.AuthHandlerUsername, auth.AuthHandlerStoreName })
                     .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<Authority>()
-            //        .Property(auth => auth.Authorization)
-            //        .HasColumnType("tinyint");
 
             modelBuilder.Entity<AuthorityHandler>()
                     .HasRequired(handler => handler.Appointer)
@@ -358,29 +352,18 @@ namespace SEWorkshop.DAL
                     .WithMany()
                     .HasForeignKey(discount => discount.RightChildId)
                     .WillCascadeOnDelete(false);
-                    //.HasOptional(discount => discount.RightChild)
-                    //.WithRequired(child => child.Father)
-                    //.Map(config => config.MapKey("RightChildId"))
-                    //.WillCascadeOnDelete(false);
-            //.Map(config => config.ToTable("Discounts"))
 
             modelBuilder.Entity<ComposedDiscount>()
                     .HasOptional(discount => discount.LeftChild)
                     .WithMany()
                     .HasForeignKey(discount => discount.LeftChildId)
                     .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Discount>()
                     .HasOptional(discount => discount.Father)
                     .WithMany()
                     .HasForeignKey(discount => discount.FatherId)
                     .WillCascadeOnDelete(false);
-            //.Map(config => config.ToTable("Discounts"))
-
-            //.WithOptionalPrincipal(child => child.Father);
-
-            //modelBuilder.Entity<ComposedDiscount>()
-            //        .Property(discount => discount.Op)
-            //        .HasColumnType("tinyint");
 
             modelBuilder.Entity<ConditionalDiscount>()
                     .HasRequired(discount => discount.Product)
@@ -399,12 +382,6 @@ namespace SEWorkshop.DAL
                     .WithMany(product => product.BuySomeGetSomeDiscounts)
                     .HasForeignKey(discount => discount.ProductIdUnderDiscount)
                     .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<BuySomeGetSomeDiscount>()
-            //        .HasRequired(discount => discount.ProdUnderDiscount)
-            //        .WithMany(product => product.BuySomeGetSomeDiscounts)
-            //        .HasForeignKey(discount => discount.ProductId)
-            //        .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Manages>()
                     .HasRequired(manager => manager.LoggedInUser)
@@ -435,10 +412,6 @@ namespace SEWorkshop.DAL
                     .WithOptionalPrincipal(message => message.Next)
                     .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<OwnershipAnswer>()
-            //        .Property(ans => ans.Answer)
-            //        .HasColumnType("tinyint");
-
             modelBuilder.Entity<OwnershipAnswer>()
                     .HasRequired(ans => ans.Request)
                     .WithMany(req => req.Answers)
@@ -450,10 +423,6 @@ namespace SEWorkshop.DAL
                     .WithMany(owner => owner.OwnershipAnswers)
                     .HasForeignKey(ans => new { ans.Username })
                     .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<OwnershipAnswer>()
-            //       .Property(auth => auth.Answer)
-            //       .HasColumnType("tinyint");
 
             modelBuilder.Entity<OwnershipRequest>()
                     .HasRequired(req => req.Store)
@@ -490,32 +459,22 @@ namespace SEWorkshop.DAL
                     .WithOptionalPrincipal(policy => policy.OuterPolicy)
                     .WillCascadeOnDelete(false);
 
+            //modelBuilder.Entity<Policy>()
+            //        .HasOptional(policy => policy.OuterPolicy)
+            //        .WithOptionalPrincipal(policy => policy.InnerPolicy)
+            //        .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Policy>()
                     .HasRequired(policy => policy.Store)
                     .WithMany(store => store.Policies)
-                    .HasForeignKey(policy => new { policy.StoreName })
+                    .HasForeignKey(policy => policy.StoreName)
                     .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<AlwaysTruePolicy>()
-                .HasRequired(policy => policy.Store)
-                .WithMany(store => store.AlwaysTruePolicies)
-                .HasForeignKey(policy => policy.StoreName)
-                .WillCascadeOnDelete(false);
                 
-
-            //modelBuilder.Entity<Policy>()
-            //        .Property(policy => policy.InnerOperator)
-            //        .HasColumnType("tinyint");
-
             modelBuilder.Entity<SingleProductQuantityPolicy>()
                     .HasRequired(policy => policy.Prod)
                     .WithMany(prod => prod.ProductPolicies)
                     .HasForeignKey(policy => policy.ProductId)
                     .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<SystemDayPolicy>()
-            //        .Property(policy => policy.CantBuyIn)
-            //        .HasColumnType("tinyint");
 
             modelBuilder.Entity<Product>()
                     .HasRequired(product => product.Store)
@@ -557,9 +516,6 @@ namespace SEWorkshop.DAL
                     .WithMany(product => product.Reviews)
                     .HasForeignKey(review => review.ProductId)
                     .WillCascadeOnDelete(false);
-
-           
         }
-        
     }
 }

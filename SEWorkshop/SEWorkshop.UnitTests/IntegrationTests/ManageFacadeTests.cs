@@ -33,7 +33,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -56,7 +56,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -80,7 +80,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -104,7 +104,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -128,7 +128,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -153,7 +153,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -169,7 +169,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -185,7 +185,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -201,7 +201,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -216,7 +216,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -242,7 +242,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -257,7 +257,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -272,7 +272,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -287,7 +287,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -323,7 +323,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -351,7 +351,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -390,7 +390,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -434,7 +434,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -478,7 +478,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -523,7 +523,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -542,7 +542,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
@@ -562,7 +562,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser firstOwner = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(firstOwner, STORE_NAME);
+            Store store = Store.StoreBuilder(firstOwner, STORE_NAME);
             LoggedInUser secondOwner = new LoggedInUser("appdevloper2", SecurityAdapter.Encrypt("1234"));
             Facade.AddStoreOwner(firstOwner, store, secondOwner);
             LoggedInUser thirdOwner = new LoggedInUser("appdevloper3", SecurityAdapter.Encrypt("1234"));
@@ -588,7 +588,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", SecurityAdapter.Encrypt("1234"));
-            Store store = new Store(usr, STORE_NAME);
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
             Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", SecurityAdapter.Encrypt("1234")));
             store.Ownership.Add(ownership);
             usr.Owns.Add(ownership);
