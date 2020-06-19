@@ -59,7 +59,7 @@ namespace SEWorkshop.Models
         public void RemoveAuthorization(Authorizations authorizations)
         {
             Authority? authority = (DatabaseProxy.Instance.Authorities
-                .Where(auth => auth.Authorization == authorizations && auth.AuthHandler.Equals(this))).FirstOrDefault();
+                .Where(auth => (byte)auth.Authorization == (byte)authorizations && auth.AuthHandler.Username.Equals(this.Username))).FirstOrDefault();
             if (authority != null)
             {
                 AuthoriztionsOfUser.Remove(authority);

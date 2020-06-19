@@ -356,10 +356,10 @@ namespace SEWorkshop.Models
 
                 var man = manager.Manage.FirstOrDefault(man => man.Store == (Store));
 
-                if (!man.HasAuthorization(authorization))
+                if (man.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
-                    man.HasAuthorization(authorization);
+                    man.RemoveAuthorization(authorization);
                 }
             }
         }
@@ -401,7 +401,7 @@ namespace SEWorkshop.Models
             }
             else
             {
-                Discount? existing = DatabaseProxy.Instance.Discounts.FirstOrDefault(dis => dis.DiscountId == disId);
+                Discount? existing = Store.Discounts.FirstOrDefault(dis => dis.DiscountId == disId);
                 if (existing != null)
                 {
                     ComposedDiscount? father = existing.Father;

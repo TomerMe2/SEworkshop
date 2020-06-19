@@ -10,7 +10,7 @@ namespace SEWorkshop.Models
         public virtual Basket Basket { get; private set; }
         public virtual int ProductId { get; set; }
         public virtual Product Product { get; private set; }
-        public virtual int Quantity { get; private set; }
+        public virtual int Quantity { get; set; }
 
         private ProductsInBasket() : base()
         {

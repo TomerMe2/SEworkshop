@@ -443,8 +443,8 @@ namespace SEWorkshop.Tests.UnitTests
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
             int id = store.Discounts.ElementAt(0).DiscountId;
             usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 0, id, false);
-            Assert.IsInstanceOf<SpecificProducDiscount>(((ComposedDiscount)store.Discounts.ElementAt(0)).RightChild);
-            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 1, 1, true);
+            Assert.IsInstanceOf<SpecificProducDiscount>((store.Discounts.ElementAt(0).Father).RightChild);
+            usr.AddSpecificProductDiscount(store, prod1, deadline, 50, Operator.Xor, 5, 1, true);
             usr.RemoveDiscount(store, 0);
             Assert.IsInstanceOf<SpecificProducDiscount>(store.Discounts.ElementAt(0));
         }

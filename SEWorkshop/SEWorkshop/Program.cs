@@ -20,7 +20,7 @@ namespace SEWorkshop
             um.AddBuyOverDiscount(10, "1", "nini", "prod1", DateTime.Now.AddMonths(1), 10, Operator.And, 0, 1, true);
             um.AddProductCategoryDiscount("1", "nini", "cat1", DateTime.Now.AddMonths(1), 10, Operator.And, 0, 3, true);
             um.AddBuySomeGetSomeDiscount(4, 5, "1", "prod1", "prod2", "nini", DateTime.Now.AddMonths(1), 10, Operator.And, 0, 3, true);
-            um.RemoveDiscount("1", "nini", 0);
+            //um.RemoveDiscount("1", "nini", 0);
             var deb = true;
         }
     }

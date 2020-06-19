@@ -48,7 +48,7 @@ namespace SEWorkshop.Models
             MoneyPaid = basket.PriceAfterDiscount();
             Basket.Purchase = this;
             AdminUserName = Administrator.ADMIN_USER_NAME;
-            Admin = DatabaseProxy.Instance.Administrators.First();
+            Admin = DatabaseProxy.Instance.Administrators.FirstOrDefault();
 
             Country = adrs.Country;
             City = adrs.City;

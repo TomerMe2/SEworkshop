@@ -7,7 +7,7 @@ namespace SEWorkshop.DAL
 {
     class TestDbContext : AppDbContext
     {
-        public TestDbContext() : base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tomer\Source\Repos\SEworkshop3\SEWorkshop\SEWorkshop\DAL\AzamazonTest.mdf;Integrated Security=True")
+        public TestDbContext() : base(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Ravid\Desktop\1st Degree\3rd Year\Semester F\Workshop for SE Project\Code\SEworkshop\SEWorkshop\SEWorkshop\DAL\AzamazonLocal.mdf;Integrated Security=True")
         {
 
         }

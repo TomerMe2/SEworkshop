@@ -114,7 +114,7 @@ namespace SEWorkshop.Models
                 {
                     Store.Products.Add(newProduct);
                     DatabaseProxy.Instance.Products.Add(newProduct);
-                    DatabaseProxy.Instance.SaveChanges();
+                    //DatabaseProxy.Instance.SaveChanges();
                     log.Info("Product has been added to store successfully");
                     return newProduct;
                 }

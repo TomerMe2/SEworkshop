@@ -41,11 +41,12 @@ namespace SEWorkshop.Models
                     var prod = basket.Products.FirstOrDefault(tup => tup.Product.Equals(product));
                     if (!(prod is null))
                     {
-                        quantity = quantity + prod.Quantity;
+                        //quantity = quantity + prod.Quantity;
                         // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
-                        basket.Products.Remove(prod);  //so we can add it later :)
-                        DatabaseProxy.Instance.ProductsInBaskets.Remove(prod);
+                        //basket.Products.Remove(prod);  //so we can add it later :)
+                        prod.Quantity += quantity;
                         //DatabaseProxy.Instance.SaveChanges();
+                        return;
                     }
                     ProductsInBasket newPib = new ProductsInBasket(basket, product, quantity);
                     basket.Products.Add(newPib);

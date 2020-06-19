@@ -90,7 +90,7 @@ namespace SEWorkshop.Models.Discounts
             }
             Store.Discounts.Remove(this);
             DatabaseProxy.Instance.Discounts.Remove(this);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
         }
     }
 }
