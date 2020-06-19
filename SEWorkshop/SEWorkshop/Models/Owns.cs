@@ -43,42 +43,42 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
             if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
-            if(Store.OwnershipRequests.Contains(request))
+            if(Store.OwnershipRequests.FirstOrDefault(req => req.NewOwnerUsername.Equals(newOwner.Username)) != null)
             {
                 throw new OwnershipRequestAlreadyExistsException();
             }
+
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
             Store.OwnershipRequests.Add(request);
-            newOwner.OwnershipRequests.Add(request);
             LoggedInUser.OwnershipRequestsFrom.Add(request);
-            DatabaseProxy.Instance.OwnershipRequests.Add(request);
-            DatabaseProxy.Instance.SaveChanges();
-            foreach (var answer in request.Answers)
+            newOwner.OwnershipRequests.Add(request);
+            foreach (var ans in request.Answers)
             {
-                DatabaseProxy.Instance.OwnershipAnswers.Add(answer);
-                DatabaseProxy.Instance.SaveChanges();
+                DatabaseProxy.Instance.OwnershipAnswers.Add(ans);
             }
-            /*DatabaseProxy.Instance.SaveChanges();*/
-            // He wants him to be an owner, cus he suggested that
+            DatabaseProxy.Instance.SaveChanges();
+
+            //he approves cus he suggested him
             request.Answer(LoggedInUser, RequestState.Approved);
+            DatabaseProxy.Instance.SaveChanges();
+
             if (request.GetRequestState() == RequestState.Approved)
             {
-                if(Store.GetOwnership(newOwner) != null)
-                {
-                    throw new UserIsAlreadyStoreOwnerException();
-                }
-                Store.OwnershipRequests.Remove(request);
-                newOwner.OwnershipRequests.Remove(request);
-                request.Owner.OwnershipRequestsFrom.Remove(request);
-                var ownership = new Owns(newOwner, Store, LoggedInUser);
-                newOwner.Owns.Add(ownership);
+                //TODO: ADD THIS
+                //DatabaseProxy.Instance.OwnershipRequests.Remove(request);   
+
+                Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                 Store.Ownership.Add(ownership);
-                DatabaseProxy.Instance.OwnershipRequests.Remove(request);
-                DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+                newOwner.Owns.Add(ownership);
+                DatabaseProxy.Instance.Owns.Add(ownership);
+                foreach (var auth in ownership.AuthoriztionsOfUser)
+                {
+                    DatabaseProxy.Instance.Authorities.Add(auth);
+                }
                 DatabaseProxy.Instance.SaveChanges();
             }
         }
@@ -101,7 +101,7 @@ namespace SEWorkshop.Models
                     newOwner.OwnershipRequests.Remove(req);
                     req.Owner.OwnershipRequestsFrom.Remove(req);
                     newOwner.Owns.Add(ownership);
-                    DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+                    DatabaseProxy.Instance.Owns.Add(ownership);
                     DatabaseProxy.Instance.OwnershipRequests.Remove(req);
                     DatabaseProxy.Instance.SaveChanges();
                     log.Info("A new owner has been added successfully");
@@ -129,7 +129,7 @@ namespace SEWorkshop.Models
             Manages mangement = new Manages(newManager, Store, LoggedInUser);
             Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
-            DatabaseProxy.Instance.AuthorityHandlers.Add(mangement);
+            DatabaseProxy.Instance.Manages.Add(mangement);
             DatabaseProxy.Instance.SaveChanges();
             log.Info("A new manager has been added successfully");
         }
@@ -159,7 +159,7 @@ namespace SEWorkshop.Models
             }
             Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
-            DatabaseProxy.Instance.AuthorityHandlers.Remove(management);
+            DatabaseProxy.Instance.Manages.Remove(management);
             DatabaseProxy.Instance.SaveChanges();
             log.Info("The manager has been removed successfully");
         }
@@ -190,7 +190,7 @@ namespace SEWorkshop.Models
 
             Store.Ownership.Remove(ownership);
             ownerToRemove.Owns.Remove(ownership);
-            DatabaseProxy.Instance.AuthorityHandlers.Remove(ownership);
+            DatabaseProxy.Instance.Owns.Remove(ownership);
             DatabaseProxy.Instance.SaveChanges();
             log.Info("The owner has been removed successfully");
         }
@@ -394,7 +394,6 @@ namespace SEWorkshop.Models
             DatabaseProxy.Instance.SaveChanges();
         }
         
-        //TODO: THIS FUNCTION WITH RESPECTS TO DB.
         private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
         {
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)

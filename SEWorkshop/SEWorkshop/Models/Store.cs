@@ -61,7 +61,7 @@ namespace SEWorkshop.Models
             Owns ownership = new Owns(owner, newStore, demo);
             newStore.Ownership.Add(ownership);
             owner.Owns.Add(ownership);
-            DatabaseProxy.Instance.AuthorityHandlers.Add(ownership);
+            DatabaseProxy.Instance.Owns.Add(ownership);
             foreach (var auth in ownership.AuthoriztionsOfUser)
             {
                 DatabaseProxy.Instance.Authorities.Add(auth);
@@ -84,6 +84,7 @@ namespace SEWorkshop.Models
             Policies = new List<Policy>();
         }
 
+        //TODO: Make this private if possible
         public Store(string name)
         {
             IsOpen = true;

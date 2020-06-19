@@ -41,7 +41,8 @@ namespace SEWorkshop.DAL
 
         public DbSet<Address> Addresses { get; set; } = null!;
         public DbSet<Authority> Authorities { get; set; } = null!;
-        public DbSet<AuthorityHandler> AuthorityHandlers { get; set; } = null!;
+        public DbSet<Owns> Owns { get; set; } = null!;
+        public DbSet<Manages> Manages { get; set; } = null!;
         public DbSet<Basket> Baskets { get; set; } = null!;
         public DbSet<Cart> Carts { get; set; } = null!;
         public DbSet<Discount> Discounts { get; set; } = null!;
@@ -82,15 +83,19 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Authority>()
                     .ToTable("Authorities")
-                    .HasKey(auth => new { auth.AuthHandlerUsername, auth.AuthHandlerStoreName, auth.Authorization });
+                    .HasKey(auth => new { auth.AuthHandlerId, auth.Authorization });
+
+            modelBuilder.Entity<Owns>()
+                    .ToTable("Owns")
+                    .HasKey(owns => owns.Id);
+
+            modelBuilder.Entity<Manages>()
+                    .ToTable("Manages")
+                    .HasKey(manages => manages.Id);
 
             modelBuilder.Entity<AuthorityHandler>()
-                    .ToTable("AuthorityHandlers")
-                    .HasKey(handler => new { handler.Username, handler.StoreName });
-
-            //modelBuilder.Entity<AuthorityHandler>()
-            //    .Property(auth => auth.Id)
-            //    .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+               .Property(auth => auth.Id)
+               .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             modelBuilder.Entity<Basket>()
                     .ToTable("Baskets")
@@ -213,10 +218,6 @@ namespace SEWorkshop.DAL
                 .Property(request => request.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
-            modelBuilder.Entity<Owns>()
-                    .ToTable("Owners")
-                    .HasKey(owns => new { owns.Username, owns.StoreName });
-
             modelBuilder.Entity<Policy>()
                     .ToTable("Policies")
                     .HasKey(policy => policy.Id);
@@ -309,13 +310,37 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Authority>()
                     .HasRequired(auth => auth.AuthHandler)
                     .WithMany(handler => handler.AuthoriztionsOfUser)
-                    .HasForeignKey(auth => new { auth.AuthHandlerUsername, auth.AuthHandlerStoreName })
+                    .HasForeignKey(auth => auth.AuthHandlerId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<AuthorityHandler>()
-                    .HasRequired(handler => handler.Appointer)
+                    .HasOptional(handler => handler.Appointer)
                     .WithMany(appointer => appointer.Appointements)
-                    .HasForeignKey(handler => new { handler.AppointerName })
+                    .HasForeignKey(handler => handler.AppointerName)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Owns>()
+                    .HasRequired(handler => handler.Store)
+                    .WithMany(store => store.Ownership)
+                    .HasForeignKey(handler => handler.StoreName)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Manages>()
+                   .HasOptional(handler => handler.Store)
+                   .WithMany(store => store.Management)
+                   .HasForeignKey(handler => handler.StoreName)
+                   .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Owns>()
+                    .HasRequired(handler => handler.LoggedInUser)
+                    .WithMany(user => user.Owns)
+                    .HasForeignKey(handler => handler.Username)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Manages>()
+                    .HasOptional(handler => handler.LoggedInUser)
+                    .WithMany(user => user.Manage)
+                    .HasForeignKey(handler => handler.Username)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Basket>()
@@ -415,13 +440,13 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<OwnershipAnswer>()
                     .HasRequired(ans => ans.Request)
                     .WithMany(req => req.Answers)
-                    .HasForeignKey(ans => new { ans.RequestId })
+                    .HasForeignKey(ans => ans.RequestId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<OwnershipAnswer>()
                     .HasRequired(ans => ans.Owner)
                     .WithMany(owner => owner.OwnershipAnswers)
-                    .HasForeignKey(ans => new { ans.Username })
+                    .HasForeignKey(ans => ans.Username)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<OwnershipRequest>()

@@ -15,6 +15,7 @@ namespace SEWorkshop.Models
 
     public abstract class AuthorityHandler
     {
+        public virtual int Id { get; set; }
         public virtual string Username { get; set; }
         public virtual LoggedInUser LoggedInUser { get; set; }
         public virtual string StoreName { get; set; }
@@ -39,12 +40,12 @@ namespace SEWorkshop.Models
         public AuthorityHandler(LoggedInUser loggedInUser, Store store, LoggedInUser appointer)
         {
             AuthoriztionsOfUser = new List<Authority>();
-            Appointer = appointer;
-            AppointerName = appointer.Username;
-            LoggedInUser = loggedInUser;
-            Store = store;
             Username = loggedInUser.Username;
+            LoggedInUser = loggedInUser;
             StoreName = store.Name;
+            Store = store;
+            AppointerName = appointer.Username;
+            Appointer = appointer;
         }
 
         public Authority AddAuthorization(Authorizations authorizations)

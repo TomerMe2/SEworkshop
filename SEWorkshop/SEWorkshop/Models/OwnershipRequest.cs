@@ -72,18 +72,10 @@ namespace SEWorkshop.Models
             where ans.Owner.Username != Owner.Username
             select ans).ToList().Count() > 0);
 
-        //TODO: SEE THAT THIS FUNCTION WAS CHANGED. NOW THERE'S AN ITERATOR CHANGE INSIDE FOREACH
         public void Answer(LoggedInUser owner, RequestState decision)
         {
-            foreach (var answer in Answers)
-            {
-                if (answer.Owner.Equals(owner))
-                {
-                    Answers.Remove(answer);
-                    Answers.Add(new OwnershipAnswer(this, owner, decision));
-                    return;
-                }
-            }
+            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username.Equals(owner.Username));
+            currAnswer.Answer = decision;
         }
 
         public bool IsDenied() => ((from ans in Answers

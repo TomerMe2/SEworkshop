@@ -7,11 +7,12 @@ namespace SEWorkshop.Models
     public class OwnershipAnswer
     {
         public virtual int Id { get; set; }
-        public virtual int RequestId { get; set; }
+        public virtual LoggedInUser Owner { get; set; }
         public virtual string Username { get; set; }
-        public virtual OwnershipRequest Request { get; private set; }
-        public virtual LoggedInUser Owner { get; private set; }
-        public virtual RequestState Answer { get; private set; }
+        public virtual OwnershipRequest Request { get; set; }
+        public virtual int RequestId { get; set; }
+
+        public virtual RequestState Answer { get; set; }
 
         private OwnershipAnswer()
         {
@@ -24,9 +25,10 @@ namespace SEWorkshop.Models
         public OwnershipAnswer(OwnershipRequest request, LoggedInUser loggedInUser, RequestState answer)
         {
             Request = request;
+            RequestId = request.Id;
             Owner = loggedInUser;
-            Answer = answer;
             Username = loggedInUser.Username;
+            Answer = answer;
         }
     }
 }

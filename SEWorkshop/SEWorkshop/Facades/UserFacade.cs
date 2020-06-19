@@ -127,7 +127,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
-            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin == requesting) == null)
+            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin.Username.Equals(requesting.Username)) == null)
             {
                 throw new UserHasNoPermissionException();
             }
@@ -160,22 +160,11 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
-            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin == requesting) == null)
+            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin.Username.Equals(requesting.Username)) == null)
             {
                 throw new UserHasNoPermissionException();
             }
-            ICollection<Purchase> purchaseHistory = new List<Purchase>();
-            foreach (var user in DatabaseProxy.Instance.LoggedInUsers)
-            {
-                foreach (var purchase in PurchaseHistory(user))
-                {
-                    if (purchase.Basket.Store.Equals(store))
-                    {
-                        purchaseHistory.Add(purchase);
-                    }
-                }
-            }
-            return purchaseHistory;
+            return DatabaseProxy.Instance.Purchases.Where(prchs => prchs.Basket.StoreName.Equals(store.Name));
         }
 
         public void WriteReview(LoggedInUser user, Product product, string description)

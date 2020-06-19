@@ -19,7 +19,6 @@ namespace SEWorkshop.Models
         public virtual string Category { get; set; }
         public virtual double Price { get; set; }
         public virtual int Quantity { get; set; }
-        //TODO: FIGURE THIS OUT
         public virtual ICollection<BuySomeGetSomeDiscount> BuySomeGetSomeDiscounts { get; set; }
         public virtual ICollection<OpenDiscount> OpenDiscounts { get; set; }
         public virtual ICollection<ConditionalDiscount> ConditionalDiscounts { get; set; }
@@ -37,7 +36,6 @@ namespace SEWorkshop.Models
             Reviews = new List<Review>();
             InBaskets = new List<ProductsInBasket>();
 
-            //TODO: FIGURE THIS OUT
             BuySomeGetSomeDiscounts = new List<BuySomeGetSomeDiscount>();
             ConditionalDiscounts = new List<ConditionalDiscount>();
             OpenDiscounts = new List<OpenDiscount>();
@@ -58,7 +56,6 @@ namespace SEWorkshop.Models
 
             InBaskets = new List<ProductsInBasket>();
 
-            //TODO: FIGURE THIS OUT
             BuySomeGetSomeDiscounts = new List<BuySomeGetSomeDiscount>();
             ConditionalDiscounts = new List<ConditionalDiscount>();
             OpenDiscounts = new List<OpenDiscount>();

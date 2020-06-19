@@ -64,11 +64,6 @@ namespace SEWorkshop.Facades
         {
             loggedInUser.AddStoreOwner(store, newOwner);
             var request = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == store);
-            if (request != null)
-            {
-                DatabaseProxy.Instance.OwnershipRequests.Add(request);
-                DatabaseProxy.Instance.SaveChanges();
-            }
             return request;
         }
 

@@ -54,7 +54,7 @@ namespace SEWorkshop.Models
                 }
                 Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
-                DatabaseProxy.Instance.AuthorityHandlers.Remove(management);
+                DatabaseProxy.Instance.Manages.Remove(management);
                 DatabaseProxy.Instance.SaveChanges();
                 log.Info("The manager has been removed successfully");
                 return;
@@ -91,7 +91,7 @@ namespace SEWorkshop.Models
                 }
                 Store.Ownership.Remove(ownership);
                 ownerToRemove.Owns.Remove(ownership);
-                DatabaseProxy.Instance.AuthorityHandlers.Remove(ownership);
+                DatabaseProxy.Instance.Owns.Remove(ownership);
                 DatabaseProxy.Instance.SaveChanges();
                 log.Info("The owner has been removed successfully");
                 return;
@@ -276,36 +276,12 @@ namespace SEWorkshop.Models
                 Manages mangement = new Manages(newManager, Store, LoggedInUser);
                 Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
-                DatabaseProxy.Instance.AuthorityHandlers.Add(mangement);
+                DatabaseProxy.Instance.Manages.Add(mangement);
                 DatabaseProxy.Instance.SaveChanges();
                 log.Info("A new manager has been added successfully");
                 return;
 
         }
-
-        public void AddStoreOwner(LoggedInUser newOwner)
-        {
-            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!HasAuthorization(Authorizations.Owner))
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (IsUserStoreManager(newOwner, Store) || IsUserStoreOwner(newOwner, Store))
-            {
-                log.Info("The requested user is already a store manager or owner");
-                throw new UserIsAlreadyStoreManagerException();
-            }
-            Owns owning = new Owns(newOwner, Store, LoggedInUser);
-            Store.Ownership.Add(owning);
-            newOwner.Owns.Add(owning);
-            DatabaseProxy.Instance.AuthorityHandlers.Add(owning);
-            DatabaseProxy.Instance.SaveChanges();
-            log.Info("A new owner has been added successfully");
-            return;
-        }
-
-
 
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
