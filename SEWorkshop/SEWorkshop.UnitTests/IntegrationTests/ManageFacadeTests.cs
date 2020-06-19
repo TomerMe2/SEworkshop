@@ -26,6 +26,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade = new ManageFacade();
             SecurityAdapter = new SecurityAdapter();
             DatabaseProxy.MoveToTestDb();
+            DatabaseProxy.ClearDB();
         }
 
         [Test]
