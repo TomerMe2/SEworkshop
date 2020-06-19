@@ -194,13 +194,15 @@ namespace SEWorkshop.Facades
                 toAnswerOn = toAnswerOn.Next;
             }
             var loggedIn = GetLoggedInUsr(user);
+            DataMessage msg;
             if(firstMsg.WrittenBy == loggedIn)
             {
                 //It's the first user, and it's the non-manager who initiated the messages
-                return new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
+                msg = new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
             }
             //It's the manager who should answer it
-            return new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
+            msg = new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
+            return msg;
         }
 
         public IEnumerable<DataBasket> MyCart(DataUser user)
@@ -226,7 +228,8 @@ namespace SEWorkshop.Facades
             {
                 throw new BasketNotInSystemException();
             }
-            return new DataPurchase(UserFacade.Purchase(user, trueBasket, creditCardNum, address));
+            var prchs = new DataPurchase(UserFacade.Purchase(user, trueBasket, creditCardNum, address));
+            return prchs;
         }
 
         public void Register(string username, byte[] password)
@@ -325,12 +328,14 @@ namespace SEWorkshop.Facades
 
         public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
-            return new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
+            var msg = new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
+            return msg;
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
         {
             UserFacade.WriteReview(GetLoggedInUsr(user), GetProduct(storeName, productName), description);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public DataGuestUser CreateGuest()

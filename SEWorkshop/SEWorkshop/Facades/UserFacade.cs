@@ -122,7 +122,9 @@ namespace SEWorkshop.Facades
 
         public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            return user.Purchase(basket, creditCardNumber, address);
+            var prchs = user.Purchase(basket, creditCardNumber, address);
+            DatabaseProxy.Instance.SaveChanges();
+            return prchs;
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
@@ -147,6 +149,7 @@ namespace SEWorkshop.Facades
                 throw new ProductNotInTradingSystemException();
             }
             user.AddProductToCart(product, quantity);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
@@ -156,6 +159,7 @@ namespace SEWorkshop.Facades
                 throw new ProductNotInTradingSystemException();
             }
             user.RemoveProductFromCart(user, product, quantity);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)

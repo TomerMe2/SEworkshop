@@ -94,7 +94,7 @@ namespace SEWorkshop.Models
             product.Reviews.Add(review);
             Reviews.Add(review);
             DatabaseProxy.Instance.Reviews.Add(review);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
         }
        
         public void WriteMessage(Store store, string description, bool isClient)
@@ -107,7 +107,7 @@ namespace SEWorkshop.Models
             store.Messages.Add(message);
             Messages.Add(message);
             DatabaseProxy.Instance.Messages.Add(message);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
@@ -283,7 +283,7 @@ namespace SEWorkshop.Models
             Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
             DatabaseProxy.Instance.Messages.Add(reply);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("Reply has been published successfully");
             return reply;
         }
@@ -327,7 +327,7 @@ namespace SEWorkshop.Models
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
             DatabaseProxy.Instance.Purchases.Add(purchase);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
             return purchase;
         }
 

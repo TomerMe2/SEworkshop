@@ -55,7 +55,7 @@ namespace SEWorkshop.Models
                 Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
                 DatabaseProxy.Instance.Manages.Remove(management);
-                DatabaseProxy.Instance.SaveChanges();
+                //DatabaseProxy.Instance.SaveChanges();
                 log.Info("The manager has been removed successfully");
                 return;
             }

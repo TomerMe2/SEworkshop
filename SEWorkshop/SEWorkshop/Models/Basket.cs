@@ -31,7 +31,6 @@ namespace SEWorkshop.Models
         public Basket(Store store, Cart cart)
         {
             Store = store;
-            //Products = (ICollection<ProductsInBasket>)DbContext.ProductsInBaskets.Select(prod => prod.Basket.Equals(this));
             Products = new List<ProductsInBasket>();
             Cart = cart;
             StoreName = store.Name;

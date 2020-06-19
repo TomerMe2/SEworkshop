@@ -27,74 +27,89 @@ namespace SEWorkshop.Facades
 
         public Product AddProduct(LoggedInUser loggedInUser, Store store, string name, string description, string category, double price, int quantity)
         {
-            return loggedInUser.AddProduct(store, name, description, category, price, quantity);
+            var prod = loggedInUser.AddProduct(store, name, description, category, price, quantity);
+            DatabaseProxy.Instance.SaveChanges();
+            return prod;
         }
 
         public void RemoveProduct(LoggedInUser loggedInUser, Store store, Product productToRemove)
         {
             loggedInUser.RemoveProduct(store, productToRemove);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void EditProductDescription(LoggedInUser loggedInUser, Store store, Product product, string description)
         {
             loggedInUser.EditProductDescription(store, product, description);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void EditProductCategory(LoggedInUser loggedInUser, Store store, Product product, string category)
         {
             loggedInUser.EditProductCategory(store, product, category);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void EditProductName(LoggedInUser loggedInUser, Store store, Product product, string name)
         {
             loggedInUser.EditProductName(store, product, name);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void EditProductPrice(LoggedInUser loggedInUser, Store store, Product product, double price)
         {
             loggedInUser.EditProductPrice(store, product, price);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void EditProductQuantity(LoggedInUser loggedInUser, Store store, Product product, int quantity)
         {
            loggedInUser.EditProductQuantity(store, product, quantity);
+           DatabaseProxy.Instance.SaveChanges();
         }
 
         public OwnershipRequest? AddStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser newOwner)
         {
             loggedInUser.AddStoreOwner(store, newOwner);
             var request = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == store);
+            DatabaseProxy.Instance.SaveChanges();
             return request;
         }
 
         public void AddStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser newManager)
         {
             loggedInUser.AddStoreManager(store, newManager);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void SetPermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
             loggedInUser.SetPermissionsOfManager(store, manager,authorization);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveStoreManager(LoggedInUser loggedInUser, Store store, LoggedInUser managerToRemove)
         {
-           loggedInUser.RemoveStoreManager(store, managerToRemove);  
+           loggedInUser.RemoveStoreManager(store, managerToRemove);
+           DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveStoreOwner(LoggedInUser loggedInUser, Store store, LoggedInUser ownerToRemove)
         {
             loggedInUser.RemoveStoreOwner(store, ownerToRemove);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public IEnumerable<Message> ViewMessage(LoggedInUser loggedInUser, Store store)
         {
-           return  loggedInUser.GetMessage(store);
+           return loggedInUser.GetMessage(store);
         }
 
         public Message MessageReply(LoggedInUser loggedInUser, Message message, Store store, string description)
         {
-            return loggedInUser.MessageReply(message, store, description);
+            var msg = loggedInUser.MessageReply(message, store, description);
+            DatabaseProxy.Instance.SaveChanges();
+            return msg;
         }
 
         public IEnumerable<Purchase> ViewPurchaseHistory(LoggedInUser loggedInUser, Store store)
@@ -121,11 +136,13 @@ namespace SEWorkshop.Facades
         public void RemovePermissionsOfManager(LoggedInUser loggedInUser, Store store, LoggedInUser manager, Authorizations authorization)
         {
             loggedInUser.RemovePermissionsOfManager(store, manager,authorization);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AnswerOwnershipRequest(LoggedInUser loggedInUser, Store store,LoggedInUser newOwner, RequestState answer)
         {
             loggedInUser.AnswerOwnershipRequest(store, newOwner,answer);
+            DatabaseProxy.Instance.SaveChanges();
         }
     }
 }

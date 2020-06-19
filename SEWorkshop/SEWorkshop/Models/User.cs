@@ -45,12 +45,12 @@ namespace SEWorkshop.Models
                         // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
                         basket.Products.Remove(prod);  //so we can add it later :)
                         DatabaseProxy.Instance.ProductsInBaskets.Remove(prod);
-                        DatabaseProxy.Instance.SaveChanges();
+                        //DatabaseProxy.Instance.SaveChanges();
                     }
                     ProductsInBasket newPib = new ProductsInBasket(basket, product, quantity);
                     basket.Products.Add(newPib);
                     DatabaseProxy.Instance.ProductsInBaskets.Add(newPib);
-                    DatabaseProxy.Instance.SaveChanges();
+                    //DatabaseProxy.Instance.SaveChanges();
                     return;  // basket found and updated. Nothing more to do here...
                 }
             }
@@ -61,7 +61,7 @@ namespace SEWorkshop.Models
             newBasket.Products.Add(pib);
             DatabaseProxy.Instance.Baskets.Add(newBasket);
             DatabaseProxy.Instance.ProductsInBaskets.Add(pib);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)

@@ -64,7 +64,7 @@ namespace SEWorkshop.Models
             {
                 AuthoriztionsOfUser.Remove(authority);
                 DatabaseProxy.Instance.Authorities.Remove(authority);
-                DatabaseProxy.Instance.SaveChanges();
+                //DatabaseProxy.Instance.SaveChanges();
             }
         }
 
@@ -132,6 +132,7 @@ namespace SEWorkshop.Models
             {
                 Message reply = new Message(loggedInUser, store, description, false, message);
                 message.Next = reply;
+                DatabaseProxy.Instance.Messages.Add(reply);
                 log.Info("Reply has been published successfully");
                 return reply;
             }
