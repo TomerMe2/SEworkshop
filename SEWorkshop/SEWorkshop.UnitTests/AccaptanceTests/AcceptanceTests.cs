@@ -20,7 +20,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
         {
             DatabaseProxy.MoveToTestDb();
             bridge = new ProxyServiceLayer();
-			DatabaseProxy.ClearDB();
         }
 
         [Test, Order(1)]

@@ -31,7 +31,6 @@ namespace SEWorkshop.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
-            DatabaseProxy.ClearDB();
         }
 
         [TearDown]

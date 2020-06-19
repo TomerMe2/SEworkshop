@@ -32,8 +32,6 @@ namespace SEWorkshop.Tests.UnitTests
         [SetUp]
         public void Setup()
         {
-            DatabaseProxy.ClearDB();
-
             Buyer = new LoggedInUser("buyer", new byte[1] { 0 });
             StoreOwner = new LoggedInUser("owner", new byte[1] { 0 });
             Str = Store.StoreBuilder(StoreOwner, "storenm");

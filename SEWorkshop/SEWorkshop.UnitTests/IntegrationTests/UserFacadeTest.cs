@@ -30,7 +30,6 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void SetUp()
         {
             DatabaseProxy.MoveToTestDb();
-            DatabaseProxy.ClearDB();
             MngrFacade = new ManageFacade();
             StrFacade = new StoreFacade();
             UsrFacade = new UserFacade(StrFacade);

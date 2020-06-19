@@ -227,32 +227,6 @@ namespace SEWorkshop.Models
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
             Owns.FirstOrDefault(own => own.Store.Name.Equals(store.Name))?.AddStoreOwner(newOwner);
-
-            ////WORKING CODE:
-            //OwnershipRequest request = new OwnershipRequest(store, this, newOwner);
-            //store.OwnershipRequests.Add(request);
-            //this.OwnershipRequestsFrom.Add(request);
-            //newOwner.OwnershipRequests.Add(request);
-            //foreach (var ans in request.Answers)
-            //{
-            //    DatabaseProxy.Instance.OwnershipAnswers.Add(ans);
-            //}
-            //DatabaseProxy.Instance.SaveChanges();
-
-            ////he approves cus he suggested him
-            //request.Answer(this, RequestState.Approved);
-            //DatabaseProxy.Instance.SaveChanges();
-
-
-            //Owns ownership = new Owns(newOwner, store, this);
-            //store.Ownership.Add(ownership);
-            //newOwner.Owns.Add(ownership);
-            //DatabaseProxy.Instance.Owns.Add(ownership);
-            //foreach (var auth in ownership.AuthoriztionsOfUser)
-            //{
-            //    DatabaseProxy.Instance.Authorities.Add(auth);
-            //}
-            //DatabaseProxy.Instance.SaveChanges();
         }
         
         public void AddStoreManager(Store store, LoggedInUser newManager)

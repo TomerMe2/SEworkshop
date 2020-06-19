@@ -20,7 +20,6 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void Init()
         {
             DatabaseProxy.MoveToTestDb();
-            DatabaseProxy.ClearDB();
             Manager = new UserManager();
         }
 
