@@ -49,7 +49,7 @@ namespace SEWorkshop.Models
                 {
                     OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
                     Answers.Add(answer);
-                    owner.OwnershipAnswers.Add(answer);
+                    ow.LoggedInUser.OwnershipAnswers.Add(answer);
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace SEWorkshop.Models
 
         public void Answer(LoggedInUser owner, RequestState decision)
         {
-            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username.Equals(owner.Username));
+            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username == owner.Username);
             currAnswer.Answer = decision;
         }
 

@@ -12,6 +12,7 @@ using SEWorkshop.DAL;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Validation;
+using NUnit.Framework;
 
 namespace SEWorkshop.Models
 {
@@ -56,13 +57,13 @@ namespace SEWorkshop.Models
             Store.OwnershipRequests.Add(request);
             LoggedInUser.OwnershipRequestsFrom.Add(request);
             newOwner.OwnershipRequests.Add(request);
+            DatabaseProxy.Instance.OwnershipRequests.Add(request);
             foreach (var ans in request.Answers)
             {
                 DatabaseProxy.Instance.OwnershipAnswers.Add(ans);
             }
             //DatabaseProxy.Instance.SaveChanges();
 
-            //he approves cus he suggested him
             request.Answer(LoggedInUser, RequestState.Approved);
             //DatabaseProxy.Instance.SaveChanges();
 
@@ -92,7 +93,7 @@ namespace SEWorkshop.Models
                     {
                         throw new UserIsAlreadyStoreOwnerException();
                     }
-                    Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                    /*Owns ownership = new Owns(newOwner, Store, LoggedInUser);
                     Store.Ownership.Add(ownership);
                     Store.OwnershipRequests.Remove(req);
                     newOwner.OwnershipRequests.Remove(req);
@@ -100,17 +101,25 @@ namespace SEWorkshop.Models
                     newOwner.Owns.Add(ownership);
                     DatabaseProxy.Instance.Owns.Add(ownership);
                     DatabaseProxy.Instance.OwnershipRequests.Remove(req);
-                    //DatabaseProxy.Instance.SaveChanges();
+                    //DatabaseProxy.Instance.SaveChanges();*/
+                    Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                    Store.Ownership.Add(ownership);
+                    newOwner.Owns.Add(ownership);
+                    DatabaseProxy.Instance.Owns.Add(ownership);
+                    foreach (var auth in ownership.AuthoriztionsOfUser)
+                    {
+                        DatabaseProxy.Instance.Authorities.Add(auth);
+                    }
                     log.Info("A new owner has been added successfully");
                 }
-                else if (req.GetRequestState() == RequestState.Denied)
+                /*else if (req.GetRequestState() == RequestState.Denied)
                 {
                     newOwner.OwnershipRequests.Remove(req);
                     Store.OwnershipRequests.Remove(req);
                     req.Owner.OwnershipRequestsFrom.Remove(req);
                     DatabaseProxy.Instance.OwnershipRequests.Remove(req);
                     //DatabaseProxy.Instance.SaveChanges();
-                }
+                }*/
             }
         }
 
