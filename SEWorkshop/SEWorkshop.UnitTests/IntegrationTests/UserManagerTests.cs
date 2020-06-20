@@ -537,6 +537,24 @@ namespace SEWorkshop.Tests.IntegrationTests
                                 "someItem", "bad review!!!!"));
             Manager.Login(DEF_ID, "wrnp_user1", "1111");
             Manager.WriteReview(DEF_ID, "WriteReviewMultipleStore", "someItem", "bad review!!!!");
-        } 
+        }
+
+        [Test]
+        public void PoliciesTest()
+        {
+            Manager.Register(DEF_ID, "p_user1", "1234");
+            Manager.Login(DEF_ID, "p_user1", "1234");
+            Manager.OpenStore(DEF_ID, "p_store1");
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Sunday);
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Monday);
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Tuesday);
+            Assert.That(Manager.SearchStore("p_store1").Policy is DataModels.Policies.DataSystemDayPolicy);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy).CantBuyIn == Enums.Weekday.Sunday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy).CantBuyIn == Enums.Weekday.Monday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy.InnerPolicy).CantBuyIn == Enums.Weekday.Tuesday);
+            Manager.RemovePolicy(DEF_ID, "p_store1", 0);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy).CantBuyIn == Enums.Weekday.Monday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy).CantBuyIn == Enums.Weekday.Tuesday);
+        }
     }
 }

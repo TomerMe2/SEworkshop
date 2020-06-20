@@ -176,5 +176,48 @@ namespace SEWorkshop.Facades
             user.RemoveDiscount(store, indexInChain);
             //DatabaseProxy.Instance.SaveChanges();
         }
+
+        public void AddAlwaysTruePolicy(LoggedInUser user, Store storeName, Operator op)
+        {
+            user.AddAlwaysTruePolicy(storeName, op);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void AddSingleProductQuantityPolicy(LoggedInUser user, Store storeName, Operator op, Product productName, int minQuantity, int maxQuantity)
+        {
+            user.AddSingleProductQuantityPolicy(storeName, op,
+                    productName, minQuantity, maxQuantity);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void AddSystemDayPolicy(LoggedInUser user, Store storeName, Operator op, Weekday cantBuyIn)
+        {
+            user.AddSystemDayPolicy(storeName, op, cantBuyIn);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void AddUserCityPolicy(LoggedInUser user, Store storeName, Operator op, string requiredCity)
+        {
+            user.AddUserCityPolicy(storeName, op, requiredCity);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void AddUserCountryPolicy(LoggedInUser user, Store storeName, Operator op, string requiredCountry)
+        {
+            user.AddUserCountryPolicy(storeName, op, requiredCountry);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void AddWholeStoreQuantityPolicy(LoggedInUser user, Store storeName, Operator op, int minQuantity, int maxQuantity)
+        {
+            user.AddWholeStoreQuantityPolicy(storeName, op, minQuantity, maxQuantity);
+            DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public void RemovePolicy(LoggedInUser user, Store storeName, int indexInChain)
+        {
+            user.RemovePolicy(storeName, indexInChain);
+            DatabaseProxy.Instance.SaveChanges();
+        }
     }
 }

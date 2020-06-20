@@ -12,6 +12,7 @@ using SEWorkshop.DAL;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using SEWorkshop.Models.Discounts;
+using SEWorkshop.Models.Policies;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -688,6 +689,26 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.That(rd_store1.Discounts.Count, Is.EqualTo(5));
             Facade.RemoveDiscount(rd_user1, rd_store1, 0);
             Assert.That(rd_store1.Discounts, Is.Empty);
+        }
+
+        [Test]
+        public void PoliciesTest()
+        {
+            const string STORE_NAME = "p_store1";
+            LoggedInUser p_user1 = new LoggedInUser("p_user1", SecurityAdapter.Encrypt("1234"));
+            Store p_store1 = Store.StoreBuilder(p_user1, STORE_NAME);
+            Facade.AddSystemDayPolicy(p_user1, p_store1, Operator.Or, Weekday.Sunday);
+            Facade.AddSystemDayPolicy(p_user1, p_store1, Operator.Or, Weekday.Monday);
+            Facade.AddSystemDayPolicy(p_user1, p_store1, Operator.Or, Weekday.Tuesday);
+            Assert.That(p_store1.Policies.Count() == 3);
+            Assert.True(((SystemDayPolicy)p_store1.Policies.ElementAt(0)).CantBuyIn == Weekday.Sunday);
+            Assert.True(p_store1.Policies.ElementAt(0) == p_store1.Policy);
+            Assert.True(p_store1.Policies.ElementAt(1) == p_store1.Policy.InnerPolicy);
+            Assert.True(p_store1.Policies.ElementAt(2) == p_store1.Policy.InnerPolicy.InnerPolicy);
+
+            Facade.RemovePolicy(p_user1, p_store1, 1);
+            Assert.True(((SystemDayPolicy)p_store1.Policy).CantBuyIn == Weekday.Sunday);
+            Assert.True(((SystemDayPolicy)p_store1.Policy.InnerPolicy).CantBuyIn == Weekday.Tuesday);
         }
     }
 }
