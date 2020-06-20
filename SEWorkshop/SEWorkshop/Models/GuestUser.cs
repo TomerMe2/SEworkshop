@@ -98,10 +98,15 @@ namespace SEWorkshop.Models
                     throw new NegativeQuantityException();
             }
             basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
-            Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
+            DatabaseProxy.Instance.Baskets.Add(basket);
+            foreach (var product in basket.Products)
+            {
+                DatabaseProxy.Instance.ProductsInBaskets.Add(product);
+            }
+            Cart.Baskets.Remove(basket);
             DatabaseProxy.Instance.Purchases.Add(purchase);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
             return purchase;
         }
     }

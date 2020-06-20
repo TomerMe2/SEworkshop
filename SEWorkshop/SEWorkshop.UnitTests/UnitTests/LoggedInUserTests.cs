@@ -435,9 +435,9 @@ namespace SEWorkshop.Tests.UnitTests
             DateTime deadline = DateTime.Now.AddMonths(1);
             LoggedInUser usr = new LoggedInUser("someusr", _securityAdapter.Encrypt("1234"));
             Store store = Store.StoreBuilder(usr, STORE_NAME);
-            Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
-            usr.Owns.Add(ownership);
-            store.Ownership.Add(ownership);
+            //Owns ownership = new Owns(usr, store, new LoggedInUser("Demo", _securityAdapter.Encrypt("1234")));
+            //usr.Owns.Add(ownership);
+            //store.Ownership.Add(ownership);
             Product prod1 = usr.AddProduct(store, "prod1", "ninini", "cat1", 11.11, 11);
             usr.AddProductCategoryDiscount(store, "cat1", deadline, 50, Operator.And, 0, 1, true);
             Assert.IsInstanceOf<ProductCategoryDiscount>(store.Discounts.ElementAt(0));
