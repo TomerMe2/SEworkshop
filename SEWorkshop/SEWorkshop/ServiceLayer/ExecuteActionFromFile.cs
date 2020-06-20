@@ -13,7 +13,7 @@ namespace SEWorkshop.ServiceLayer
 {
     class ExecuteActionFromFile
     {
-        private IUserManager userManager;
+        private readonly IUserManager userManager;
         private const string DEF_SID = "1";
 
         public ExecuteActionFromFile(IUserManager userManager)
@@ -117,107 +117,34 @@ namespace SEWorkshop.ServiceLayer
                     case "AddSystemDayPolicy":
                         HandleAddSystemDayPolicy(action, valuesDictionary);
                         break;
-                    /*
                     case "AddUserCityPolicy":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[2]);
-                            if (op != null)
-                                userManager.AddUserCityPolicy(DEF_SID, actionLineSplited[1], (Operator)op, actionLineSplited[3]);
-                        }
+                        HandleAddUserCityPolicy(action, valuesDictionary);
                         break;
                     case "AddUserCountryPolicy":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[2]);
-                            if (op != null)
-                                userManager.AddUserCountryPolicy(DEF_SID, actionLineSplited[1], (Operator)op, actionLineSplited[3]);
-                        }
+                        HandleAddUserCountryPolicy(action, valuesDictionary);
                         break;
                     case "AddWholeStoreQuantityPolicy":
-                        if (actionLineSplited.Length == 5 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[2]);
-                            if (op != null && int.TryParse(actionLineSplited[4], out int minQuantity)
-                                && int.TryParse(actionLineSplited[5], out int maxQuantity))
-                                userManager.AddWholeStoreQuantityPolicy(DEF_SID, actionLineSplited[1], (Operator)op, minQuantity, maxQuantity);
-                        }
+                        HandleAddWholeStoreQuantityPolicy(action, valuesDictionary);
                         break;
                     case "RemovePolicy":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                        {
-                            if (int.TryParse(actionLineSplited[2], out int indexInChain1))
-                                userManager.RemovePolicy(DEF_SID, actionLineSplited[1], indexInChain1);
-                        }
+                        HandleRemovePolicy(action, valuesDictionary);
                         break;
                     case "AddProductCategoryDiscount":
-                        if (actionLineSplited.Length == 9 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[5]);
-                            DateTime deadline = DateTime.Parse(actionLineSplited[3]);
-                            bool toLeft = bool.Parse(actionLineSplited[8]);
-                            if (op != null
-                                && double.TryParse(actionLineSplited[4], out double percentage)
-                                && int.TryParse(actionLineSplited[6], out int indexInChain2)
-                                && int.TryParse(actionLineSplited[7], out int disId))
-                                userManager.AddProductCategoryDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
-                                    deadline, percentage, (Operator)op, indexInChain2, disId, toLeft);
-                        }
+                        HandleAddProductCategoryDiscount(action, valuesDictionary);
                         break;
                     case "AddSpecificProductDiscount":
-                        if (actionLineSplited.Length == 9 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[5]);
-                            DateTime deadline = DateTime.Parse(actionLineSplited[3]);
-                            bool toLeft = bool.Parse(actionLineSplited[8]);
-                            if (op != null
-                                && double.TryParse(actionLineSplited[4], out double percentage)
-                                && int.TryParse(actionLineSplited[6], out int indexInChain3)
-                                && int.TryParse(actionLineSplited[7], out int disId))
-                                userManager.AddSpecificProductDiscount(DEF_SID, actionLineSplited[1], actionLineSplited[2],
-                                    deadline, percentage, (Operator)op, indexInChain3, disId, toLeft);
-                        }
+                        HandleAddSpecificProductDiscount(action, valuesDictionary);
                         break;
                     case "AddBuySomeGetSomeDiscount":
-                        // <actionName>,<storeName>,<deadline>,<percentae>,<op>,<indexInChain>
-                        // ,<disId>,<toLeft>,<conditionProdName>,<underDiscountProdName>,<buySome>,<getSome>
-                        if (actionLineSplited.Length == 12 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[5]);
-                            DateTime deadline = DateTime.Parse(actionLineSplited[2]);
-                            bool toLeft = bool.Parse(actionLineSplited[8]);
-                            if (op != null
-                                && double.TryParse(actionLineSplited[3], out double percentage)
-                                && int.TryParse(actionLineSplited[5], out int indexInChain4)
-                                && int.TryParse(actionLineSplited[6], out int disId)
-                                && int.TryParse(actionLineSplited[10], out int buySome)
-                                && int.TryParse(actionLineSplited[11], out int getSome))
-                                userManager.AddBuySomeGetSomeDiscount(buySome, getSome, DEF_SID, actionLineSplited[8], actionLineSplited[9],
-                                    actionLineSplited[1], deadline, percentage, (Operator)op, indexInChain4, disId, toLeft);
-                        }
+                        HandleAddBuySomeGetSomeDiscount(action, valuesDictionary);
                         break;
                     case "AddBuyOverDiscount":
-                        // <actionName>,<storeName>,<productName>,<deadline>,<percentage>,<op>
-                        // ,<indexInChain>,<disId>,<toLeft>,<minSum>
-                        if (actionLineSplited.Length == 10 && CheckArgs(actionLineSplited))
-                        {
-                            Operator? op = StringToOperator(actionLineSplited[5]);
-                            DateTime deadline = DateTime.Parse(actionLineSplited[2]);
-                            bool toLeft = bool.Parse(actionLineSplited[8]);
-                            if (op != null
-                                && double.TryParse(actionLineSplited[3], out double percentage)
-                                && int.TryParse(actionLineSplited[5], out int indexInChain5)
-                                && int.TryParse(actionLineSplited[6], out int disId)
-                                && int.TryParse(actionLineSplited[9], out int minSum))
-                                userManager.AddBuyOverDiscount(minSum, DEF_SID, actionLineSplited[1], actionLineSplited[2],
-                                    deadline, percentage, (Operator)op, indexInChain5, disId, toLeft);
-                        }
+                        HandleAddBuyOverDiscount(action, valuesDictionary);
                         break;
                     case "RemoveDiscount":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited)
-                            && int.TryParse(actionLineSplited[2], out int indexInChain6))
-                            userManager.RemoveDiscount(DEF_SID, actionLineSplited[1], indexInChain6);
+                        HandleRemoveDiscount(action, valuesDictionary);
                         break;
+                    /*
                     case "AddStoreOwner":
                         if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
                             userManager.AddStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
@@ -431,26 +358,30 @@ namespace SEWorkshop.ServiceLayer
                 Console.WriteLine("Error! Purchase invalid. required properties: { \"command\":_, \"storeName\":_, \"creditCardNumber\":_, \"city\":_, \"street\":_, \"houseNumber\":_, \"country\":_ }");
                 return;
             }
-            string storeName = "";
-            string creditCardNumber = "";
-            string city = "";
-            string street = "";
-            string houseNumber = "";
-            string country = "";
+            string storeName = "", creditCardNumber = "", city = "", street = "", houseNumber = "", country = "";
             foreach (var property in properties)
             {
-                if (property.Key.Equals("storeName"))
-                    storeName = (string)property.Value;
-                if (property.Key.Equals("creditCardNumber"))
-                    creditCardNumber = (string)property.Value;
-                if (property.Key.Equals("city"))
-                    city = (string)property.Value;
-                if (property.Key.Equals("street"))
-                    street = (string)property.Value;
-                if (property.Key.Equals("houseNumber"))
-                    houseNumber = (string)property.Value;
-                if (property.Key.Equals("country"))
-                    country = (string)property.Value;
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "creditCardNumber":
+                        creditCardNumber = (string)property.Value;
+                        break;
+                    case "city":
+                        city = (string)property.Value;
+                        break;
+                    case "street":
+                        street = (string)property.Value;
+                        break;
+                    case "houseNumber":
+                        houseNumber = (string)property.Value;
+                        break;
+                    case "country":
+                        country = (string)property.Value;
+                        break;
+                }
             }
             IEnumerable<DataBasket> baskets = userManager.MyCart(DEF_SID);
             Address address = new Address(country, city, street, houseNumber);
@@ -923,21 +854,548 @@ namespace SEWorkshop.ServiceLayer
                 return;
             }
             string storeName = "";
-            string productName = "";
             Operator op = Operator.And;
             DayOfWeek dayOfWeek = DayOfWeek.Sunday;
             foreach (var property in properties)
             {
-                if (property.Key.Equals("storeName"))
-                    storeName = (string)property.Value;
-                if (property.Key.Equals("productName"))
-                    productName = (string)property.Value;
-                if (property.Key.Equals("operator"))
-                    op = StringToOperator((string)property.Value);
-                if (property.Key.Equals("dayOfWeek"))
-                    dayOfWeek = StringToDayOfWeek((string)property.Value);
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "operator":
+                        op = StringToOperator((string)property.Value);
+                        break;
+                    case "dayOfWeek":
+                        dayOfWeek = StringToDayOfWeek((string)property.Value);
+                        break;
+                }
             }
             userManager.AddSystemDayPolicy(DEF_SID, storeName, op, dayOfWeek);
+        }
+
+        [Obsolete]
+        void HandleAddUserCityPolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddUserCityPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'city': { 'type': 'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddUserCityPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "city         type: string" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string city = "";
+            Operator op = Operator.And;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("city"))
+                    city = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+            }
+            userManager.AddUserCityPolicy(DEF_SID, storeName, op, city);
+        }
+
+        [Obsolete]
+        void HandleAddUserCountryPolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddUserCountryPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'country': { 'type': 'string', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddUserCountryPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "country      type: string" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string country = "";
+            Operator op = Operator.And;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("country"))
+                    country = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+            }
+            userManager.AddUserCountryPolicy(DEF_SID, storeName, op, country);
+        }
+
+        [Obsolete]
+        void HandleAddWholeStoreQuantityPolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddWholeStoreQuantityPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'minQuantity': { 'type': 'integer', 'required': 'true'},
+                    'maxQuantity': { 'type': 'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddWholeStoreQuantityPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "minQuantity  type: integer" +
+                  "maxQuantity  type: integer" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            Operator op = Operator.And;
+            int minQuantity = 0;
+            int maxQuantity = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("operator"))
+                    op = StringToOperator((string)property.Value);
+                if (property.Key.Equals("minQuantity"))
+                    minQuantity = (int)(long)property.Value;
+                if (property.Key.Equals("maxQuantity"))
+                    maxQuantity = (int)(long)property.Value;
+            }
+            userManager.AddWholeStoreQuantityPolicy(DEF_SID, storeName, op, minQuantity, maxQuantity);
+        }
+
+        [Obsolete]
+        void HandleRemovePolicy(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddWholeStoreQuantityPolicy',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddWholeStoreQuantityPolicy invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "indexInChain type: integer" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            int indexInChain = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("indexInChain"))
+                    indexInChain = (int)(long)property.Value;
+            }
+            userManager.RemovePolicy(DEF_SID, storeName, indexInChain);
+        }
+
+        [Obsolete]
+        void HandleAddProductCategoryDiscount(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddProductCategoryDiscount',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'categoryName': { 'type': 'string', 'required': 'true' },
+                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
+                    'percentage': { 'type': 'number', 'required': 'true' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true' },
+                    'discountId': { 'type': 'integer', 'required': 'true' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddProductCategoryDiscount invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "categoryName type: string" +
+                  "deadline     type: string    format:'date-time'  example: 2020-03-19T07:22Z" +
+                  "percentage   type: number" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "indexInChain type: integer" +
+                  "discountId   type: integer" +
+                  "toLeft       type: enum ['True', 'False']" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string categoryName = "";
+            DateTime deadline = new DateTime();
+            double percentage = 0;
+            Operator op = Operator.And;
+            int indexInChain = 0, discountId = 0;
+            bool toLeft = false;
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "categoryName":
+                        categoryName = (string)property.Value;
+                        break;
+                    case "deadline":
+                        deadline = DateTime.Parse((string)property.Value);
+                        break;
+                    case "percentage":
+                        percentage = (double)property.Value;
+                        break;
+                    case "operator":
+                        op = StringToOperator((string)property.Value);
+                        break;
+                    case "indexInChain":
+                        indexInChain = (int)(long)property.Value;
+                        break;
+                    case "discountId":
+                        discountId = (int)(long)property.Value;
+                        break;
+                    case "toLeft":
+                        toLeft = bool.Parse((string)property.Value);
+                        break;
+                }
+            }
+            userManager.AddProductCategoryDiscount(DEF_SID, storeName, categoryName, deadline, percentage, op, indexInChain, discountId, toLeft);
+        }
+
+        [Obsolete]
+        void HandleAddSpecificProductDiscount(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddSpecificProductDiscount',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': { 'type': 'string', 'required': 'true' },
+                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
+                    'percentage': { 'type': 'number', 'required': 'true' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true' },
+                    'discountId': { 'type': 'integer', 'required': 'true' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddSpecificProductDiscount invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "productName  type: string" +
+                  "deadline     type: string    format:'date-time'  example: 2020-03-19T07:22Z" +
+                  "percentage   type: number" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "indexInChain type: integer" +
+                  "discountId   type: integer" +
+                  "toLeft       type: enum ['True', 'False']" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            DateTime deadline = new DateTime();
+            double percentage = 0;
+            Operator op = Operator.And;
+            int indexInChain = 0, discountId = 0;
+            bool toLeft = false;
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "productName":
+                        productName = (string)property.Value;
+                        break;
+                    case "deadline":
+                        deadline = DateTime.Parse((string)property.Value);
+                        break;
+                    case "percentage":
+                        percentage = (double)property.Value;
+                        break;
+                    case "operator":
+                        op = StringToOperator((string)property.Value);
+                        break;
+                    case "indexInChain":
+                        indexInChain = (int)(long)property.Value;
+                        break;
+                    case "discountId":
+                        discountId = (int)(long)property.Value;
+                        break;
+                    case "toLeft":
+                        toLeft = bool.Parse((string)property.Value);
+                        break;
+                }
+            }
+            userManager.AddSpecificProductDiscount(DEF_SID, storeName, productName, deadline, percentage, op, indexInChain, discountId, toLeft);
+        }
+
+        [Obsolete]
+        void HandleAddBuySomeGetSomeDiscount(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddBuySomeGetSomeDiscount',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
+                    'percentage': { 'type': 'number', 'required': 'true' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true' },
+                    'discountId': { 'type': 'integer', 'required': 'true' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'},
+                    'conditionProductName': { 'type': 'string', 'required': 'true'},
+                    'underDiscountProductName': { 'type': 'string', 'required': 'true'},
+                    'buySome': { 'type': 'integer', 'required': 'true' },
+                    'getSome': { 'type': 'integer', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddBuySomeGetSomeDiscount invalid." +
+                  "Required properties:" +
+                  "command                      type: string" +
+                  "storeName                    type: string" +
+                  "deadline                     type: string    format:'date-time'  example: 2020-03-19T07:22Z" +
+                  "percentage                   type: number" +
+                  "operator                     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "indexInChain                 type: integer" +
+                  "discountId                   type: integer" +
+                  "toLeft                       type: enum ['True', 'False']" +
+                  "conditionProductName         type: string" +
+                  "underDiscountProductName     type: string" +
+                  "buySome                      type: integer" +
+                  "getSome                      type: integer" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "", conditionProductName = "", underDiscountProductName = "";
+            DateTime deadline = new DateTime();
+            double percentage = 0;
+            Operator op = Operator.And;
+            int indexInChain = 0, discountId = 0, buySome = 0, getSome = 0;
+            bool toLeft = false;
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "deadline":
+                        deadline = DateTime.Parse((string)property.Value);
+                        break;
+                    case "percentage":
+                        percentage = (double)property.Value;
+                        break;
+                    case "operator":
+                        op = StringToOperator((string)property.Value);
+                        break;
+                    case "indexInChain":
+                        indexInChain = (int)(long)property.Value;
+                        break;
+                    case "discountId":
+                        discountId = (int)(long)property.Value;
+                        break;
+                    case "toLeft":
+                        toLeft = bool.Parse((string)property.Value);
+                        break;
+                    case "conditionProductName":
+                        conditionProductName = (string)property.Value;
+                        break;
+                    case "underDiscountProductName":
+                        conditionProductName = (string)property.Value;
+                        break;
+                    case "buySome":
+                        buySome = (int)(long)property.Value;
+                        break;
+                    case "getSome":
+                        getSome = (int)(long)property.Value;
+                        break;
+                }
+            }
+            userManager.AddBuySomeGetSomeDiscount(buySome, getSome, DEF_SID, conditionProductName, underDiscountProductName,
+                storeName, deadline, percentage, op, indexInChain, discountId, toLeft);
+        }
+
+        [Obsolete]
+        void HandleAddBuyOverDiscount(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddBuyOverDiscount',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'productName': { 'type': 'string', 'required': 'true' },
+                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
+                    'percentage': { 'type': 'number', 'required': 'true' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true' },
+                    'discountId': { 'type': 'integer', 'required': 'true' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'},
+                    'minSum' : { 'type': 'number', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddBuyOverDiscount invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "productName  type: string" +
+                  "deadline     type: string    format:'date-time'  example: 2020-03-19T07:22Z" +
+                  "percentage   type: number" +
+                  "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
+                  "indexInChain type: integer" +
+                  "discountId   type: integer" +
+                  "toLeft       type: enum ['True', 'False']" +
+                  "minSum       type: number" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            string productName = "";
+            DateTime deadline = new DateTime();
+            double percentage = 0;
+            Operator op = Operator.And;
+            int indexInChain = 0, discountId = 0, minSum = 0;
+            bool toLeft = false;
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "productName":
+                        productName = (string)property.Value;
+                        break;
+                    case "deadline":
+                        deadline = DateTime.Parse((string)property.Value);
+                        break;
+                    case "percentage":
+                        percentage = (double)property.Value;
+                        break;
+                    case "operator":
+                        op = StringToOperator((string)property.Value);
+                        break;
+                    case "indexInChain":
+                        indexInChain = (int)(long)property.Value;
+                        break;
+                    case "discountId":
+                        discountId = (int)(long)property.Value;
+                        break;
+                    case "toLeft":
+                        toLeft = bool.Parse((string)property.Value);
+                        break;
+                    case "minSum":
+                        minSum = (double)property.Value;
+                        break;
+                }
+            }
+            userManager.AddBuyOverDiscount(minSum, DEF_SID, storeName, productName, deadline, percentage, op, indexInChain, discountId, toLeft);
+        }
+
+        [Obsolete]
+        void HandleRemoveDiscount(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemoveDiscount',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'indexInChain': { 'type': 'integer', 'required': 'true'}
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveDiscount invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "indexInChain type: integer" +
+                  "Additional properties are not allowed.}");
+                return;
+            }
+            string storeName = "";
+            int indexInChain = 0;
+            foreach (var property in properties)
+            {
+                if (property.Key.Equals("storeName"))
+                    storeName = (string)property.Value;
+                if (property.Key.Equals("indexInChain"))
+                    indexInChain = (int)(long)property.Value;
+            }
+            userManager.RemoveDiscount(DEF_SID, storeName, indexInChain);
         }
 
         bool CheckArgs(string[] args)
