@@ -215,8 +215,14 @@ namespace SEWorkshop.Facades
             var relevants = DatabaseProxy.Instance.Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
                                                     && prchs.TimeStamp.Month == date.Month
                                                     && prchs.TimeStamp.Day == date.Day);
-            var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
-            return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
+            double output = 0.0;
+            foreach(var prchs in relevants)
+            {
+                output += prchs.MoneyPaid;
+            }
+            return output;
+            //var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
+            //return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
         }
     }
 }
