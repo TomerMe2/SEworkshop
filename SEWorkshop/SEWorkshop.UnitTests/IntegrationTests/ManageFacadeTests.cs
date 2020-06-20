@@ -405,12 +405,10 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser newManager = new LoggedInUser("appmanager1", SecurityAdapter.Encrypt("1234"));
             usr.AddStoreManager(store, newManager);
             Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
-            LoggedInUser managerToTest1 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
-            usr.AddStoreManager(store, managerToTest1);
             bool success = true;
             try
             {
-                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Products);
+                Facade.SetPermissionsOfManager(usr, store, newManager, Authorizations.Authorizing);
             }
             catch
             {
@@ -420,14 +418,14 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.IsTrue(success);
 
           
-            var auto= managerToTest1.Manage.FirstOrDefault(man => man.Store==(store));
+            var auto= newManager.Manage.FirstOrDefault(man => man.Store==(store));
 
-            Assert.IsTrue(auto.HasAuthorization(Authorizations.Products));
-            LoggedInUser managerToTest2 = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
-            usr.AddStoreManager(store, managerToTest2);
+            Assert.IsTrue(auto.HasAuthorization(Authorizations.Authorizing));
+            LoggedInUser managerToTest = new LoggedInUser("appmanager2", SecurityAdapter.Encrypt("1234"));
+            usr.AddStoreManager(store, managerToTest);
             try
             {
-                Facade.SetPermissionsOfManager(newManager, store, managerToTest1, Authorizations.Authorizing);
+                Facade.SetPermissionsOfManager(newManager, store, managerToTest, Authorizations.Products);
                 success = true;
             }
             catch
