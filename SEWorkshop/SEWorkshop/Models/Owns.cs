@@ -415,23 +415,23 @@ namespace SEWorkshop.Models
                         {
                             Store.Discounts.Add(dis);
                             DatabaseProxy.Instance.Discounts.Add(dis);
-                            //DatabaseProxy.Instance.SaveChanges();
+                            DatabaseProxy.Instance.SaveChanges();
                             ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
                             //Store.Discounts.Insert(indexInChain, newDis);
                             Store.Discounts.Add(newDis);
                             DatabaseProxy.Instance.Discounts.Add(newDis);
-                            //DatabaseProxy.Instance.SaveChanges();
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                         else
                         {
                             Store.Discounts.Add(dis);
                             DatabaseProxy.Instance.Discounts.Add(dis);
-                            //DatabaseProxy.Instance.SaveChanges();
+                            DatabaseProxy.Instance.SaveChanges();
                             ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
                             //Store.Discounts.Insert(indexInChain, newDis);
                             Store.Discounts.Add(newDis);
                             DatabaseProxy.Instance.Discounts.Add(newDis);
-                            //DatabaseProxy.Instance.SaveChanges();
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                     }
                     else
@@ -444,12 +444,12 @@ namespace SEWorkshop.Models
                                 {
                                     Store.Discounts.Add(dis);
                                     DatabaseProxy.Instance.Discounts.Add(dis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.LeftChild);
                                     father.LeftChild = newDis;
                                     newDis.Father = father;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
@@ -458,12 +458,12 @@ namespace SEWorkshop.Models
                                 {
                                     Store.Discounts.Add(dis);
                                     DatabaseProxy.Instance.Discounts.Add(dis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, dis, father.RightChild);
                                     father.RightChild = newDis;
                                     newDis.Father = father;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }
@@ -475,12 +475,12 @@ namespace SEWorkshop.Models
                                 {
                                     Store.Discounts.Add(dis);
                                     DatabaseProxy.Instance.Discounts.Add(dis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.LeftChild, dis);
                                     newDis.Father = father;
                                     father.LeftChild = newDis;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
@@ -489,12 +489,12 @@ namespace SEWorkshop.Models
                                 {
                                     Store.Discounts.Add(dis);
                                     DatabaseProxy.Instance.Discounts.Add(dis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                     ComposedDiscount newDis = new ComposedDiscount(op, father.RightChild, dis);
                                     newDis.Father = father;
                                     father.RightChild = newDis;
                                     DatabaseProxy.Instance.Discounts.Add(newDis);
-                                    //DatabaseProxy.Instance.SaveChanges();
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }

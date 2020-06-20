@@ -9,6 +9,8 @@ using System.Linq;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Enums;
 using SEWorkshop.DAL;
+using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -609,6 +611,84 @@ namespace SEWorkshop.Tests.IntegrationTests
             {
                 newManager.AddProduct(store, "failedProd", "ninini", "cat1", 11.11, 1);
             });
+        }
+
+        [Test]
+        public void AddBuySomeGetSomeDiscount()
+        {
+            const string STORE_NAME = "bsgs_store1";
+            const string PROD1_NAME = "bsgs_prod1";
+            const string PROD2_NAME = "bsgs_prod2";
+            LoggedInUser bsgs_user1 = new LoggedInUser("bsgs_user1", SecurityAdapter.Encrypt("1234"));
+            Store bsgs_store1 = Store.StoreBuilder(bsgs_user1, STORE_NAME);
+            Product bsgs_prod1 = Facade.AddProduct(bsgs_user1, bsgs_store1, PROD1_NAME, "nini", "cat1", 10, 10);
+            Product bsgs_prod2 = Facade.AddProduct(bsgs_user1, bsgs_store1, PROD2_NAME, "nini", "cat1", 10, 10);
+            Facade.AddBuySomeGetSomeDiscount(bsgs_user1, bsgs_store1, bsgs_prod1, bsgs_prod2, 2, 1, DateTime.Now.AddMonths(1),  100, Operator.And, 0, 1, true);
+            bsgs_user1.AddProductToCart(bsgs_prod1, 2);
+            bsgs_user1.AddProductToCart(bsgs_prod2, 1);
+            //how to get discountes price?
+        }
+
+        [Test]
+        public void AddProductCategoryDiscount()
+        {
+            const string STORE_NAME = "pc_store1";
+            const string PROD1_NAME = "pc_prod1";
+            const string PROD2_NAME = "pc_prod2";
+            LoggedInUser pc_user1 = new LoggedInUser("pc_user1", SecurityAdapter.Encrypt("1234"));
+            Store pc_store1 = Store.StoreBuilder(pc_user1, STORE_NAME);
+            Product pc_prod1 = Facade.AddProduct(pc_user1, pc_store1, PROD1_NAME, "nini", "cat1", 10, 10);
+            Product pc_prod2 = Facade.AddProduct(pc_user1, pc_store1, PROD2_NAME, "nini", "cat1", 10, 10);
+            Facade.AddProductCategoryDiscount(pc_user1, pc_store1, "cat1", DateTime.Now.AddMonths(1), 50, Operator.And, 0, 1, true);
+            pc_user1.AddProductToCart(pc_prod1, 2);
+            pc_user1.AddProductToCart(pc_prod2, 1);
+            //how to get discountes price?
+        }
+
+        [Test]
+        public void AddSpecificProductDiscount()
+        {
+            const string STORE_NAME = "sp_store1";
+            const string PROD1_NAME = "sp_prod1";
+            const string PROD2_NAME = "sp_prod2";
+            LoggedInUser sp_user1 = new LoggedInUser("sp_user1", SecurityAdapter.Encrypt("1234"));
+            Store sp_store1 = Store.StoreBuilder(sp_user1, STORE_NAME);
+            Product sp_prod1 = Facade.AddProduct(sp_user1, sp_store1, PROD1_NAME, "nini", "cat1", 10, 10);
+            Product sp_prod2 = Facade.AddProduct(sp_user1, sp_store1, PROD2_NAME, "nini", "cat1", 10, 10);
+            Facade.AddSpecificProductDiscount(sp_user1, sp_store1, sp_prod1, DateTime.Now.AddMonths(1), 10, Operator.And, 0, 1, true);
+            sp_user1.AddProductToCart(sp_prod1, 2);
+            sp_user1.AddProductToCart(sp_prod2, 1);
+            //how to get discountes price?
+        }
+
+        [Test]
+        public void AddBuyOverDiscount()
+        {
+            const string STORE_NAME = "bo_store1";
+            const string PROD1_NAME = "bo_prod1";
+            const string PROD2_NAME = "bo_prod2";
+            LoggedInUser bo_user1 = new LoggedInUser("bo_user1", SecurityAdapter.Encrypt("1234"));
+            Store bo_store1 = Store.StoreBuilder(bo_user1, STORE_NAME);
+            Product bo_prod1 = Facade.AddProduct(bo_user1, bo_store1, PROD1_NAME, "nini", "cat1", 10, 10);
+            Product bo_prod2 = Facade.AddProduct(bo_user1, bo_store1, PROD2_NAME, "nini", "cat1", 10, 10);
+            Facade.AddBuyOverDiscount(bo_user1, bo_store1, bo_prod1, 10, DateTime.Now.AddMonths(1), 2, Operator.And, 0, 1, true);
+            bo_user1.AddProductToCart(bo_prod1, 2);
+            bo_user1.AddProductToCart(bo_prod2, 1);
+            //how to get discountes price?
+        }
+
+        [Test]
+        public void RemoveDiscount()
+        {
+            const string STORE_NAME = "rd_store1";
+            LoggedInUser rd_user1 = new LoggedInUser("rd_user1", SecurityAdapter.Encrypt("1234"));
+            Store rd_store1 = Store.StoreBuilder(rd_user1, STORE_NAME);
+            Facade.AddProductCategoryDiscount(rd_user1, rd_store1, "cat1", DateTime.Now.AddMonths(1), 10, Operator.And, 0, 1, true);
+            Facade.AddProductCategoryDiscount(rd_user1, rd_store1, "cat2", DateTime.Now.AddMonths(1), 10, Operator.Or, 0, 1, true);
+            Facade.AddProductCategoryDiscount(rd_user1, rd_store1, "cat3", DateTime.Now.AddMonths(1), 10, Operator.Xor, 0, 1, true);
+            Assert.That(rd_store1.Discounts.Count, Is.EqualTo(5));
+            Facade.RemoveDiscount(rd_user1, rd_store1, 0);
+            Assert.That(rd_store1.Discounts, Is.Empty);
         }
     }
 }

@@ -30,5 +30,11 @@ namespace SEWorkshop.Facades
         public bool StoreContainsProduct(Store store, Product product);
 
         public void RemovePermissionsOfManager(LoggedInUser currUser, Store getStore, LoggedInUser getUser, Authorizations authorization);
+        public void AddProductCategoryDiscount(LoggedInUser user, Store storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(LoggedInUser user, Store storeName, Product product, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(LoggedInUser user, Store storeName, Product prod1, Product prod2, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuyOverDiscount(LoggedInUser user, Store storeName, Product product, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+
+        public void RemoveDiscount(LoggedInUser user, Store storeName, int indexInChain);
     }
 }
