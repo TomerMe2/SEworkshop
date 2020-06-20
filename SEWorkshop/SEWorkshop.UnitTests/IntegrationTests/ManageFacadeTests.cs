@@ -11,6 +11,7 @@ using SEWorkshop.Enums;
 using SEWorkshop.DAL;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
+using SEWorkshop.Models.Discounts;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -624,7 +625,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddBuySomeGetSomeDiscount(bsgs_user1, bsgs_store1, bsgs_prod1, bsgs_prod2, 2, 1, DateTime.Now.AddMonths(1),  100, Operator.And, 0, 1, true);
             bsgs_user1.AddProductToCart(bsgs_prod1, 2);
             bsgs_user1.AddProductToCart(bsgs_prod2, 1);
-            //how to get discountes price?
+            Assert.IsInstanceOf<BuySomeGetSomeDiscount>(bsgs_store1.Discounts.ElementAt(0));
         }
 
         [Test]
@@ -640,7 +641,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddProductCategoryDiscount(pc_user1, pc_store1, "cat1", DateTime.Now.AddMonths(1), 50, Operator.And, 0, 1, true);
             pc_user1.AddProductToCart(pc_prod1, 2);
             pc_user1.AddProductToCart(pc_prod2, 1);
-            //how to get discountes price?
+            Assert.IsInstanceOf<ProductCategoryDiscount>(pc_store1.Discounts.ElementAt(0));
         }
 
         [Test]
@@ -656,7 +657,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddSpecificProductDiscount(sp_user1, sp_store1, sp_prod1, DateTime.Now.AddMonths(1), 10, Operator.And, 0, 1, true);
             sp_user1.AddProductToCart(sp_prod1, 2);
             sp_user1.AddProductToCart(sp_prod2, 1);
-            //how to get discountes price?
+            Assert.IsInstanceOf<SpecificProducDiscount>(sp_store1.Discounts.ElementAt(0));
         }
 
         [Test]
@@ -672,7 +673,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Facade.AddBuyOverDiscount(bo_user1, bo_store1, bo_prod1, 10, DateTime.Now.AddMonths(1), 2, Operator.And, 0, 1, true);
             bo_user1.AddProductToCart(bo_prod1, 2);
             bo_user1.AddProductToCart(bo_prod2, 1);
-            //how to get discountes price?
+            Assert.IsInstanceOf<BuyOverDiscount>(bo_store1.Discounts.ElementAt(0));
         }
 
         [Test]
