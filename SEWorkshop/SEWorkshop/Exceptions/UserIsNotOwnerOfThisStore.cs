@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    public class UserIsNotOwnerOfThisStore : Exception
+    public class UserIsNotOwnerOfThisStore : TradingSystemException
     {
         public UserIsNotOwnerOfThisStore() { }
         public UserIsNotOwnerOfThisStore(string message) : base(message) { }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SEWorkshop.Exceptions
+﻿namespace SEWorkshop.Exceptions
 {
-    class CantRemoveTheOnlyPolicy : Exception
+    class CantRemoveTheOnlyPolicy : TradingSystemException
     {
         public CantRemoveTheOnlyPolicy() { }
         public CantRemoveTheOnlyPolicy(string message) : base(message) { }

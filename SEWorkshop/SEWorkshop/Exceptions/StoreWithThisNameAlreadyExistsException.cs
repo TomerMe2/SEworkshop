@@ -1,7 +1,7 @@
 ﻿namespace SEWorkshop.Exceptions
 {
     [System.Serializable]
-    public class StoreWithThisNameAlreadyExistsException : System.Exception
+    public class StoreWithThisNameAlreadyExistsException : TradingSystemException
     {
         public StoreWithThisNameAlreadyExistsException() { }
         public StoreWithThisNameAlreadyExistsException(string message) : base(message) { }
