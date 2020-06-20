@@ -445,5 +445,27 @@ namespace SEWorkshop.Tests.IntegrationTests
             // This weird compare is done to avoid floating number representation issues
             Assert.IsTrue(Math.Abs((incomeNow - incomeBefore) - increaseShouldBe) <= 0.0001);
         }
+
+        [Test]
+        public void GuestUserPurchase()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", securityAdaprer.Encrypt("1234"));
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
+            //Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", securityAdaprer.Encrypt("1234")));
+            //store.Ownership.Add(ownership);
+            //usr.Owns.Add(ownership);
+            Product product = new Product(store, "BestApp", "Authentic One", "App", 4.00, 10);
+            store.Products.Add(product);
+
+            User user = new GuestUser();
+            user.Cart.Baskets.Add(new Basket(store, user.Cart));
+            user.Cart.Baskets.ElementAt(0).Products.Add(new ProductsInBasket(user.Cart.Baskets.ElementAt(0), product, 5));
+
+            Purchase purchase = UsrFacade.Purchase(user, user.Cart.Baskets.ElementAt(0), "Mich's Credit Card", new Address("Israel", "Beersheba", "Rager Blv.", "123"));
+            Assert.IsTrue(user.Cart.Baskets.Count() == 0);
+            Assert.IsTrue(store.Purchases.ElementAt(0) == purchase);
+            Assert.IsTrue(store.Products.ElementAt(0).Quantity == 5);
+        }
     }
 }

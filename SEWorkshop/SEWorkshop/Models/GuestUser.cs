@@ -105,6 +105,7 @@ namespace SEWorkshop.Models
                 DatabaseProxy.Instance.ProductsInBaskets.Add(product);
             }
             Cart.Baskets.Remove(basket);
+            DatabaseProxy.Instance.Carts.Remove(Cart);
             DatabaseProxy.Instance.Purchases.Add(purchase);
             //DatabaseProxy.Instance.SaveChanges();
             return purchase;
