@@ -48,6 +48,9 @@
 @if (Model.IsAdmin)
 {
     <h5><a href="/IncomesInDate">Watch incomes from Azamazon!</a></h5>
+
+    <h5><a href="/AllPurchases">View all purchases</a></h5>
+
     @:<h5>Select a user to view his purchase history</h5>
     @foreach (string username in Model.Users)
     {
