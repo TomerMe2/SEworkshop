@@ -11,9 +11,11 @@ namespace SEWorkshop.Models
         private static int nextId = 0;
         private static object nextIdLock = new object();
         public int Id { get; }
+        public DateTime TimeStamp { get; }
 
         public GuestUser() : base() 
         {
+            TimeStamp = DateTime.Now;
             lock(nextIdLock)
             {
                 Id = nextId;

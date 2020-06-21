@@ -952,6 +952,37 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.GetIncomeInDate(date);
         }
 
+        public int GetGuestEntriesInDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetGuestEntriesInDate(date);
+        }
+
+        public int GetLoggedEntriesDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);
+            return FacadesBridge.GetLoggedEntriesDate(date);
+        }
+
+        public int GetOwnersEntriesDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);
+            return FacadesBridge.GetOwnersEntriesDate(date);
+        }
+
+        public int GetOnlyManagersEntriesDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);
+            return FacadesBridge.GetOnlyManagersEntriesDate(date);
+
+        }
+
+        public int GetAdminsEntriesDate(string sessionId, DateTime date)
+        {
+            GetAdmin(sessionId);
+            return FacadesBridge.GetAdminsEntriesDate(date);
+
+        }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
             OwnershipRequestObservers.Add(obsrv);

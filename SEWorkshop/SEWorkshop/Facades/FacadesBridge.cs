@@ -421,5 +421,27 @@ namespace SEWorkshop.Facades
         {
             return UserFacade.GetIncomeInDate(date);
         }
+
+        public int GetGuestEntriesInDate(DateTime date)
+        {
+            return UserFacade.GetGuestEntriesInDate(date);
+        }
+        public int GetLoggedEntriesDate(DateTime date)
+        {
+            return UserFacade.GetLoggedEntriesDate(date);
+        }
+        public int GetOwnersEntriesDate(DateTime date)
+        {
+            return UserFacade.GetOwnersEntriesDate(date);
+        }
+        public int GetOnlyManagersEntriesDate(DateTime date)
+        {
+            return UserFacade.GetOnlyManagersEntriesDate(date);
+        }
+        public int GetAdminsEntriesDate(DateTime date)
+        {
+            return UserFacade.GetAdminsEntriesDate(date);
+        }
+
     }
 }

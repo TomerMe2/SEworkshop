@@ -216,5 +216,55 @@ namespace SEWorkshop.Facades
             var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
             return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
         }
+
+        public int GetGuestEntriesInDate(DateTime date)
+        {
+            var rel = GuestUsers.Where(g => g.TimeStamp.Year == date.Year
+                                             && g.TimeStamp.Month == date.Month
+                                             && g.TimeStamp.Day == date.Day);
+
+            return rel.Count();
+        }
+
+
+        public int GetLoggedEntriesDate(DateTime date)
+        {
+            var rel = RegisteredUsers.Where(g => g.Owns.Count==0 && g.Manage.Count==0 &&
+                                                g.TimeStamp.Year == date.Year
+                                               && g.TimeStamp.Month == date.Month
+                                               && g.TimeStamp.Day == date.Day);
+
+            return rel.Count();
+        }
+
+        public int GetOwnersEntriesDate(DateTime date)
+        {
+            var rel = RegisteredUsers.Where(g => 
+                                                g.TimeStamp.Year == date.Year &&
+                                                g.Owns.Count()>0
+                                               && g.TimeStamp.Month == date.Month
+                                               && g.TimeStamp.Day == date.Day);
+
+                                                    
+
+            return rel.Count();
+        }
+        public int GetOnlyManagersEntriesDate(DateTime date)
+        {
+            var rel = RegisteredUsers.Where(g => g.Manage.Count()>0  && g.Owns.Count==0
+                                                && g.TimeStamp.Year == date.Year
+                                                && g.TimeStamp.Month == date.Month
+                                                && g.TimeStamp.Day == date.Day);
+
+            return rel.Count();
+        }
+        public int GetAdminsEntriesDate(DateTime date)
+        {
+            var rel = Administrators.Where(g => g.TimeStamp.Year == date.Year
+                                              && g.TimeStamp.Month == date.Month
+                                              && g.TimeStamp.Day == date.Day);
+
+            return rel.Count();
+        }
     }
 }

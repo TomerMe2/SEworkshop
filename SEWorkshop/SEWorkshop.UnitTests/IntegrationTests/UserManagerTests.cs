@@ -522,7 +522,17 @@ namespace SEWorkshop.Tests.IntegrationTests
             CollectionAssert.AreEqual(expected, result);
         }
 
-       [Test]
+        [Test]
+        public void CountGuestUsers_Count()
+        {
+            Manager.Login(DEF_ID, "admin", "sadnaTeam");
+            int res = Manager.GetGuestEntriesInDate(DEF_ID, DateTime.Today);
+            int res2 = Manager.GetLoggedEntriesDate(DEF_ID, DateTime.Today);
+         //   Assert.IsTrue(res == 8);
+          //  Assert.IsTrue(res2 == 8);
+        }
+
+        [Test]
         public void WriteReview_Multiple_Sessions()
         {
             const string OTHER_ID = "WriteReview_NoPermission_ThrowsException";

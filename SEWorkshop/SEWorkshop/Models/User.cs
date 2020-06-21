@@ -11,10 +11,11 @@ namespace SEWorkshop.Models
     public abstract class User
     {
         public Cart Cart { get; set; }
-
+        public DateTime TimeStamp { get; }
         public User()
         {
             Cart = new Cart();
+            TimeStamp = DateTime.Now;
         }
 
 
