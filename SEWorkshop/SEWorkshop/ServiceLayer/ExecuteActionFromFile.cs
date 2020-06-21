@@ -4,7 +4,6 @@ using Newtonsoft.Json.Schema;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
-using SEWorkshop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,9 +40,12 @@ namespace SEWorkshop.ServiceLayer
             {
                 Console.WriteLine(e.ToString());
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
-        // action line format: <ActionName>,<Arg1>,<Arg2>...
         [Obsolete]
         void ReadActionsFile(List<JObject> jobjectsList, List<Dictionary<string, object>> dictionariesList)
         {
@@ -75,7 +77,6 @@ namespace SEWorkshop.ServiceLayer
                         HandleRemoveProductFromCart(action, valuesDictionary);
                         break;
                     case "Purchase":
-                        // action line format: <ActionName>,<StoreName>,<creditCardNumber>,<City>,<Street>,<HouseNumber>,<Country>
                         HandlePurchase(action, valuesDictionary);
                         break;
                     case "OpenStore":
@@ -144,32 +145,24 @@ namespace SEWorkshop.ServiceLayer
                     case "RemoveDiscount":
                         HandleRemoveDiscount(action, valuesDictionary);
                         break;
-                    /*
                     case "AddStoreOwner":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.AddStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        HandleAddStoreOwner(action, valuesDictionary);
                         break;
                     case "AddStoreManager":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.AddStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        HandleAddStoreManager(action, valuesDictionary);
                         break;
                     case "SetPermissionsOfManager":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.SetPermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        HandleSetPermissionsOfManager(action, valuesDictionary);
                         break;
                     case "RemovePermissionsOfManager":
-                        if (actionLineSplited.Length == 4 && CheckArgs(actionLineSplited))
-                            userManager.RemovePermissionsOfManager(DEF_SID, actionLineSplited[1], actionLineSplited[2], actionLineSplited[3]);
+                        HandleRemovePermissionsOfManager(action, valuesDictionary);
                         break;
                     case "RemoveStoreOwner":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.RemoveStoreOwner(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        HandleRemoveStoreOwner(action, valuesDictionary);
                         break;
                     case "RemoveStoreManager":
-                        if (actionLineSplited.Length == 3 && CheckArgs(actionLineSplited))
-                            userManager.RemoveStoreManager(DEF_SID, actionLineSplited[1], actionLineSplited[2]);
+                        HandleRemoveStoreManager(action, valuesDictionary);
                         break;
-                    */
                     default:
                         Console.WriteLine("Error! command name is illegal");
                         continue;
@@ -191,23 +184,25 @@ namespace SEWorkshop.ServiceLayer
                 'additionalProperties': false
             }";
             JsonSchema schema = JsonSchema.Parse(schemaJson);
-            if (action.IsValid(schema))
+            if (!action.IsValid(schema))
             {
-                string username = "";
-                string password = "";
-                foreach (var property in properties)
-                {
-                    if (property.Key.Equals("username"))
-                        username = (string)property.Value;
-                    if (property.Key.Equals("password"))
-                        password = (string)property.Value;
-                }
-                userManager.Register(DEF_SID, username, password);
+                Console.WriteLine("Error! Register invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "username     type: string" +
+                  "password     type: string" +
+                  "Additional properties are not allowed.}");
+                return;
             }
-            else
+            string username = "", password = "";
+            foreach (var property in properties)
             {
-                Console.WriteLine("Error! Register invalid. required properties: { \"command\":_, \"username\":_, \"password\":_ }");
+                if (property.Key.Equals("username"))
+                    username = (string)property.Value;
+                if (property.Key.Equals("password"))
+                    password = (string)property.Value;
             }
+            userManager.Register(DEF_SID, username, password);
         }
 
         [Obsolete]
@@ -224,23 +219,25 @@ namespace SEWorkshop.ServiceLayer
                 'additionalProperties': false
             }";
             JsonSchema schema = JsonSchema.Parse(schemaJson);
-            if (action.IsValid(schema))
+            if (!action.IsValid(schema))
             {
-                string username = "";
-                string password = "";
-                foreach (var property in properties)
-                {
-                    if (property.Key.Equals("username"))
-                        username = (string)property.Value;
-                    if (property.Key.Equals("password"))
-                        password = (string)property.Value;
-                }
-                userManager.Login(DEF_SID, username, password);
+                Console.WriteLine("Error! Login invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "username     type: string" +
+                  "password     type: string" +
+                  "Additional properties are not allowed.");
+                return;
             }
-            else
+            string username = "", password = "";
+            foreach (var property in properties)
             {
-                Console.WriteLine("Error! Login invalid. required properties: { \"command\":_, \"username\":_, \"password\":_ }");
+                if (property.Key.Equals("username"))
+                    username = (string)property.Value;
+                if (property.Key.Equals("password"))
+                    password = (string)property.Value;
             }
+            userManager.Login(DEF_SID, username, password);
         }
 
         [Obsolete]
@@ -255,14 +252,15 @@ namespace SEWorkshop.ServiceLayer
                 'additionalProperties': false
             }";
             JsonSchema schema = JsonSchema.Parse(schemaJson);
-            if (action.IsValid(schema))
+            if (!action.IsValid(schema))
             {
-                userManager.Logout(DEF_SID);
+                Console.WriteLine("Error! Logout invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "Additional properties are not allowed.");
+                return;
             }
-            else
-            {
-                Console.WriteLine("Error! Logout invalid. There are no properties in this command");
-            }
+            userManager.Logout(DEF_SID);
         }
 
         [Obsolete]
@@ -282,11 +280,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! AddProductToCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                Console.WriteLine("Error! AddProductToCart invalid." +
+                 "Required properties:" +
+                 "command      type: string" +
+                 "storeName    type: string" +
+                 "productName  type: string" +
+                 "quantity     type: integer" +
+                 "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             int quantity = 0;
             foreach (var property in properties)
             {
@@ -317,11 +320,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! RemoveProductFromCart invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"quantity\":_ }");
+                Console.WriteLine("Error! RemoveProductFromCart invalid." +
+                 "Required properties:" +
+                 "command      type: string" +
+                 "storeName    type: string" +
+                 "productName  type: string" +
+                 "quantity     type: integer" +
+                 "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             int quantity = 0;
             foreach (var property in properties)
             {
@@ -355,7 +363,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! Purchase invalid. required properties: { \"command\":_, \"storeName\":_, \"creditCardNumber\":_, \"city\":_, \"street\":_, \"houseNumber\":_, \"country\":_ }");
+                Console.WriteLine("Error! Purchase invalid." +
+                 "Required properties:" +
+                 "command           type: string" +
+                 "storeName         type: string" +
+                 "creditCardNumber  type: string" +
+                 "city              type: string" +
+                 "street            type: string" +
+                 "houseNumber       type: string" +
+                 "country           type: string" +
+                 "Additional properties are not allowed.");
                 return;
             }
             string storeName = "", creditCardNumber = "", city = "", street = "", houseNumber = "", country = "";
@@ -391,7 +408,8 @@ namespace SEWorkshop.ServiceLayer
                     userManager.Purchase(DEF_SID, basket, creditCardNumber, address);
                     return;
                 }
-            Console.WriteLine("Purchase invalid, couldn't find a basket in the Store: " + storeName);
+            Console.WriteLine("Error! Purchase invalid." +
+                "couldn't find a basket in the Store: " + storeName);
         }
 
         [Obsolete]
@@ -409,7 +427,11 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! OpenStore invalid. required properties: { \"command\":_, \"storeName\":_ }");
+                Console.WriteLine("Error! OpenStore invalid." +
+                 "Required properties:" +
+                 "command      type: string" +
+                 "storeName    type: string" +
+                 "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -430,20 +452,24 @@ namespace SEWorkshop.ServiceLayer
                 'properties': {
                     'command': { 'type': 'string', 'required': 'true'},
                     'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'review': {'type':'string', 'required': 'true'}
+                    'productName': { 'type':'string', 'required': 'true'},
+                    'review': { 'type':'string', 'required': 'true'}
                 },
                 'additionalProperties': false
             }";
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! WriteReview invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"review\":_ }");
+                Console.WriteLine("Error! WriteReview invalid." +
+                 "Required properties:" +
+                 "command      type: string" +
+                 "storeName    type: string" +
+                 "productName  type: string" +
+                 "review       type: string" +
+                 "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
-            string review = "";
+            string storeName = "", productName = "", review = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -460,23 +486,28 @@ namespace SEWorkshop.ServiceLayer
         void HandleWriteMessage(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
-                'description': 'WriteReview',
+                'description': 'WriteMessage',
                 'type': 'object',
                 'properties': {
                     'command': { 'type': 'string', 'required': 'true'},
                     'storeName': { 'type': 'string', 'required': 'true'},
-                    'message': {'type':'string', 'required': 'true'}
+                    'message': { 'type':'string', 'required': 'true'}
                 },
                 'additionalProperties': false
             }";
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! WriteReview invalid. required properties: { \"command\":_, \"storeName\":_, \"message\":_ }");
+                Console.WriteLine("Error! WriteReview invalid." +
+                 "Required properties:" +
+                 "command      type: string" +
+                 "storeName    type: string" +
+                 "productName  type: string" +
+                 "message      type: string" +
+                 "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string message = "";
+            string storeName = "", message = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -507,13 +538,19 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! AddProduct invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"description\":_, \"category\":_, \"price\":_, \"quantity\":_ }");
+                Console.WriteLine("Error! AddProduct invalid." +
+                "Required properties:" +
+                "command      type: string" +
+                "storeName    type: string" +
+                "productName  type: string" +
+                "description  type: string" +
+                "category     type: string" +
+                "price        type: number" +
+                "quantity     type: integer" +
+                "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
-            string description = "";
-            string category = "";
+            string storeName = "", productName = "", description = "", category = "";
             double price = 0;
             int quantity = 0;
             foreach (var property in properties)
@@ -551,12 +588,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! EditProductName invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newName\":_ }");
+                Console.WriteLine("Error! EditProductName invalid." +
+               "Required properties:" +
+               "command      type: string" +
+               "storeName    type: string" +
+               "productName  type: string" +
+               "newName      type: string" +
+               "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
-            string newName = "";
+            string storeName = "", productName = "", newName = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -586,12 +627,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! EditProductCategory invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newCategory\":_ }");
+                Console.WriteLine("Error! EditProductCategory invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "productName  type: string" +
+                  "newCategory  type: string" +
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
-            string newCategory = "";
+            string storeName = "", productName = "", newCategory = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -621,12 +666,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! EditProductDescription invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newDescription\":_ }");
+                Console.WriteLine("Error! EditProductDescription invalid." +
+                  "Required properties:" +
+                  "command         type: string" +
+                  "storeName       type: string" +
+                  "productName     type: string" +
+                  "newDescription  type: string" +
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
-            string newDescription = "";
+            string storeName = "", productName = "", newDescription = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -656,11 +705,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! EditProductPrice invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newPrice\":_ }");
+                Console.WriteLine("Error! EditProductPrice invalid." +
+                  "Required properties:" +
+                  "command         type: string" +
+                  "storeName       type: string" +
+                  "productName     type: string" +
+                  "newPrice        type: number" +
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             double newPrice = 0;
             foreach (var property in properties)
             {
@@ -691,11 +745,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! EditProductQuantity invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_, \"newQuantity\":_ }");
+                Console.WriteLine("Error! EditProductQuantity invalid." +
+                  "Required properties:" +
+                  "command         type: string" +
+                  "storeName       type: string" +
+                  "productName     type: string" +
+                  "newQuantity     type: integer" +
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             int newQuantity = 0;
             foreach (var property in properties)
             {
@@ -725,11 +784,16 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! RemoveProduct invalid. required properties: { \"command\":_, \"storeName\":_, \"productName\":_ }");
+
+                Console.WriteLine("Error! RemoveProduct invalid." +
+                  "Required properties:" +
+                  "command         type: string" +
+                  "storeName       type: string" +
+                  "productName     type: string" +
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -761,7 +825,7 @@ namespace SEWorkshop.ServiceLayer
                    "command      type: string" +
                    "storeName    type: string" +
                    "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
-                   "Additional properties are not allowed.}");
+                   "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -803,7 +867,7 @@ namespace SEWorkshop.ServiceLayer
                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
                   "minQuantity  type: integer" +
                   "maxQuantity  type: integer" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -850,7 +914,7 @@ namespace SEWorkshop.ServiceLayer
                   "storeName    type: string" +
                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
                   "dayOfWeek    type: enum ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -897,11 +961,10 @@ namespace SEWorkshop.ServiceLayer
                   "storeName    type: string" +
                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
                   "city         type: string" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string city = "";
+            string storeName = "", city = "";
             Operator op = Operator.And;
             foreach (var property in properties)
             {
@@ -938,11 +1001,10 @@ namespace SEWorkshop.ServiceLayer
                   "storeName    type: string" +
                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
                   "country      type: string" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string country = "";
+            string storeName = "", country = "";
             Operator op = Operator.And;
             foreach (var property in properties)
             {
@@ -981,13 +1043,12 @@ namespace SEWorkshop.ServiceLayer
                   "operator     type: enum ['And', 'Or', 'Xor', 'Implies']" +
                   "minQuantity  type: integer" +
                   "maxQuantity  type: integer" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
             Operator op = Operator.And;
-            int minQuantity = 0;
-            int maxQuantity = 0;
+            int minQuantity = 0, maxQuantity = 0;
             foreach (var property in properties)
             {
                 if (property.Key.Equals("storeName"))
@@ -1006,7 +1067,7 @@ namespace SEWorkshop.ServiceLayer
         void HandleRemovePolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
-                'description': 'AddWholeStoreQuantityPolicy',
+                'description': 'RemovePolicy',
                 'type': 'object',
                 'properties': {
                     'command': { 'type': 'string', 'required': 'true'},
@@ -1018,12 +1079,12 @@ namespace SEWorkshop.ServiceLayer
             JsonSchema schema = JsonSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
-                Console.WriteLine("Error! AddWholeStoreQuantityPolicy invalid." +
+                Console.WriteLine("Error! RemovePolicy invalid." +
                   "Required properties:" +
                   "command      type: string" +
                   "storeName    type: string" +
                   "indexInChain type: integer" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -1071,11 +1132,10 @@ namespace SEWorkshop.ServiceLayer
                   "indexInChain type: integer" +
                   "discountId   type: integer" +
                   "toLeft       type: enum ['True', 'False']" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string categoryName = "";
+            string storeName = "", categoryName = "";
             DateTime deadline = new DateTime();
             double percentage = 0;
             Operator op = Operator.And;
@@ -1147,11 +1207,10 @@ namespace SEWorkshop.ServiceLayer
                   "indexInChain type: integer" +
                   "discountId   type: integer" +
                   "toLeft       type: enum ['True', 'False']" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             DateTime deadline = new DateTime();
             double percentage = 0;
             Operator op = Operator.And;
@@ -1229,7 +1288,7 @@ namespace SEWorkshop.ServiceLayer
                   "underDiscountProductName     type: string" +
                   "buySome                      type: integer" +
                   "getSome                      type: integer" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "", conditionProductName = "", underDiscountProductName = "";
@@ -1316,11 +1375,10 @@ namespace SEWorkshop.ServiceLayer
                   "discountId   type: integer" +
                   "toLeft       type: enum ['True', 'False']" +
                   "minSum       type: number" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "";
-            string productName = "";
+            string storeName = "", productName = "";
             DateTime deadline = new DateTime();
             double percentage = 0;
             Operator op = Operator.And;
@@ -1355,7 +1413,7 @@ namespace SEWorkshop.ServiceLayer
                         toLeft = bool.Parse((string)property.Value);
                         break;
                     case "minSum":
-                        minSum = (double)property.Value;
+                        minSum = (int)(long)property.Value;
                         break;
                 }
             }
@@ -1383,7 +1441,7 @@ namespace SEWorkshop.ServiceLayer
                   "command      type: string" +
                   "storeName    type: string" +
                   "indexInChain type: integer" +
-                  "Additional properties are not allowed.}");
+                  "Additional properties are not allowed.");
                 return;
             }
             string storeName = "";
@@ -1396,6 +1454,256 @@ namespace SEWorkshop.ServiceLayer
                     indexInChain = (int)(long)property.Value;
             }
             userManager.RemoveDiscount(DEF_SID, storeName, indexInChain);
+        }
+
+        [Obsolete]
+        void HandleAddStoreOwner(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddStoreOwner',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddStoreOwner invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "username     type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.AddStoreOwner(DEF_SID, storeName, username);
+        }
+
+        [Obsolete]
+        void HandleAddStoreManager(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'AddStoreManager',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! AddStoreManager invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "username     type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.AddStoreManager(DEF_SID, storeName, username);
+        }
+
+        [Obsolete]
+        void HandleSetPermissionsOfManager(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'SetPermissionsOfManager',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' },
+                    'authorization': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! SetPermissionsOfManager invalid." +
+                  "Required properties:" +
+                  "command       type: string" +
+                  "storeName     type: string" +
+                  "username      type: string" +
+                  "authorization type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "", authorization = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                    case "authorization":
+                        authorization = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.SetPermissionsOfManager(DEF_SID, storeName, username, authorization);
+        }
+
+        [Obsolete]
+        void HandleRemovePermissionsOfManager(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemovePermissionsOfManager',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' },
+                    'authorization': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemovePermissionsOfManager invalid." +
+                  "Required properties:" +
+                  "command       type: string" +
+                  "storeName     type: string" +
+                  "username      type: string" +
+                  "authorization type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "", authorization = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                    case "authorization":
+                        authorization = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.RemovePermissionsOfManager(DEF_SID, storeName, username, authorization);
+        }
+
+        [Obsolete]
+        void HandleRemoveStoreOwner(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemoveStoreOwner',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveStoreOwner invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "username     type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.RemoveStoreOwner(DEF_SID, storeName, username);
+        }
+
+        [Obsolete]
+        void HandleRemoveStoreManager(JObject action, Dictionary<string, object> properties)
+        {
+            string schemaJson = @"{
+                'description': 'RemoveStoreManager',
+                'type': 'object',
+                'properties': {
+                    'command': { 'type': 'string', 'required': 'true'},
+                    'storeName': { 'type': 'string', 'required': 'true'},
+                    'username': { 'type': 'string', 'required': 'true' }
+                },
+                'additionalProperties': false
+            }";
+            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            if (!action.IsValid(schema))
+            {
+                Console.WriteLine("Error! RemoveStoreManager invalid." +
+                  "Required properties:" +
+                  "command      type: string" +
+                  "storeName    type: string" +
+                  "username     type: string" +
+                  "Additional properties are not allowed.");
+                return;
+            }
+            string storeName = "", username = "";
+            foreach (var property in properties)
+            {
+                switch (property.Key)
+                {
+                    case "storeName":
+                        storeName = (string)property.Value;
+                        break;
+                    case "username":
+                        username = (string)property.Value;
+                        break;
+                }
+            }
+            userManager.RemoveStoreManager(DEF_SID, storeName, username);
         }
 
         bool CheckArgs(string[] args)
