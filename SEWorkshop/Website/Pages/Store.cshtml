@@ -17,7 +17,7 @@
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
         var isMan = user != null && Model.Store.Managers.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        @:<h1>Welcome to the Store: "@Model.Store.Name"</h1>
+        @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         if (user != null)
         {
             <h5><a href="/MessageView/@Model.Store.Name/@user.Username"> Go to conversation with this store </a></h5>
