@@ -510,7 +510,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<ProductsInBasket>()
                     .HasRequired(pb => pb.Basket)
                     .WithMany(Basket => Basket.Products)
-                    .HasForeignKey(pb => new { pb.BasketId })
+                    .HasForeignKey(pb => pb.BasketId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ProductsInBasket>()

@@ -67,7 +67,7 @@ namespace SEWorkshop.Facades
 
         private Product GetProduct(string storeName, string productName)
         {
-            Product? product = DatabaseProxy.Instance.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
+            Product? product = DatabaseProxy.Instance.Products.FirstOrDefault(prod => prod.StoreName.Equals(storeName) && prod.Name.Equals(productName));
             if (product is null || !product.Store.Name.Equals(storeName))
             {
                 throw new ProductNotInTheStoreException();
@@ -207,7 +207,8 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataBasket> MyCart(DataUser user)
         {
-            return GetUser(user).Cart.Baskets.Select(bskt => new DataBasket(bskt));
+            var cart = DatabaseProxy.Instance.Carts.FirstOrDefault(cart => user.Username == cart.Username);
+            return cart.Baskets.ToList().Select(bskt => new DataBasket(bskt));
         }
 
         public void OpenStore(DataLoggedInUser user, string storeName)
@@ -223,7 +224,7 @@ namespace SEWorkshop.Facades
         public DataPurchase Purchase(DataUser dataUser, DataBasket basket, string creditCardNum, Address address)
         {
             var user = GetUser(dataUser);
-            Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
+            Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Id == bskt.Id);
             if (trueBasket is null)
             {
                 throw new BasketNotInSystemException();

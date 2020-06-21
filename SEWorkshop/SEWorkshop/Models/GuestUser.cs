@@ -9,11 +9,13 @@ using System.Linq;
 namespace SEWorkshop.Models
 {
     public class GuestUser : User
-    {        
+    {
+        public static int ID_COUNTER = 0;
+        public int Id { get; set; }
 
         public GuestUser() : base()
-        { 
-
+        {
+            Id = ID_COUNTER++;
         }
 
         public override void AddProductToCart(Product product, int quantity)

@@ -30,7 +30,7 @@ namespace SEWorkshop.Models
 
         public LoggedInUser() : base()
         {
-            Username = "";
+            /*Username = "";
             Password = new byte[] { 0 };
             Owns = new List<Owns>();
             Manage = new List<Manages>();
@@ -41,7 +41,7 @@ namespace SEWorkshop.Models
             Cart = new Cart(this);
             OwnershipAnswers = new List<OwnershipAnswer>();
             OwnershipRequests = new List<OwnershipRequest>();
-            OwnershipRequestsFrom = new List<OwnershipRequest>();
+            OwnershipRequestsFrom = new List<OwnershipRequest>();*/
         }
 
         public LoggedInUser(string username, byte[] password) : base()

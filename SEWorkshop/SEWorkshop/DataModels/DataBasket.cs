@@ -14,6 +14,7 @@ namespace SEWorkshop.DataModels
 
         public double PriceWithoutDiscount => InnerModel.PriceWithoutDiscount();
         public double PriceAfterDiscount => InnerModel.PriceAfterDiscount();
+        public int Id => InnerModel.Id;
 
         public DataBasket(Basket basket) : base(basket) { }
 

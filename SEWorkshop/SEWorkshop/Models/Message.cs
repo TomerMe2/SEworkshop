@@ -19,13 +19,13 @@ namespace SEWorkshop.Models
         public virtual bool StoreSawIt { get; set; }
         public virtual bool ClientSawIt { get; set; }
 
-        private Message()
-        {
+        public Message()
+        {/*
             WrittenBy = null!;
             ToStore = null!;
             StoreName = "";
             Writer = "";
-            Description = "";
+            Description = "";*/
         }
 
         public Message(LoggedInUser writtenBy, Store toStore, string description, bool isClient, Message? prev = null)

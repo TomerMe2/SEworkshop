@@ -13,7 +13,6 @@ namespace SEWorkshop.Models
 {
     public abstract class User
     {
-        public virtual int Id { get; set; }
 
         public virtual Cart Cart { get; set; }
 

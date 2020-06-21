@@ -17,11 +17,10 @@ namespace SEWorkshop.Models
 
         public Manages() : base()
         {
-            Store = null!;
+            /*Store = null!;
             LoggedInUser = null!;
             Username = "";
-            StoreName = "";
-
+            StoreName = "";*/
         }
 
         public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)

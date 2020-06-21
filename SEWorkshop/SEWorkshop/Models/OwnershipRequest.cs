@@ -23,15 +23,15 @@ namespace SEWorkshop.Models
         public virtual string NewOwnerUsername { get; private set; }
         public virtual LoggedInUser NewOwner { get; private set; }
 
-        private OwnershipRequest()
+        public OwnershipRequest()
         {
-            Store = null!;
+            /*Store = null!;
             Owner = null!;
             NewOwner = null!;
             Answers = new List<OwnershipAnswer>();
             StoreName = "";
             OwnerUsername = "";
-            NewOwnerUsername = "";
+            NewOwnerUsername = "";*/
         }
 
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)

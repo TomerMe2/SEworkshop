@@ -16,14 +16,13 @@ namespace SEWorkshop.Models
 {
     public class Store
     {
-        public virtual int Id { get; set; }
         public virtual ICollection<Product> Products { get; private set; }
         public virtual ICollection<Manages> Management { get; private set; }
         public virtual ICollection<Owns> Ownership { get; private set; }
         public virtual ICollection<Basket> Baskets { get; private set; }
         public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
-        public virtual IList<Message> Messages { get; private set; }
-        public virtual IList<Discount> Discounts { get; private set; }
+        public virtual IList<Message> Messages { get; set; }
+        public virtual IList<Discount> Discounts { get; set; }
         public virtual bool IsOpen { get; private set; }
         public virtual string Name { get; private set; }
 
@@ -70,9 +69,9 @@ namespace SEWorkshop.Models
             return newStore;
         }
 
-        private Store()
+        public Store()
         {
-            Ownership = new List<Owns>();
+            /* Ownership = new List<Owns>();
             Management = new List<Manages>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
@@ -81,7 +80,7 @@ namespace SEWorkshop.Models
             Discounts = new List<Discount>();
             Name = "";
             OwnershipRequests = new List<OwnershipRequest>();
-            Policies = new List<Policy>();
+            Policies = new List<Policy>();*/
         }
 
         //TODO: Make this private if possible

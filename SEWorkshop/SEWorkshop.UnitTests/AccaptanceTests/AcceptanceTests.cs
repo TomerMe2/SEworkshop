@@ -237,7 +237,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.That(() => bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
 			IEnumerable<DataBasket> cart4 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
 			bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
-			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart.First(), "123456789", address); });
+			IEnumerable<DataBasket> cart5 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
+			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart5.First(), "123456789", address); });
 			IEnumerable<DataBasket> cart3 = bridge.MyCart(DEF_SID); //debug: check that cart is not empty
 
 			bridge.Logout(DEF_SID);

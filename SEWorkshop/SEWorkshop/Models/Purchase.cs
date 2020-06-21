@@ -25,9 +25,9 @@ namespace SEWorkshop.Models
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
 
-        private Purchase()
+        public Purchase()
         {
-            Basket = null!;
+            /*Basket = null!;
             Address = null!;
             TimeStamp = default;
             Country = "";
@@ -35,7 +35,7 @@ namespace SEWorkshop.Models
             Street = "";
             HouseNumber = "";
             AdminUserName = Administrator.ADMIN_USER_NAME;
-            Admin = null!;
+            Admin = null!;*/
         }
 
 

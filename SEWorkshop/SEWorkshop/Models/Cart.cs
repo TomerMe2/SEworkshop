@@ -9,15 +9,15 @@ namespace SEWorkshop.Models
     public class Cart
     {
         public virtual int Id { get; set; }
-        public virtual ICollection<Basket> Baskets { get; private set; }
-        public virtual string Username { get; private set; }
-        public virtual LoggedInUser? LoggedInUser { get; private set; }
+        public virtual ICollection<Basket> Baskets { get; set; }
+        public virtual string Username { get; set; }
+        public virtual LoggedInUser? LoggedInUser { get; set; }
 
-        private Cart()
+        public Cart()
         {
-            Baskets = new List<Basket>();
+            /*Baskets = new List<Basket>();
             LoggedInUser = null;
-            Username = "";
+            Username = "";*/
         }
 
         public Cart(User user)

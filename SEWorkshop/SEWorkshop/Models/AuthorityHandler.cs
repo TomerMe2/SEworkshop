@@ -26,15 +26,15 @@ namespace SEWorkshop.Models
 
         public virtual ICollection<Authority> AuthoriztionsOfUser { get; set; }
 
-        protected AuthorityHandler()
+        public AuthorityHandler()
         {
-            AuthoriztionsOfUser = new List<Authority>();
+            /*AuthoriztionsOfUser = new List<Authority>();
             Appointer = null!;
             AppointerName = "";
             LoggedInUser = null!;
             Store = null!;
             Username = "";
-            StoreName = "";
+            StoreName = "";*/
         }
 
         public AuthorityHandler(LoggedInUser loggedInUser, Store store, LoggedInUser appointer)

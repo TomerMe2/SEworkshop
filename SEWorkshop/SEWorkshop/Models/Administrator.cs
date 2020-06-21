@@ -11,11 +11,11 @@ namespace SEWorkshop.Models
     public class Administrator : LoggedInUser
     {
         public static readonly string ADMIN_USER_NAME = "admin";
-        public ICollection<Purchase> PurchasesToView { get; private set; }
+        public ICollection<Purchase> PurchasesToView { get; set; }
 
-        private Administrator() : base()
+        public Administrator()
         {
-            PurchasesToView = new List<Purchase>();
+            /*PurchasesToView = new List<Purchase>();*/
         }
 
         public Administrator(string username, byte[] password) : base(username, password)

@@ -26,8 +26,9 @@ namespace SEWorkshop.Models
         public virtual ICollection<ProductsInBasket> InBaskets {get ; set;}
         public virtual ICollection<Review> Reviews {get ; set;}
 
-        private Product()
+        public Product()
         {
+            /*
             Store = null!;
             Name = "";
             StoreName = "";
@@ -39,8 +40,7 @@ namespace SEWorkshop.Models
             BuySomeGetSomeDiscounts = new List<BuySomeGetSomeDiscount>();
             ConditionalDiscounts = new List<ConditionalDiscount>();
             OpenDiscounts = new List<OpenDiscount>();
-            ProductPolicies = new List<SingleProductQuantityPolicy>();
-
+            ProductPolicies = new List<SingleProductQuantityPolicy>();*/
         }
 
         public Product(Store store, string name, string description, string category, double price, int quantity)
