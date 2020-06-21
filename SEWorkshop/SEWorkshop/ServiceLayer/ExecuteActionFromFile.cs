@@ -20,7 +20,6 @@ namespace SEWorkshop.ServiceLayer
             this.userManager = userManager;
         }
 
-        [Obsolete]
         public void ReadAndExecute()
         {
             try
@@ -46,7 +45,6 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        [Obsolete]
         void ReadActionsFile(List<JObject> jobjectsList, List<Dictionary<string, object>> dictionariesList)
         {
             int index = -1;
@@ -68,7 +66,7 @@ namespace SEWorkshop.ServiceLayer
                         HandleLogin(action, valuesDictionary);
                         break;
                     case "Logout":
-                        HandleLogout(action, valuesDictionary);
+                        HandleLogout(action);
                         break;
                     case "AddProductToCart":
                         HandleAddProductToCart(action, valuesDictionary);
@@ -170,7 +168,6 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        [Obsolete]
         void HandleRegister(JObject action, Dictionary<string,object> properties)
         {
             string schemaJson = @"{
@@ -183,7 +180,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! Register invalid." +
@@ -205,7 +202,7 @@ namespace SEWorkshop.ServiceLayer
             userManager.Register(DEF_SID, username, password);
         }
 
-        [Obsolete]
+
         void HandleLogin(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -218,7 +215,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! Login invalid." +
@@ -240,8 +237,7 @@ namespace SEWorkshop.ServiceLayer
             userManager.Login(DEF_SID, username, password);
         }
 
-        [Obsolete]
-        void HandleLogout(JObject action, Dictionary<string, object> properties)
+        void HandleLogout(JObject action)
         {
             string schemaJson = @"{
                 'description': 'Logout',
@@ -251,7 +247,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! Logout invalid." +
@@ -263,7 +259,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.Logout(DEF_SID);
         }
 
-        [Obsolete]
         void HandleAddProductToCart(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -277,7 +272,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddProductToCart invalid." +
@@ -303,7 +298,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddProductToCart(DEF_SID, storeName, productName, quantity);
         }
 
-        [Obsolete]
         void HandleRemoveProductFromCart(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -317,7 +311,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemoveProductFromCart invalid." +
@@ -343,7 +337,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemoveProductFromCart(DEF_SID, storeName, productName, quantity);
         }
 
-        [Obsolete]
         void HandlePurchase(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -360,7 +353,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! Purchase invalid." +
@@ -412,7 +405,6 @@ namespace SEWorkshop.ServiceLayer
                 "couldn't find a basket in the Store: " + storeName);
         }
 
-        [Obsolete]
         void HandleOpenStore(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -424,7 +416,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! OpenStore invalid." +
@@ -443,7 +435,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.OpenStore(DEF_SID, storeName);
         }
 
-        [Obsolete]
         void HandleWriteReview(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -457,7 +448,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! WriteReview invalid." +
@@ -482,7 +473,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.WriteReview(DEF_SID, storeName, productName, review);
         }
 
-        [Obsolete]
         void HandleWriteMessage(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -495,7 +485,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! WriteReview invalid." +
@@ -518,7 +508,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.WriteMessage(DEF_SID, storeName, message);
         }
 
-        [Obsolete]
         void HandleAddProduct(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -535,7 +524,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddProduct invalid." +
@@ -571,7 +560,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddProduct(DEF_SID, storeName, productName, description, category, price, quantity);
         }
 
-        [Obsolete]
         void HandleEditProductName(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -585,7 +573,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! EditProductName invalid." +
@@ -610,7 +598,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductName(DEF_SID, storeName, productName, newName);
         }
 
-        [Obsolete]
         void HandleEditProductCategory(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -624,7 +611,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! EditProductCategory invalid." +
@@ -649,7 +636,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductCategory(DEF_SID, storeName, productName, newCategory);
         }
 
-        [Obsolete]
         void HandleEditProductDescription(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -663,7 +649,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! EditProductDescription invalid." +
@@ -688,7 +674,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductDescription(DEF_SID, storeName, productName, newDescription);
         }
 
-        [Obsolete]
         void HandleEditProductPrice(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -702,7 +687,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! EditProductPrice invalid." +
@@ -728,7 +713,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductPrice(DEF_SID, storeName, productName, newPrice);
         }
 
-        [Obsolete]
         void HandleEditProductQuantity(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -742,7 +726,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! EditProductQuantity invalid." +
@@ -768,7 +752,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.EditProductQuantity(DEF_SID, storeName, productName, newQuantity);
         }
 
-        [Obsolete]
         void HandleRemoveProduct(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -781,7 +764,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
 
@@ -804,7 +787,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemoveProduct(DEF_SID, storeName, productName);
         }
 
-        [Obsolete]
         void HandleAddAlwaysTruePolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -817,7 +799,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddAlwaysTruePolicy invalid." +
@@ -840,7 +822,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddAlwaysTruePolicy(DEF_SID, storeName, op);
         }
 
-        [Obsolete]
         void HandleAddSingleProductQuantityPolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -856,7 +837,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddSingleProductQuantityPolicy invalid." +
@@ -891,7 +872,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddSingleProductQuantityPolicy(DEF_SID, storeName, op, productName, minQuantity, maxQuantity);
         }
 
-        [Obsolete]
         void HandleAddSystemDayPolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -905,7 +885,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddSystemDayPolicy invalid." +
@@ -938,7 +918,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddSystemDayPolicy(DEF_SID, storeName, op, dayOfWeek);
         }
 
-        [Obsolete]
         void HandleAddUserCityPolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -952,7 +931,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddUserCityPolicy invalid." +
@@ -978,7 +957,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddUserCityPolicy(DEF_SID, storeName, op, city);
         }
 
-        [Obsolete]
         void HandleAddUserCountryPolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -992,7 +970,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddUserCountryPolicy invalid." +
@@ -1018,7 +996,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddUserCountryPolicy(DEF_SID, storeName, op, country);
         }
 
-        [Obsolete]
         void HandleAddWholeStoreQuantityPolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1033,7 +1010,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddWholeStoreQuantityPolicy invalid." +
@@ -1063,7 +1040,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddWholeStoreQuantityPolicy(DEF_SID, storeName, op, minQuantity, maxQuantity);
         }
 
-        [Obsolete]
         void HandleRemovePolicy(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1076,7 +1052,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemovePolicy invalid." +
@@ -1099,7 +1075,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemovePolicy(DEF_SID, storeName, indexInChain);
         }
 
-        [Obsolete]
         void HandleAddProductCategoryDiscount(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1118,7 +1093,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddProductCategoryDiscount invalid." +
@@ -1174,7 +1149,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddProductCategoryDiscount(DEF_SID, storeName, categoryName, deadline, percentage, op, indexInChain, discountId, toLeft);
         }
 
-        [Obsolete]
         void HandleAddSpecificProductDiscount(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1193,7 +1167,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddSpecificProductDiscount invalid." +
@@ -1249,7 +1223,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddSpecificProductDiscount(DEF_SID, storeName, productName, deadline, percentage, op, indexInChain, discountId, toLeft);
         }
 
-        [Obsolete]
         void HandleAddBuySomeGetSomeDiscount(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1271,7 +1244,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddBuySomeGetSomeDiscount invalid." +
@@ -1340,7 +1313,6 @@ namespace SEWorkshop.ServiceLayer
                 storeName, deadline, percentage, op, indexInChain, discountId, toLeft);
         }
 
-        [Obsolete]
         void HandleAddBuyOverDiscount(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1360,7 +1332,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddBuyOverDiscount invalid." +
@@ -1420,7 +1392,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddBuyOverDiscount(minSum, DEF_SID, storeName, productName, deadline, percentage, op, indexInChain, discountId, toLeft);
         }
 
-        [Obsolete]
         void HandleRemoveDiscount(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1433,7 +1404,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemoveDiscount invalid." +
@@ -1456,7 +1427,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemoveDiscount(DEF_SID, storeName, indexInChain);
         }
 
-        [Obsolete]
         void HandleAddStoreOwner(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1469,7 +1439,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddStoreOwner invalid." +
@@ -1496,7 +1466,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddStoreOwner(DEF_SID, storeName, username);
         }
 
-        [Obsolete]
         void HandleAddStoreManager(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1509,7 +1478,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! AddStoreManager invalid." +
@@ -1536,7 +1505,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.AddStoreManager(DEF_SID, storeName, username);
         }
 
-        [Obsolete]
         void HandleSetPermissionsOfManager(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1550,7 +1518,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! SetPermissionsOfManager invalid." +
@@ -1581,7 +1549,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.SetPermissionsOfManager(DEF_SID, storeName, username, authorization);
         }
 
-        [Obsolete]
         void HandleRemovePermissionsOfManager(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1595,7 +1562,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemovePermissionsOfManager invalid." +
@@ -1626,7 +1593,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemovePermissionsOfManager(DEF_SID, storeName, username, authorization);
         }
 
-        [Obsolete]
         void HandleRemoveStoreOwner(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1639,7 +1605,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemoveStoreOwner invalid." +
@@ -1666,7 +1632,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemoveStoreOwner(DEF_SID, storeName, username);
         }
 
-        [Obsolete]
         void HandleRemoveStoreManager(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
@@ -1679,7 +1644,7 @@ namespace SEWorkshop.ServiceLayer
                 },
                 'additionalProperties': false
             }";
-            JsonSchema schema = JsonSchema.Parse(schemaJson);
+            JSchema schema = JSchema.Parse(schemaJson);
             if (!action.IsValid(schema))
             {
                 Console.WriteLine("Error! RemoveStoreManager invalid." +

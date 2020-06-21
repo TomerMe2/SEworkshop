@@ -28,7 +28,6 @@ namespace SEWorkshop.ServiceLayer
         private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
         private ICollection<IServiceObserver<DataOwnershipRequest>> OwnershipRequestObservers { get; }
 
-        [Obsolete]
         public UserManager()
         {
             ConfigLog();

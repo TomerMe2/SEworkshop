@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
 using System.Linq;
