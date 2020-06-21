@@ -27,17 +27,6 @@ namespace SEWorkshop.Tests.UnitTests
             DatabaseProxy.MoveToTestDb();
         }
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
-        [TearDown]
-        public void Cleanup()
-        {
-            //DbContext.Database.Delete();
-        }
-
         [Test]
         public void AddProductToCartTest()
         {

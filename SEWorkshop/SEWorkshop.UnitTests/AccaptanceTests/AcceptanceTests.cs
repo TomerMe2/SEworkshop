@@ -67,7 +67,6 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			string food = "food";
 			Assert.That(() => bridge.SearchProductsByCategory(ref food), Throws.Nothing);
-            var deb = bridge.SearchProductsByCategory(ref food).ToList();
 			Assert.AreEqual(bridge.SearchProductsByCategory(ref food).Count(), 2);
 		}
 

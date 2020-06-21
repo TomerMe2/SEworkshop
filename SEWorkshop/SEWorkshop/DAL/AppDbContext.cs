@@ -18,25 +18,7 @@ namespace SEWorkshop.DAL
     {
         public AppDbContext(string conString) : base(conString)
         {
-            /*
-            Addresses = Set<Address>();
-            Admins = Set<Administrator>();;
-            Authorities = Set<Authority>();
-            AuthorityHandlers = Set<AuthorityHandler>();
-            Baskets = Set<Basket>();
-            Carts = Set<Cart>();
-            //Discounts = Set<Discount>();
-            Messages = Set<Message>();
-            OwnershipRequests = Set<OwnershipRequest>();
-            OwnershipAnswers = Set<OwnershipAnswer>();
-            Policies = Set<Policy>();
-            Products = Set<Product>();
-            ProductsInBaskets = Set<ProductsInBasket>();
-            Purchases = Set<Purchase>();
-            Reviews = Set<Review>();
-            Stores = Set<Store>();
-            LoggedInUsers = Set<LoggedInUser>();
-            */
+            
         }
 
         public DbSet<Address> Addresses { get; set; } = null!;
@@ -55,7 +37,6 @@ namespace SEWorkshop.DAL
         public DbSet<Purchase> Purchases { get; set; } = null!;
         public DbSet<Review> Reviews { get; set; } = null!;
         public DbSet<Store> Stores { get; set; } = null!;
-        //public DbSet<User> Users { get; set; } = null!;
         public DbSet<LoggedInUser> LoggedInUsers { get; set; } = null!;
         public DbSet<Administrator> Administrators { get; set; } = null!;
 
@@ -345,7 +326,9 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Basket>()
                     .HasOptional(basket => basket.Cart)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     .WithMany(cart => cart.Baskets)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     .HasForeignKey(basket => new { basket.CartId })
                     .WillCascadeOnDelete(false);
 
@@ -363,7 +346,9 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Cart>()
                 .HasOptional(cart => cart.LoggedInUser)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 .WithRequired(user => user.Cart)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Discount>()
@@ -434,7 +419,11 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Message>()
                     .HasOptional(message => message.Prev)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
                     .WithOptionalPrincipal(message => message.Next)
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<OwnershipAnswer>()
@@ -481,13 +470,12 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Policy>()
                     .HasOptional(policy => policy.InnerPolicy)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
                     .WithOptionalPrincipal(policy => policy.OuterPolicy)
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     .WillCascadeOnDelete(false);
-
-            //modelBuilder.Entity<Policy>()
-            //        .HasOptional(policy => policy.OuterPolicy)
-            //        .WithOptionalPrincipal(policy => policy.InnerPolicy)
-            //        .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Policy>()
                     .HasRequired(policy => policy.Store)
@@ -527,7 +515,9 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Basket)
+#pragma warning disable CS8603 // Possible null reference return.
                     .WithOptional(basket => basket.Purchase)
+#pragma warning restore CS8603 // Possible null reference return.
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Review>()

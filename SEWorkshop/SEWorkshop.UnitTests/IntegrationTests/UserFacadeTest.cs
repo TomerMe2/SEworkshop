@@ -250,23 +250,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             Assert.True(pass);
         }
-
-        /*
-        [Test]
-        public void PurchaseHistory_NoPermission_ThrowsException()
-        {
-            LoggedInUser phnp_user1 = UsrFacade.Register("phnp_user1", securityAdaprer.Encrypt("1111"));
-            try
-            {
-                UsrFacade.PurchaseHistory(phnp_user1);
-                Assert.Fail();
-            }
-            catch (UserHasNoPermissionException)
-            {
-                Assert.True(true);
-            }
-        }
-        */
         
         [Test]
         public void PurchaseHistory_UserNotExists_ReturnEmptyList()
@@ -387,26 +370,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.True(passed);
         }
 
-        /*
-        
-        //public void WriteMessage(User user, Store store, string description)
-        [Test]
-        public void WriteMessage_NoPermission_ThrowsException()
-        {
-            LoggedInUser wmnp_user1 = UsrFacade.Register("wmnp_user1", securityAdaprer.Encrypt("1111"));
-            Store wmnp_store1 = Store.StoreBuilder(wmnp_user1, "wmnp_store1");
-            try
-            {
-                UsrFacade.WriteMessage(wmnp_user1, wmnp_store1, "Do you have any bananas?");
-                Assert.Fail();
-            }
-            catch (UserHasNoPermissionException)
-            {
-                
-            }
-        }
-
-    */
         
         [Test]
         public void WriteMessage_HasPermission_AddMessage()
@@ -452,9 +415,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             const string STORE_NAME = "Google Play";
             LoggedInUser usr = new LoggedInUser("appdevloper1", securityAdaprer.Encrypt("1234"));
             Store store = Store.StoreBuilder(usr, STORE_NAME);
-            //Owns ownership = new Owns(usr, store, new LoggedInUser("DEMO", securityAdaprer.Encrypt("1234")));
-            //store.Ownership.Add(ownership);
-            //usr.Owns.Add(ownership);
             Product product = new Product(store, "BestApp", "Authentic One", "App", 4.00, 10);
             store.Products.Add(product);
 

@@ -70,6 +70,17 @@ namespace SEWorkshop.Models
             return newStore;
         }
 
+        public static Store StoreBuilderWithoutDB(LoggedInUser owner, string name)
+        {
+            Store newStore = new Store(name);
+            var demo = new LoggedInUser("DEMO", new byte[] { 0 });
+
+            Owns ownership = new Owns(owner, newStore, demo);
+            newStore.Ownership.Add(ownership);
+            owner.Owns.Add(ownership);
+            return newStore;
+        }
+
         private Store()
         {
             Ownership = new List<Owns>();
