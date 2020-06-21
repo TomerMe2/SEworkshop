@@ -16,6 +16,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         private const string DEF_ID = "UserManagerTests";
 
         [OneTimeSetUp]
+        [Obsolete]
         public void Init()
         {
             Manager = new UserManager();
@@ -30,7 +31,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             catch { }
         }
-
         
         [Test]
         public void CartTest()

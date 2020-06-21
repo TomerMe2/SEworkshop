@@ -1706,14 +1706,6 @@ namespace SEWorkshop.ServiceLayer
             userManager.RemoveStoreManager(DEF_SID, storeName, username);
         }
 
-        bool CheckArgs(string[] args)
-        {
-            foreach (string arg in args)
-                if (arg.Length <= 0)
-                    return false;
-            return true;
-        }
-
         Operator StringToOperator(string op)
         {
             return op switch
