@@ -11,10 +11,7 @@ namespace SEWorkshop.Facades
     public class UserFacade : IUserFacade
     {
         private IStoreFacade StoreFacade { get; }
-        //private ICollection<LoggedInUser> RegisteredUsers {get; }
         private ICollection<GuestUser> GuestUsers { get; }
-        //private ICollection<LoggedInUser> Administrators { get; }
-        //private ICollection<Purchase> Purchases {get; }
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
@@ -22,9 +19,6 @@ namespace SEWorkshop.Facades
         public UserFacade(IStoreFacade storeFacade)
         {
             StoreFacade = storeFacade;
-            /*RegisteredUsers = new List<LoggedInUser>();
-            Purchases = new List<Purchase>();
-            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};*/
             GuestUsers = new List<GuestUser>();
             if (!DatabaseProxy.Instance.Administrators.Any())
             {
@@ -221,8 +215,6 @@ namespace SEWorkshop.Facades
                 output += prchs.MoneyPaid;
             }
             return output;
-            //var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
-            //return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
         }
     }
 }

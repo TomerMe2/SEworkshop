@@ -28,27 +28,12 @@ namespace SEWorkshop.Tests.UnitTests
             DatabaseProxy.MoveToTestDb();
         }
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
-        [TearDown]
-        public void Cleanup()
-        {
-            //DbContext.Database.Delete();
-        }
-
         //Testing CloseStore()
         [Test]
         public void CloseStore_StoreIsOpen_StoreClosed()
         {
             LoggedInUser sp_user1 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
-            //DbContext.LoggedInUsers.Add(sp_user1);
-            //DbContext.SaveChanges();
             Store closeStore1 = Store.StoreBuilder(sp_user1, "sp_store1");
-            //DbContext.Stores.Add(closeStore1);
-            //DbContext.SaveChanges();
             closeStore1.CloseStore();
             Assert.That(closeStore1.IsOpen, Is.False);
         }
@@ -58,11 +43,8 @@ namespace SEWorkshop.Tests.UnitTests
         public void SearchProducts_ProductDoesNotExistInStore_ReturnEmptyList()
         {
             LoggedInUser sp_user1 = new LoggedInUser("sp_user1", _securityAdapter.Encrypt("1111"));
-            //DbContext.LoggedInUsers.Add(sp_user1);
-            //DbContext.SaveChanges();
+
             Store sp_store1 = Store.StoreBuilder(sp_user1, "sp_store1");
-            //DbContext.Stores.Add(sp_store1);
-            //DbContext.SaveChanges();
             Owns ownership = new Owns(sp_user1, sp_store1, new LoggedInUser("DEMO", _securityAdapter.Encrypt("1234")));
             sp_store1.Ownership.Add(ownership);
             sp_user1.Owns.Add(ownership);

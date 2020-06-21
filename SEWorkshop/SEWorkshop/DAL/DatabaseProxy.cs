@@ -43,6 +43,5 @@ namespace SEWorkshop.DAL
                 instance = new TestDbContext();
             }
         }
-
     }
 }

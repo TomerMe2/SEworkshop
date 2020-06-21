@@ -11,11 +11,10 @@ namespace SEWorkshop.Facades
 {
     public class StoreFacade : IStoreFacade
     {
-        //private ICollection<Store> Stores { get; set; }
 
         public StoreFacade()
         {
-            //Stores = new List<Store>();
+            
         }
 
         /// <summary>
