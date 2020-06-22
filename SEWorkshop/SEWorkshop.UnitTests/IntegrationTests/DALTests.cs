@@ -103,16 +103,14 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.RemoveDiscount(DEF_ID, "store1", 0);
             Assert.IsTrue(Manager.SearchStore("store1").Discounts.Count() == 0);
             Assert.IsTrue(Manager.SearchStore("store1").Policies.Count() == 3);
-            //Manager.RemovePolicy(DEF_ID, "store1", 1);
+            Manager.RemovePolicy(DEF_ID, "store1", 1);
             Manager.Logout(DEF_ID);
         }
 
         [Test, Order(5)]
         public void DALTest5()
         {
-            Assert.IsTrue(Manager.SearchStore("store1").Policies.Count() == 3);
-            /*Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(0)).CantBuyIn == Enums.Weekday.Sunday);
-            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(1)).CantBuyIn == Enums.Weekday.Tuesday);*/
+            Assert.That(Manager.SearchStore("store1").Policies.Count(), Is.EqualTo(2));
             Manager.Login(DEF_ID, "user1", "1234");
             Manager.AddStoreOwner(DEF_ID, "store1", "user4");
             Manager.AnswerOwnershipRequest(DEF_ID, "store1", "user4", Enums.RequestState.Approved);
@@ -128,6 +126,8 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test, Order(6)]
         public void DALTest6()
         {
+            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(0)).CantBuyIn == Enums.Weekday.Sunday);
+            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(1)).CantBuyIn == Enums.Weekday.Tuesday);
             Manager.Login(DEF_ID, "user2", "1234");
             Assert.IsTrue(Manager.SearchStore("store1").Ownership.Count() == 3);
             Manager.AnswerOwnershipRequest(DEF_ID, "store1", "user3", Enums.RequestState.Approved);

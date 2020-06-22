@@ -153,7 +153,7 @@ namespace SEWorkshop.Facades
 
         public void AddBuyOverDiscount(LoggedInUser user, Store store, Product product, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            user.AddBuyOverDiscountDiscount(store, product, deadline, percentage, minSum, op, indexInChain, disId, toLeft);
+            user.AddBuyOverDiscount(store, product, deadline, percentage, minSum, op, indexInChain, disId, toLeft);
             DatabaseProxy.Instance.SaveChanges();
         }
 
@@ -174,7 +174,7 @@ namespace SEWorkshop.Facades
         public void RemoveDiscount(LoggedInUser user, Store store, int indexInChain)
         {
             user.RemoveDiscount(store, indexInChain);
-            DatabaseProxy.Instance.SaveChanges();
+            //DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AddAlwaysTruePolicy(LoggedInUser user, Store storeName, Operator op)
