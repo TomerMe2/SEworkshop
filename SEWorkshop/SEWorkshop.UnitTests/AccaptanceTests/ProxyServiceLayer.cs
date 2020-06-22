@@ -1,6 +1,5 @@
 ﻿using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
-using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
 {
     class ProxyServiceLayer : Bridge
     {
-        private UserManager userManager = new UserManager();
+        private readonly UserManager userManager = new UserManager();
 
         public override DataProduct AddProduct(string sid, string storeNm, string productName, string description, string category, double price, int quantity)
         {

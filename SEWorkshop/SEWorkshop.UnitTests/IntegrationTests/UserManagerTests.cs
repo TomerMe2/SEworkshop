@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
 using System.Linq;
@@ -16,6 +15,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         private const string DEF_ID = "UserManagerTests";
 
         [OneTimeSetUp]
+        [Obsolete]
         public void Init()
         {
             Manager = new UserManager();
@@ -30,7 +30,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             catch { }
         }
-
         
         [Test]
         public void CartTest()
