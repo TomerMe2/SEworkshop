@@ -13,8 +13,10 @@ namespace SEWorkshop.Models
         public virtual Store ToStore { get; set; }
         public virtual string Writer { get; set; }
         public virtual LoggedInUser WrittenBy { get; set; }
-        public virtual string Description {get; set;}
+        public virtual string Description {get; set; }
+        //public virtual int? PrevId { get; set; }
         public virtual Message? Prev { get; set; }
+        //public virtual int? NextId { get; set; }
         public virtual Message? Next { get; set; }
         public virtual bool StoreSawIt { get; set; }
         public virtual bool ClientSawIt { get; set; }

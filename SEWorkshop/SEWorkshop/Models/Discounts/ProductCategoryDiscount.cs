@@ -9,9 +9,9 @@ namespace SEWorkshop.Models.Discounts
     {
         public virtual string CatUnderDiscount { get; set; }
 
-        protected ProductCategoryDiscount() : base()
+        public ProductCategoryDiscount() : base()
         {
-            CatUnderDiscount = "";
+            //CatUnderDiscount = "";
         }
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 

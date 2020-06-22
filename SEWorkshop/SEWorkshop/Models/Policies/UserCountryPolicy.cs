@@ -9,9 +9,9 @@ namespace SEWorkshop.Models.Policies
     {
         public virtual string RequiredCountry { get; set; }
 
-        protected UserCountryPolicy() : base()
+        public UserCountryPolicy() : base()
         {
-            RequiredCountry = "";
+            //RequiredCountry = "";
         }
 
         public UserCountryPolicy(Store store, string requiredCountry) : base(store)

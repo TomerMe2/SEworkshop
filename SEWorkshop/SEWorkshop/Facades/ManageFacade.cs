@@ -174,7 +174,7 @@ namespace SEWorkshop.Facades
         public void RemoveDiscount(LoggedInUser user, Store store, int indexInChain)
         {
             user.RemoveDiscount(store, indexInChain);
-            //DatabaseProxy.Instance.SaveChanges();
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AddAlwaysTruePolicy(LoggedInUser user, Store storeName, Operator op)

@@ -12,9 +12,9 @@ namespace SEWorkshop.Models.Discounts
         public virtual int ProductIdUnderDiscount { get; set; }
         public virtual Product ProdUnderDiscount { get; set; }
 
-        protected BuySomeGetSomeDiscount() : base()
+        public BuySomeGetSomeDiscount() : base()
         {
-            ProdUnderDiscount = null!;
+            //ProdUnderDiscount = null!;
         }
 
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)

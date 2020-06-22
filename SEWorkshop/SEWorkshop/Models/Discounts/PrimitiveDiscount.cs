@@ -9,7 +9,7 @@ namespace SEWorkshop.Models.Discounts
     {
         public virtual double Percentage { get; private set; }
 
-        protected PrimitiveDiscount() : base()
+        public PrimitiveDiscount() : base()
         {
             
         }

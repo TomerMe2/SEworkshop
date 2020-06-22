@@ -16,7 +16,7 @@ namespace SEWorkshop.Models.Discounts
         public virtual Discount? LeftChild { get; set; }
         public virtual Discount? RightChild {get; set;}
 
-        protected ComposedDiscount() : base()
+        public ComposedDiscount() : base()
         {
 
         }

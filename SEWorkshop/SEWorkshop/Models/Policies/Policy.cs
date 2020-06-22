@@ -12,15 +12,17 @@ namespace SEWorkshop.Models.Policies
     {
         public virtual int Id { get; set; }
         public virtual string StoreName { get; set; }
+        public virtual int? OuterPolicyId { get; set; }
         public virtual Policy? OuterPolicy { get; set; }
+        public virtual int? InnerPolicyId { get; set; }
         public virtual Policy? InnerPolicy { get; set; }
         public virtual Operator? InnerOperator { get; set; }
         public virtual Store Store { get; set; }
 
-        protected Policy()
+        public Policy()
         {
-            Store = null!;
-            StoreName = "";
+            /*Store = null!;
+            StoreName = "";*/
         }
         
         public Policy(Store store)

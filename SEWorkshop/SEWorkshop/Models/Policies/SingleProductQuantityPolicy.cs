@@ -13,9 +13,9 @@ namespace SEWorkshop.Models.Policies
         public virtual int MinQuantity { get; set; }
         public virtual int MaxQuantity { get; set; }
 
-        protected SingleProductQuantityPolicy() : base()
+        public SingleProductQuantityPolicy() : base()
         {
-            Prod = null!;
+            /*Prod = null!;*/
         }
 
 

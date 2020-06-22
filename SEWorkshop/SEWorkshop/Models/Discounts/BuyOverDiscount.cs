@@ -10,7 +10,7 @@ namespace SEWorkshop.Models.Discounts
        
         public virtual double MinSum { get; set; }
 
-        protected BuyOverDiscount() : base()
+        public BuyOverDiscount() : base()
         {
 
         }

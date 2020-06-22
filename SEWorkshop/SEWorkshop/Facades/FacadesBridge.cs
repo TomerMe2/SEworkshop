@@ -199,6 +199,7 @@ namespace SEWorkshop.Facades
             {
                 //It's the first user, and it's the non-manager who initiated the messages
                 msg = new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
+                return msg;
             }
             //It's the manager who should answer it
             msg = new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
@@ -208,6 +209,8 @@ namespace SEWorkshop.Facades
         public IEnumerable<DataBasket> MyCart(DataUser user)
         {
             var cart = DatabaseProxy.Instance.Carts.FirstOrDefault(cart => user.Username == cart.Username);
+            if (cart == default)
+                return user.Cart.Baskets.ToList();
             return cart.Baskets.ToList().Select(bskt => new DataBasket(bskt));
         }
 

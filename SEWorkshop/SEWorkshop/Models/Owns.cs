@@ -394,6 +394,7 @@ namespace SEWorkshop.Models
             {
                 currPol = currPol.InnerPolicy;
             }
+            pol.OuterPolicy = currPol;
             currPol.InnerPolicy = pol;
             currPol.InnerOperator = op;
             DatabaseProxy.Instance.Policies.Add(pol);
@@ -406,7 +407,7 @@ namespace SEWorkshop.Models
             {
                 Store.Discounts.Add(dis);
                 DatabaseProxy.Instance.Discounts.Add(dis);
-                //DatabaseProxy.Instance.SaveChanges();
+                DatabaseProxy.Instance.SaveChanges();
             }
             else
             {
@@ -579,16 +580,30 @@ namespace SEWorkshop.Models
                 {
                     var newPol = new AlwaysTruePolicy(Store);
                     Store.Policies.Add(newPol);
+                    DatabaseProxy.Instance.Policies.Add(newPol);
+                    DatabaseProxy.Instance.SaveChanges();
                 }
                 else
                 {
                     currPol.InnerPolicy.OuterPolicy = null;
+                    currPol.InnerPolicy.OuterPolicyId = null;
+                    DatabaseProxy.Instance.SaveChanges();
                 }
             }
             else
-            {
+            {   
                 prev.InnerPolicy = currPol.InnerPolicy;
+                prev.InnerPolicyId = null;
+                DatabaseProxy.Instance.SaveChanges();
+                if (currPol.InnerPolicy != null)
+                {
+                    prev.InnerPolicyId = currPol.InnerPolicyId;
+                    currPol.InnerPolicy.OuterPolicy = prev;
+                    currPol.InnerPolicy.OuterPolicyId = prev.Id;
+                    DatabaseProxy.Instance.SaveChanges();
+                }
             }
+            Store.Policies.Remove(currPol);
             //TODO: REMOVE THE POLICIES THAT NO ONE POINTS AT THEM
             DatabaseProxy.Instance.Policies.Remove(currPol);
             //DatabaseProxy.Instance.SaveChanges();

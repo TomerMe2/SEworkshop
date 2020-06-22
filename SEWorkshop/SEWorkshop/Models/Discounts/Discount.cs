@@ -19,11 +19,11 @@ namespace SEWorkshop.Models.Discounts
         public virtual DateTime Deadline { get; set; }
         public virtual Store Store { get; set; }
 
-        protected Discount()
+        public Discount()
         {
-            Deadline = default;
+            /*Deadline = default;
             Store = null!;
-            StoreName = "";
+            StoreName = "";*/
         }
 
         public Discount(DateTime deadline, Store store)

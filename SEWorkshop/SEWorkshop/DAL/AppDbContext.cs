@@ -347,7 +347,9 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Cart>()
                 .HasOptional(cart => cart.LoggedInUser)
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
                 .WithRequired(user => user.Cart)
+#pragma warning restore CS8603 // Possible null reference return.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 .WillCascadeOnDelete(false);
 
@@ -470,11 +472,14 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Policy>()
                     .HasOptional(policy => policy.InnerPolicy)
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8603 // Possible null reference return.
-                    .WithOptionalPrincipal(policy => policy.OuterPolicy)
-#pragma warning restore CS8603 // Possible null reference return.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    .WithMany()
+                    .HasForeignKey(policy => policy.InnerPolicyId)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Policy>()
+                    .HasOptional(policy => policy.OuterPolicy)
+                    .WithMany()
+                    .HasForeignKey(policy => policy.OuterPolicyId)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Policy>()

@@ -67,14 +67,14 @@ namespace SEWorkshop.Facades
         /// </summary>
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
-            ICollection<Product> searchResult = new List<Product>();
+            /*ICollection<Product> searchResult = new List<Product>();
             foreach (var store in DatabaseProxy.Instance.Stores)
             {
                 foreach (var prod in store.SearchProducts(pred))
                 {
                     searchResult.Add(prod);
                 }
-            }
+            }*/
             return (from product in AllActiveProducts()
                     where pred(product)
                     select product).ToList();

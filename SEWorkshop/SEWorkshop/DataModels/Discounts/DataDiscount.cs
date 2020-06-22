@@ -17,6 +17,7 @@ namespace SEWorkshop.DataModels
         public Operator? opeartor => ((ComposedDiscount)InnerModel).Op;
         public DataDiscount? leftChild => ((ComposedDiscount)InnerModel).LeftChild != null ? CreateDataFromDiscount(((ComposedDiscount)InnerModel).LeftChild) : null;
         public DataDiscount? rightChild => ((ComposedDiscount)InnerModel).RightChild != null ? CreateDataFromDiscount(((ComposedDiscount)InnerModel).RightChild) : null;
+        public DataDiscount? father => InnerModel.Father != null ? CreateDataFromDiscount(InnerModel.Father) : null;
 
         public DataDiscount(Discount discount) : base(discount)
         {

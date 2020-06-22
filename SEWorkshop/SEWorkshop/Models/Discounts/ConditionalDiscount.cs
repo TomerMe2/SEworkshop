@@ -12,7 +12,7 @@ namespace SEWorkshop.Models.Discounts
         public virtual int ProductId { get; set; }
         public virtual Product Product { get; set; }
 
-        protected ConditionalDiscount() : base()
+        public ConditionalDiscount() : base()
         {
             Product = null!;
         }

@@ -10,9 +10,9 @@ namespace SEWorkshop.Models.Discounts
         public virtual int ProductId { get; set; }
         public virtual Product Product { get; set; }
 
-        protected OpenDiscount() : base()
+        public OpenDiscount() : base()
         {
-            Product = null!;
+            //Product = null!;
         }
 
         protected OpenDiscount(double percentage, DateTime deadline, Product product, Store store) : 

@@ -8,7 +8,7 @@ namespace SEWorkshop.Models.Policies
     public class AlwaysTruePolicy : Policy
     {
 
-        protected AlwaysTruePolicy() : base() { }
+        public AlwaysTruePolicy() : base() { }
 
         public AlwaysTruePolicy(Store store) : base(store) { }
 
