@@ -103,16 +103,41 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.RemoveDiscount(DEF_ID, "store1", 0);
             Assert.IsTrue(Manager.SearchStore("store1").Discounts.Count() == 0);
             Assert.IsTrue(Manager.SearchStore("store1").Policies.Count() == 3);
-            Manager.RemovePolicy(DEF_ID, "store1", 1);
+            //Manager.RemovePolicy(DEF_ID, "store1", 1);
             Manager.Logout(DEF_ID);
         }
 
         [Test, Order(5)]
         public void DALTest5()
         {
-            Assert.IsTrue(Manager.SearchStore("store1").Policies.Count() == 2);
-            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(0)).CantBuyIn == Enums.Weekday.Sunday);
-            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(1)).CantBuyIn == Enums.Weekday.Tuesday);
+            Assert.IsTrue(Manager.SearchStore("store1").Policies.Count() == 3);
+            /*Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(0)).CantBuyIn == Enums.Weekday.Sunday);
+            Assert.IsTrue(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("store1").Policies.ElementAt(1)).CantBuyIn == Enums.Weekday.Tuesday);*/
+            Manager.Login(DEF_ID, "user1", "1234");
+            Manager.AddStoreOwner(DEF_ID, "store1", "user4");
+            Manager.AnswerOwnershipRequest(DEF_ID, "store1", "user4", Enums.RequestState.Approved);
+            Manager.AddStoreOwner(DEF_ID, "store1", "user3");
+            Manager.AddStoreOwner(DEF_ID, "store2", "user4");
+            Manager.AddStoreOwner(DEF_ID, "store2", "user2");
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "user2", "1234");
+            Manager.AnswerOwnershipRequest(DEF_ID, "store1", "user4", Enums.RequestState.Approved);
+            Manager.Logout(DEF_ID);
+        }
+
+        [Test, Order(6)]
+        public void DALTest6()
+        {
+            Manager.Login(DEF_ID, "user2", "1234");
+            Assert.IsTrue(Manager.SearchStore("store1").Ownership.Count() == 3);
+            Manager.AnswerOwnershipRequest(DEF_ID, "store1", "user3", Enums.RequestState.Approved);
+            Assert.IsTrue(Manager.SearchStore("store1").Ownership.Count() == 4);
+            Manager.Logout(DEF_ID);
+            Manager.Login(DEF_ID, "user4", "1234");
+            Assert.IsTrue(Manager.SearchStore("store2").Ownership.Count() == 2);
+            Manager.AnswerOwnershipRequest(DEF_ID, "store2", "user2", Enums.RequestState.Denied);
+            Assert.IsTrue(Manager.SearchStore("store2").Ownership.Count() == 2);
+            Manager.Logout(DEF_ID);
         }
     }
 }
