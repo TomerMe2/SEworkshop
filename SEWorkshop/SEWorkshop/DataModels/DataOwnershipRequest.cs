@@ -15,6 +15,7 @@ namespace SEWorkshop.DataModels
             InnerModel.Answers.Select(tup => (new DataLoggedInUser(tup.Owner), tup.Answer)).ToList().AsReadOnly();
         public DataLoggedInUser Owner => new DataLoggedInUser(InnerModel.Owner);
         public DataLoggedInUser NewOwner => new DataLoggedInUser(InnerModel.NewOwner);
+        public RequestState State => InnerModel.GetRequestState();
 
         public DataOwnershipRequest(OwnershipRequest request) : base(request) { }
     }

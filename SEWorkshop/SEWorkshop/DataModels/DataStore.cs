@@ -25,7 +25,7 @@ namespace SEWorkshop.DataModels
 
         public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> OwnershipRequests => InnerModel.OwnershipRequests
             .Select((item) =>
-                (new DataLoggedInUser(item.Owner), new DataLoggedInUser(item.NewOwner)))
+                (new DataLoggedInUser(item.NewOwner), new DataLoggedInUser(item.Owner)))
             .ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
 

@@ -22,7 +22,7 @@ namespace SEWorkshop.DataModels.Policies
         {
             get
             {
-                return InnerOperator;
+                return InnerModel.InnerOperator;
             }
         }
 

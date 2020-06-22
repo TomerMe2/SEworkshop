@@ -142,8 +142,16 @@
                 {
                     var appointer = keyVal.Value;
                     var wannaBeOwner = keyVal.Key;
-                    var request = wannaBeOwner.OwnershipRequests.First(request => request.Store.Equals(Model.Store));
-                    var answer = request.Answers.First(request => request.Item1.Equals(Model.LoggedUser)).Item2;
+                    var request = wannaBeOwner.OwnershipRequests.FirstOrDefault(request => request.Store.Equals(Model.Store));
+                    if(request == default)
+                    {
+                        continue;
+                    }
+                    var answer = request.Answers.FirstOrDefault(request => request.Item1.Equals(Model.LoggedUser)).Item2;
+                    if (request.State != SEWorkshop.Enums.RequestState.Pending)
+                    {
+                        continue;
+                    }
                     <tr style="border:solid;border-color:black;border-width:1px">
                         <th style="border:solid;border-color:black;border-width:1px">@wannaBeOwner.Username</th>
                         <th style="border:solid;border-color:black;border-width:1px">@appointer.Username</th>

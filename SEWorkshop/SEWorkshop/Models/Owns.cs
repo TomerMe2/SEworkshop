@@ -102,7 +102,7 @@ namespace SEWorkshop.Models
                     DatabaseProxy.Instance.Owns.Add(ownership);
                     DatabaseProxy.Instance.OwnershipRequests.Remove(req);
                     //DatabaseProxy.Instance.SaveChanges();*/
-            Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+            Owns ownership = new Owns(newOwner, Store, req.Owner);
                     Store.Ownership.Add(ownership);
                     newOwner.Owns.Add(ownership);
                     DatabaseProxy.Instance.Owns.Add(ownership);
