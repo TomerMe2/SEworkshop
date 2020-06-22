@@ -55,8 +55,10 @@ namespace SEWorkshop.Facades
                 {
                     throw new UserDoesNotExistException();
                 }
+                admin.Cart = DatabaseProxy.Instance.Carts.FirstOrDefault(admin => admin.Username.Equals(username));
                 return admin;
             }
+            user.Cart = DatabaseProxy.Instance.Carts.FirstOrDefault(cart => cart.Username.Equals(username));
             return user;
         }
 
