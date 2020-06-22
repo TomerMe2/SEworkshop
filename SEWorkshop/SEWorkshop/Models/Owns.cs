@@ -48,7 +48,8 @@ namespace SEWorkshop.Models
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
-            if(Store.OwnershipRequests.FirstOrDefault(req => req.NewOwnerUsername.Equals(newOwner.Username)) != null)
+            var req = Store.OwnershipRequests.FirstOrDefault(req => req.NewOwnerUsername.Equals(newOwner.Username));
+            if (req != null && req.GetRequestState() != RequestState.Approved)
             {
                 throw new OwnershipRequestAlreadyExistsException();
             }

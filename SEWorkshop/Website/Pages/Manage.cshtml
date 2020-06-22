@@ -138,10 +138,10 @@
                 <th style="border:solid;border-color:black;border-width:1px;width:25%">Deny</th>
             </tr>
             @{ 
-                foreach(var keyVal in Model.Store.OwnershipRequests)
+                foreach(var req in Model.Store.OwnershipRequests)
                 {
-                    var appointer = keyVal.Value;
-                    var wannaBeOwner = keyVal.Key;
+                    var appointer = req.Owner;
+                    var wannaBeOwner = req.NewOwner;
                     var request = wannaBeOwner.OwnershipRequests.FirstOrDefault(request => request.Store.Equals(Model.Store));
                     if(request == default)
                     {

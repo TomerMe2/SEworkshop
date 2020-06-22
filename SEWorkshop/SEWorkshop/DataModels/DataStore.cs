@@ -23,10 +23,8 @@ namespace SEWorkshop.DataModels
         public IReadOnlyCollection<DataPolicy> Policies => InnerModel.Policies.Select(policy =>
                                                                             DataPolicy.CreateDataPolFromPol(policy)).ToList().AsReadOnly();
 
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> OwnershipRequests => InnerModel.OwnershipRequests
-            .Select((item) =>
-                (new DataLoggedInUser(item.NewOwner), new DataLoggedInUser(item.Owner)))
-            .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+        public IReadOnlyCollection<DataOwnershipRequest> OwnershipRequests => InnerModel.OwnershipRequests.Select(item =>
+                                                                                new DataOwnershipRequest(item)).ToList().AsReadOnly();
 
 
         public bool IsOpen => InnerModel.IsOpen;
