@@ -16,7 +16,7 @@
         var um = Model.UserManager;
         var sessionId = Model.HttpContext.Session.Id;
         var user = um.IsLoggedIn(sessionId) ? um.GetDataLoggedInUser(sessionId) : null;
-        var isMan = user != null && Model.Store.Managers.ContainsKey(um.GetDataLoggedInUser(sessionId));
+        var isMan = user != null && Model.Store.IsManager(um.GetDataLoggedInUser(sessionId));
         @:<h1>Welcome to the Store: @Model.Store.Name</h1>
         if (user != null)
         {
@@ -33,7 +33,7 @@
         {
             <h5 class="card-title"><a href="/StoreMessages/?storeName=@Model.Store.Name">View Messages As Manager</a></h5>
         }
-        if (user != null && ((Model.Store.Owners.ContainsKey(user) ||
+        if (user != null && ((Model.Store.IsOwner(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))))
             || Model.UserManager.IsAdministrator(sessionId))
         {
@@ -48,7 +48,7 @@
         }
         foreach (var product in Model.Store.Products)
         {
-            bool authorized = user != null && (Model.Store.Owners.ContainsKey(user) ||
+            bool authorized = user != null && (Model.Store.IsOwner(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Products)));
             ProductViewModel pvm = new ProductViewModel(product, um, authorized);
             pvm.destPath = pvm.Product.Store.Name;

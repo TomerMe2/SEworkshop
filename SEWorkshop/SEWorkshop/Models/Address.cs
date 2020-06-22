@@ -1,15 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.Models;
 
 namespace SEWorkshop
 {
     public class Address
     {
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string HouseNumber { get; set; }
-        public string Country { get; set; }
+        public virtual int Id { get; set; }
+        public virtual string City { get; set; }
+        public virtual string Street { get; set; }
+        public virtual string HouseNumber { get; set; }
+        public virtual string Country { get; set; }
+        public virtual ICollection<Purchase> Purchases { get; set;}
+
+        public Address()
+        {
+            /*City = "";
+            Street = "";
+            HouseNumber = "";
+            Country = "";
+            Purchases = new List<Purchase>();*/
+        }
 
         public Address(string country, string city, string street, string houseNumber)
         {
@@ -17,6 +31,7 @@ namespace SEWorkshop
             this.Street = street;
             this.HouseNumber = houseNumber;
             this.Country = country;
+            Purchases = new List<Purchase>();
         }
 
         public override bool Equals(object? obj)

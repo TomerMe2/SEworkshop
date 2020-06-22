@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.Enums
 {
-    public enum Operator
+    public enum Operator : byte
     {
         And,
         Or,

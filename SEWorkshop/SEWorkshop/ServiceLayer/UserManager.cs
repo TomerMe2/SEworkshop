@@ -567,7 +567,7 @@ namespace SEWorkshop.ServiceLayer
             FacadesBridge.AddSingleProductQuantityPolicy(GetLoggedInUser(sessionId), storeName, op, productName, minQuantity, maxQuantity);
         }
 
-        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, Weekday cantBuyIn)
         {
             Log.Info(string.Format("AddSystemDayPolicy    {0}    {1}    {2}", storeName, op, cantBuyIn.ToString()));
             FacadesBridge.AddSystemDayPolicy(GetLoggedInUser(sessionId), storeName, op, cantBuyIn);

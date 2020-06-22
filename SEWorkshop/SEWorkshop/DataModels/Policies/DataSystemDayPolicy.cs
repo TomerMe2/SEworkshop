@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Models.Policies;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.DataModels.Policies
 {
     public class DataSystemDayPolicy : DataPolicy
     {
         private SystemDayPolicy InnerDayPol { get; }
-        public DayOfWeek CantBuyIn => InnerDayPol.CantBuyIn;
+        public Weekday CantBuyIn => InnerDayPol.CantBuyIn;
 
         public DataSystemDayPolicy(SystemDayPolicy pol) : base(pol)
         {

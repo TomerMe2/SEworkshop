@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.Enums
 {
-    public enum RequestState
+    public enum RequestState : byte
     {
             Pending,
             Approved,

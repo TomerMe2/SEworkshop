@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
     public class SpecificProducDiscount : OpenDiscount
     {
+
+        public SpecificProducDiscount() : base()
+        {
+
+        }
+
         public SpecificProducDiscount(double percentage, DateTime deadline,
             Product product, Store store) :
             base(percentage, deadline, product, store)
@@ -13,7 +20,7 @@ namespace SEWorkshop.Models.Discounts
 
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             if (DateTime.Now > Deadline)
             {
@@ -21,11 +28,11 @@ namespace SEWorkshop.Models.Discounts
             }
 
             double totalDiscount = 0;
-            foreach (var (prod, quantity) in itemsList)
+            foreach (var prod in itemsList)
             {
-                if (Product == prod)
+                if (prod.Product.Equals(Product))
                 {
-                    totalDiscount += (prod.Price * quantity) * (Percentage / 100);
+                    totalDiscount += (prod.Product.Price * prod.Quantity) * (Percentage / 100);
                 }
             }
 

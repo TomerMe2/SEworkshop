@@ -1,25 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
     public class BuyOverDiscount : ConditionalDiscount
     {
        
-        public double MinSum { get; set; }
+        public virtual double MinSum { get; set; }
+
+        public BuyOverDiscount() : base()
+        {
+
+        }
 
         public BuyOverDiscount(Store store, double minSum, double percentage, DateTime deadline, Product product) : base(percentage, deadline, product, store)
         {
              MinSum = minSum;
         }
        
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
             double sumBasket = 0;
             foreach (var product in itemsList)
             {
-                sumBasket = sumBasket + (product.Item1.Price * product.Item2);
+                sumBasket = sumBasket + (product.Product.Price * product.Quantity);
             }
             if (sumBasket >= MinSum)
             {

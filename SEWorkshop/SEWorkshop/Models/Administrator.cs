@@ -1,12 +1,22 @@
-﻿using System;
+﻿using NLog;
+using SEWorkshop.Exceptions;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System;
 
 namespace SEWorkshop.Models
 {
     public class Administrator : LoggedInUser
     {
-        public ICollection<Purchase> PurchasesToView { get; private set; }
+        public static readonly string ADMIN_USER_NAME = "admin";
+        public ICollection<Purchase> PurchasesToView { get; set; }
+
+        public Administrator()
+        {
+            /*PurchasesToView = new List<Purchase>();*/
+        }
 
         public Administrator(string username, byte[] password) : base(username, password)
         {

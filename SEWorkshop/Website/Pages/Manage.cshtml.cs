@@ -205,7 +205,7 @@ namespace Website.Pages
                 case "DayPolicy":
                     try
                     {
-                        UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (DayOfWeek)Enum.Parse(typeof(DayOfWeek), value2));
+                        UserManager.AddSystemDayPolicy(sid, StoreName, (Operator)Enum.Parse(typeof(Operator), value), (Weekday)Enum.Parse(typeof(Weekday), value2));
                     }
                     catch (Exception e)
                     {
@@ -488,21 +488,21 @@ namespace Website.Pages
 
         private string StringPolicy(DataPolicy policy, int index)
         {
-            if (!policy.InnerPolicy.HasValue)
+            if (policy.InnerPolicy is null)
             {
                 PolicyNumber = index;
                 return "[" + index + "] " + policy.ToString();
             }
-            return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerPolicy.Value.Item2.ToString() + " (" + StringPolicy(policy.InnerPolicy.Value.Item1, index + 1) + ")";
+            return "[" + index + "] " + policy.ToString()+ " "+ policy.InnerOperator.ToString() + " (" + StringPolicy(policy.InnerPolicy, index + 1) + ")";
         }
 
         private string StringDiscount(DataDiscount discount)
         {
-            if (!discount.ComposedParts.HasValue)
+            if (discount.opeartor == null || discount.leftChild == null || discount.rightChild == null)
             {
                 return "[" + discount.DiscountId + "] " + discount.ToString();
             }
-            return "(" + StringDiscount(discount.ComposedParts.Value.Item2) + ") " + discount.ComposedParts.Value.Item1.ToString() + " (" + StringDiscount(discount.ComposedParts.Value.Item3) + ")";
+            return "(" + StringDiscount(discount.leftChild) + ") " + discount.opeartor.ToString() + " (" + StringDiscount(discount.rightChild) + ")";
         }
 
         private void HandleMinMax(string min, string max)

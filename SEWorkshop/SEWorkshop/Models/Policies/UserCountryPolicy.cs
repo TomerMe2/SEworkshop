@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
     public class UserCountryPolicy : Policy
     {
-        public string RequiredCountry { get; set; }
+        public virtual string RequiredCountry { get; set; }
+
+        public UserCountryPolicy() : base()
+        {
+            //RequiredCountry = "";
+        }
 
         public UserCountryPolicy(Store store, string requiredCountry) : base(store)
         {

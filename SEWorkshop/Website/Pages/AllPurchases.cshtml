@@ -31,11 +31,11 @@
                         <div class="card-body">
                             <h5 class="card-title">@addressStr</h5>
                             <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
-                            @foreach (var (product, amount) in purchase.Basket.Products)
+                            @foreach (var product in purchase.Basket.Products)
                             {
-                                <h5 class="card-title">Product name: @product.Name</h5>
-                                <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
-                                <h6 class="card-subtitle mb-2">Amount: @amount</h6>
+                                <h5 class="card-title">Product name: @product.Product.Name</h5>
+                                <h6 class="card-subtitle mb-2">Category: @product.Product.Category</h6>
+                                <h6 class="card-subtitle mb-2">Amount: @product.Quantity</h6>
                             }
                         </div>
                     </div>

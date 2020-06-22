@@ -12,9 +12,10 @@ namespace SEWorkshop.DataModels
 
         public DataStore Store => new DataStore(InnerModel.Store);
         public IReadOnlyCollection<(DataLoggedInUser, RequestState)> Answers =>
-            InnerModel.Answers.Select(tup => (new DataLoggedInUser(tup.Item1), tup.Item2)).ToList().AsReadOnly();
+            InnerModel.Answers.Select(tup => (new DataLoggedInUser(tup.Owner), tup.Answer)).ToList().AsReadOnly();
         public DataLoggedInUser Owner => new DataLoggedInUser(InnerModel.Owner);
         public DataLoggedInUser NewOwner => new DataLoggedInUser(InnerModel.NewOwner);
+        public RequestState State => InnerModel.GetRequestState();
 
         public DataOwnershipRequest(OwnershipRequest request) : base(request) { }
     }

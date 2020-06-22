@@ -899,7 +899,7 @@ namespace SEWorkshop.ServiceLayer
             }
             string storeName = "";
             Operator op = Operator.And;
-            DayOfWeek dayOfWeek = DayOfWeek.Sunday;
+            Enums.Weekday dayOfWeek = Enums.Weekday.Sunday;
             foreach (var property in properties)
             {
                 switch (property.Key)
@@ -1683,18 +1683,18 @@ namespace SEWorkshop.ServiceLayer
             };
         }
 
-        DayOfWeek StringToDayOfWeek(string day)
+        Enums.Weekday StringToDayOfWeek(string day)
         {
             return day switch
             {
-                "Sunday" => DayOfWeek.Sunday,
-                "Monday" => DayOfWeek.Monday,
-                "Tuesday" => DayOfWeek.Tuesday,
-                "Wednesday" => DayOfWeek.Wednesday,
-                "Thursday" => DayOfWeek.Thursday,
-                "Friday" => DayOfWeek.Friday,
-                "Saturday" => DayOfWeek.Saturday,
-                _ => DayOfWeek.Sunday,
+                "Sunday" => Enums.Weekday.Sunday,
+                "Monday" => Enums.Weekday.Monday,
+                "Tuesday" => Enums.Weekday.Tuesday,
+                "Wednesday" => Enums.Weekday.Wednesday,
+                "Thursday" => Enums.Weekday.Thursday,
+                "Friday" => Enums.Weekday.Friday,
+                "Saturday" => Enums.Weekday.Saturday,
+                _ => Enums.Weekday.Sunday,
             };
         }
     }

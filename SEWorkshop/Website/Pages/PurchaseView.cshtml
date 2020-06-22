@@ -8,17 +8,17 @@
         <h3>Store - @Model.Purchase.Basket.Store.Name</h3>
         @{ foreach (var product in Model.Purchase.Basket.Products)
             {
-                await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Item1, Model.UserManager, false));
-                @:<h6>  Quantity Purchased: @product.Item2</h6>
+                await Html.RenderPartialAsync("ProductView", new ProductViewModel(product.Product, Model.UserManager, false));
+                @:<h6>  Quantity Purchased: @product.Quantity</h6>
                 if (Model.CanReview)
                 {
-                    IEnumerable<SEWorkshop.DataModels.DataReview> reviews = product.Item1.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser(Model.Session)).Username));
+                    IEnumerable<SEWorkshop.DataModels.DataReview> reviews = product.Product.Reviews.Where(r => r.Writer.Username.Equals((Model.UserManager.GetDataLoggedInUser(Model.Session)).Username));
                     if (reviews.Count() == 0)
                     {
                     <form id="messageSend" asp-page="/UserPage" method="post">
                         <div class="form-group">
-                            <input type="hidden" name="storeName" value="@product.Item1.Store.Name">
-                            <input type="hidden" name="productName" value="@product.Item1.Name">
+                            <input type="hidden" name="storeName" value="@product.Product.Store.Name">
+                            <input type="hidden" name="productName" value="@product.Product.Name">
                             <label for="msg_txt_area">Write Your Review:</label>
                             <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
                             <button type="submit" class="form-control btn btn-primary">Post Review</button>

@@ -39,9 +39,9 @@ namespace Website.Hubs
             {
                 var usrName = keyVal.Value;
                 // This requirement is defined only for owners
-                foreach (var innerKeyVal in arg.Basket.Store.Owners)
+                foreach (var innerKeyVal in arg.Basket.Store.Ownership)
                 {
-                    if (innerKeyVal.Key.Username.Equals(usrName))
+                    if (innerKeyVal.user.Username.Equals(usrName))
                     {
                         //push it
                         await PrchsHub.Clients.Client(keyVal.Key).SendAsync("NewPurchase", arg.Basket.Store.Name);

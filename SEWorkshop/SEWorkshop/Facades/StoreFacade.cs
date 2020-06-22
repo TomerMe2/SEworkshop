@@ -3,6 +3,7 @@ using SEWorkshop.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SEWorkshop.DAL;
 using NLog;
 using SEWorkshop.TyposFix;
 
@@ -10,11 +11,10 @@ namespace SEWorkshop.Facades
 {
     public class StoreFacade : IStoreFacade
     {
-        private ICollection<Store> Stores { get; set; }
 
         public StoreFacade()
         {
-            Stores = new List<Store>();
+            
         }
 
         /// <summary>
@@ -29,16 +29,13 @@ namespace SEWorkshop.Facades
             {
                 throw new StoreWithThisNameAlreadyExistsException();
             }
-            Store newStore = new Store(owner, storeName);
-            Stores.Add(newStore);
-            Owns newOwnership = new Owns(owner, newStore);
-            owner.Owns.Add(newOwnership);
+            Store newStore = Store.StoreBuilder(owner, storeName);
             return newStore;
         }
 
         public ICollection<Store> BrowseStores()
         {
-            return (from store in Stores
+            return (from store in DatabaseProxy.Instance.Stores
                     where store.IsOpen
                     select store).ToList();
         }
@@ -62,7 +59,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<Product> AllActiveProducts()
         {
-            return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products));
+            return BrowseStores().Aggregate(Enumerable.Empty<Product>(), (acc, store) => Enumerable.Concat(acc, store.Products.ToList()));
         }
 
         /// <summary>
@@ -70,14 +67,14 @@ namespace SEWorkshop.Facades
         /// </summary>
         public ICollection<Product> SearchProducts(Func<Product, bool> pred)
         {
-            ICollection<Product> searchResult = new List<Product>();
-            foreach (var store in Stores)
+            /*ICollection<Product> searchResult = new List<Product>();
+            foreach (var store in DatabaseProxy.Instance.Stores)
             {
                 foreach (var prod in store.SearchProducts(pred))
                 {
                     searchResult.Add(prod);
                 }
-            }
+            }*/
             return (from product in AllActiveProducts()
                     where pred(product)
                     select product).ToList();

@@ -39,7 +39,7 @@ namespace Website.Hubs
             foreach (var keyVal in ConnectionsDict)
             {
                 string userName = keyVal.Value;
-                bool isOwningStore = arg.Store.Owners.Keys.Any(usr => usr.Username.Equals(userName));
+                bool isOwningStore = arg.Store.Ownership.Any(owner => owner.user.Username.Equals(userName));
                 bool isPending;
                 try
                 {

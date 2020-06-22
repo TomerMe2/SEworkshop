@@ -8,8 +8,8 @@ namespace SEWorkshop.Adapters
     interface ISupplyAdapter
     {
         //houseNum is string because of house numbers like 18א
-        public void Supply(ICollection<(Product, int)> products, Address address);
+        public void Supply(ICollection<ProductsInBasket> products, Address address);
 
-        public bool CanSupply(ICollection<(Product, int)> products, Address address);
+        public bool CanSupply(ICollection<ProductsInBasket> products, Address address);
     }
 }
