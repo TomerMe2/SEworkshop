@@ -18,7 +18,7 @@ namespace SEWorkshop.DataModels
                 .Select((item) =>
                     (new DataOwns(item))).ToList();
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
-        public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
+        public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Where(discount => discount.Father is null).Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
         public IReadOnlyCollection<DataPolicy> Policies => InnerModel.Policies.Select(policy =>
                                                                             DataPolicy.CreateDataPolFromPol(policy)).ToList().AsReadOnly();
