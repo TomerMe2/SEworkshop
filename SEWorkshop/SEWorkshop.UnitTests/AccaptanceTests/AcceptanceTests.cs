@@ -207,7 +207,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		[Test, Order(33)]
 		public void Test_4_2_1()
 		{
-			string username = "Noa Kirel";
+			string username = "NoaKirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
 			//bridge.Logout(DEF_SID);
@@ -243,7 +243,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		[Test, Order(34)]
 		public void Test_4_2_2()
 		{
-			string username = "Noa Kirel";
+			string username = "NoaKirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
 			bridge.Logout(DEF_SID);

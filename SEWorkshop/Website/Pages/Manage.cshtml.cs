@@ -50,6 +50,7 @@ namespace Website.Pages
         public IActionResult OnGet(string storeName, string error) 
         {
             StoreName = storeName;
+            StoreName = Uri.EscapeUriString(StoreName);
             try
             {
                 Store = UserManager.SearchStore(storeName);

@@ -512,6 +512,10 @@ namespace SEWorkshop.ServiceLayer
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
+            if(username.Contains(" ") || password.Contains(" "))
+            {
+                throw new IllegalCharactersException();
+            }
             var user = GetUser(sessionId);
             if (!(user is DataGuestUser))
             {
