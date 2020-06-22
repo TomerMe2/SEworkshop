@@ -53,10 +53,13 @@ namespace SEWorkshop.DAL
 
         private void InstantiateKeys(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Address>()
+                .Property(address => address.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             modelBuilder.Entity<Address>()
                     .ToTable("Addresses")
-                    .HasKey(address => new { address.City, address.Street, address.HouseNumber, address.Country });
+                    .HasKey(address => new { address.Id, address.City, address.Street, address.HouseNumber, address.Country });
 
             modelBuilder.Entity<Administrator>()
                     .ToTable("Administrators")
@@ -515,7 +518,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Address)
                     .WithMany(address => address.Purchases)
-                    .HasForeignKey(prchs => new { prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country})
+                    .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country})
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Purchase>()

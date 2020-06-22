@@ -16,6 +16,7 @@ namespace SEWorkshop.Models
         public virtual LoggedInUser? User { get; private set;}
         public virtual int BasketId { get; set; }
         public virtual Basket Basket { get; private set; }
+        public virtual int AddressId { get; set; }
         public virtual Address Address { get; set;  }
         public virtual DateTime TimeStamp { get; set;  }
         public virtual double MoneyPaid { get; set; }
