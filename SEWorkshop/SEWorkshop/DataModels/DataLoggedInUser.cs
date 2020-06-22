@@ -38,12 +38,12 @@ namespace SEWorkshop.DataModels
 
         public bool IsManager(IReadOnlyCollection<DataManages> Management)
         {
-            return Management.Where(mngr => mngr.Equals(this)).Count() > 0;
+            return Management.Where(mngr => mngr.user.Username.Equals(this.Username)).Count() > 0;
         }
 
         public bool IsOwner(IReadOnlyCollection<DataOwns> Ownership)
         {
-            return Ownership.Where(ownr => ownr.Equals(this)).Count() > 0;
+            return Ownership.Where(ownr => ownr.user.Username.Equals(this.Username)).Count() > 0;
         }
     }
 }
