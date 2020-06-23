@@ -32,9 +32,9 @@
 
         <form class="statisticsform" method="post">
             <label for="date">Start Date</label>
-            <input type="date" id="date" name="date">
+            <input type="date" id="date" asp-for="StartDate" name="date">
             <label for="date">End Date</label>
-            <input type="date" id="date" name="date">
+            <input type="date" id="date" asp-for="EndDate" name="date">
             <button class="submit" type="submit" id="submit">Show Statistics</button>
         </form>
     </div>
