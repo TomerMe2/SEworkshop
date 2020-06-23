@@ -23,15 +23,11 @@ namespace SEWorkshop.Models
         public virtual string NewOwnerUsername { get; private set; }
         public virtual LoggedInUser NewOwner { get; private set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public OwnershipRequest()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Store = null!;
-            Owner = null!;
-            NewOwner = null!;
-            Answers = new List<OwnershipAnswer>();
-            StoreName = "";
-            OwnerUsername = "";
-            NewOwnerUsername = "";*/
+            
         }
 
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)

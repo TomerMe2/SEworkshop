@@ -26,21 +26,11 @@ namespace SEWorkshop.Models
         public virtual ICollection<ProductsInBasket> InBaskets {get ; set;}
         public virtual ICollection<Review> Reviews {get ; set;}
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Product()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*
-            Store = null!;
-            Name = "";
-            StoreName = "";
-            Description = "";
-            Category = "";
-            Reviews = new List<Review>();
-            InBaskets = new List<ProductsInBasket>();
-
-            BuySomeGetSomeDiscounts = new List<BuySomeGetSomeDiscount>();
-            ConditionalDiscounts = new List<ConditionalDiscount>();
-            OpenDiscounts = new List<OpenDiscount>();
-            ProductPolicies = new List<SingleProductQuantityPolicy>();*/
+           
         }
 
         public Product(Store store, string name, string description, string category, double price, int quantity)

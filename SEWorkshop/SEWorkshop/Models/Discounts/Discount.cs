@@ -19,11 +19,11 @@ namespace SEWorkshop.Models.Discounts
         public virtual DateTime Deadline { get; set; }
         public virtual Store Store { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Discount()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Deadline = default;
-            Store = null!;
-            StoreName = "";*/
+            
         }
 
         public Discount(DateTime deadline, Store store)

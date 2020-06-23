@@ -673,7 +673,7 @@ namespace SEWorkshop.ServiceLayer
         public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
             Log.Info(string.Format("GetUseRecord {0}    {1}    {2}", sessionId, dateFrom, dateTo));
-            GetAdmin(sessionId);
+            GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
             return FacadesBridge.GetUseRecord(dateFrom, dateTo, kinds);
         }
 
