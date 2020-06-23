@@ -589,23 +589,22 @@ namespace SEWorkshop.Tests.IntegrationTests
                 Enums.KindOfUser.LoggedInNotOwnNotManage, Enums.KindOfUser.LoggedInYesOwn};
 
             var dctAll = Manager.GetUseRecord("ActionsTest1", now, now, allKinds);
-            Assert.IsTrue(dctAll.Values.First() >= 5);
+            Assert.IsTrue((dctAll.Values).First().Values.First() >= 5);
 
             var dctOnlyGuest = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Guest });
-            Assert.IsTrue(dctOnlyGuest.Values.First() >= 1);
+            Assert.IsTrue((dctOnlyGuest.Values).First().Values.First() >= 1);
 
             var dctOnlyAdmin = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Admin });
-            Assert.IsTrue(dctOnlyAdmin.Values.First() >= 1);
+            Assert.IsTrue((dctOnlyAdmin.Values).First().Values.First() >= 1);
 
             var dctOnlyUserNoOwnNoManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNotOwnNotManage });
-            Assert.IsTrue(dctOnlyUserNoOwnNoManage.Values.First() >= 1);
+            Assert.IsTrue((dctOnlyUserNoOwnNoManage.Values).First().Values.First() >= 1);
 
             var dctOnlyUserYesOwn = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInYesOwn });
-            Assert.IsTrue(dctOnlyUserYesOwn.Values.First() >= 1);
+            Assert.IsTrue((dctOnlyUserYesOwn.Values).First().Values.First() >= 1);
 
             var dctOnlyUserNoOwnYesManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNoOwnYesManage });
-            Assert.IsTrue(dctOnlyUserNoOwnYesManage.Values.First() >= 1);
-
+            Assert.IsTrue((dctOnlyUserNoOwnYesManage.Values).First().Values.First() >= 1);
         }
     }
 }

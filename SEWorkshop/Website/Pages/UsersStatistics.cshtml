@@ -5,7 +5,7 @@
 }
 
 <script>
-function registerToHub(userName) {
+    function registerToHub(userName) {
     const handlersNewReportHub = [
         ["NewMessage", kind => {
         //TODO: SYNC THIS METHOD IF POSSIBLE
@@ -94,7 +94,12 @@ function registerToHub(userName) {
             <table class="table table-bordered table-responsive table-dark table-hover">
                 <thead>
                     <tr>
-                        <th style="text-align: center">Day</th>
+                        <th style="text-align: center">Date</th>
+                        <th style="text-align: center">Guests</th>
+                        <th style="text-align: center">Registered (not managers or owners)</th>
+                        <th style="text-align: center">Store Managers (but not owners)</th>
+                        <th style="text-align: center">Store Owners</th>
+                        <th style="text-align: center">System Admins</th>
                         <th style="text-align: center">Total Entries</th>
                     </tr>
                 </thead>
@@ -102,8 +107,19 @@ function registerToHub(userName) {
                     @foreach (DateTime day in Model.SelectedStatistics.Keys)
                     {
                         <tr>
-                            <td style="text-align: center">@day.ToLongDateString()</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day]</td>
+                            <td style="text-align: center">@day.ToShortDateString()</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin]</td>
+                            <td style="text-align: center">
+                                @(Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin])
+                            </td>
                         </tr>
                     }
                 </tbody>

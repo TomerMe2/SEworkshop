@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.DataModels;
 using SEWorkshop.Models;
 using System.Linq;
@@ -283,7 +282,7 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<DataProduct> SearchProductsByKeywords(string input)
         {
-            bool HasWordInsideOther(string[] words1, List<string> words2)
+            static bool HasWordInsideOther(string[] words1, List<string> words2)
             {
                 foreach (string word1 in words1)
                 {
@@ -431,7 +430,7 @@ namespace SEWorkshop.Facades
             return UserFacade.GetIncomeInDate(date);
         }
 
-        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
             return UserFacade.GetUseRecord(dateFrom, dateTo, kinds);
         }

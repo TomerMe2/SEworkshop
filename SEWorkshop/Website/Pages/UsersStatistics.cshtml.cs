@@ -19,13 +19,13 @@ namespace Website.Pages
         public DateTime EndDate { get; set; }
         public string Error;
         public bool Selected;
-        public IDictionary<DateTime, int> SelectedStatistics;
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> SelectedStatistics;
 
         public UsersStatisticsModel(IUserManager userManager)
         {
             UserManager = userManager;
             TodaysStatistics = new Dictionary<KindOfUser, int>();
-            SelectedStatistics = new Dictionary<DateTime, int>();
+            SelectedStatistics = new Dictionary<DateTime, IDictionary<KindOfUser, int>>();
             KindsOfUsers = new List<KindOfUser>();
             KindsOfUsers.Add(KindOfUser.Guest);
             KindsOfUsers.Add(KindOfUser.LoggedInNotOwnNotManage);

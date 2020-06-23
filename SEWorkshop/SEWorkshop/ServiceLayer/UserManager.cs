@@ -734,7 +734,7 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.GetIncomeInDate(date);
         }
 
-        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
             Log.Info(string.Format("GetUseRecord {0}    {1}    {2}", sessionId, dateFrom, dateTo));
             GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served

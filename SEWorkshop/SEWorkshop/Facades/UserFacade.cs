@@ -5,6 +5,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using SEWorkshop.DAL;
 using System.Linq;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades
 {
@@ -219,7 +220,7 @@ namespace SEWorkshop.Facades
             return output;
         }
 
-        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
             dateFrom = new DateTime(dateFrom.Year, dateFrom.Month, dateFrom.Day);
             dateTo = new DateTime(dateTo.Year, dateTo.Month, dateTo.Day).AddDays(1);
@@ -229,11 +230,16 @@ namespace SEWorkshop.Facades
                                                                     && kinds.Contains(record.Kind));
             var stamps = records.Select(record => new DateTime(record.Timestamp.Year, record.Timestamp.Month,
                                                                record.Timestamp.Day));
-            var dayToAmount = new Dictionary<DateTime, int>();
+            var dayToAmount = new Dictionary<DateTime, IDictionary<KindOfUser, int>>();
             DateTime runningOn = dateFrom;
             while (runningOn <= dateTo)
             {
-                dayToAmount[runningOn] = 0;
+                dayToAmount[runningOn] = new Dictionary<KindOfUser, int>();
+                dayToAmount[runningOn].Add(KindOfUser.Guest, 0);
+                dayToAmount[runningOn].Add(KindOfUser.LoggedInNotOwnNotManage, 0);
+                dayToAmount[runningOn].Add(KindOfUser.LoggedInNoOwnYesManage, 0);
+                dayToAmount[runningOn].Add(KindOfUser.LoggedInYesOwn, 0);
+                dayToAmount[runningOn].Add(KindOfUser.Admin, 0);
                 runningOn = runningOn.AddDays(1);
             }
             dayToAmount.Remove(runningOn.AddDays(-1));
@@ -241,7 +247,7 @@ namespace SEWorkshop.Facades
             foreach (var record in records)
             {
                 var actualDate = new DateTime(record.Timestamp.Year, record.Timestamp.Month, record.Timestamp.Day);
-                dayToAmount[actualDate]++;
+                (dayToAmount[actualDate])[record.Kind]++;
             }
             return dayToAmount;
         }
