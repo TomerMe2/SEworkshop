@@ -17,24 +17,47 @@ namespace Website.Pages
         List<KindOfUser> KindsOfUsers;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string Error;
+        public bool Selected;
+        public IDictionary<KindOfUser, int> SelectedStatistics;
 
         public UsersStatisticsModel(IUserManager userManager)
         {
             UserManager = userManager;
             TodaysStatistics = new Dictionary<KindOfUser, int>();
+            SelectedStatistics = new Dictionary<KindOfUser, int>();
             KindsOfUsers = new List<KindOfUser>();
             KindsOfUsers.Add(KindOfUser.Guest);
             KindsOfUsers.Add(KindOfUser.LoggedInNotOwnNotManage);
             KindsOfUsers.Add(KindOfUser.LoggedInNoOwnYesManage);
             KindsOfUsers.Add(KindOfUser.LoggedInYesOwn);
             KindsOfUsers.Add(KindOfUser.Admin);
+            Selected = false;
+            Error = "";
         }
 
         public void OnGet()
         {
+            Selected = false;
+            Error = "";
             string sid = HttpContext.Session.Id;
             DateTimeNow = DateTime.Now;
             TodaysStatistics = UserManager.GetUsersByCategory(sid, DateTimeNow);
+        }
+
+        public void OnPost()
+        {
+            try
+            {
+                UserManager.GetUseRecord(HttpContext.Session.Id, StartDate, EndDate, KindsOfUsers);
+                Selected = true;
+            }
+            catch (Exception e)
+            {
+                Error = e.ToString();
+                //return new PageResult();
+            }
+            //return RedirectToPage("./Stores");
         }
     }
 }
