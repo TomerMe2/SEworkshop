@@ -555,7 +555,16 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Basket>()
                     .HasOptional(basket => basket.Purchase)
 #pragma warning disable CS8603 // Possible null reference return.
-                    .WithRequired(purchase => purchase.Basket)
+                    .WithMany()
+                    .HasForeignKey(basket => basket.PurchaseId)
+#pragma warning restore CS8603 // Possible null reference return.
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Purchase>()
+                    .HasRequired(purchase => purchase.Basket)
+#pragma warning disable CS8603 // Possible null reference return.
+                    .WithMany()
+                    .HasForeignKey(purchase => purchase.BasketId)
 #pragma warning restore CS8603 // Possible null reference return.
                     .WillCascadeOnDelete(false);
 

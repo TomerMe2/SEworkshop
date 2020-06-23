@@ -144,7 +144,9 @@ namespace SEWorkshop.Models
                         // Update the quantity in the product itself
                         foreach (var product in basket.Products)
                         {
-                            product.Product.Quantity -= product.Quantity;
+                            Product prod = DatabaseProxy.Instance.Products.ToList().First(prd => prd.Name.Equals(product.Product.Name) &&
+                                                                                        prd.StoreName.Equals(product.Product.StoreName));
+                            prod.Quantity -= product.Quantity;
                         }
                         DatabaseProxy.Instance.SaveChanges();
                     }

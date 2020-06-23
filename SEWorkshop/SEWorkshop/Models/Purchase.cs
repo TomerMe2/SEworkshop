@@ -17,7 +17,7 @@ namespace SEWorkshop.Models
         public virtual LoggedInUser? User { get; private set; }
         public virtual string storeName { get; set; }
         public virtual Store store { get; private set; }
-        //public virtual int BasketId { get; set; }
+        public virtual int BasketId { get; set; }
         public virtual Basket Basket { get; private set; }
         public virtual int AddressId { get; set; }
         public virtual Address Address { get; set;  }
@@ -44,6 +44,7 @@ namespace SEWorkshop.Models
             if (user != null)
                 Username = user.Username;
             Basket = basket;
+            BasketId = Basket.Id;
             TimeStamp = DateTime.Now;
             Address = adrs;
             MoneyPaid = basket.PriceAfterDiscount();

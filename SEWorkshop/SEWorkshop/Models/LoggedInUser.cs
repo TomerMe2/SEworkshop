@@ -306,15 +306,13 @@ namespace SEWorkshop.Models
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
-            Purchase purchase;
-            purchase = new Purchase(this, basket, address);
-            
             foreach (var product in basket.Products)
             {
                 if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
             basket.Store.PurchaseBasket(basket, creditCardNumber, expirationDate, cvv, address, this, username, id);
+            Purchase purchase = new Purchase(this, basket, address);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);
