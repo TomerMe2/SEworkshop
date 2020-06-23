@@ -10,6 +10,7 @@ using SEWorkshop.DAL;
 using System.Data.Entity;
 using System;
 using Microsoft.VisualBasic;
+using System.Globalization;
 
 namespace SEWorkshop.Models
 {
@@ -310,7 +311,7 @@ namespace SEWorkshop.Models
             return management.ViewPurchaseHistory(this, store);
         }
 
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -322,7 +323,7 @@ namespace SEWorkshop.Models
                 if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
-            basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
+            basket.Store.PurchaseBasket(basket, creditCardNumber, expirationDate, cvv, address, this, username, id);
             Cart.Baskets.Remove(basket);
             basket.Store.Purchases.Add(purchase);
             Purchases.Add(purchase);

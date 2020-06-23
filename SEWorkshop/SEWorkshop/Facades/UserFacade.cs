@@ -116,9 +116,9 @@ namespace SEWorkshop.Facades
             return userPurchases;
         }
 
-        public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        public Purchase Purchase(User user, Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id)
         {
-            var prchs = user.Purchase(basket, creditCardNumber, address);
+            var prchs = user.Purchase(basket, creditCardNumber, expirationDate, cvv, address, username, id);
             DatabaseProxy.Instance.SaveChanges();
             return prchs;
         }

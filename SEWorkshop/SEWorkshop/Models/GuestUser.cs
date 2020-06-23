@@ -89,7 +89,7 @@ namespace SEWorkshop.Models
             throw new ProductIsNotInCartException();
         }
 
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
@@ -101,7 +101,7 @@ namespace SEWorkshop.Models
                 if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
-            basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
+            basket.Store.PurchaseBasket(basket, creditCardNumber, expirationDate, cvv, address, this, username, id);
             basket.Store.Purchases.Add(purchase);
             DatabaseProxy.Instance.Baskets.Add(basket);
             foreach (var product in basket.Products)

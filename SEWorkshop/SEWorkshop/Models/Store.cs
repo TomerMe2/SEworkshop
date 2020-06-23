@@ -124,7 +124,7 @@ namespace SEWorkshop.Models
                 select product).ToList();
         }
 
-        public void PurchaseBasket(Basket basket, string creditCardNumber, Address address, User user)
+        public void PurchaseBasket(Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, User user, string username, string id)
         {
             if (!Policy.CanPurchase(user, address))
             {
@@ -138,7 +138,7 @@ namespace SEWorkshop.Models
                 }
             }
             if (supplyAdapter.CanSupply(basket.Products, address)
-                && billingAdapter.Bill(basket.Products, creditCardNumber, basket.PriceAfterDiscount()))
+                && billingAdapter.Bill(basket.Products, creditCardNumber, expirationDate, cvv, basket.PriceAfterDiscount(), username, id))
             {
                 supplyAdapter.Supply(basket.Products, address);
                 // Update the quantity in the product itself

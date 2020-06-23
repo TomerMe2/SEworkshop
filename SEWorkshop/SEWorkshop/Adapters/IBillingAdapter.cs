@@ -7,7 +7,7 @@ namespace SEWorkshop.Adapters
 {
     interface IBillingAdapter
     {
-        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, double totalProce);
+        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalProce, string username, string id);
 
         public bool CancelBill(int TransactionId)
 
