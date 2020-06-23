@@ -8,76 +8,119 @@ using System.Text;
 using SEWorkshop.Models.Discounts;
 using Operator = SEWorkshop.Enums.Operator;
 using SEWorkshop.Enums;
+using SEWorkshop.DAL;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Validation;
+using NUnit.Framework;
 
 namespace SEWorkshop.Models
 {
     public class Owns : AuthorityHandler
     {
-        public LoggedInUser LoggedInUser { get; set; }
-        public Store Store { get; set; }
+
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Owns(LoggedInUser loggedInUser, Store store) : base()
+        public Owns() : base()
         {
-            AuthoriztionsOfUser.Add(Authorizations.Authorizing);
-            AuthoriztionsOfUser.Add(Authorizations.Watching);
-            AuthoriztionsOfUser.Add(Authorizations.Manager);
-            AuthoriztionsOfUser.Add(Authorizations.Owner);
-            LoggedInUser = loggedInUser;
-            Store = store;
+            /*LoggedInUser = null!;
+            Store = null!;
+            Appointer = null!;
+            Username = "";
+            StoreName = "";
+            AppointerName = "";*/
+        }
+
+        public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
+        {
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Authorizing));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Replying));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Products));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Watching));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Manager));
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Owner));
         }
 
         public void AddStoreOwner(LoggedInUser newOwner)
         {
             log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
-            if (Store.Owners.ContainsKey(newOwner))
+            if (Store.GetOwnership(newOwner) != null)
             {
                 throw new UserIsAlreadyStoreOwnerException();
             }
-            if(!Store.OwnershipRequests.TryAdd(newOwner, LoggedInUser))
+            var req = Store.OwnershipRequests.FirstOrDefault(req => req.NewOwnerUsername.Equals(newOwner.Username));
+            if (req != null && req.GetRequestState() != RequestState.Approved)
             {
                 throw new OwnershipRequestAlreadyExistsException();
             }
+
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
+            Store.OwnershipRequests.Add(request);
+            LoggedInUser.OwnershipRequestsFrom.Add(request);
             newOwner.OwnershipRequests.Add(request);
-            // He wants him to be an owner, cus he suggested that
+            DatabaseProxy.Instance.OwnershipRequests.Add(request);
+            foreach (var ans in request.Answers)
+            {
+                DatabaseProxy.Instance.OwnershipAnswers.Add(ans);
+            }
+            //DatabaseProxy.Instance.SaveChanges();
+
             request.Answer(LoggedInUser, RequestState.Approved);
+            //DatabaseProxy.Instance.SaveChanges();
+
             if (request.GetRequestState() == RequestState.Approved)
             {
-                if (!Store.Owners.TryAdd(newOwner, LoggedInUser))
-                {
-                    throw new UserIsAlreadyStoreOwnerException();
-                }
-                Store.OwnershipRequests.Remove(newOwner);
-                newOwner.OwnershipRequests.Remove(request);
-                Owns ownership = new Owns(newOwner, Store);
+                Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                Store.Ownership.Add(ownership);
                 newOwner.Owns.Add(ownership);
+                DatabaseProxy.Instance.Owns.Add(ownership);
+                foreach (var auth in ownership.AuthoriztionsOfUser)
+                {
+                    DatabaseProxy.Instance.Authorities.Add(auth);
+                }
+                //DatabaseProxy.Instance.SaveChanges();
             }
         }
 
         public void AnswerOwnershipRequest(LoggedInUser newOwner, RequestState answer)
         {
             var req = newOwner.OwnershipRequests.FirstOrDefault(request => request.Store == Store);
-            if (req == null)
+            if (req != null)
             {
-                return;
-            }
-            req.Answer(LoggedInUser, answer);
-            if (req.GetRequestState() == RequestState.Approved)
-            {
-                if (!Store.Owners.TryAdd(newOwner, req.Owner))
+                req.Answer(LoggedInUser, answer);
+                if (req.GetRequestState()==RequestState.Approved)
                 {
-                    throw new UserIsAlreadyStoreOwnerException();
+                    if(Store.GetOwnership(newOwner) != null)
+                    {
+                        throw new UserIsAlreadyStoreOwnerException();
+                    }
+                    /*Owns ownership = new Owns(newOwner, Store, LoggedInUser);
+                    Store.Ownership.Add(ownership);
+                    Store.OwnershipRequests.Remove(req);
+                    newOwner.OwnershipRequests.Remove(req);
+                    req.Owner.OwnershipRequestsFrom.Remove(req);
+                    newOwner.Owns.Add(ownership);
+                    DatabaseProxy.Instance.Owns.Add(ownership);
+                    DatabaseProxy.Instance.OwnershipRequests.Remove(req);
+                    //DatabaseProxy.Instance.SaveChanges();*/
+            Owns ownership = new Owns(newOwner, Store, req.Owner);
+                    Store.Ownership.Add(ownership);
+                    newOwner.Owns.Add(ownership);
+                    DatabaseProxy.Instance.Owns.Add(ownership);
+                    foreach (var auth in ownership.AuthoriztionsOfUser)
+                    {
+                        DatabaseProxy.Instance.Authorities.Add(auth);
+                    }
+                    log.Info("A new owner has been added successfully");
                 }
-                Owns ownership = new Owns(newOwner, Store);
-                Store.OwnershipRequests.Remove(newOwner);
-                newOwner.OwnershipRequests.Remove(req);
-                newOwner.Owns.Add(ownership);
-            }
-            else if (req.GetRequestState() == RequestState.Denied)
-            {
-                newOwner.OwnershipRequests.Remove(req);
-                Store.OwnershipRequests.Remove(newOwner);
+                /*else if (req.GetRequestState() == RequestState.Denied)
+                {
+                    newOwner.OwnershipRequests.Remove(req);
+                    Store.OwnershipRequests.Remove(req);
+                    req.Owner.OwnershipRequestsFrom.Remove(req);
+                    DatabaseProxy.Instance.OwnershipRequests.Remove(req);
+                    //DatabaseProxy.Instance.SaveChanges();
+                }*/
             }
         }
 
@@ -90,10 +133,11 @@ namespace SEWorkshop.Models
                 log.Info("The requested user is already a store manager or owner");
                 throw new UserIsAlreadyStoreManagerException();
             }
-
-            Store.Managers.Add(newManager, LoggedInUser);
-            Manages mangement = new Manages(newManager, Store);
+            Manages mangement = new Manages(newManager, Store, LoggedInUser);
+            Store.Management.Add(mangement);
             newManager.Manage.Add(mangement);
+            DatabaseProxy.Instance.Manages.Add(mangement);
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("A new manager has been added successfully");
         }
 
@@ -107,22 +151,23 @@ namespace SEWorkshop.Models
                 throw new UserIsNotMangerOfTheStoreException();
             }
 
-            if (!Store.Managers.ContainsKey(managerToRemove))
+            Manages? management = Store.GetManagement(managerToRemove);
+            if (management == null)
             {
                 log.Info("The requested manager is not a store manager");
                 throw new UserIsNotMangerOfTheStoreException();
             }
 
-            LoggedInUser appointer = Store.Managers[managerToRemove];
+            LoggedInUser appointer = management.Appointer;
             if (appointer != LoggedInUser)
             {
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
-
-            Store.Managers.Remove(managerToRemove);
-            var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+            Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
+            DatabaseProxy.Instance.Manages.Remove(management);
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("The manager has been removed successfully");
         }
 
@@ -135,23 +180,25 @@ namespace SEWorkshop.Models
                 log.Info("The requested owner is not an owner");
                 throw new UserIsNotOwnerOfThisStore();
             }
-
-            if (!Store.Owners.ContainsKey(ownerToRemove))
+            
+            Owns? ownership = Store.GetOwnership(ownerToRemove); 
+            if (ownership == null)
             {
                 log.Info("The requested owner is not an owner");
                 throw new UserIsNotOwnerOfThisStore();
             }
 
-            LoggedInUser appointer = Store.Owners[ownerToRemove];
+            LoggedInUser appointer = ownership.Appointer;
             if (appointer != LoggedInUser)
             {
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
 
-            Store.Owners.Remove(ownerToRemove);
-            var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
-            ownerToRemove.Owns.Remove(owning);
+            Store.Ownership.Remove(ownership);
+            ownerToRemove.Owns.Remove(ownership);
+            DatabaseProxy.Instance.Owns.Remove(ownership);
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("The owner has been removed successfully");
         }
 
@@ -160,23 +207,23 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager] != this.LoggedInUser)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer != this.LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
 
                 var man = manager.Manage.FirstOrDefault(man => man.Store == (Store));
-
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                if (!authorizations.Contains(authorization))
+                if (!man.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);
+                    man.AddAuthorization(authorization);
                 }
 
                 return;
             }
+
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
         }
@@ -190,6 +237,8 @@ namespace SEWorkshop.Models
             if (!StoreContainsProduct(newProduct, Store))
             {
                 Store.Products.Add(newProduct);
+                DatabaseProxy.Instance.Products.Add(newProduct);
+                //DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product has been added to store successfully");
                 return newProduct;
             }
@@ -206,6 +255,8 @@ namespace SEWorkshop.Models
             {
                 productToRemove.Quantity = 0;   //can't sell it anymore
                 Store.Products.Remove(productToRemove);
+                DatabaseProxy.Instance.Products.Remove(productToRemove);
+                //DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product has been removed from store successfully");
                 return;
             }
@@ -225,6 +276,7 @@ namespace SEWorkshop.Models
             }
 
             product.Description = description;
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's description has been modified successfully");
         }
 
@@ -239,6 +291,7 @@ namespace SEWorkshop.Models
             }
 
             product.Category = category;
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's category has been modified successfully");
             return;
         }
@@ -246,7 +299,6 @@ namespace SEWorkshop.Models
         override public void EditProductName(Product product, string name)
         {
             log.Info("User tries to modify product's name");
-            Product demo = new Product(Store, name, "", "", 0, 0);
 
             if (!StoreContainsProduct(product, Store))
             {
@@ -254,13 +306,14 @@ namespace SEWorkshop.Models
                 throw new ProductNotInTradingSystemException();
             }
 
-            if (StoreContainsProduct(demo, Store))
+            if (Store.Products.Any(prod => prod.Name.Equals(name)))
             {
                 log.Info("Product name is already taken in store");
                 throw new StoreWithThisNameAlreadyExistsException();
             }
 
             product.Name = name;
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("Product's category has been modified successfully");
             return;
         }
@@ -277,6 +330,7 @@ namespace SEWorkshop.Models
                 }
 
                 product.Price = price;
+                //DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's price has been modified successfully");
                 return;
             }
@@ -293,9 +347,9 @@ namespace SEWorkshop.Models
                 throw new ProductNotInTradingSystemException();
             }
 
-            log.Info("Product's quantity has been modified successfully");
             product.Quantity = quantity;
-
+            //DatabaseProxy.Instance.SaveChanges();
+            log.Info("Product's quantity has been modified successfully");
         }
 
         public void RemovePermissionsOfManager(LoggedInUser manager, Authorizations authorization)
@@ -303,7 +357,8 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager] != this.LoggedInUser)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer != this.LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
@@ -311,11 +366,10 @@ namespace SEWorkshop.Models
 
                 var man = manager.Manage.FirstOrDefault(man => man.Store == (Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                if (authorizations.Contains(authorization))
+                if (man.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
+                    man.RemoveAuthorization(authorization);
                 }
             }
         }
@@ -330,14 +384,22 @@ namespace SEWorkshop.Models
             if (currPol is AlwaysTruePolicy && currPol.InnerPolicy is null)
             {
                 //The owner wants different policy, and allways true should be removed
-                Store.Policy = pol;
+                Store.Policies.Add(pol);
+                DatabaseProxy.Instance.Policies.Add(pol);
+                Store.Policies.Remove(currPol);
+                DatabaseProxy.Instance.Policies.Remove(currPol);
+                //DatabaseProxy.Instance.SaveChanges();
                 return;
             }
             while(currPol.InnerPolicy != null)
             {
-                currPol = currPol.InnerPolicy.Value.Item1;
+                currPol = currPol.InnerPolicy;
             }
-            currPol.InnerPolicy = (pol, op);
+            pol.OuterPolicy = currPol;
+            currPol.InnerPolicy = pol;
+            currPol.InnerOperator = op;
+            DatabaseProxy.Instance.Policies.Add(pol);
+            //DatabaseProxy.Instance.SaveChanges();
         }
         
         private void ComposeDiscount(Discount dis, Operator op, int indexInChain, int disId, bool toLeft)
@@ -345,23 +407,42 @@ namespace SEWorkshop.Models
             if (indexInChain >= Store.Discounts.Count || indexInChain < 0)
             {
                 Store.Discounts.Add(dis);
+                DatabaseProxy.Instance.Discounts.Add(dis);
+                DatabaseProxy.Instance.SaveChanges();
             }
             else
             {
-                Discount? existing = SearchNode(Store.Discounts.ElementAt(indexInChain), disId);
+                Discount? existing = Store.Discounts.FirstOrDefault(dis => dis.DiscountId == disId);
                 if (existing != null)
                 {
                     ComposedDiscount? father = existing.Father;
                     if (father is null)
                     {
-                        Store.Discounts.RemoveAt(indexInChain);
+                        //Discount toRemove = Store.Discounts.ElementAt(indexInChain);
+                        //Store.Discounts.RemoveAt(indexInChain);
+                        //DatabaseProxy.Instance.Discounts.Remove(toRemove);
+                        //DatabaseProxy.Instance.SaveChanges();
                         if (toLeft)
                         {
-                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, dis, existing));
+                            Store.Discounts.Add(dis);
+                            DatabaseProxy.Instance.Discounts.Add(dis);
+                            DatabaseProxy.Instance.SaveChanges();
+                            ComposedDiscount newDis = new ComposedDiscount(op, dis, existing);
+                            //Store.Discounts.Insert(indexInChain, newDis);
+                            Store.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                         else
                         {
-                            Store.Discounts.Insert(indexInChain, new ComposedDiscount(op, existing, dis));
+                            Store.Discounts.Add(dis);
+                            DatabaseProxy.Instance.Discounts.Add(dis);
+                            DatabaseProxy.Instance.SaveChanges();
+                            ComposedDiscount newDis = new ComposedDiscount(op, existing, dis);
+                            //Store.Discounts.Insert(indexInChain, newDis);
+                            Store.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.Discounts.Add(newDis);
+                            DatabaseProxy.Instance.SaveChanges();
                         }
                     }
                     else
@@ -370,18 +451,30 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.LeftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item2);
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.LeftChild);
+                                    father.LeftChild = newDis;
+                                    newDis.Father = father;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.RightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.ComposedParts.Value.Item3);
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, dis, father.RightChild);
+                                    father.RightChild = newDis;
+                                    newDis.Father = father;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }
@@ -389,20 +482,30 @@ namespace SEWorkshop.Models
                         {
                             if (existing.IsLeftChild())
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.LeftChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item2, dis);
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.LeftChild, dis);
                                     newDis.Father = father;
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, newDis, father.ComposedParts.Value.Item3);
+                                    father.LeftChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                             else
                             {
-                                if (father.ComposedParts != null)
+                                if (father.Op != null && father.RightChild != null)
                                 {
-                                    ComposedDiscount newDis = new ComposedDiscount(op, father.ComposedParts.Value.Item3, dis);
+                                    Store.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.Discounts.Add(dis);
+                                    DatabaseProxy.Instance.SaveChanges();
+                                    ComposedDiscount newDis = new ComposedDiscount(op, father.RightChild, dis);
                                     newDis.Father = father;
-                                    father.ComposedParts = (father.ComposedParts.Value.Item1, father.ComposedParts.Value.Item2, newDis);
+                                    father.RightChild = newDis;
+                                    DatabaseProxy.Instance.Discounts.Add(newDis);
+                                    DatabaseProxy.Instance.SaveChanges();
                                 }
                             }
                         }
@@ -411,19 +514,20 @@ namespace SEWorkshop.Models
             }
         }
 
-        private Discount? SearchNode(Discount root, int disId)
+/*        private Discount? SearchNode(Discount root, int disId)
         {
             if (root.DiscountId == disId)
             {
                 return root;
             }
-            if (root.ComposedParts is null)
+            if (!(root is ComposedDiscount) || ((ComposedDiscount)root).Op is null ||
+                    ((ComposedDiscount)root).LeftChild is null || ((ComposedDiscount)root).RightChild is null)
             {
                 return null;
             }
 
-            return SearchNode(root.ComposedParts.Value.Item2, disId) ?? SearchNode(root.ComposedParts.Value.Item3, disId);
-        }
+            return SearchNode(((ComposedDiscount)root).LeftChild, disId) ?? SearchNode(((ComposedDiscount)root).RightChild, disId);
+        }*/
 
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(Operator op)
@@ -436,7 +540,7 @@ namespace SEWorkshop.Models
             AddPolicyToEnd(new SingleProductQuantityPolicy(Store, product, minQuantity, maxQuantity), op);
         }
 
-        public void AddSystemDayPolicy(Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(Operator op, Weekday cantBuyIn)
         {
             AddPolicyToEnd(new SystemDayPolicy(Store, cantBuyIn), op);
         }
@@ -464,7 +568,7 @@ namespace SEWorkshop.Models
             while (currPol.InnerPolicy != null && i < indexInChain)
             {
                 prev = currPol;
-                currPol = currPol.InnerPolicy.Value.Item1;
+                currPol = currPol.InnerPolicy;
                 i++;
             }
             if (i != indexInChain)
@@ -475,17 +579,35 @@ namespace SEWorkshop.Models
             {
                 if (currPol.InnerPolicy == null)
                 {
-                    Store.Policy = new AlwaysTruePolicy(Store);
+                    var newPol = new AlwaysTruePolicy(Store);
+                    Store.Policies.Add(newPol);
+                    DatabaseProxy.Instance.Policies.Add(newPol);
+                    DatabaseProxy.Instance.SaveChanges();
                 }
                 else
                 {
-                    Store.Policy = currPol.InnerPolicy.Value.Item1;
+                    currPol.InnerPolicy.OuterPolicy = null;
+                    currPol.InnerPolicy.OuterPolicyId = null;
+                    DatabaseProxy.Instance.SaveChanges();
                 }
             }
             else
-            {
+            {   
                 prev.InnerPolicy = currPol.InnerPolicy;
+                prev.InnerPolicyId = null;
+                DatabaseProxy.Instance.SaveChanges();
+                if (currPol.InnerPolicy != null)
+                {
+                    prev.InnerPolicyId = currPol.InnerPolicyId;
+                    currPol.InnerPolicy.OuterPolicy = prev;
+                    currPol.InnerPolicy.OuterPolicyId = prev.Id;
+                    DatabaseProxy.Instance.SaveChanges();
+                }
             }
+            Store.Policies.Remove(currPol);
+            //TODO: REMOVE THE POLICIES THAT NO ONE POINTS AT THEM
+            DatabaseProxy.Instance.Policies.Remove(currPol);
+            //DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AddProductCategoryDiscount(Operator op, string categoryName, DateTime deadline, double percentage, int indexInChain, int disId, bool toLeft)
@@ -507,9 +629,18 @@ namespace SEWorkshop.Models
             ComposeDiscount(new BuySomeGetSomeDiscount(Store, buySome, getSome, percentage, deadline, prod1, prod2), op, indexInChain, disId, toLeft);
         }
 
+
         public void RemoveDiscount(int indexInChain)
         {
-            Store.Discounts.Remove(Store.Discounts.ElementAt(indexInChain));
+            var toRemove = Store.Discounts.ElementAt(indexInChain);
+            while(!(toRemove.Father is null))
+            {
+                toRemove = toRemove.Father;
+            }
+            toRemove.SelfDestruct();
         }
     }
+
 }
+
+

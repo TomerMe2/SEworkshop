@@ -5,27 +5,55 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using SEWorkshop.Enums;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 
 namespace SEWorkshop.Models
 {
     public class OwnershipRequest
     {
-        public Store Store { get; private set; }
-        public ICollection<(LoggedInUser, RequestState )> Answers{ get; private set; }
-        public LoggedInUser Owner { get; private set; }
-        public LoggedInUser NewOwner { get; private set; }
+        public virtual int Id { get; set; }
+        public virtual string StoreName { get; private set; }
+        public virtual Store Store { get; private set; }
+        public virtual ICollection<OwnershipAnswer> Answers{ get; private set; }
+        public virtual string OwnerUsername { get; private set; }
+        public virtual LoggedInUser Owner { get; private set; }
+        public virtual string NewOwnerUsername { get; private set; }
+        public virtual LoggedInUser NewOwner { get; private set; }
+
+        public OwnershipRequest()
+        {
+            /*Store = null!;
+            Owner = null!;
+            NewOwner = null!;
+            Answers = new List<OwnershipAnswer>();
+            StoreName = "";
+            OwnerUsername = "";
+            NewOwnerUsername = "";*/
+        }
+
         public OwnershipRequest(Store store, LoggedInUser owner, LoggedInUser newOwner)
         {
             Store = store;
+            StoreName = Store.Name;
+            OwnerUsername = owner.Username;
+            NewOwnerUsername = newOwner.Username;
             Owner = owner;
             NewOwner = newOwner;
-            Answers = new List<(LoggedInUser, RequestState)>();
-            foreach (var ow in store.Owners.Keys)
+            Answers = new List<OwnershipAnswer>();
+            foreach(var ow in store.Ownership)
             {
-                Answers.Add((ow, RequestState.Pending));
+                if (!HasAnswered(ow.LoggedInUser))
+                {
+                    OwnershipAnswer answer = new OwnershipAnswer(this, ow.LoggedInUser, RequestState.Pending);
+                    Answers.Add(answer);
+                    ow.LoggedInUser.OwnershipAnswers.Add(answer);
+                }
             }
         }
+
         public RequestState GetRequestState()
         {
             if (IsDenied())
@@ -40,25 +68,22 @@ namespace SEWorkshop.Models
             return RequestState.Approved;
         }
 
+        public bool HasAnswered(LoggedInUser owner) => ((from ans in Answers
+            where ans.Owner.Username != Owner.Username
+            select ans).ToList().Count() > 0);
+
         public void Answer(LoggedInUser owner, RequestState decision)
         {
-            foreach (var answer in Answers)
-            {
-                if (answer.Item1 == owner)
-                {
-                    Answers.Remove(answer);
-                    Answers.Add((owner, decision));
-                    return;
-                }
-            }
+            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username == owner.Username);
+            currAnswer.Answer = decision;
         }
 
         public bool IsDenied() => ((from ans in Answers
-            where ans.Item1.Username != Owner.Username && ans.Item2 == RequestState.Denied
+            where ans.Owner.Username != Owner.Username && ans.Answer == RequestState.Denied
             select ans).ToList().Count() > 0);
 
         public bool IsPending() => ((from ans in Answers
-            where ans.Item1.Username != Owner.Username && ans.Item2 == RequestState.Pending
+            where ans.Owner.Username != Owner.Username && ans.Answer == RequestState.Pending
             select ans).ToList().Count() > 0);
     }
 

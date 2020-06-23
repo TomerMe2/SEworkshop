@@ -35,5 +35,15 @@ namespace SEWorkshop.DataModels
         {
             return Username.GetHashCode();
         }
+
+        public bool IsManager(IReadOnlyCollection<DataManages> Management)
+        {
+            return Management.Where(mngr => mngr.user.Username.Equals(this.Username)).Count() > 0;
+        }
+
+        public bool IsOwner(IReadOnlyCollection<DataOwns> Ownership)
+        {
+            return Ownership.Where(ownr => ownr.user.Username.Equals(this.Username)).Count() > 0;
+        }
     }
 }

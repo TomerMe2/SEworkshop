@@ -1,4 +1,5 @@
 ﻿using SEWorkshop.Models.Discounts;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.DataModels
 {

@@ -6,6 +6,7 @@ using SEWorkshop.Models;
 using System.Linq;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Enums;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Facades
 {
@@ -66,9 +67,8 @@ namespace SEWorkshop.Facades
 
         private Product GetProduct(string storeName, string productName)
         {
-            Store store = GetStore(storeName);
-            Product? product = store.Products.FirstOrDefault(prod => prod.Name.Equals(productName));
-            if (product is null)
+            Product? product = DatabaseProxy.Instance.Products.FirstOrDefault(prod => prod.StoreName.Equals(storeName) && prod.Name.Equals(productName));
+            if (product is null || !product.Store.Name.Equals(storeName))
             {
                 throw new ProductNotInTheStoreException();
             }
@@ -77,7 +77,7 @@ namespace SEWorkshop.Facades
 
         public void AddProductToCart(DataUser user, string storeName, string productName, int quantity)
         {
-            var store = StoreFacade.SearchStore(str => str.Name.Equals(storeName)).FirstOrDefault();
+            Store store = GetStore(storeName);
             if (store is null)
             {
                 throw new StoreNotInTradingSystemException();
@@ -129,18 +129,18 @@ namespace SEWorkshop.Facades
         public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddProductCategoryDiscount(GetStore(storeName), categoryName, deadline, percentage, op, indexInChain, disId, toLeft);
+            ManageFacade.AddProductCategoryDiscount(GetLoggedInUsr(user), GetStore(storeName), categoryName, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage,
                                                 Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddSpecificProductDiscount(GetStore(storeName), GetProduct(storeName, productName), deadline, percentage, op, indexInChain, disId, toLeft);
+            ManageFacade.AddSpecificProductDiscount(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName, productName), deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain)
         {
-            GetLoggedInUsr(user).RemoveDiscount(GetStore(storeName), indexInChain);
+            ManageFacade.RemoveDiscount(GetLoggedInUsr(user), GetStore(storeName), indexInChain);
         }
 
         public void EditProductName(DataLoggedInUser user, string storeName, string productName, string name)
@@ -194,18 +194,24 @@ namespace SEWorkshop.Facades
                 toAnswerOn = toAnswerOn.Next;
             }
             var loggedIn = GetLoggedInUsr(user);
+            DataMessage msg;
             if(firstMsg.WrittenBy == loggedIn)
             {
                 //It's the first user, and it's the non-manager who initiated the messages
-                return new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
+                msg = new DataMessage(loggedIn.MessageReplyAsNotManager(toAnswerOn, description));
+                return msg;
             }
             //It's the manager who should answer it
-            return new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
+            msg = new DataMessage(ManageFacade.MessageReply(loggedIn, toAnswerOn, GetStore(storeName), description));
+            return msg;
         }
 
         public IEnumerable<DataBasket> MyCart(DataUser user)
         {
-            return GetUser(user).Cart.Baskets.Select(bskt => new DataBasket(bskt));
+            var cart = DatabaseProxy.Instance.Carts.FirstOrDefault(cart => user.Username == cart.Username);
+            if (cart == default)
+                return user.Cart.Baskets.ToList();
+            return cart.Baskets.ToList().Select(bskt => new DataBasket(bskt));
         }
 
         public void OpenStore(DataLoggedInUser user, string storeName)
@@ -221,12 +227,13 @@ namespace SEWorkshop.Facades
         public DataPurchase Purchase(DataUser dataUser, DataBasket basket, string creditCardNum, Address address)
         {
             var user = GetUser(dataUser);
-            Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Represents(bskt));
+            Basket? trueBasket = user.Cart.Baskets.FirstOrDefault(bskt => basket.Id == bskt.Id);
             if (trueBasket is null)
             {
                 throw new BasketNotInSystemException();
             }
-            return new DataPurchase(UserFacade.Purchase(user, trueBasket, creditCardNum, address));
+            var prchs = new DataPurchase(UserFacade.Purchase(user, trueBasket, creditCardNum, address));
+            return prchs;
         }
 
         public void Register(string username, byte[] password)
@@ -325,12 +332,14 @@ namespace SEWorkshop.Facades
 
         public DataMessage WriteMessage(DataLoggedInUser user, string storeName, string description)
         {
-            return new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
+            var msg = new DataMessage(UserFacade.WriteMessage(GetLoggedInUsr(user), GetStore(storeName), description));
+            return msg;
         }
 
         public void WriteReview(DataLoggedInUser user, string storeName, string productName, string description)
         {
             UserFacade.WriteReview(GetLoggedInUsr(user), GetProduct(storeName, productName), description);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public DataGuestUser CreateGuest()
@@ -341,38 +350,38 @@ namespace SEWorkshop.Facades
 
         public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op)
         {
-            GetLoggedInUsr(user).AddAlwaysTruePolicy(GetStore(storeName), op);
+            ManageFacade.AddAlwaysTruePolicy(GetLoggedInUsr(user), GetStore(storeName), op);
         }
 
         public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity)
         {
-            GetLoggedInUsr(user).AddSingleProductQuantityPolicy(GetStore(storeName), op,
+            ManageFacade.AddSingleProductQuantityPolicy(GetLoggedInUsr(user), GetStore(storeName), op,
                     GetProduct(storeName, productName), minQuantity, maxQuantity);
         }
 
-        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, Weekday cantBuyIn)
         {
-            GetLoggedInUsr(user).AddSystemDayPolicy(GetStore(storeName), op, cantBuyIn);
+            ManageFacade.AddSystemDayPolicy(GetLoggedInUsr(user), GetStore(storeName), op, cantBuyIn);
         }
 
         public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity)
         {
-            GetLoggedInUsr(user).AddUserCityPolicy(GetStore(storeName), op, requiredCity);
+            ManageFacade.AddUserCityPolicy(GetLoggedInUsr(user), GetStore(storeName), op, requiredCity);
         }
 
         public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry)
         {
-            GetLoggedInUsr(user).AddUserCountryPolicy(GetStore(storeName), op, requiredCountry);
+            ManageFacade.AddUserCountryPolicy(GetLoggedInUsr(user), GetStore(storeName), op, requiredCountry);
         }
 
         public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity)
         {
-            GetLoggedInUsr(user).AddWholeStoreQuantityPolicy(GetStore(storeName), op, minQuantity, maxQuantity);
+            ManageFacade.AddWholeStoreQuantityPolicy(GetLoggedInUsr(user), GetStore(storeName), op, minQuantity, maxQuantity);
         }
 
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain)
         {
-            GetLoggedInUsr(user).RemovePolicy(GetStore(storeName), indexInChain);
+            ManageFacade.RemovePolicy(GetLoggedInUsr(user), GetStore(storeName), indexInChain);
         }
 
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg)
@@ -405,12 +414,12 @@ namespace SEWorkshop.Facades
 
         public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddBuySomeGetSomeFreeDiscount(GetStore(storeName), GetProduct(storeName,prod1Name), GetProduct(storeName, prod2Name), deadline, percentage, buySome, getSome,op, indexInChain, disId, toLeft);
+            ManageFacade.AddBuySomeGetSomeDiscount(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName,prod1Name), GetProduct(storeName, prod2Name), buySome, getSome, deadline, percentage, op, indexInChain, disId, toLeft);
         }
 
         public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft)
         {
-            GetLoggedInUsr(user).AddBuyOverDiscountDiscount(GetStore(storeName), GetProduct(storeName,productName), deadline, percentage, minSum, op, indexInChain, disId, toLeft);
+            ManageFacade.AddBuyOverDiscount(GetLoggedInUsr(user), GetStore(storeName), GetProduct(storeName,productName), percentage, deadline, minSum, op, indexInChain, disId, toLeft);
         }
         public IEnumerable<string> GetRegisteredUsers()
         {

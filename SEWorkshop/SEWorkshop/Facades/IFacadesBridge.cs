@@ -61,19 +61,19 @@ namespace SEWorkshop.Facades
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(DataLoggedInUser user, string storeName, Operator op);
         public void AddSingleProductQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
-        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public void AddSystemDayPolicy(DataLoggedInUser user, string storeName, Operator op, Weekday cantBuyIn);
         public void AddUserCityPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCity);
         public void AddUserCountryPolicy(DataLoggedInUser user, string storeName, Operator op, string requiredCountry);
         public void AddWholeStoreQuantityPolicy(DataLoggedInUser user, string storeName, Operator op, int minQuantity, int maxQuantity);
         public void RemovePolicy(DataLoggedInUser user, string storeName, int indexInChain);
         public void MarkAllDiscussionAsRead(DataLoggedInUser user, string storeName, DataMessage msg);
 
-        public void AddProductCategoryDiscount(DataLoggedInUser user, string storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
-        public void AddSpecificProductDiscount(DataLoggedInUser user, string storeName, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
-        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string storeName, string prod1Name, string prod2Name, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
-        public void AddBuyOverDiscount(DataLoggedInUser user, string storeName, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddProductCategoryDiscount(DataLoggedInUser user, string store, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(DataLoggedInUser user, string store, string productName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(DataLoggedInUser user, string store, string prod1Name, string prod2Name, int buySome, int getSome,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuyOverDiscount(DataLoggedInUser user, string store, string productName, double minSum ,DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
 
-        public void RemoveDiscount(DataLoggedInUser user, string storeName, int indexInChain);
+        public void RemoveDiscount(DataLoggedInUser user, string store, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();
         public double GetIncomeInDate(DateTime date);
         public int GetGuestEntriesInDate(DateTime date);

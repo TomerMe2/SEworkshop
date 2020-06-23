@@ -6,6 +6,7 @@ using SEWorkshop.Facades;
 using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -28,6 +29,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         [OneTimeSetUp]
         public void SetUp()
         {
+            DatabaseProxy.MoveToTestDb();
             MngrFacade = new ManageFacade();
             StrFacade = new StoreFacade();
             UsrFacade = new UserFacade(StrFacade);
@@ -206,12 +208,12 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void Purchase_EmptyBasket_ThrowsException()
         {
             LoggedInUser peb_user1 = UsrFacade.Register("peb_user1", securityAdaprer.Encrypt("1111"));
-            Store peb_store1 = new Store(peb_user1, "peb_store1");
+            Store peb_store1 = Store.StoreBuilder(peb_user1, "peb_store1");
             string peb_creditCardNumber = "1234";
             Address peb_address1 = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111");
             try
             {
-                UsrFacade.Purchase(peb_user1, new Basket(peb_store1), peb_creditCardNumber, peb_address1);
+                UsrFacade.Purchase(peb_user1, new Basket(peb_store1, peb_user1.Cart), peb_creditCardNumber, peb_address1);
                 Assert.Fail();
             }
             catch (BasketIsEmptyException)
@@ -248,23 +250,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             Assert.True(pass);
         }
-
-        /*
-        [Test]
-        public void PurchaseHistory_NoPermission_ThrowsException()
-        {
-            LoggedInUser phnp_user1 = UsrFacade.Register("phnp_user1", securityAdaprer.Encrypt("1111"));
-            try
-            {
-                UsrFacade.PurchaseHistory(phnp_user1);
-                Assert.Fail();
-            }
-            catch (UserHasNoPermissionException)
-            {
-                Assert.True(true);
-            }
-        }
-        */
         
         [Test]
         public void PurchaseHistory_UserNotExists_ReturnEmptyList()
@@ -340,7 +325,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void StorePurchaseHistory_RequestingNotAdministrator_ThrowsException()
         {
             LoggedInUser sphrna_user1 = UsrFacade.Register("sphrna_user1", securityAdaprer.Encrypt("1111"));
-            Store sphrna_store1 = new Store(sphrna_user1, "sphrna_store1");
+            Store sphrna_store1 = Store.StoreBuilder(sphrna_user1, "sphrna_store1");
             try
             {
                 UsrFacade.StorePurchaseHistory(sphrna_user1, sphrna_store1);
@@ -360,7 +345,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         public void StorePurchaseHistory_NoPurchasesForStore_ReturnEmpyList()
         {
             LoggedInUser sphnp_user1 = UsrFacade.Register("sphnp_user1", securityAdaprer.Encrypt("1111"));
-            Store sphnp_store1 = new Store(sphnp_user1, "sphnp_store1");
+            Store sphnp_store1 = Store.StoreBuilder(sphnp_user1, "sphnp_store1");
             LoggedInUser sphnp_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));
             Assert.That(UsrFacade.StorePurchaseHistory(sphnp_admin1, sphnp_store1), Is.Empty);
         }
@@ -371,7 +356,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             bool passed = false;
             LoggedInUser wrhp_user1 = UsrFacade.Register("wrhp_user1", securityAdaprer.Encrypt("1111"));
-            Store wrhp_store1 = new Store(wrhp_user1, "wrhp_store1");
+            Store wrhp_store1 = Store.StoreBuilder(wrhp_user1, "wrhp_store1");
             Product wrhp_product1 = new Product(wrhp_store1, "wrhp_product2", "blablabla", "cat1", 11.11, 1);
             UsrFacade.WriteReview(wrhp_user1, wrhp_product1, "This is a bad book :(");
 
@@ -385,33 +370,13 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.True(passed);
         }
 
-        /*
-        
-        //public void WriteMessage(User user, Store store, string description)
-        [Test]
-        public void WriteMessage_NoPermission_ThrowsException()
-        {
-            LoggedInUser wmnp_user1 = UsrFacade.Register("wmnp_user1", securityAdaprer.Encrypt("1111"));
-            Store wmnp_store1 = new Store(wmnp_user1, "wmnp_store1");
-            try
-            {
-                UsrFacade.WriteMessage(wmnp_user1, wmnp_store1, "Do you have any bananas?");
-                Assert.Fail();
-            }
-            catch (UserHasNoPermissionException)
-            {
-                
-            }
-        }
-
-    */
         
         [Test]
         public void WriteMessage_HasPermission_AddMessage()
         {
             bool passed = false;
             LoggedInUser wmhp_user1 = UsrFacade.Register("wmhp_user1", securityAdaprer.Encrypt("1111"));
-            Store wmhp_store1 = new Store(wmhp_user1, "wmhp_store1");
+            Store wmhp_store1 = Store.StoreBuilder(wmhp_user1, "wmhp_store1");
 
             UsrFacade.WriteMessage(wmhp_user1, wmhp_store1, "I love your store");
 
@@ -442,6 +407,25 @@ namespace SEWorkshop.Tests.IntegrationTests
             double incomeNow = UsrFacade.GetIncomeInDate(DateTime.Now);
             // This weird compare is done to avoid floating number representation issues
             Assert.IsTrue(Math.Abs((incomeNow - incomeBefore) - increaseShouldBe) <= 0.0001);
+        }
+
+        [Test]
+        public void GuestUserPurchase()
+        {
+            const string STORE_NAME = "Google Play";
+            LoggedInUser usr = new LoggedInUser("appdevloper1", securityAdaprer.Encrypt("1234"));
+            Store store = Store.StoreBuilder(usr, STORE_NAME);
+            Product product = new Product(store, "BestApp", "Authentic One", "App", 4.00, 10);
+            store.Products.Add(product);
+
+            User user = new GuestUser();
+            user.Cart.Baskets.Add(new Basket(store, user.Cart));
+            user.Cart.Baskets.ElementAt(0).Products.Add(new ProductsInBasket(user.Cart.Baskets.ElementAt(0), product, 5));
+
+            Purchase purchase = UsrFacade.Purchase(user, user.Cart.Baskets.ElementAt(0), "Mich's Credit Card", new Address("Israel", "Beersheba", "Rager Blv.", "123"));
+            Assert.IsTrue(user.Cart.Baskets.Count() == 0);
+            Assert.IsTrue(store.Purchases.ElementAt(0) == purchase);
+            Assert.IsTrue(store.Products.ElementAt(0).Quantity == 5);
         }
     }
 }

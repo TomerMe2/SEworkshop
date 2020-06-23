@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SEWorkshop.Enums
 {
-    public enum Authorizations
+    public enum Authorizations : byte
     {
         Products,
         Owner,

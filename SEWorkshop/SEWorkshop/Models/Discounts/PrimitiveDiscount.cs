@@ -1,11 +1,18 @@
 ﻿using System;
 using SEWorkshop.Exceptions;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models.Discounts
 {
     public abstract class PrimitiveDiscount : Discount
     {
-        public double Percentage { get; private set; }
+        public virtual double Percentage { get; private set; }
+
+        public PrimitiveDiscount() : base()
+        {
+            
+        }
 
         public PrimitiveDiscount(double percentage, DateTime deadline, Store store) : base(deadline, store)
         {
@@ -23,6 +30,13 @@ namespace SEWorkshop.Models.Discounts
                 return true;
             }
             return false;
+        }
+
+        public override void SelfDestruct()
+        {
+            Store.Discounts.Remove(this);
+            DatabaseProxy.Instance.Discounts.Remove(this);
+            DatabaseProxy.Instance.SaveChanges();
         }
     }
 }

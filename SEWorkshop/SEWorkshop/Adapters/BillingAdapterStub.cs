@@ -7,7 +7,7 @@ namespace SEWorkshop.Adapters
 {
     class BillingAdapterStub : IBillingAdapter
     {
-        public bool Bill(ICollection<(Product, int)> products, string creditCardNumber, double totalPrice)
+        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, double totalPrice)
         {
             return true;
         }

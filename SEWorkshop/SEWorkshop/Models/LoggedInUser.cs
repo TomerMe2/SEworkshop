@@ -4,34 +4,63 @@ using System.Collections.Generic;
 using System.Linq;
 using SEWorkshop.Facades;
 using SEWorkshop.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
+using System.Data.Entity;
 using System;
+using Microsoft.VisualBasic;
 
 namespace SEWorkshop.Models
 {
     public class LoggedInUser : User
     {
-        public ICollection<Owns> Owns { get; private set; }
-        public ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
-        public ICollection<Manages> Manage { get; private set; }
-        public IList<Review> Reviews { get; private set; }
-        public IList<Message> Messages { get; private set; }
-        public string Username { get; private set; }
-        public byte[] Password { get; private set; }   //it will be SHA256 encrypted password
-        private ICollection<Purchase> Purchases { get; set; }
+        public virtual ICollection<Owns> Owns { get; private set; }
+        public virtual ICollection<OwnershipAnswer> OwnershipAnswers { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequestsFrom { get; private set; }
+        public virtual ICollection<Manages> Manage { get; private set; }
+        public virtual ICollection<AuthorityHandler> Appointements { get; set; }
+        public virtual IList<Review> Reviews { get; private set; }
+        public virtual IList<Message> Messages { get; private set; }
+        public virtual string Username { get; private set; }
+        public virtual byte[] Password { get; private set; }   //it will be SHA256 encrypted password
+        public virtual ICollection<Purchase> Purchases { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public LoggedInUser(string username, byte[] password)
+        public LoggedInUser() : base()
         {
-            Username = username;
-            Password = password;
-            OwnershipRequests = new List<OwnershipRequest>();
+            /*Username = "";
+            Password = new byte[] { 0 };
             Owns = new List<Owns>();
             Manage = new List<Manages>();
             Reviews = new List<Review>();
             Messages = new List<Message>();
             Purchases = new List<Purchase>();
+            Appointements = new List<AuthorityHandler>();
+            Cart = new Cart(this);
+            OwnershipAnswers = new List<OwnershipAnswer>();
+            OwnershipRequests = new List<OwnershipRequest>();
+            OwnershipRequestsFrom = new List<OwnershipRequest>();*/
         }
 
+        public LoggedInUser(string username, byte[] password) : base()
+        {
+            Username = username;
+            Password = password;
+            Owns = new List<Owns>();
+            Manage = new List<Manages>();
+            Reviews = new List<Review>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Appointements = new List<AuthorityHandler>();
+            Cart = new Cart(this);
+            OwnershipAnswers = new List<OwnershipAnswer>();
+            OwnershipRequests = new List<OwnershipRequest>();
+            OwnershipRequestsFrom = new List<OwnershipRequest>();
+        }
+
+        [NotMapped()]
         public int AmountOfUnReadMessage
         {
             get
@@ -61,9 +90,11 @@ namespace SEWorkshop.Models
             {
                 throw new ReviewIsEmptyException();
             }
-            Review review = new Review(this, description);
+            Review review = new Review(this, description, product);
             product.Reviews.Add(review);
             Reviews.Add(review);
+            DatabaseProxy.Instance.Reviews.Add(review);
+            //DatabaseProxy.Instance.SaveChanges();
         }
        
         public void WriteMessage(Store store, string description, bool isClient)
@@ -75,6 +106,8 @@ namespace SEWorkshop.Models
             Message message = new Message(this, store, description, isClient);
             store.Messages.Add(message);
             Messages.Add(message);
+            DatabaseProxy.Instance.Messages.Add(message);
+            //DatabaseProxy.Instance.SaveChanges();
         }
 
         public void AnswerOwnershipRequest(Store store,LoggedInUser newOwner, RequestState answer)
@@ -89,8 +122,8 @@ namespace SEWorkshop.Models
 
         public Product AddProduct(Store store, string name, string description, string category, double price, int quantity)
         {
-            var ownership = Owns.FirstOrDefault(man =>(man.Store.Name==(store.Name)));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));  
+            var ownership = Owns.FirstOrDefault(man =>(man.Store.Name.Equals(store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));  
             if(management == null)
             {
                 if (ownership == null)
@@ -142,21 +175,19 @@ namespace SEWorkshop.Models
         public void EditProductName(Store store, Product product, string name)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductName(product, name);
                 return;
             }
             management.EditProductName(product, name);
-
         }
         
         public void EditProductPrice(Store store, Product product, double price)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-              var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductPrice(product, price);
@@ -171,7 +202,7 @@ namespace SEWorkshop.Models
         public void EditProductQuantity(Store store, Product product, int quantity)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.EditProductQuantity(product, quantity);
@@ -184,33 +215,24 @@ namespace SEWorkshop.Models
         public void SetPermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 ownership.SetPermissionsOfManager(manager, authorization);
                 return;
             }
-
             management.SetPermissionsOfManager(manager,authorization);
         }
 
         public void AddStoreOwner(Store store, LoggedInUser newOwner)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
-            if (management == default)
-            {
-                ownership.AddStoreOwner(newOwner);
-                return;
-            }
-            management.AddStoreOwner(newOwner);
+            Owns.FirstOrDefault(own => own.Store.Name.Equals(store.Name))?.AddStoreOwner(newOwner);
         }
         
         public void AddStoreManager(Store store, LoggedInUser newManager)
         {
-
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-           var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.AddStoreManager(newManager);
@@ -222,8 +244,8 @@ namespace SEWorkshop.Models
         public void RemoveStoreManager(Store store, LoggedInUser managerToRemove)
         {
 
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.RemoveStoreManager(managerToRemove);
@@ -235,8 +257,8 @@ namespace SEWorkshop.Models
         public void RemoveStoreOwner(Store store, LoggedInUser ownerToRemove)
         {
 
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 ownership.RemoveStoreOwner(ownerToRemove);
@@ -247,13 +269,12 @@ namespace SEWorkshop.Models
 
         public Message MessageReply(Message message, Store store, string description)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 return ownership.MessageReply(this, store, message, description);
             }
-            
             return management.MessageReply(this,store,message,description);
         }
 
@@ -261,80 +282,65 @@ namespace SEWorkshop.Models
         {
             Message reply = new Message(this, message.ToStore, description, true, message);
             message.Next = reply;
+            DatabaseProxy.Instance.Messages.Add(reply);
+            //DatabaseProxy.Instance.SaveChanges();
             log.Info("Reply has been published successfully");
             return reply;
         }
 
         public IEnumerable<Message> GetMessage(Store store)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == default)
             {
                 return ownership.GetMessage(store, this);
             }
-
             return management.GetMessage(store, this);
         }
 
         public IEnumerable<Purchase> PurchaseHistory(Store store)
         {
-            var ownership = Owns.FirstOrDefault(man => man.Store == store);
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 return ownership.ViewPurchaseHistory(this, store);
             }
-
             return management.ViewPurchaseHistory(this, store);
         }
 
-        public bool isManger(Store store)
-        {
-            if(Owns.FirstOrDefault(man => man.Store == store) != default)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address, UserFacade facade)
+        override public Purchase Purchase(Basket basket, string creditCardNumber, Address address)
         {
             if (basket.Products.Count == 0)
                 throw new BasketIsEmptyException();
             Purchase purchase;
             purchase = new Purchase(this, basket, address);
             
-            foreach (var (prod, purchaseQuantity) in basket.Products)
+            foreach (var product in basket.Products)
             {
-                if (purchaseQuantity <= 0)
+                if (product.Quantity <= 0)
                     throw new NegativeQuantityException();
             }
-            try
-            {
-                basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
-                Cart.Baskets.Remove(basket);
-                basket.Store.Purchases.Add(purchase);
-                Purchases.Add(purchase);
-                facade.AddPurchaseToList(purchase);
-                return purchase;
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
+            basket.Store.PurchaseBasket(basket, creditCardNumber, address, this);
+            Cart.Baskets.Remove(basket);
+            basket.Store.Purchases.Add(purchase);
+            Purchases.Add(purchase);
+            DatabaseProxy.Instance.Purchases.Add(purchase);
+            //DatabaseProxy.Instance.SaveChanges();
+            return purchase;
         }
+
 
         public void RemovePermissionsOfManager(Store store, LoggedInUser manager, Authorizations authorization)
         {
             var ownership = Owns.FirstOrDefault(man => man.Store.Equals(store));
-            var management = Manage.FirstOrDefault(man => (man.Store.Name == (store.Name)));
+            var management = Manage.FirstOrDefault(man => (man.Store.Name.Equals(store.Name)));
             if (management == null)
             {
                 ownership.RemovePermissionsOfManager(manager, authorization);
                 return;
             }
-
             management.RemovePermissionsOfManager(manager,authorization);
         }
 
@@ -346,7 +352,6 @@ namespace SEWorkshop.Models
                 throw new UserIsNotOwnerOfThisStore();
             }
             return res;
-
         }
 
         //All add policies are adding to the end
@@ -360,7 +365,7 @@ namespace SEWorkshop.Models
             OwnsForStore(store).AddSingleProductQuantityPolicy(op, product, minQuantity, maxQuantity);
         }
 
-        public void AddSystemDayPolicy(Store store, Operator op, DayOfWeek cantBuyIn)
+        public void AddSystemDayPolicy(Store store, Operator op, Weekday cantBuyIn)
         {
             OwnsForStore(store).AddSystemDayPolicy(op, cantBuyIn);
         }
@@ -394,7 +399,7 @@ namespace SEWorkshop.Models
         {
             OwnsForStore(store).AddSpecificProductDiscount(op, product, deadline, percentage, IndexInChain, disId, toLeft);
         }
-        public void AddBuyOverDiscountDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain, int disId, bool toLeft)
+        public void AddBuyOverDiscount(Store store, Product product, DateTime deadline, double percentage, double minSum, Operator op, int IndexInChain, int disId, bool toLeft)
         {
             OwnsForStore(store).AddBuyOverDiscount(op, product, deadline, percentage, minSum, IndexInChain, disId, toLeft);
         }
@@ -411,6 +416,87 @@ namespace SEWorkshop.Models
         public override int GetHashCode()
         {
             return Username.GetHashCode();
+        }
+
+        public override void AddProductToCart(Product product, int quantity)
+        {
+            if (quantity < 1)
+            {
+                throw new NegativeQuantityException();
+            }
+            if (product.Quantity - quantity < 0)
+            {
+                throw new NegativeInventoryException();
+            }
+            Cart cart = this.Cart;
+            foreach (var basket in cart.Baskets)
+            {
+                if (product.Store == basket.Store)
+                {
+                    var prod = basket.Products.FirstOrDefault(tup => tup.Product.Equals(product));
+                    if (!(prod is null))
+                    {
+                        //quantity = quantity + prod.Quantity;
+                        // we are doing this because of the fact that when a tuple is assigned, it's copied and int is a primitive...
+                        //basket.Products.Remove(prod);  //so we can add it later :)
+                        prod.Quantity += quantity;
+                        //DatabaseProxy.Instance.SaveChanges();
+                        return;
+                    }
+                    ProductsInBasket newPib = new ProductsInBasket(basket, product, quantity);
+                    basket.Products.Add(newPib);
+                    DatabaseProxy.Instance.ProductsInBaskets.Add(newPib);
+                    //DatabaseProxy.Instance.SaveChanges();
+                    return;  // basket found and updated. Nothing more to do here...
+                }
+            }
+            // if we got here, the correct basket doesn't exists now, so we should create it!
+            Basket newBasket = new Basket(product.Store, cart);
+            Cart.Baskets.Add(newBasket);
+            ProductsInBasket pib = new ProductsInBasket(newBasket, product, quantity);
+            newBasket.Products.Add(pib);
+            DatabaseProxy.Instance.Baskets.Add(newBasket);
+            DatabaseProxy.Instance.ProductsInBaskets.Add(pib);
+            //DatabaseProxy.Instance.SaveChanges();
+        }
+
+        public override void RemoveProductFromCart(User user, Product product, int quantity)
+        {
+            if (quantity < 1)
+            {
+                throw new NegativeQuantityException();
+            }
+            foreach (var basket in user.Cart.Baskets)
+            {
+                if (product.Store == basket.Store)
+                {
+                    var prod = basket.Products.FirstOrDefault(tup => tup.Product.Equals(product));
+                    if (prod is null)
+                    {
+                        throw new ProductIsNotInCartException();
+                    }
+                    int quantityDelta = prod.Quantity - quantity;
+                    if (quantityDelta < 0)
+                    {
+                        throw new ArgumentOutOfRangeException("quantity in cart minus quantity is smaller then 0");
+                    }
+                    if (quantityDelta > 0)
+                    {
+                        // The item should still be in the basket because it still has a positive quantity
+                        prod.Quantity = quantityDelta;
+                        return;
+                    }
+                    basket.Products.Remove(prod);
+                    DatabaseProxy.Instance.ProductsInBaskets.Remove(prod);
+                    if(basket.Products.Count() == 0)
+                    {
+                        Cart.Baskets.Remove(basket);
+                        DatabaseProxy.Instance.Baskets.Remove(basket);
+                    }
+                    return;
+                }
+            }
+            throw new ProductIsNotInCartException();
         }
     }
 }

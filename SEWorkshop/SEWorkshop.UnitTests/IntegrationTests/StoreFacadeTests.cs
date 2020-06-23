@@ -7,6 +7,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using System.Linq;
 using SEWorkshop.Exceptions;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -14,11 +15,12 @@ namespace SEWorkshop.Tests.IntegrationTests
     class StoreFacadeTests
     {
         private IStoreFacade Facade { get; set; }
-        private ISecurityAdapter SecurityAdapter { get; set; } 
+        private ISecurityAdapter SecurityAdapter { get; set; }
 
         [OneTimeSetUp]
         public void Init()
         {
+            DatabaseProxy.MoveToTestDb();
             Facade = new StoreFacade();
             SecurityAdapter = new SecurityAdapter();
         }
@@ -61,7 +63,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             LoggedInUser usr2 = new LoggedInUser("SearchNaNa", SecurityAdapter.Encrypt("910"));
             Store store1 = Facade.CreateStore(usr1, "StrNini");
             Store store2 = Facade.CreateStore(usr2, "StrNana");
-            var result = Facade.SearchStore(store => store.Owners.ContainsKey(usr1));
+            var result = Facade.SearchStore(store => store.GetOwnership(usr1) != null);
             Assert.IsTrue(result.Contains(store1) && result.Count == 1);
             result = Facade.SearchStore(store => store.Name.Equals("StrNana"));
             Assert.IsTrue(result.Contains(store2) && result.Count == 1);

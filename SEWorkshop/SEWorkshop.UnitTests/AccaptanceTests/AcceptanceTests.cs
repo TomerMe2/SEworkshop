@@ -5,16 +5,24 @@ using System.Collections.Generic;
 using SEWorkshop.DataModels;
 using System.Linq;
 using SEWorkshop.Tests.AccaptanceTests;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.AcceptanceTests
 {
 	[TestFixture]
 	public class AcceptanceTests
 	{
-		private Bridge bridge = new ProxyServiceLayer();
+		private Bridge bridge { get; set; }
         private const string DEF_SID = "1";
 
-		[Test, Order(1)]
+        [OneTimeSetUp]
+        public void Init()
+        {
+            DatabaseProxy.MoveToTestDb();
+            bridge = new ProxyServiceLayer();
+        }
+
+        [Test, Order(1)]
 		public void Test_2_2()
         {
 			Assert.That(() => bridge.Register(DEF_SID, "user", "1234"), Throws.Nothing);
@@ -192,7 +200,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			string bamba = "bamba";
 			string bamba2 = "bamba2";
-			var bamb = bridge.SearchProductsByName(ref bamba).First();
+			
+            var bamb = bridge.SearchProductsByName(ref bamba).First();
 			Assert.That(() => bridge.EditProductName(DEF_SID, "store1", "bamba", "bamba2"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductCategory(DEF_SID, "store1", "bamba2", "electronics"), Throws.Nothing);
 			Assert.That(() => bridge.EditProductPrice(DEF_SID, "store1", "bamba2", 215), Throws.Nothing);
@@ -207,7 +216,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		[Test, Order(33)]
 		public void Test_4_2_1()
 		{
-			string username = "Noa Kirel";
+			string username = "NoaKirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
 			//bridge.Logout(DEF_SID);
@@ -227,7 +236,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.That(() => bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
 			IEnumerable<DataBasket> cart4 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
 			bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
-			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart.First(), "123456789", address); });
+			IEnumerable<DataBasket> cart5 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
+			Assert.Throws<PolicyIsFalse>(delegate { bridge.Purchase(DEF_SID, cart5.First(), "123456789", address); });
 			IEnumerable<DataBasket> cart3 = bridge.MyCart(DEF_SID); //debug: check that cart is not empty
 
 			bridge.Logout(DEF_SID);
@@ -243,7 +253,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		[Test, Order(34)]
 		public void Test_4_2_2()
 		{
-			string username = "Noa Kirel";
+			string username = "NoaKirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
 			bridge.Logout(DEF_SID);

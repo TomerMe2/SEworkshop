@@ -18,14 +18,14 @@
                 double sumafterdiscount = Model.Basket.PriceAfterDiscount;
                 foreach (var product in Model.Basket.Products)
                 {
-                    string name = product.Item1.Name;
-                    int quantity = product.Item2;
+                    string name = product.Product.Name;
+                    int quantity = product.Quantity;
                     //sum += quantity * product.Item1.Price;
                     //sumafterdiscount += quantity * product.ToTuple().Item1.PriceAfterDiscount;
-                    var priceOfProd = quantity * product.Item1.Price;
+                    var priceOfProd = quantity * product.Product.Price;
                     <div>
                         <div><h5>Product: @name</h5></div>
-                        <div><h6>Price per unit: @product.Item1.Price ₪</h6></div>
+                        <div><h6>Price per unit: @product.Product.Price ₪</h6></div>
                         <div><h6>Quantity: @quantity</h6></div>
                         <div><h6>Price: @priceOfProd ₪</h6></div>
                         <input type="hidden" name="StoreName" value="@Model.Basket.Store.Name">

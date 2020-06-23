@@ -1,6 +1,5 @@
 ﻿using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
-using SEWorkshop.Models;
 using SEWorkshop.ServiceLayer;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
 {
     class ProxyServiceLayer : Bridge
     {
-        private UserManager userManager = new UserManager();
+        private readonly UserManager userManager = new UserManager();
 
         public override DataProduct AddProduct(string sid, string storeNm, string productName, string description, string category, double price, int quantity)
         {
@@ -192,7 +191,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
             userManager.AddSingleProductQuantityPolicy(sessionId, storeName, op, productName, minQuantity, maxQuantity);
         }
 
-        public override void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn)
+        public override void AddSystemDayPolicy(string sessionId, string storeName, Operator op, Weekday cantBuyIn)
         {
             userManager.AddSystemDayPolicy(sessionId, storeName, op, cantBuyIn);
         }
