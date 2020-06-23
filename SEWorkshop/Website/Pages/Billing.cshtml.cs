@@ -7,6 +7,7 @@ using SEWorkshop.ServiceLayer;
 using SEWorkshop.DataModels;
 using SEWorkshop;
 using System;
+using SEWorkshop.Exceptions;
 
 namespace Website.Pages
 {
@@ -64,6 +65,16 @@ namespace Website.Pages
             try
             {
                 expirationDate = new DateTime(int.Parse(ExpirationYear), int.Parse(ExpirationMonth), 1);
+            }
+            catch (SupplyCancellationHasFailedException e)
+            {
+                ErrorMsg = "Supply error, please contact the store";
+                return new PageResult();
+            }
+            catch (BillingCancellationHasFailedException e)
+            {
+                ErrorMsg = "Billing error, please contact the store";
+                return new PageResult();
             }
             catch
             {

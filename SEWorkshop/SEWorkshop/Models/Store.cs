@@ -156,10 +156,24 @@ namespace SEWorkshop.Models
                 }
                 catch
                 {
-                    if (transactionBillingId > -1)
-                        billingAdapter.CancelBill(transactionBillingId);
-                    if (transactionSupplyId > -1)
-                        supplyAdapter.CancelSupply(transactionSupplyId);
+                    try
+                    {
+                        if (transactionBillingId > -1)
+                            billingAdapter.CancelBill(transactionBillingId);
+                    }
+                    catch
+                    {
+                        throw new BillingCancellationHasFailedException();
+                    }
+                    try
+                    {
+                        if (transactionSupplyId > -1)
+                            supplyAdapter.CancelSupply(transactionSupplyId);
+                    }
+                    catch
+                    {
+                        throw new SupplyCancellationHasFailedException();
+                    }
                     throw new PurchaseFailedException();
                 }
             }
