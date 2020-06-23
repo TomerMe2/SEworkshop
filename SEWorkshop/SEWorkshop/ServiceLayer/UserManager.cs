@@ -186,6 +186,35 @@ namespace SEWorkshop.ServiceLayer
             };
             var usr = FacadesBridge.GetLoggedInUserAndApplyCart(username, SecurityAdapter.Encrypt(password), guest);
             UsersDict[sessionId] = usr;
+            KindOfUser kind;
+            if (usr is DataAdministrator)
+            {
+                kind = KindOfUser.Admin;
+            }
+            else if (usr.Owns.Count != 0)
+            {
+                kind = KindOfUser.LoggedInYesOwn;
+            }
+            else if (usr.Manages.Count != 0)
+            {
+                kind = KindOfUser.LoggedInNoOwnYesManage;
+            }
+            else
+            {
+                kind = KindOfUser.LoggedInNotOwnNotManage;
+            }
+            var encrtyptedSid = SecurityAdapter.Encrypt(sessionId);
+            var recordToChange = DAL.DatabaseProxy.Instance.UseRecords.FirstOrDefault(record => record.HashedSessionId ==
+                                                                            encrtyptedSid);
+            if (recordToChange == null)
+            {
+                Log.Error("No record in db before login");
+            }
+            else
+            {
+                recordToChange.Kind = kind;
+                DAL.DatabaseProxy.Instance.SaveChanges();
+            }
         }
 
         public void Logout(string sessionId)
