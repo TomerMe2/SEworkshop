@@ -10,7 +10,7 @@ namespace SEWorkshop.Adapters
     class BillingAdapterStub : IBillingAdapter
     {
         private static readonly HttpClient client = new HttpClient();
-        public async Task<bool> Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
+        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
         {
             var handshakePostContent = new Dictionary<string, string>
             {
@@ -29,9 +29,9 @@ namespace SEWorkshop.Adapters
 
             var content = new FormUrlEncodedContent(payPostContent);
 
-            var response = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", content);
+            /*var response = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", content);
 
-            var responseString = await response.Content.ReadAsStringAsync();
+            var responseString = await response.Content.ReadAsStringAsync();*/
 
             return true;
         }
