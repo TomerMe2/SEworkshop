@@ -11,5 +11,7 @@ namespace SEWorkshop.Adapters
         public void Supply(ICollection<ProductsInBasket> products, Address address);
 
         public bool CanSupply(ICollection<ProductsInBasket> products, Address address);
+
+        public bool CancelSupply(int TransactionId)
     }
 }

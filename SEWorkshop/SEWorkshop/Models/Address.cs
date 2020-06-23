@@ -14,6 +14,7 @@ namespace SEWorkshop
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
         public virtual string Country { get; set; }
+        public virtual string zip { get; set; }
         public virtual ICollection<Purchase> Purchases { get; set;}
 
         public Address()
@@ -25,12 +26,13 @@ namespace SEWorkshop
             Purchases = new List<Purchase>();*/
         }
 
-        public Address(string country, string city, string street, string houseNumber)
+        public Address(string country, string city, string street, string houseNumber, string zip)
         {
             this.City = city;
             this.Street = street;
             this.HouseNumber = houseNumber;
             this.Country = country;
+            this.zip = zip;
             Purchases = new List<Purchase>();
         }
 

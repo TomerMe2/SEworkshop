@@ -8,5 +8,8 @@ namespace SEWorkshop.Adapters
     interface IBillingAdapter
     {
         public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, double totalProce);
+
+        public bool CancelBill(int TransactionId)
+
     }
 }

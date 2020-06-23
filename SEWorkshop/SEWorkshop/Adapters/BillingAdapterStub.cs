@@ -11,5 +11,10 @@ namespace SEWorkshop.Adapters
         {
             return true;
         }
+
+        public bool CancelBill(int TransactionId)
+        {
+            return true;
+        }
     }
 }
