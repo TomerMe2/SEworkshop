@@ -555,6 +555,18 @@ namespace SEWorkshop.DAL
 #pragma warning restore CS8603 // Possible null reference return.
                     .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Purchase>()
+                    .HasRequired(purchase => purchase.store)
+                    .WithMany(store => store.Purchases)
+                    .HasForeignKey(prchs => prchs.storeName)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Purchase>()
+                    .HasOptional(purchase => purchase.User)
+                    .WithMany(user => user.Purchases)
+                    .HasForeignKey(prchs => prchs.Username)
+                    .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Review>()
                     .HasRequired(review => review.Writer)
                     .WithMany(user => user.Reviews)
