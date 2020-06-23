@@ -19,10 +19,11 @@ namespace SEWorkshop.Models.Policies
         public virtual Operator? InnerOperator { get; set; }
         public virtual Store Store { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Policy()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Store = null!;
-            StoreName = "";*/
+            
         }
         
         public Policy(Store store)

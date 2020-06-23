@@ -12,10 +12,11 @@ namespace SEWorkshop.Models
         public virtual Product Product { get; set; }
         public virtual int Quantity { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public ProductsInBasket()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Basket = null!;
-            Product = null!;*/
+
         }
 
         public ProductsInBasket(Basket basket, Product product, int quantity)

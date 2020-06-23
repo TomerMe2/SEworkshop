@@ -45,7 +45,6 @@ namespace SEWorkshop.ServiceLayer
             executeActionFromFile.ReadAndExecute();
         }
 
-        [Obsolete]
         public UserManager(IFacadesBridge facadesBridge)
         {
             ConfigLog();
@@ -94,16 +93,29 @@ namespace SEWorkshop.ServiceLayer
 
         public DataUser GetUser(string sessionId)
         {
+            DataUser toRet;
             lock(UserDictLock)
             {
                 if (UsersDict.ContainsKey(sessionId))
                 {
-                    return UsersDict[sessionId];
+                    toRet = UsersDict[sessionId];
                 }
-                var usr = FacadesBridge.CreateGuest();
-                UsersDict[sessionId] = usr;
-                return usr;
+                else
+                {
+                    toRet = FacadesBridge.CreateGuest();
+                    UsersDict[sessionId] = toRet;
+                }
             }
+            var encSid = SecurityAdapter.Encrypt(sessionId);
+            if (DAL.DatabaseProxy.Instance.UseRecords.Where(record => record.HashedSessionId == encSid).Any())
+            {
+                //it's already in the db and it's logging in again after a logout
+                return toRet;
+            }
+            UseRecord record = new UseRecord(encSid, DateTime.Now, KindOfUser.Guest);
+            DAL.DatabaseProxy.Instance.UseRecords.Add(record);
+            DAL.DatabaseProxy.Instance.SaveChanges();
+            return toRet;
         }
 
         private DataLoggedInUser GetLoggedInUser(string sessionId)
@@ -173,6 +185,10 @@ namespace SEWorkshop.ServiceLayer
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
+            if (username.Equals("DEMO"))
+            {
+                throw new CantLoginAsDemoExeption();
+            }
             DataGuestUser guest = GetUser(sessionId) switch
             {
                 DataGuestUser gst => gst,
@@ -180,6 +196,35 @@ namespace SEWorkshop.ServiceLayer
             };
             var usr = FacadesBridge.GetLoggedInUserAndApplyCart(username, SecurityAdapter.Encrypt(password), guest);
             UsersDict[sessionId] = usr;
+            KindOfUser kind;
+            if (usr is DataAdministrator)
+            {
+                kind = KindOfUser.Admin;
+            }
+            else if (usr.Owns.Count != 0)
+            {
+                kind = KindOfUser.LoggedInYesOwn;
+            }
+            else if (usr.Manages.Count != 0)
+            {
+                kind = KindOfUser.LoggedInNoOwnYesManage;
+            }
+            else
+            {
+                kind = KindOfUser.LoggedInNotOwnNotManage;
+            }
+            var encrtyptedSid = SecurityAdapter.Encrypt(sessionId);
+            var recordToChange = DAL.DatabaseProxy.Instance.UseRecords.FirstOrDefault(record => record.HashedSessionId ==
+                                                                            encrtyptedSid);
+            if (recordToChange == null)
+            {
+                Log.Error("No record in db before login");
+            }
+            else
+            {
+                recordToChange.Kind = kind;
+                DAL.DatabaseProxy.Instance.SaveChanges();
+            }
         }
 
         public void Logout(string sessionId)
@@ -671,80 +716,20 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.GetIncomeInDate(date);
         }
 
-        public int GetGuestEntriesInDate(string sessionId, DateTime date)
+        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
-            Log.Info("GetGuestEntriesInDate");
-            try
-            {
-                GetAdmin(sessionId);
-                return FacadesBridge.GetGuestEntriesInDate(date);
-            }
-            catch (Exception e)
-            {
-                Log.Info(string.Format("GetGuestEntriesInDate    {0}", e.ToString()));
-                return -1;
-            }
+            Log.Info(string.Format("GetUseRecord {0}    {1}    {2}", sessionId, dateFrom, dateTo));
+            GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetUseRecord(dateFrom, dateTo, kinds);
         }
 
-        public int GetLoggedEntriesDate(string sessionId, DateTime date)
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
         {
-            Log.Info("GetLoggedEntriesDate");
-            try
-            {
-                GetAdmin(sessionId);
-                return FacadesBridge.GetLoggedEntriesDate(date);
-            }
-            catch (Exception e)
-            {
-                Log.Info(string.Format("GetLoggedEntriesDate    {0}", e.ToString()));
-                return -1;
-            }
+            Log.Info(string.Format("GetUsersByCategory    {0}     {1}", sessionId, today));
+            GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetUsersByCategory(today);
         }
 
-        public int GetOwnersEntriesDate(string sessionId, DateTime date)
-        {
-             Log.Info("GetOwnersEntriesDate");
-            try
-            {
-                GetAdmin(sessionId);
-                return FacadesBridge.GetOwnersEntriesDate(date);
-            }
-            catch (Exception e)
-            {
-                Log.Info(string.Format("GetOwnersEntriesDate    {0}", e.ToString()));
-                return -1;
-            }
-        }
-
-        public int GetOnlyManagersEntriesDate(string sessionId, DateTime date)
-        {
-            Log.Info("GetOnlyManagersEntriesDate");
-            try
-            {
-                GetAdmin(sessionId);
-                return FacadesBridge.GetOnlyManagersEntriesDate(date);
-            }
-            catch (Exception e)
-            {
-                Log.Info(string.Format("GetOnlyManagersEntriesDate    {0}", e.ToString()));
-                return -1;
-            }
-        }
-
-        public int GetAdminsEntriesDate(string sessionId, DateTime date)
-        {
-            Log.Info("GetAdminsEntriesDate");
-            try
-            {
-                GetAdmin(sessionId);
-                return FacadesBridge.GetAdminsEntriesDate(date);
-            }
-            catch (Exception e)
-            {
-                Log.Info(string.Format("GetAdminsEntriesDate    {0}", e.ToString()));
-                return -1;
-            }
-        }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
             OwnershipRequestObservers.Add(obsrv);
@@ -760,6 +745,11 @@ namespace SEWorkshop.ServiceLayer
             {
                 return "";
             }
+        }
+
+        public void AccessSystem(string sessionId)
+        {
+            GetUser(sessionId);
         }
     }
 }

@@ -21,13 +21,11 @@ namespace SEWorkshop.Models
         public virtual bool StoreSawIt { get; set; }
         public virtual bool ClientSawIt { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Message()
-        {/*
-            WrittenBy = null!;
-            ToStore = null!;
-            StoreName = "";
-            Writer = "";
-            Description = "";*/
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        {
+
         }
 
         public Message(LoggedInUser writtenBy, Store toStore, string description, bool isClient, Message? prev = null)

@@ -16,13 +16,11 @@ namespace SEWorkshop
         public virtual string Country { get; set; }
         public virtual ICollection<Purchase> Purchases { get; set;}
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Address()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*City = "";
-            Street = "";
-            HouseNumber = "";
-            Country = "";
-            Purchases = new List<Purchase>();*/
+            
         }
 
         public Address(string country, string city, string street, string houseNumber)

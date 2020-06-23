@@ -13,9 +13,11 @@ namespace SEWorkshop.Models.Policies
         public virtual int MinQuantity { get; set; }
         public virtual int MaxQuantity { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public SingleProductQuantityPolicy() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Prod = null!;*/
+            
         }
 
 

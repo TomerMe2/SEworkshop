@@ -11,11 +11,14 @@ using SEWorkshop.Models.Policies;
 using SEWorkshop.Enums;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations.Schema;
+using NLog;
 
 namespace SEWorkshop.DAL
 {
     public abstract class AppDbContext : DbContext
     {
+        private readonly Logger Log = LogManager.GetCurrentClassLogger();
+
         public AppDbContext(string conString) : base(conString)
         {
             
@@ -39,6 +42,22 @@ namespace SEWorkshop.DAL
         public DbSet<Store> Stores { get; set; } = null!;
         public DbSet<LoggedInUser> LoggedInUsers { get; set; } = null!;
         public DbSet<Administrator> Administrators { get; set; } = null!;
+        public DbSet<UseRecord> UseRecords { get; set; } = null!;
+
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                //we would like to catch any exception here, since EF is abstracted from all the physical links exceptions
+                Log.Error(string.Format("SaveChanges() failed. Exception: {0}", e.ToString()));
+                //return error code, but do not throw exception because the changes are cached
+                return -1;
+            }
+        }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -53,9 +72,17 @@ namespace SEWorkshop.DAL
 
         private void InstantiateKeys(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UseRecord>()
+                    .Property(record => record.Id)
+                    .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<UseRecord>()
+                    .ToTable("UseRecords")
+                    .HasKey(record => record.Id);
+
             modelBuilder.Entity<Address>()
-                .Property(address => address.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+                    .Property(address => address.Id)
+                    .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             modelBuilder.Entity<Address>()
                     .ToTable("Addresses")

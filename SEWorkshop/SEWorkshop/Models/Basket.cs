@@ -20,12 +20,11 @@ namespace SEWorkshop.Models
         // Every element in this collection is a 2-tuple: (product, amountToBuy)
         public virtual ICollection<ProductsInBasket> Products { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Basket()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Products = new List<ProductsInBasket>();
-            Cart = null!;
-            StoreName = "";
-            Store = null!;*/
+            
         }
 
         public Basket(Store store, Cart cart)

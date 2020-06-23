@@ -23,11 +23,7 @@ namespace SEWorkshop.Facades
         public void WriteReview(LoggedInUser user, Product product, string description);
         public IEnumerable<string> GetRegisteredUsers();
         public double GetIncomeInDate(DateTime date);
-        public int GetGuestEntriesInDate(DateTime date);
-        public int GetLoggedEntriesDate(DateTime date);
-        public int GetOwnersEntriesDate(DateTime date);
-        public int GetOnlyManagersEntriesDate(DateTime date);
-        public int GetAdminsEntriesDate(DateTime date);
-
+        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<Enums.KindOfUser, int> GetUsersByCategory(DateTime today);
     }
 }

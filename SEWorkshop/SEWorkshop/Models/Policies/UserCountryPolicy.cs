@@ -9,9 +9,11 @@ namespace SEWorkshop.Models.Policies
     {
         public virtual string RequiredCountry { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public UserCountryPolicy() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            //RequiredCountry = "";
+            
         }
 
         public UserCountryPolicy(Store store, string requiredCountry) : base(store)

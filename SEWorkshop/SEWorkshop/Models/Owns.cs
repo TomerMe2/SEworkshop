@@ -23,12 +23,7 @@ namespace SEWorkshop.Models
 
         public Owns() : base()
         {
-            /*LoggedInUser = null!;
-            Store = null!;
-            Appointer = null!;
-            Username = "";
-            StoreName = "";
-            AppointerName = "";*/
+
         }
 
         public Owns(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
