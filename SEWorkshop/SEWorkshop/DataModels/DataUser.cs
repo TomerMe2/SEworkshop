@@ -9,7 +9,7 @@ namespace SEWorkshop.DataModels
     {
         public DataCart Cart => new DataCart(InnerModel.Cart);
 
-        public string Username => InnerModel is LoggedInUser ? ((LoggedInUser)InnerModel).Username : "";
+        public virtual string Username => InnerModel is LoggedInUser ? ((LoggedInUser)InnerModel).Username : "";
         public DataUser(User usr) : base(usr) { }
     }
 }

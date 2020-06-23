@@ -15,12 +15,11 @@ namespace SEWorkshop.Models
         public virtual string Description { get; set; }
         public virtual Product Product { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Review()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Writer = null!;
-            Description = "";
-            Product = null!;
-            Username = "";*/
+
         }
 
         public Review(LoggedInUser writer, string description, Product product)

@@ -28,6 +28,7 @@ namespace SEWorkshop.ServiceLayer
         private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; }
         private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
         private ICollection<IServiceObserver<DataOwnershipRequest>> OwnershipRequestObservers { get; }
+        private ICollection<IServiceObserver<KindOfUser>> NewUseReportObservers { get; }
 
         public UserManager()
         {
@@ -42,6 +43,7 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
+            NewUseReportObservers = new List<IServiceObserver<KindOfUser>>();
             ExecuteActionFromFile executeActionFromFile = new ExecuteActionFromFile(this);
             executeActionFromFile.ReadAndExecute();
         }
@@ -58,6 +60,7 @@ namespace SEWorkshop.ServiceLayer
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
+            NewUseReportObservers = new List<IServiceObserver<KindOfUser>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
             ExecuteActionFromFile executeActionFromFile = new ExecuteActionFromFile(this);
             executeActionFromFile.ReadAndExecute();
@@ -74,6 +77,14 @@ namespace SEWorkshop.ServiceLayer
             config.AddRule(LogLevel.Error, LogLevel.Fatal, errorLogFile);
             // Apply config
             LogManager.Configuration = config;
+        }
+
+        private void NotifyNewUseReportsObservers(KindOfUser kind)
+        {
+            foreach(var obs in NewUseReportObservers)
+            {
+                obs.Notify(kind);
+            }
         }
 
         private void NotifyMsgObservers(DataMessage msg)
@@ -107,9 +118,16 @@ namespace SEWorkshop.ServiceLayer
                     UsersDict[sessionId] = toRet;
                 }
             }
-            UseRecord record = new UseRecord(SecurityAdapter.Encrypt(sessionId), DateTime.Now, KindOfUser.Guest);
+            var encSid = SecurityAdapter.Encrypt(sessionId);
+            if (DAL.DatabaseProxy.Instance.UseRecords.Where(record => record.HashedSessionId == encSid).Any())
+            {
+                //it's already in the db and it's logging in again after a logout
+                return toRet;
+            }
+            UseRecord record = new UseRecord(encSid, DateTime.Now, KindOfUser.Guest);
             DAL.DatabaseProxy.Instance.UseRecords.Add(record);
             DAL.DatabaseProxy.Instance.SaveChanges();
+            NotifyNewUseReportsObservers(KindOfUser.Guest);
             return toRet;
         }
 
@@ -180,6 +198,10 @@ namespace SEWorkshop.ServiceLayer
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
+            if (username.Equals("DEMO"))
+            {
+                throw new CantLoginAsDemoExeption();
+            }
             DataGuestUser guest = GetUser(sessionId) switch
             {
                 DataGuestUser gst => gst,
@@ -215,6 +237,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 recordToChange.Kind = kind;
                 DAL.DatabaseProxy.Instance.SaveChanges();
+                NotifyNewUseReportsObservers(kind);
             }
         }
 
@@ -649,6 +672,11 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers.Add(obsrv);
         }
 
+        public void RegisterNewUseReportObserver(IServiceObserver<KindOfUser> obsrv)
+        {
+            NewUseReportObservers.Add(obsrv);
+        }
+
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
             Log.Info(string.Format("MarkAllDiscussionAsRead    {0}    {1}", storeName, msg.Id));
@@ -712,6 +740,13 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("GetUseRecord {0}    {1}    {2}", sessionId, dateFrom, dateTo));
             GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
             return FacadesBridge.GetUseRecord(dateFrom, dateTo, kinds);
+        }
+
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        {
+            Log.Info(string.Format("GetUsersByCategory    {0}     {1}", sessionId, today));
+            GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetUsersByCategory(today);
         }
 
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)

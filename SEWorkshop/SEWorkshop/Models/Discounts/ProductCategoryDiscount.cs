@@ -9,9 +9,11 @@ namespace SEWorkshop.Models.Discounts
     {
         public virtual string CatUnderDiscount { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public ProductCategoryDiscount() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            //CatUnderDiscount = "";
+           
         }
         
         public ProductCategoryDiscount(double percentage, DateTime deadline, 
