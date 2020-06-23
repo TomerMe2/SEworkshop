@@ -25,6 +25,10 @@ namespace SEWorkshop.Tests.IntegrationTests
         const string HOUSE_NUMBER_STUB = "111";
         const string COUNTRY_STUB = "Israel";
         const string ZIP_STUB = "1234";
+        private const string CVV = "512";
+        private const string NAME = "Ben Zini";
+        private const string ID = "1";
+        private DateTime expirationDate = new DateTime(2021, 3, 1);
         Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB, ZIP_STUB);
 
         [OneTimeSetUp]
@@ -214,7 +218,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Address peb_address1 = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111", "1234");
             try
             {
-                UsrFacade.Purchase(peb_user1, new Basket(peb_store1, peb_user1.Cart), peb_creditCardNumber, peb_address1);
+                UsrFacade.Purchase(peb_user1, new Basket(peb_store1, peb_user1.Cart), peb_creditCardNumber, expirationDate, 
+                    CVV, peb_address1, NAME, ID);
                 Assert.Fail();
             }
             catch (BasketIsEmptyException)
@@ -240,7 +245,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Purchase p = new Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), address);
             string peb_creditCardNumber = "1234";
             Address peb_address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111", "1234");
-            UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
+            UsrFacade.Purchase(php_user1, php_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, expirationDate,
+                    CVV, peb_address, NAME, ID);
 
             foreach (var purchase in UsrFacade.PurchaseHistory(php_user1))
             {
@@ -273,7 +279,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             UsrFacade.AddProductToCart(phue_user1, phue_product2, 1);
             var basket = phue_user1.Cart.Baskets.ElementAt(0);
             Purchase p = new Purchase(phue_user1, basket, address);
-            UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), CREDIT_CARD_NUMBER_STUB, address);
+            UsrFacade.Purchase(phue_user1, phue_user1.Cart.Baskets.ElementAt(0), CREDIT_CARD_NUMBER_STUB, expirationDate,
+                    CVV, address, NAME, ID);
             var result = UsrFacade.PurchaseHistory(phue_user1);
 
             Assert.That(result.ElementAt(0).User, Is.EqualTo(p.User));
@@ -314,7 +321,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             UsrFacade.AddProductToCart(uphria_user1, uphria_product2, 1);
             string peb_creditCardNumber = "1234";
             Address peb_address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "111", "1234");
-            UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, peb_address);
+            UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, expirationDate,
+                    CVV, peb_address, NAME, ID);
             
             LoggedInUser uphria_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));
             var result = UsrFacade.UserPurchaseHistory(uphria_admin1, "uphria_user1");
@@ -403,7 +411,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             store.Products.Add(prod);
             UsrFacade.AddProductToCart(usr2, prod, 5);
             var basket = usr2.Cart.Baskets.First(bskt => bskt.Store.Name.Equals(store.Name));
-            UsrFacade.Purchase(usr2, basket, "1234", new Address("nini", "nana", "wallak", "ahla", "1234"));
+            UsrFacade.Purchase(usr2, basket, "1234", expirationDate,
+                    CVV, new Address("nini", "nana", "wallak", "ahla", "1234"), NAME, ID);
             double increaseShouldBe = basket.PriceAfterDiscount();
             double incomeNow = UsrFacade.GetIncomeInDate(DateTime.Now);
             // This weird compare is done to avoid floating number representation issues
@@ -423,7 +432,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             user.Cart.Baskets.Add(new Basket(store, user.Cart));
             user.Cart.Baskets.ElementAt(0).Products.Add(new ProductsInBasket(user.Cart.Baskets.ElementAt(0), product, 5));
 
-            Purchase purchase = UsrFacade.Purchase(user, user.Cart.Baskets.ElementAt(0), "Mich's Credit Card", new Address("Israel", "Beersheba", "Rager Blv.", "123", "1234"));
+            Purchase purchase = UsrFacade.Purchase(user, user.Cart.Baskets.ElementAt(0), "3333", expirationDate,
+                    CVV, new Address("Israel", "Beersheba", "Rager Blv.", "123", "1234"), NAME, ID);
             Assert.IsTrue(user.Cart.Baskets.Count() == 0);
             Assert.IsTrue(store.Purchases.ElementAt(0) == purchase);
             Assert.IsTrue(store.Products.ElementAt(0).Quantity == 5);

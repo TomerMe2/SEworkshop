@@ -21,6 +21,10 @@ namespace SEWorkshop.Tests.UnitTests
         const string HOUSE_NUMBER_STUB = "111";
         const string COUNTRY_STUB = "Israel";
         const string ZIP_STUB = "1234";
+        private const string CVV = "512";
+        private const string NAME = "Ben Zini";
+        private const string ID = "1";
+        private DateTime expirationDate = new DateTime(2021, 3, 1);
         Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB, ZIP_STUB);
 
         [OneTimeSetUp]
@@ -84,7 +88,7 @@ namespace SEWorkshop.Tests.UnitTests
             bskt.Products.Add(new ProductsInBasket(bskt, pb_prod1, 2));
             try
             {
-                pb_store1.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, address, pb_user1);
+                pb_store1.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, expirationDate, CVV, address, pb_user1, NAME, ID);
                 Assert.Fail();
             }
             catch (NegativeInventoryException)
@@ -109,7 +113,7 @@ namespace SEWorkshop.Tests.UnitTests
             var pb_prod2 = pb_store2.SearchProducts(product => product.Name.Equals("pb_prod2")).ElementAt(0);
             Basket bskt = new Basket(pb_store2, pb_user2.Cart);
             bskt.Products.Add(new ProductsInBasket(bskt, pb_prod2, 1));
-            pb_store2.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, address, pb_user2);
+            pb_store2.PurchaseBasket(bskt, CREDIT_CARD_NUMBER_STUB, expirationDate, CVV, address, pb_user2, NAME, ID);
             Assert.That(pb_prod2.Quantity, Is.EqualTo(0));
         }
     }

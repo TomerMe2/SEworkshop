@@ -298,8 +298,12 @@ namespace SEWorkshop.DAL
                     .HasKey(pb => new { pb.BasketId, pb.ProductId });
 
             modelBuilder.Entity<Purchase>()
+                .Property(purchase => purchase.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<Purchase>()
                     .ToTable("Purchases")
-                    .HasKey(purchase => purchase.BasketId);
+                    .HasKey(purchase => purchase.Id);
 
             modelBuilder.Entity<Review>()
                     .ToTable("Reviews")
@@ -548,10 +552,10 @@ namespace SEWorkshop.DAL
                     .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country, prchs.Zip})
                     .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Purchase>()
-                    .HasRequired(purchase => purchase.Basket)
+            modelBuilder.Entity<Basket>()
+                    .HasOptional(basket => basket.Purchase)
 #pragma warning disable CS8603 // Possible null reference return.
-                    .WithOptional(basket => basket.Purchase)
+                    .WithRequired(purchase => purchase.Basket)
 #pragma warning restore CS8603 // Possible null reference return.
                     .WillCascadeOnDelete(false);
 

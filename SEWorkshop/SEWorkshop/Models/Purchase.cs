@@ -10,13 +10,14 @@ namespace SEWorkshop.Models
 {
     public class Purchase
     {
+        public virtual int Id { get; set; }
         public virtual Administrator Admin { get; set; }
         public virtual string AdminUserName { get; set; }
         public virtual string? Username { get; set; }
         public virtual LoggedInUser? User { get; private set; }
         public virtual string storeName { get; set; }
         public virtual Store store { get; private set; }
-        public virtual int BasketId { get; set; }
+        //public virtual int BasketId { get; set; }
         public virtual Basket Basket { get; private set; }
         public virtual int AddressId { get; set; }
         public virtual Address Address { get; set;  }
