@@ -954,32 +954,77 @@ namespace SEWorkshop.ServiceLayer
 
         public int GetGuestEntriesInDate(string sessionId, DateTime date)
         {
-            GetAdmin(sessionId);   //if it throws an exception, the user is not an admin and it should not be served
-            return FacadesBridge.GetGuestEntriesInDate(date);
+            Log.Info("GetGuestEntriesInDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetGuestEntriesInDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetGuestEntriesInDate    {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public int GetLoggedEntriesDate(string sessionId, DateTime date)
         {
-            GetAdmin(sessionId);
-            return FacadesBridge.GetLoggedEntriesDate(date);
+            Log.Info("GetLoggedEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetLoggedEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetLoggedEntriesDate    {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public int GetOwnersEntriesDate(string sessionId, DateTime date)
         {
-            GetAdmin(sessionId);
-            return FacadesBridge.GetOwnersEntriesDate(date);
+             Log.Info("GetOwnersEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetOwnersEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetOwnersEntriesDate    {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public int GetOnlyManagersEntriesDate(string sessionId, DateTime date)
         {
-            GetAdmin(sessionId);
-            return FacadesBridge.GetOnlyManagersEntriesDate(date);
+            Log.Info("GetOnlyManagersEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetOnlyManagersEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetOnlyManagersEntriesDate    {0}", e.ToString()));
+                throw e;
+            }
         }
 
         public int GetAdminsEntriesDate(string sessionId, DateTime date)
         {
-            GetAdmin(sessionId);
-            return FacadesBridge.GetAdminsEntriesDate(date);
+            Log.Info("GetAdminsEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetAdminsEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetAdminsEntriesDate    {0}", e.ToString()));
+                throw e;
+            }
         }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
