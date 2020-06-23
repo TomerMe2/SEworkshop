@@ -41,9 +41,9 @@ namespace Website.Pages
             {
                 foreach (var manages in loggedIn.Manages)
                 {
-                    if (manages.Value.Where(auth => auth.Authorization == SEWorkshop.Enums.Authorizations.Watching).Any())
+                    if (manages.Value.Contains(SEWorkshop.Enums.Authorizations.Watching))
                     {
-                        if (manages.Value.Where(auth => auth.Authorization == SEWorkshop.Enums.Authorizations.Replying).Any())
+                        if (manages.Value.Contains(SEWorkshop.Enums.Authorizations.Replying))
                         {
                             CanRespond = true;
                         }
@@ -73,7 +73,7 @@ namespace Website.Pages
             isMan = false;
             foreach (var keyVal in usr.Manages)
             {
-                if (keyVal.Key.Equals(StoreWritingTo) && keyVal.Value.Where(auth => auth.Authorization == SEWorkshop.Enums.Authorizations.Watching).Any())
+                if (keyVal.Key.Equals(StoreWritingTo) && keyVal.Value.Contains(SEWorkshop.Enums.Authorizations.Watching))
                 {
                     isMan = true;
                     break;

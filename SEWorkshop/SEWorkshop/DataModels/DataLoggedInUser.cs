@@ -10,9 +10,9 @@ namespace SEWorkshop.DataModels
     public class DataLoggedInUser : DataUser
     {
         public IReadOnlyCollection<DataStore> Owns => InnerLoggedInUser.Owns.Select(owns => new DataStore(owns.Store)).ToList().AsReadOnly();
-        public IReadOnlyDictionary<DataStore, ICollection<Authority>> Manages => InnerLoggedInUser.Manage.Select(item =>
+        public IReadOnlyDictionary<DataStore, ICollection<Authorizations>> Manages => InnerLoggedInUser.Manage.Select(item =>
                                                            (new DataStore(item.Store),
-                                                           (ICollection<Authority>)item.AuthoriztionsOfUser.Select(auth => auth).ToList()))
+                                                           (ICollection<Authorizations>)item.AuthoriztionsOfUser.Select(auth => auth.Authorization).ToList()))
                                                            .ToDictionary(tup => tup.Item1, tup => tup.Item2);
         public IReadOnlyList<DataReview> Reviews => InnerLoggedInUser.Reviews.Select(review =>
                                                                               new DataReview(review)).ToList().AsReadOnly();
