@@ -19,13 +19,13 @@ namespace Website.Pages
         public DateTime EndDate { get; set; }
         public string Error;
         public bool Selected;
-        public IDictionary<KindOfUser, int> SelectedStatistics;
+        public IDictionary<DateTime, int> SelectedStatistics;
 
         public UsersStatisticsModel(IUserManager userManager)
         {
             UserManager = userManager;
             TodaysStatistics = new Dictionary<KindOfUser, int>();
-            SelectedStatistics = new Dictionary<KindOfUser, int>();
+            SelectedStatistics = new Dictionary<DateTime, int>();
             KindsOfUsers = new List<KindOfUser>();
             KindsOfUsers.Add(KindOfUser.Guest);
             KindsOfUsers.Add(KindOfUser.LoggedInNotOwnNotManage);
@@ -49,7 +49,10 @@ namespace Website.Pages
         {
             try
             {
-                UserManager.GetUseRecord(HttpContext.Session.Id, StartDate, EndDate, KindsOfUsers);
+                string sid = HttpContext.Session.Id;
+                DateTimeNow = DateTime.Now;
+                TodaysStatistics = UserManager.GetUsersByCategory(sid, DateTimeNow);
+                SelectedStatistics = UserManager.GetUseRecord(sid, StartDate, EndDate, KindsOfUsers);
                 Selected = true;
             }
             catch (Exception e)
@@ -57,7 +60,7 @@ namespace Website.Pages
                 Error = e.ToString();
                 //return new PageResult();
             }
-            //return RedirectToPage("./Stores");
+            //return new PageResult();
         }
     }
 }

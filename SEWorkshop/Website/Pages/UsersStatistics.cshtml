@@ -46,21 +46,18 @@
             <table class="table table-bordered table-responsive table-dark table-hover">
                 <thead>
                     <tr>
-                        <th>Guests</th>
-                        <th>Registered (not managers or owners)</th>
-                        <th>Store Managers (but not owners)</th>
-                        <th>Store Owners</th>
-                        <th>System Admins</th>
+                        <th style="text-align: center">Day</th>
+                        <th style="text-align: center">Record</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="text-align: center">@Model.SelectedStatistics[SEWorkshop.Enums.KindOfUser.Guest]</td>
-                        <td style="text-align: center">@Model.SelectedStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
-                        <td style="text-align: center">@Model.SelectedStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
-                        <td style="text-align: center">@Model.SelectedStatistics[SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
-                        <td style="text-align: center">@Model.SelectedStatistics[SEWorkshop.Enums.KindOfUser.Admin]</td>
-                    </tr>
+                    @foreach (DateTime day in Model.SelectedStatistics.Keys)
+                    {
+                        <tr>
+                            <td style="text-align: center">@day.ToLongDateString()</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day]</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
