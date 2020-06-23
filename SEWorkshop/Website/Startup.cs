@@ -40,6 +40,7 @@ namespace Website
             services.AddSingleton(typeof(MessagesObserver), typeof(MessagesObserver));
             services.AddSingleton(typeof(PurchaseObserver), typeof(PurchaseObserver));
             services.AddSingleton(typeof(OwnershipRequestObserver), typeof(OwnershipRequestObserver));
+            services.AddSingleton(typeof(NewUseReportObserver), typeof(NewUseReportObserver));
             services.AddSignalR();
         }
 
@@ -79,6 +80,7 @@ namespace Website
                 endpoints.MapHub<MessagesNotificationsHub>("/notificationshub");
                 endpoints.MapHub<PurchasesNotificationsHub>("/purchasenotificationshub");
                 endpoints.MapHub<OwnershipRequestHub>("/ownershiprequesthub");
+                endpoints.MapHub<NewUseReportHub>("/newusereporthub");
             });
         }
     }

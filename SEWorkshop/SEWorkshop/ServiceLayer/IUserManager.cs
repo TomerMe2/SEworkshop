@@ -81,6 +81,7 @@ namespace SEWorkshop.ServiceLayer
         public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today);
         public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer);
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv);
+        public void RegisterNewUseReportObserver(IServiceObserver<KindOfUser> obsrv);
         public DataUser GetUser(string sessionId);
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
         public bool IsLoggedIn(string sessionId);
