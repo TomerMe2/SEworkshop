@@ -133,9 +133,15 @@ input::-moz-focus-inner {
     justify-content: space-around;
     border: 3px solid #242c3c;
     border-radius: 0.25rem;
-    width: 50%;
-    height: 300px;
+    width: 40%;
+    height: 200px;
     padding-top: 10px;
+}
+
+.label: {
+    font: 60px #242c3c;
+    width: 60%;
+    height: 60px;
 }
 
 .input {
@@ -144,7 +150,6 @@ input::-moz-focus-inner {
     font: 20px #242c3c;
     width: 60%;
     height: 60px;
-    line-height: 50px;
 }
 
 input::-moz-focus-inner {

@@ -41,13 +41,13 @@
 
         @if (Model.Selected)
         {
-        <h4>@Model.StartDate.ToShortDateString() to @Model.EndDate.ToShortDateString() </h4>
+        <h4>from @Model.StartDate.ToShortDateString() to @Model.EndDate.ToShortDateString() </h4>
         <div style="overflow-x:auto">
             <table class="table table-bordered table-responsive table-dark table-hover">
                 <thead>
                     <tr>
                         <th style="text-align: center">Day</th>
-                        <th style="text-align: center">Record</th>
+                        <th style="text-align: center">Total Entries</th>
                     </tr>
                 </thead>
                 <tbody>
