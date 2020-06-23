@@ -31,7 +31,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             catch { }
         }
 
-        
         [Test]
         public void CartTest()
         {
@@ -520,16 +519,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             var result = Manager.StorePurchaseHistory(DEF_ID, "StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory");
             ICollection<Purchase> expected = new List<Purchase>();
             CollectionAssert.AreEqual(expected, result);
-        }
-
-        [Test]
-        public void CountGuestUsers_Count()
-        {
-            Manager.Login(DEF_ID, "admin", "sadnaTeam");
-            int res = Manager.GetGuestEntriesInDate(DEF_ID, DateTime.Today);
-            int res2 = Manager.GetLoggedEntriesDate(DEF_ID, DateTime.Today);
-         //   Assert.IsTrue(res == 8);
-          //  Assert.IsTrue(res2 == 8);
         }
 
         [Test]
