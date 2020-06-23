@@ -974,14 +974,12 @@ namespace SEWorkshop.ServiceLayer
         {
             GetAdmin(sessionId);
             return FacadesBridge.GetOnlyManagersEntriesDate(date);
-
         }
 
         public int GetAdminsEntriesDate(string sessionId, DateTime date)
         {
             GetAdmin(sessionId);
             return FacadesBridge.GetAdminsEntriesDate(date);
-
         }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
