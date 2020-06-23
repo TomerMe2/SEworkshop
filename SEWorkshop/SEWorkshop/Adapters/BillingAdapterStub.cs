@@ -12,7 +12,7 @@ namespace SEWorkshop.Adapters
         private static readonly HttpClient client = new HttpClient();
         public BillingAdapterStub()
         {
-            client.Timeout = TimeSpan.FromSeconds(30);
+            //client.Timeout = TimeSpan.FromSeconds(30);
         }
         public async Task<int> Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
         {

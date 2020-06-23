@@ -14,7 +14,7 @@ namespace SEWorkshop.Adapters
         private static readonly HttpClient client = new HttpClient();
         public SupplyAdapterStub()
         {
-            client.Timeout = TimeSpan.FromSeconds(30);
+            //client.Timeout = TimeSpan.FromSeconds(30);
         }
         public async Task<int> Supply(ICollection<ProductsInBasket> products, Address address, string username)
         {

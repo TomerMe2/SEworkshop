@@ -78,7 +78,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.That(() => Manager.AddProduct(DEF_ID, "store2", "best", "product", "ever", 10, 10), Throws.Nothing);
             Manager.Logout(DEF_ID);
             Manager.Login(DEF_ID, "user1", "1234");
-            Assert.IsTrue(Manager.ManagingPurchaseHistory(DEF_ID, "store1").Count() == 2);
+            Assert.IsTrue(Manager.ManagingPurchaseHistory(DEF_ID, "store1").Count() == 1);
             string input = "Wakanda2";
             Assert.IsTrue(Manager.SearchProductsByName(ref input).ElementAt(0).Reviews.Count() == 1);
             Assert.IsTrue(Manager.ViewMessage(DEF_ID, "store2").Count() == 2);
