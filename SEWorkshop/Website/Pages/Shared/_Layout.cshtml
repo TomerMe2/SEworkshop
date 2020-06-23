@@ -40,6 +40,12 @@
                                 <li class="navbar-brand">
                                     <a class="nav-link text-dark" asp-area="" asp-page="/CreateStore">Create Store</a>
                                 </li>
+                                if (Model.UserManager.IsAdministrator(Model.HttpContext.Session.Id))
+                                {
+                                    <li class="navbar-brand">
+                                        <a class="nav-link text-dark" asp-area="" asp-page="/UsersStatistics">Users Statistics</a>
+                                    </li>
+                                }
                             }
                             else
                             {
