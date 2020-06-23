@@ -106,7 +106,7 @@ namespace SEWorkshop.ServiceLayer
                     UsersDict[sessionId] = toRet;
                 }
             }
-            UseRecord record = new UseRecord(SecurityAdapter.Encrypt(sessionId).ToString(), DateTime.Now, KindOfUser.Guest);
+            UseRecord record = new UseRecord(SecurityAdapter.Encrypt(sessionId), DateTime.Now, KindOfUser.Guest);
             DAL.DatabaseProxy.Instance.UseRecords.Add(record);
             DAL.DatabaseProxy.Instance.SaveChanges();
             return toRet;

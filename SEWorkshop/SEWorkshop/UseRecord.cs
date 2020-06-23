@@ -14,7 +14,7 @@ namespace SEWorkshop
     public class UseRecord
     {
         public virtual int Id { get; set; }
-        public virtual string HashedSessionId { get; set; }
+        public virtual byte[] HashedSessionId { get; set; }
         public virtual DateTime Timestamp { get; set; }
         public virtual KindOfUser Kind { get; set; }
 
@@ -25,7 +25,7 @@ namespace SEWorkshop
 
         }
 
-        public UseRecord(string hashedSessionId, DateTime timestamp, KindOfUser kind)
+        public UseRecord(byte[] hashedSessionId, DateTime timestamp, KindOfUser kind)
         {
             HashedSessionId = hashedSessionId;
             Timestamp = timestamp;
