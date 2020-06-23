@@ -554,5 +554,58 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy).CantBuyIn == Enums.Weekday.Monday);
             Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy).CantBuyIn == Enums.Weekday.Tuesday);
         }
+
+        [Test]
+        public void ActionsTest()
+        {
+            //DO NOT RUN THIS TEST AROUND MIDNIGHT. IT CAN FAIL AROUND MIDNIGHT.
+            Manager.AccessSystem("ActionsTest1");
+            Manager.AccessSystem("ActionsTest2");
+            Manager.AccessSystem("ActionsTest3");
+            Manager.AccessSystem("ActionsTest4");
+            //guest
+            Manager.AccessSystem("ActionsTest5");
+
+            //admin
+            Manager.Login("ActionsTest1", "admin", "sadnaTeam");
+
+            //logged in user no own no manager
+            Manager.Register("ActionsTest2", "ActionsTest2", "1234");
+            Manager.Login("ActionsTest2", "ActionsTest2", "1234");
+            Manager.OpenStore("ActionsTest2", "ActionsTest2Store");
+
+            Manager.Register("ActionsTest4", "ActionsTest4", "1234");
+            Manager.AddStoreManager("ActionsTest2", "ActionsTest2Store", "ActionsTest4");
+
+            //logged in user owner
+            Manager.Login("ActionsTest3", "ActionsTest2", "1234");
+
+            //logged in user no owner yes manager
+            Manager.Login("ActionsTest4", "ActionsTest4", "1234");
+
+            var now = DateTime.Now;
+            var allKinds = new List<SEWorkshop.Enums.KindOfUser> { Enums.KindOfUser.Admin, Enums.KindOfUser.Guest,
+                Enums.KindOfUser.LoggedInNoOwnYesManage,
+                Enums.KindOfUser.LoggedInNotOwnNotManage, Enums.KindOfUser.LoggedInYesOwn};
+
+            var dctAll = Manager.GetUseRecord("ActionsTest1", now, now, allKinds);
+            Assert.IsTrue(dctAll.Values.First() >= 5);
+
+            var dctOnlyGuest = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Guest });
+            Assert.IsTrue(dctOnlyGuest.Values.First() >= 1);
+
+            var dctOnlyAdmin = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Admin });
+            Assert.IsTrue(dctOnlyAdmin.Values.First() >= 1);
+
+            var dctOnlyUserNoOwnNoManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNotOwnNotManage });
+            Assert.IsTrue(dctOnlyUserNoOwnNoManage.Values.First() >= 1);
+
+            var dctOnlyUserYesOwn = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInYesOwn });
+            Assert.IsTrue(dctOnlyUserYesOwn.Values.First() >= 1);
+
+            var dctOnlyUserNoOwnYesManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNoOwnYesManage });
+            Assert.IsTrue(dctOnlyUserNoOwnYesManage.Values.First() >= 1);
+
+        }
     }
 }

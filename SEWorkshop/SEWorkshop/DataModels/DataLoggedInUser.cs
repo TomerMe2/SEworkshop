@@ -12,7 +12,7 @@ namespace SEWorkshop.DataModels
         public IReadOnlyCollection<DataStore> Owns => InnerLoggedInUser.Owns.Select(owns => new DataStore(owns.Store)).ToList().AsReadOnly();
         public IReadOnlyDictionary<DataStore, ICollection<Authorizations>> Manages => InnerLoggedInUser.Manage.Select(item =>
                                                            (new DataStore(item.Store),
-                                                           (ICollection<Authorizations>)item.AuthoriztionsOfUser.Select(auth => auth).ToList()))
+                                                           (ICollection<Authorizations>)item.AuthoriztionsOfUser.Select(auth => auth.Authorization).ToList()))
                                                            .ToDictionary(tup => tup.Item1, tup => tup.Item2);
         public IReadOnlyList<DataReview> Reviews => InnerLoggedInUser.Reviews.Select(review =>
                                                                               new DataReview(review)).ToList().AsReadOnly();
@@ -21,7 +21,7 @@ namespace SEWorkshop.DataModels
         public IReadOnlyCollection<DataOwnershipRequest> OwnershipRequests => InnerLoggedInUser.OwnershipRequests.Select(request =>
                                                                                 new DataOwnershipRequest(request)).ToList().AsReadOnly();
 
-        public string Username => InnerLoggedInUser.Username;
+        public override string Username => InnerLoggedInUser.Username;
         public byte[] Password => InnerLoggedInUser.Password;
         public int AmountOfUnreadMessages => InnerLoggedInUser.AmountOfUnReadMessage;
         private LoggedInUser InnerLoggedInUser { get; }

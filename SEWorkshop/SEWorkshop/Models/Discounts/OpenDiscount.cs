@@ -10,9 +10,11 @@ namespace SEWorkshop.Models.Discounts
         public virtual int ProductId { get; set; }
         public virtual Product Product { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public OpenDiscount() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            //Product = null!;
+            
         }
 
         protected OpenDiscount(double percentage, DateTime deadline, Product product, Store store) : 

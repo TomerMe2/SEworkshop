@@ -78,7 +78,8 @@ namespace SEWorkshop.ServiceLayer
         public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today);
 
         //keys are days, values are the number of visitors in the day of the key
-        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<KindOfUser> kinds);
+        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today);
         public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer);
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv);
         public DataUser GetUser(string sessionId);
