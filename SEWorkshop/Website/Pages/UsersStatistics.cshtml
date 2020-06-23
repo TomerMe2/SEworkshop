@@ -4,29 +4,37 @@
     ViewData["Title"] = "UsersStatistics";
 }
 
-<div class="allpage">
-    <h1 class="display-4">Users Statistics</h1>
-    <h4>@Model.DateTimeNow.ToShortDateString()</h4>
-    <div style="overflow-x:auto">
-        <table class="table table-bordered table-responsive table-dark table-hover">
-            <thead>
-                <tr>
-                    <th>Guests</th>
-                    <th>Registered (not managers or owners)</th>
-                    <th>Store Managers (but not owners)</th>
-                    <th>Store Owners</th>
-                    <th>System Admins</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Guest]</td>
-                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
-                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
-                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
-                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Admin]</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="allpage">
+        <h1 class="display-4">Users Statistics</h1>
+        <h4>@Model.DateTimeNow.ToShortDateString()</h4>
+        <div style="overflow-x:auto">
+            <table class="table table-bordered table-responsive table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Guests</th>
+                        <th>Registered (not managers or owners)</th>
+                        <th>Store Managers (but not owners)</th>
+                        <th>Store Owners</th>
+                        <th>System Admins</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Guest]</td>
+                        <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                        <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                        <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                        <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Admin]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <form class="statisticsform" method="post">
+            <label for="date">Start Date</label>
+            <input type="date" id="date" name="date">
+            <label for="date">End Date</label>
+            <input type="date" id="date" name="date">
+            <button class="submit" type="submit" id="submit">Show Statistics</button>
+        </form>
     </div>
-</div>

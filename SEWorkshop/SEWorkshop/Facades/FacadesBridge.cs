@@ -435,6 +435,5 @@ namespace SEWorkshop.Facades
         {
             return UserFacade.GetUseRecord(dateFrom, dateTo, kinds);
         }
-
     }
 }

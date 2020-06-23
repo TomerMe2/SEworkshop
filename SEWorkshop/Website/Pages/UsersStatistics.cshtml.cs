@@ -15,6 +15,7 @@ namespace Website.Pages
         public DateTime DateTimeNow;
         public IDictionary<KindOfUser, int> TodaysStatistics;
         List<KindOfUser> KindsOfUsers;
+        public DateTime? StartDate { get; set; }
 
         public UsersStatisticsModel(IUserManager userManager)
         {
