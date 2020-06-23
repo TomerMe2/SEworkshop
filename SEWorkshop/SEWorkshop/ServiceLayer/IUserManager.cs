@@ -76,11 +76,9 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
         public double GetIncomeInDate(string sessionId, DateTime date);
-        public int GetGuestEntriesInDate(string sessionId, DateTime date);
-        public int GetLoggedEntriesDate(string sessionId, DateTime date);
-        public int GetOwnersEntriesDate(string sessionId, DateTime date);
-        public int GetOnlyManagersEntriesDate(string sessionId, DateTime date);
-        public int GetAdminsEntriesDate(string sessionId, DateTime date);
+        
+        //keys are days, values are the number of visitors in the day of the key
+        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
         public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer);
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv);
         public DataUser GetUser(string sessionId);
@@ -90,5 +88,6 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public string GetLoggedInUsername(string sessionId);
         public bool CancelPayment(string transactionId);
+        public void AccessSystem(string sessionId);
     }
 }

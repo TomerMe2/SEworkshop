@@ -27,17 +27,11 @@ namespace SEWorkshop.Models
         public virtual string HouseNumber { get; set; }
         public virtual string Zip { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. THIS IS FOR EF.
         public Purchase()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            /*Basket = null!;
-            Address = null!;
-            TimeStamp = default;
-            Country = "";
-            City = "";
-            Street = "";
-            HouseNumber = "";
-            AdminUserName = Administrator.ADMIN_USER_NAME;
-            Admin = null!;*/
+
         }
 
 

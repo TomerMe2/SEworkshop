@@ -13,11 +13,11 @@ namespace SEWorkshop.Models
         public virtual string Username { get; set; }
         public virtual LoggedInUser? LoggedInUser { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public Cart()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Baskets = new List<Basket>();
-            LoggedInUser = null;
-            Username = "";*/
+
         }
 
         public Cart(User user)

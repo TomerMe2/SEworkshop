@@ -12,9 +12,11 @@ namespace SEWorkshop.Models.Discounts
         public virtual int ProductIdUnderDiscount { get; set; }
         public virtual Product ProdUnderDiscount { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public BuySomeGetSomeDiscount() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            //ProdUnderDiscount = null!;
+            
         }
 
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)

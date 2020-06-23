@@ -29,20 +29,11 @@ namespace SEWorkshop.Models
         public virtual ICollection<Purchase> Purchases { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public LoggedInUser() : base()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Username = "";
-            Password = new byte[] { 0 };
-            Owns = new List<Owns>();
-            Manage = new List<Manages>();
-            Reviews = new List<Review>();
-            Messages = new List<Message>();
-            Purchases = new List<Purchase>();
-            Appointements = new List<AuthorityHandler>();
-            Cart = new Cart(this);
-            OwnershipAnswers = new List<OwnershipAnswer>();
-            OwnershipRequests = new List<OwnershipRequest>();
-            OwnershipRequestsFrom = new List<OwnershipRequest>();*/
+            
         }
 
         public LoggedInUser(string username, byte[] password) : base()

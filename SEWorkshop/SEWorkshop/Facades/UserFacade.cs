@@ -219,54 +219,27 @@ namespace SEWorkshop.Facades
             return output;
         }
 
-        public int GetGuestEntriesInDate(DateTime date)
+        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
-            var rel = GuestUsers.Where(g => g.TimeStamp.Year == date.Year
-                                             && g.TimeStamp.Month == date.Month
-                                             && g.TimeStamp.Day == date.Day);
-
-            return rel.Count();
-        }
-
-
-        public int GetLoggedEntriesDate(DateTime date)
-        {
-            var rel = RegisteredUsers.Where(g => g.Owns.Count==0 && g.Manage.Count==0 &&
-                                                g.TimeStamp.Year == date.Year
-                                               && g.TimeStamp.Month == date.Month
-                                               && g.TimeStamp.Day == date.Day);
-
-            return rel.Count();
-        }
-
-        public int GetOwnersEntriesDate(DateTime date)
-        {
-            var rel = RegisteredUsers.Where(g => 
-                                                g.TimeStamp.Year == date.Year &&
-                                                g.Owns.Count()>0
-                                               && g.TimeStamp.Month == date.Month
-                                               && g.TimeStamp.Day == date.Day);
-
-                                                    
-
-            return rel.Count();
-        }
-        public int GetOnlyManagersEntriesDate(DateTime date)
-        {
-            var rel = RegisteredUsers.Where(g => g.Manage.Count()>0  && g.Owns.Count==0
-                                                && g.TimeStamp.Year == date.Year
-                                                && g.TimeStamp.Month == date.Month
-                                                && g.TimeStamp.Day == date.Day);
-
-            return rel.Count();
-        }
-        public int GetAdminsEntriesDate(DateTime date)
-        {
-            var rel = Administrators.Where(g => g.TimeStamp.Year == date.Year
-                                              && g.TimeStamp.Month == date.Month
-                                              && g.TimeStamp.Day == date.Day);
-
-            return rel.Count();
+            var records = DatabaseProxy.Instance.UseRecords.Where(record => record.Timestamp >= dateFrom
+                                                                    && record.Timestamp < dateTo
+                                                                    && kinds.Contains(record.Kind));
+            var stamps = records.Select(record => new DateTime(record.Timestamp.Year, record.Timestamp.Month,
+                                                               record.Timestamp.Day));
+            var dayToAmount = new Dictionary<DateTime, int>();
+            DateTime runningOn = dateFrom;
+            while (runningOn <= dateTo)
+            {
+                dayToAmount[runningOn] = 0;
+                runningOn.AddDays(1);
+            }
+            //now dayToAmount is a dict that contains all the days as keys and 0 as values. gotta fill the values
+            foreach (var record in records)
+            {
+                var actualDate = new DateTime(record.Timestamp.Year, record.Timestamp.Month, record.Timestamp.Day);
+                dayToAmount[actualDate]++;
+            }
+            return dayToAmount;
         }
     }
 }

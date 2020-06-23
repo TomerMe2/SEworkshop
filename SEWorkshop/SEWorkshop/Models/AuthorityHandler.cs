@@ -26,15 +26,11 @@ namespace SEWorkshop.Models
 
         public virtual ICollection<Authority> AuthoriztionsOfUser { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. FOR EF!
         public AuthorityHandler()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         {
-            /*AuthoriztionsOfUser = new List<Authority>();
-            Appointer = null!;
-            AppointerName = "";
-            LoggedInUser = null!;
-            Store = null!;
-            Username = "";
-            StoreName = "";*/
+
         }
 
         public AuthorityHandler(LoggedInUser loggedInUser, Store store, LoggedInUser appointer)

@@ -20,14 +20,14 @@ namespace SEWorkshop.DAL
                     {
                         if (instance == null)
                         {
-                            try
-                            {
-                                instance = new RemoteDbContext();
-                            }
-                            catch
-                            {
+                            //try
+                            //{
+                            //    instance = new RemoteDbContext();
+                            //}
+                            //catch
+                            //{
                                 instance = new LocalDbContext();
-                            }
+                            //}
                         }
                     }
                 }

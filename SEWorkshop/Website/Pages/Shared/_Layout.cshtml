@@ -11,6 +11,7 @@
     <header>
         @{
             var sessionId = Model.HttpContext.Session.Id;
+            Model.UserManager.AccessSystem(sessionId);
             if (Model.UserManager.IsLoggedIn(sessionId))
             {
                 var usrUp = Model.UserManager.GetDataLoggedInUser(sessionId);
