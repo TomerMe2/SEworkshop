@@ -5,10 +5,10 @@
 }
 
 <div class="allpage">
-    <h1>Users Statistics</h1>
+    <h1 class="display-4">Users Statistics</h1>
     <h4>@Model.DateTimeNow.ToShortDateString()</h4>
     <div style="overflow-x:auto">
-        <table class="table table-bordered table-responsive table-hover">
+        <table class="table table-bordered table-responsive table-dark table-hover">
             <thead>
                 <tr>
                     <th>Guests</th>
@@ -20,11 +20,11 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>3</td>
-                    <td>15</td>
-                    <td>33</td>
-                    <td>202</td>
-                    <td>1</td>
+                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Guest]</td>
+                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                    <td style="text-align: center">@Model.TodaysStatistics[SEWorkshop.Enums.KindOfUser.Admin]</td>
                 </tr>
             </tbody>
         </table>

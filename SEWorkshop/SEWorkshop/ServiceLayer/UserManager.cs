@@ -734,5 +734,16 @@ namespace SEWorkshop.ServiceLayer
         {
             GetUser(sessionId);
         }
+
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        {
+            Dictionary<KindOfUser, int> result = new Dictionary<KindOfUser, int>();
+            result.Add(KindOfUser.Guest, 8);
+            result.Add(KindOfUser.LoggedInNotOwnNotManage, 40);
+            result.Add(KindOfUser.LoggedInNoOwnYesManage, 15);
+            result.Add(KindOfUser.LoggedInYesOwn, 7);
+            result.Add(KindOfUser.Admin, 42);
+            return result;
+        }
     }
 }

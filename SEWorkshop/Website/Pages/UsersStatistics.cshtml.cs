@@ -13,13 +13,13 @@ namespace Website.Pages
     {
         public IUserManager UserManager { get; }
         public DateTime DateTimeNow;
-        IDictionary<DateTime, int> Displyed;
+        public IDictionary<KindOfUser, int> TodaysStatistics;
         List<KindOfUser> KindsOfUsers;
 
         public UsersStatisticsModel(IUserManager userManager)
         {
             UserManager = userManager;
-            Displyed = new Dictionary<DateTime, int>();
+            TodaysStatistics = new Dictionary<KindOfUser, int>();
             KindsOfUsers = new List<KindOfUser>();
             KindsOfUsers.Add(KindOfUser.Guest);
             KindsOfUsers.Add(KindOfUser.LoggedInNotOwnNotManage);
@@ -32,7 +32,7 @@ namespace Website.Pages
         {
             string sid = HttpContext.Session.Id;
             DateTimeNow = DateTime.Now;
-            //Displyed = UserManager.GetUseRecord(sid, DateTimeNow, DateTimeNow, KindsOfUsers);
+            TodaysStatistics = UserManager.GetUsersByCategory(sid, DateTimeNow);
         }
     }
 }
