@@ -45,8 +45,10 @@ namespace Website.Pages
             TodaysStatistics = UserManager.GetUsersByCategory(sid, DateTimeNow);
         }
 
-        public void OnPost()
+        public void OnPost(DateTime StartDate, DateTime EndDate)
         {
+            this.StartDate = StartDate;
+            this.EndDate = EndDate;
             try
             {
                 string sid = HttpContext.Session.Id;
@@ -58,9 +60,7 @@ namespace Website.Pages
             catch (Exception e)
             {
                 Error = e.ToString();
-                //return new PageResult();
             }
-            //return new PageResult();
         }
     }
 }
