@@ -84,5 +84,6 @@ namespace SEWorkshop.ServiceLayer
         public bool IsAdministrator(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public string GetLoggedInUsername(string sessionId);
+        public void AccessSystem(string sessionId);
     }
 }

@@ -93,16 +93,23 @@ namespace SEWorkshop.ServiceLayer
 
         public DataUser GetUser(string sessionId)
         {
+            DataUser toRet;
             lock(UserDictLock)
             {
                 if (UsersDict.ContainsKey(sessionId))
                 {
-                    return UsersDict[sessionId];
+                    toRet = UsersDict[sessionId];
                 }
-                var usr = FacadesBridge.CreateGuest();
-                UsersDict[sessionId] = usr;
-                return usr;
+                else
+                {
+                    toRet = FacadesBridge.CreateGuest();
+                    UsersDict[sessionId] = toRet;
+                }
             }
+            UseRecord record = new UseRecord(sessionId, DateTime.Now, KindOfUser.Guest);
+            DAL.DatabaseProxy.Instance.UseRecords.Add(record);
+            DAL.DatabaseProxy.Instance.SaveChanges();
+            return toRet;
         }
 
         private DataLoggedInUser GetLoggedInUser(string sessionId)
@@ -692,6 +699,11 @@ namespace SEWorkshop.ServiceLayer
             {
                 return "";
             }
+        }
+
+        public void AccessSystem(string sessionId)
+        {
+            GetUser(sessionId);
         }
     }
 }

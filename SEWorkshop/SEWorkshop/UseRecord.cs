@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using SEWorkshop.Enums;
 
-namespace SEWorkshop.Models
+namespace SEWorkshop
 {
+    /*
+     * THIS CLASS IS NOT INSIDE A SPECIFIC NAMESPACE BECUASE UserManager SHOULD HANDLE IT, AND IT'S SAVED IN THE DB.
+     * THIS CLASS BREAKS THE ABSTRACTION.
+     */
+
+
     public class UseRecord
     {
         public virtual int Id { get; set; }
