@@ -430,15 +430,14 @@ namespace SEWorkshop.Facades
             return UserFacade.GetIncomeInDate(date);
         }
 
-        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo)
         {
-            return UserFacade.GetUseRecord(dateFrom, dateTo, kinds);
+            return UserFacade.GetUseRecord(dateFrom, dateTo);
         }
 
         public IDictionary<KindOfUser, int> GetUsersByCategory(DateTime today)
         {
             return UserFacade.GetUsersByCategory(today);
         }
-
     }
 }

@@ -36,18 +36,18 @@
         }
         else
         {
-            <h4>You are not a manager or owner of this store</h4>
+            <h4>You are not allowed to watch this store's purchase history</h4>
         }
     }
     else
     {
         if (Model.Store == null)
         {
-            <h4>Store was not found</h4>
+            <h4>Store not found</h4>
         }
         if (!um.IsLoggedIn(sessionId))
         {
-            <h4>You should be logged in to watch this page</h4>
+            <h4>Please login first</h4>
         }
     }
 }

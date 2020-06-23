@@ -14,7 +14,6 @@ namespace Website.Pages
         public IUserManager UserManager { get; }
         public DateTime DateTimeNow;
         public IDictionary<KindOfUser, int> TodaysStatistics;
-        List<KindOfUser> KindsOfUsers;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Error;
@@ -26,12 +25,6 @@ namespace Website.Pages
             UserManager = userManager;
             TodaysStatistics = new Dictionary<KindOfUser, int>();
             SelectedStatistics = new Dictionary<DateTime, IDictionary<KindOfUser, int>>();
-            KindsOfUsers = new List<KindOfUser>();
-            KindsOfUsers.Add(KindOfUser.Guest);
-            KindsOfUsers.Add(KindOfUser.LoggedInNotOwnNotManage);
-            KindsOfUsers.Add(KindOfUser.LoggedInNoOwnYesManage);
-            KindsOfUsers.Add(KindOfUser.LoggedInYesOwn);
-            KindsOfUsers.Add(KindOfUser.Admin);
             Selected = false;
             Error = "";
         }
@@ -54,7 +47,7 @@ namespace Website.Pages
                 string sid = HttpContext.Session.Id;
                 DateTimeNow = DateTime.Now;
                 TodaysStatistics = UserManager.GetUsersByCategory(sid, DateTimeNow);
-                SelectedStatistics = UserManager.GetUseRecord(sid, StartDate, EndDate, KindsOfUsers);
+                SelectedStatistics = UserManager.GetUseRecord(sid, StartDate, EndDate);
                 Selected = true;
             }
             catch (Exception e)

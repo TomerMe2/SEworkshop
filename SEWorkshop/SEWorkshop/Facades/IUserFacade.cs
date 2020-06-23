@@ -24,7 +24,7 @@ namespace SEWorkshop.Facades
         public void WriteReview(LoggedInUser user, Product product, string description);
         public IEnumerable<string> GetRegisteredUsers();
         public double GetIncomeInDate(DateTime date);
-        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo);
         public IDictionary<Enums.KindOfUser, int> GetUsersByCategory(DateTime today);
     }
 }
