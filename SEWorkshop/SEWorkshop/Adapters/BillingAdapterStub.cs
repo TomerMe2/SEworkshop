@@ -10,35 +10,62 @@ namespace SEWorkshop.Adapters
     class BillingAdapterStub : IBillingAdapter
     {
         private static readonly HttpClient client = new HttpClient();
-        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
+        public async Task<int> Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
         {
             var handshakePostContent = new Dictionary<string, string>
             {
                 {"action_type", "handshake"}
             };
 
-            var payPostContent = new Dictionary<string, string>
+            var handshakeContent = new FormUrlEncodedContent(handshakePostContent);
+            var handshakeResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", handshakeContent);
+            var handshakeResponseString = await handshakeResponse.Content.ReadAsStringAsync();
+
+            if (handshakeResponseString.Equals("OK"))
             {
-                {"action_type", "pay"},
-                {"card_number", creditCardNumber},
-                {"month", expirationDate.Month.ToString()},
-                {"year", expirationDate.Year.ToString()},
-                {"holder", username},
-                {"id", id}
-            };
+                var payPostContent = new Dictionary<string, string>
+                {
+                    {"action_type", "pay"},
+                    {"card_number", creditCardNumber},
+                    {"month", expirationDate.Month.ToString()},
+                    {"year", expirationDate.Year.ToString()},
+                    {"holder", username},
+                    {"ccv", cvv},
+                    {"id", id}
+                };
 
-            var content = new FormUrlEncodedContent(payPostContent);
+                var payContent = new FormUrlEncodedContent(payPostContent);
+                var payResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", payContent);
+                var payResponseString = await payResponse.Content.ReadAsStringAsync();
 
-            /*var response = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", content);
-
-            var responseString = await response.Content.ReadAsStringAsync();*/
-
-            return true;
+                return int.Parse(payResponseString);
+            }
+            return -1;
         }
 
-        public bool CancelBill(int TransactionId)
+        public async void CancelBill(int TransactionId)
         {
-            return true;
+            var handshakePostContent = new Dictionary<string, string>
+            {
+                {"action_type", "handshake"}
+            };
+
+            var handshakeContent = new FormUrlEncodedContent(handshakePostContent);
+            var handshakeResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", handshakeContent);
+            var handshakeResponseString = await handshakeResponse.Content.ReadAsStringAsync();
+
+            if (handshakeResponseString.Equals("OK"))
+            {
+                var cancelBillingPostContent = new Dictionary<string, string>
+                {
+                    { "action_type", "cancel_pay" },
+                    { "transaction_id", TransactionId.ToString() }
+                };
+
+                var cancelContent = new FormUrlEncodedContent(cancelBillingPostContent);
+                var cancelResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", cancelContent);
+                var cancelResponseString = await cancelResponse.Content.ReadAsStringAsync();
+            }
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using SEWorkshop.Models;
 
 namespace SEWorkshop.Adapters
@@ -9,38 +12,67 @@ namespace SEWorkshop.Adapters
     class SupplyAdapterStub : ISupplyAdapter
     {
         private static readonly HttpClient client = new HttpClient();
-        public async void Supply(ICollection<ProductsInBasket> products, Address address, string username)
+        public async Task<int> Supply(ICollection<ProductsInBasket> products, Address address, string username)
         {
             var handshakePostContent = new Dictionary<string, string>
             {
                 {"action_type", "handshake"}
             };
 
-            var supplyPostContent = new Dictionary<string, string>
+            var handshakeContent = new FormUrlEncodedContent(handshakePostContent);
+            var handshakeResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", handshakeContent);
+            var handshakeResponseString = await handshakeResponse.Content.ReadAsStringAsync();
+
+            if(handshakeResponseString.Equals("OK"))
             {
-                { "action_type", "supply" },
-                { "name", username },
-                { "address", address.Street + " " + address.HouseNumber },
-                { "city", address.City },
-                { "country", address.Country },
-                { "zip", address.Zip }
-            };
+                var supplyPostContent = new Dictionary<string, string>
+                {
+                    { "action_type", "supply" },
+                    { "name", username },
+                    { "address", address.Street + " " + address.HouseNumber },
+                    { "city", address.City },
+                    { "country", address.Country },
+                    { "zip", address.Zip }
+                };
 
-            var content = new FormUrlEncodedContent(supplyPostContent);
+                var supplyContent = new FormUrlEncodedContent(supplyPostContent);
+                var supplyResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", supplyContent);
+                var supplyResponseString = await supplyResponse.Content.ReadAsStringAsync();
 
-            var response = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", content);
+                return int.Parse(supplyResponseString);
+            }
 
-            var responseString = await response.Content.ReadAsStringAsync();
+            return -1;
         }
 
         public bool CanSupply(ICollection<ProductsInBasket> products, Address address)
         {
-            return true;
+            return products.Where(prod => prod.Product.Quantity < prod.Quantity).Count() <= 0;
         }
 
-        public bool CancelSupply(int TransactionId)
+        public async void CancelSupply(int TransactionId)
         {
-            return true;
+            var handshakePostContent = new Dictionary<string, string>
+            {
+                {"action_type", "handshake"}
+            };
+
+            var handshakeContent = new FormUrlEncodedContent(handshakePostContent);
+            var handshakeResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", handshakeContent);
+            var handshakeResponseString = await handshakeResponse.Content.ReadAsStringAsync();
+
+            if (handshakeResponseString.Equals("OK"))
+            {
+                var cancelSupplyPostContent = new Dictionary<string, string>
+                {
+                    { "action_type", "cancel_supply" },
+                    { "transaction_id", TransactionId.ToString() }
+                };
+
+                var cancelContent = new FormUrlEncodedContent(cancelSupplyPostContent);
+                var cancelResponse = await client.PostAsync("https://cs-bgu-wsep.herokuapp.com/", cancelContent);
+                var cancelResponseString = await cancelResponse.Content.ReadAsStringAsync();
+            }
         }
     }
 }
