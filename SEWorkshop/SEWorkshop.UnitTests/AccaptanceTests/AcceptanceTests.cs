@@ -224,7 +224,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			string username = "NoaKirel";
 			string password = "1234";
 			string storeName = "Waist Pouches";
-			//bridge.Logout(DEF_SID);
+			bridge.Logout(DEF_SID);
 			bridge.Register(DEF_SID, username, password);
 			bridge.Login(DEF_SID, username, password);
 			bridge.OpenStore(DEF_SID, storeName);
