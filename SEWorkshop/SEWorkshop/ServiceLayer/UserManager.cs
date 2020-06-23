@@ -185,6 +185,10 @@ namespace SEWorkshop.ServiceLayer
             {
                 throw new UsernameOrPasswordAreEmpty();
             }
+            if (username.Equals("DEMO"))
+            {
+                throw new CantLoginAsDemoExeption();
+            }
             DataGuestUser guest = GetUser(sessionId) switch
             {
                 DataGuestUser gst => gst,
