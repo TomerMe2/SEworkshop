@@ -246,7 +246,7 @@ namespace SEWorkshop.Facades
             return dayToAmount;
         }
 
-        public IDictionary<Enums.KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        public IDictionary<Enums.KindOfUser, int> GetUsersByCategory(DateTime today)
         {
             var records = DatabaseProxy.Instance.UseRecords.ToList().Where(record => record.Timestamp.Year == today.Year
                                                                     && record.Timestamp.Month == today.Month

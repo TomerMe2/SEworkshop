@@ -721,6 +721,9 @@ namespace SEWorkshop.ServiceLayer
 
         public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
         {
+            Log.Info(string.Format("GetUsersByCategory    {0}     {1}", sessionId, today));
+            GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
+            return FacadesBridge.GetUsersByCategory(today);
 
         }
 

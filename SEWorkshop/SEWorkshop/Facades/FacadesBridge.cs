@@ -436,9 +436,9 @@ namespace SEWorkshop.Facades
             return UserFacade.GetUseRecord(dateFrom, dateTo, kinds);
         }
 
-        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        public IDictionary<KindOfUser, int> GetUsersByCategory(DateTime today)
         {
-
+            return UserFacade.GetUsersByCategory(today);
         }
 
     }
