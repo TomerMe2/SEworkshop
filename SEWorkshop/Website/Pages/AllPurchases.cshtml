@@ -26,7 +26,7 @@
                 foreach (SEWorkshop.DataModels.DataPurchase purchase in purchases)
                 {
                     var adrs = purchase.Address;
-                    var addressStr = $"{adrs.Country}, {adrs.City}, {adrs.Street}, {adrs.HouseNumber}";
+                    var addressStr = $"{adrs.Country}, {adrs.City}, {adrs.Street}, {adrs.HouseNumber}, {adrs.Zip}";
                     <div class="card" style="width: 100%">
                         <div class="card-body">
                             <h5 class="card-title">@addressStr</h5>

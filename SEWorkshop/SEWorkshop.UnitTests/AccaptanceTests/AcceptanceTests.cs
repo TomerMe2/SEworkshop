@@ -125,9 +125,9 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			bridge.AddProductToCart(DEF_SID, "store1", "bisli", 1);
 			var basket = bridge.MyCart(DEF_SID).First();
-			Assert.That(() => bridge.Purchase(DEF_SID, basket, "555", new Address("Israel", "Beer Sheva", "Ben Gurion", "99")), Throws.Nothing);
+			Assert.That(() => bridge.Purchase(DEF_SID, basket, "555", new Address("Israel", "Beer Sheva", "Ben Gurion", "99", "1234")), Throws.Nothing);
 			Assert.Throws<BasketNotInSystemException>(delegate { bridge.Purchase(DEF_SID, basket, "555",
-                                                        new Address("Israel", "Beer Sheva", "Ben Gurion", "99")); });
+                                                        new Address("Israel", "Beer Sheva", "Ben Gurion", "99", "1234")); });
 		}
 
 		[Test, Order(30)]
@@ -232,7 +232,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			bridge.Login(DEF_SID, "user1", "password");
 			bridge.AddProductToCart(DEF_SID, storeName, productName, 7);
 			IEnumerable<DataBasket> cart = bridge.MyCart(DEF_SID);
-			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33");
+			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33", "1234");
 			Assert.That(() => bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
 			IEnumerable<DataBasket> cart4 = bridge.MyCart(DEF_SID);  //degub: cart should be empty
 			bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
@@ -382,7 +382,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
             bridge.Login(SECOND_SID, "test_10_user2", "1234");
             bridge.AddProductToCart(SECOND_SID, "test_10_str", "some_prod", 1);
             var basket = bridge.MyCart(SECOND_SID).First(bskt => bskt.Store.Name.Equals("test_10_str"));
-            var adrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "14");
+            var adrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "14", "1234");
             bridge.Purchase(SECOND_SID, basket, "1234", adrs);
 
             Assert.IsTrue(obsrv.Purchases.Count == 1);

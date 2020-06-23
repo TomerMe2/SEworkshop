@@ -16,7 +16,7 @@ namespace SEWorkshop.Tests.UnitTests
     public class LoggedInUserTests
     {
         SecurityAdapter _securityAdapter = new SecurityAdapter();
-        private Address DEF_ADRS = new Address("1", "1", "1", "1");
+        private Address DEF_ADRS = new Address("1", "1", "1", "1", "1");
 
         [OneTimeSetUp]
         public void Init()

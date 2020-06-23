@@ -40,7 +40,7 @@ namespace Website.Pages
             }
         }
 
-        public IActionResult OnPostPurchaseAsync(string storeName, string CreditCardNumber, string Country, string City, string Street, string HouseNumber)
+        public IActionResult OnPostPurchaseAsync(string storeName, string CreditCardNumber, string Country, string City, string Street, string HouseNumber, string Zip)
         {
             List<DataBasket> cart = UserManager.MyCart(HttpContext.Session.Id).ToList();
             foreach (var basket in cart)
@@ -57,7 +57,7 @@ namespace Website.Pages
                 ErrorMsg = "Input is Invalid";
                 return new PageResult();
             }
-            Address address = new Address(Country, City, Street, HouseNumber);
+            Address address = new Address(Country, City, Street, HouseNumber, Zip);
             try
             {
                 if(Basket == null)

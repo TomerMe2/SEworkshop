@@ -19,7 +19,8 @@ namespace SEWorkshop.Tests.UnitTests
         const string STREET_NAME_STUB = "Shderot Ben Gurion";
         const string HOUSE_NUMBER_STUB = "111";
         const string COUNTRY_STUB = "Israel";
-        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+        const string ZIP_STUB = "1234";
+        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB, ZIP_STUB);
 
         [OneTimeSetUp]
         public void Init()
@@ -86,7 +87,7 @@ namespace SEWorkshop.Tests.UnitTests
             user.Cart.Baskets.Add(new Basket(store, user.Cart));
             user.Cart.Baskets.ElementAt(0).Products.Add(new ProductsInBasket(user.Cart.Baskets.ElementAt(0), product, 5));
 
-            Purchase purchase = user.Purchase(user.Cart.Baskets.ElementAt(0), "Mich's Credit Card", new Address("Israel", "Beersheba", "Rager Blv.", "123"));
+            Purchase purchase = user.Purchase(user.Cart.Baskets.ElementAt(0), "Mich's Credit Card", new Address("Israel", "Beersheba", "Rager Blv.", "123", "1234"));
             Assert.IsTrue(user.Cart.Baskets.Count() == 0);
             Assert.IsTrue(store.Purchases.ElementAt(0) == purchase);
             Assert.IsTrue(store.Products.ElementAt(0).Quantity == 5);

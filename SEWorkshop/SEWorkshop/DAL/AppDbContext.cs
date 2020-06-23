@@ -59,7 +59,7 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Address>()
                     .ToTable("Addresses")
-                    .HasKey(address => new { address.Id, address.City, address.Street, address.HouseNumber, address.Country });
+                    .HasKey(address => new { address.Id, address.City, address.Street, address.HouseNumber, address.Country, address.Zip });
 
             modelBuilder.Entity<Administrator>()
                     .ToTable("Administrators")
@@ -518,7 +518,7 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Address)
                     .WithMany(address => address.Purchases)
-                    .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country})
+                    .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country, prchs.Zip})
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Purchase>()

@@ -220,7 +220,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "PurchaseHistoryy_store1", "ph_prod1", 1);
             var basket = Manager.MyCart(DEF_ID).ElementAt(0);
             string creditCardNumber = "1234";
-            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76", "1234");
             Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
             var result = Manager.PurchaseHistory(DEF_ID);
             Assert.That(result.ElementAt(0).Basket, Is.EqualTo(basket));
@@ -262,7 +262,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "UserPurchaseHistory_store1", "uph_prod1", 1);
             var basket = Manager.MyCart(DEF_ID).First(bskt => bskt.Store.Name.Equals("UserPurchaseHistory_store1"));
             string creditCardNumber = "1234";
-            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76", "1234");
             Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
             var result = Manager.PurchaseHistory(DEF_ID);
             Assert.That(result.First(prchs => prchs.Basket.Store.Name.Equals("UserPurchaseHistory_store1")).Basket, Is.EqualTo(basket));
@@ -282,7 +282,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             var checkcheck = Manager.MyCart(DEF_ID);
             var basket = Manager.MyCart(DEF_ID).First(bskt => bskt.Store.Name.Equals("ManagingPurchaseHistory_store1"));
             string creditCardNumber = "1234";
-            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76");
+            Address address = new Address("Israel", "Beer Sheva", "Shderot Ben Gurion", "76", "1234");
             Manager.Purchase(DEF_ID, basket, creditCardNumber, address);
             var result = Manager.ManagingPurchaseHistory(DEF_ID, "ManagingPurchaseHistory_store1");
             Assert.That(result.First().Basket, Is.EqualTo(basket));

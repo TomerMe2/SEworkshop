@@ -9,7 +9,7 @@ namespace SEWorkshop.Adapters
     {
         public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalProce, string username, string id);
 
-        public bool CancelBill(int TransactionId)
+        public bool CancelBill(int TransactionId);
 
     }
 }
