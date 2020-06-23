@@ -671,6 +671,80 @@ namespace SEWorkshop.ServiceLayer
             return FacadesBridge.GetIncomeInDate(date);
         }
 
+        public int GetGuestEntriesInDate(string sessionId, DateTime date)
+        {
+            Log.Info("GetGuestEntriesInDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetGuestEntriesInDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetGuestEntriesInDate    {0}", e.ToString()));
+                return -1;
+            }
+        }
+
+        public int GetLoggedEntriesDate(string sessionId, DateTime date)
+        {
+            Log.Info("GetLoggedEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetLoggedEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetLoggedEntriesDate    {0}", e.ToString()));
+                return -1;
+            }
+        }
+
+        public int GetOwnersEntriesDate(string sessionId, DateTime date)
+        {
+             Log.Info("GetOwnersEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetOwnersEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetOwnersEntriesDate    {0}", e.ToString()));
+                return -1;
+            }
+        }
+
+        public int GetOnlyManagersEntriesDate(string sessionId, DateTime date)
+        {
+            Log.Info("GetOnlyManagersEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetOnlyManagersEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetOnlyManagersEntriesDate    {0}", e.ToString()));
+                return -1;
+            }
+        }
+
+        public int GetAdminsEntriesDate(string sessionId, DateTime date)
+        {
+            Log.Info("GetAdminsEntriesDate");
+            try
+            {
+                GetAdmin(sessionId);
+                return FacadesBridge.GetAdminsEntriesDate(date);
+            }
+            catch (Exception e)
+            {
+                Log.Info(string.Format("GetAdminsEntriesDate    {0}", e.ToString()));
+                return -1;
+            }
+        }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
         {
             OwnershipRequestObservers.Add(obsrv);

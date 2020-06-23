@@ -32,7 +32,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             }
             catch { }
         }
-        
+
         [Test]
         public void CartTest()
         {
@@ -523,7 +523,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             CollectionAssert.AreEqual(expected, result);
         }
 
-       [Test]
+        [Test]
         public void WriteReview_Multiple_Sessions()
         {
             const string OTHER_ID = "WriteReview_NoPermission_ThrowsException";
