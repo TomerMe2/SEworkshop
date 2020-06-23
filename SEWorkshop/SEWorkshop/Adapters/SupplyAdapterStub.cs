@@ -7,12 +7,12 @@ namespace SEWorkshop.Adapters
 {
     class SupplyAdapterStub : ISupplyAdapter
     {
-        public void Supply(ICollection<ProductsInBasket> products, Address address, string firstname, string lastname)
+        public void Supply(ICollection<ProductsInBasket> products, Address address, string username)
         {
             var postContent = new Dictionary<string, string>
             {
                 { "action_type", "supply" },
-                { "name", firstname + " " + lastname },
+                { "name", username },
                 { "address", address.Street + " " + address.HouseNumber },
                 { "city", address.City },
                 { "country", address.Country },

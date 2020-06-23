@@ -140,7 +140,7 @@ namespace SEWorkshop.Models
             if (supplyAdapter.CanSupply(basket.Products, address)
                 && billingAdapter.Bill(basket.Products, creditCardNumber, expirationDate, cvv, basket.PriceAfterDiscount(), username, id))
             {
-                supplyAdapter.Supply(basket.Products, address);
+                supplyAdapter.Supply(basket.Products, address, username);
                 // Update the quantity in the product itself
                 foreach (var product in basket.Products)
                 {

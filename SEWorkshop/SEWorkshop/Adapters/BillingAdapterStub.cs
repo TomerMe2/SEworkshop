@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using SEWorkshop.Models;
 
 namespace SEWorkshop.Adapters
@@ -9,7 +10,7 @@ namespace SEWorkshop.Adapters
     class BillingAdapterStub : IBillingAdapter
     {
         private static readonly HttpClient client = new HttpClient();
-        public bool Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
+        public async Task<bool> Bill(ICollection<ProductsInBasket> products, string creditCardNumber, DateTime expirationDate, string cvv, double totalPrice, string username,string id)
         {
             var handshakePostContent = new Dictionary<string, string>
             {

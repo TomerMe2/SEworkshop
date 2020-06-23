@@ -42,8 +42,14 @@
                     if(Model.Paying)
                     {
                         <form method="post">
-                            <input type="hidden" name="storeName" value="@Model.Basket.Store.Name"/>
+                            <input type="hidden" name="storeName" value="@Model.Basket.Store.Name" />
+                            <input type="text" style="margin-bottom: 10px" name="FirstName" placeholder="First Name" />
+                            <input type="text" style="margin-bottom: 10px" name="LastName" placeholder="Last Name" />
+                            <input type="text" style="margin-bottom: 10px" name="ID" placeholder="ID" />
                             <input type="text" style="margin-bottom: 10px" name="CreditCardNumber" placeholder="Credit Card Number" />
+                            <input type="text" style="margin-bottom: 10px" name="ExpirationMonth" placeholder="Expiration Month" />
+                            <input type="text" style="margin-bottom: 10px" name="ExpirationYear" placeholder="Expiration Year" />
+                            <input type="text" style="margin-bottom: 10px" name="CVV" placeholder="CVV" />
                             <input type="text" style="margin-bottom: 10px" name="Country" placeholder="Country" />
                             <input type="text" style="margin-bottom: 10px" name="City" placeholder="City" />
                             <input type="text" style="margin-bottom: 10px" name="Street" placeholder="Street" />

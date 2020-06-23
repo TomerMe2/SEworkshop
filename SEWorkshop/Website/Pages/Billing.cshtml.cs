@@ -40,7 +40,7 @@ namespace Website.Pages
             }
         }
 
-        public IActionResult OnPostPurchaseAsync(string storeName, string CreditCardNumber, string Country, string City, string Street, string HouseNumber, string Zip)
+        public IActionResult OnPostPurchaseAsync(string storeName, string FirstName, string LastName, string ID,  string CreditCardNumber, string ExpirationMonth, string ExpirationYear, string CVV, string Country, string City, string Street, string HouseNumber, string Zip)
         {
             List<DataBasket> cart = UserManager.MyCart(HttpContext.Session.Id).ToList();
             foreach (var basket in cart)
@@ -52,19 +52,31 @@ namespace Website.Pages
                 }
             }
             if(CreditCardNumber == null || Country == null
-                || City == null || Street == null || HouseNumber == null)
+                || City == null || Street == null || HouseNumber == null 
+                || FirstName == null || LastName == null || ID == null
+                || ExpirationMonth == null || ExpirationYear == null || CVV == null)
             {
                 ErrorMsg = "Input is Invalid";
                 return new PageResult();
             }
+            DateTime expirationDate;
             Address address = new Address(Country, City, Street, HouseNumber, Zip);
+            try
+            {
+                expirationDate = new DateTime(int.Parse(ExpirationYear), int.Parse(ExpirationMonth), 1);
+            }
+            catch
+            {
+                ErrorMsg = "An Error has Occured";
+                return new PageResult();
+            }
             try
             {
                 if(Basket == null)
                 {
                     throw new Exception();
                 }
-                UserManager.Purchase(HttpContext.Session.Id, Basket, CreditCardNumber, address);
+                UserManager.Purchase(HttpContext.Session.Id, Basket, CreditCardNumber, expirationDate, CVV, address, FirstName + " " + LastName, ID);
             }
             catch
             {
