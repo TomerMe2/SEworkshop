@@ -682,7 +682,7 @@ namespace SEWorkshop.ServiceLayer
             catch (Exception e)
             {
                 Log.Info(string.Format("GetGuestEntriesInDate    {0}", e.ToString()));
-                throw e;
+                return -1;
             }
         }
 
@@ -697,7 +697,7 @@ namespace SEWorkshop.ServiceLayer
             catch (Exception e)
             {
                 Log.Info(string.Format("GetLoggedEntriesDate    {0}", e.ToString()));
-                throw e;
+                return -1;
             }
         }
 
@@ -712,7 +712,7 @@ namespace SEWorkshop.ServiceLayer
             catch (Exception e)
             {
                 Log.Info(string.Format("GetOwnersEntriesDate    {0}", e.ToString()));
-                throw e;
+                return -1;
             }
         }
 
@@ -727,7 +727,7 @@ namespace SEWorkshop.ServiceLayer
             catch (Exception e)
             {
                 Log.Info(string.Format("GetOnlyManagersEntriesDate    {0}", e.ToString()));
-                throw e;
+                return -1;
             }
         }
 
@@ -742,7 +742,7 @@ namespace SEWorkshop.ServiceLayer
             catch (Exception e)
             {
                 Log.Info(string.Format("GetAdminsEntriesDate    {0}", e.ToString()));
-                throw e;
+                return -1;
             }
         }
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
