@@ -8,43 +8,107 @@ using SEWorkshop.Adapters;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models.Discounts;
 using SEWorkshop.Models.Policies;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Models
 {
     public class Store
     {
-        public ICollection<Product> Products { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> Managers { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> Owners { get; private set; }
-        public IDictionary<LoggedInUser, LoggedInUser> OwnershipRequests { get; private set; }
-        public IList<Message> Messages { get; private set; }
-        public IList<Discount> Discounts { get; private set; }
-        public bool IsOpen { get; private set; }
-        public string Name { get; private set; }
-        public Policy Policy { get; set; }
-        public ICollection<Purchase> Purchases {get; private set; }
-        
+        public virtual ICollection<Product> Products { get; private set; }
+        public virtual ICollection<Manages> Management { get; private set; }
+        public virtual ICollection<Owns> Ownership { get; private set; }
+        public virtual ICollection<Basket> Baskets { get; private set; }
+        public virtual ICollection<OwnershipRequest> OwnershipRequests { get; private set; }
+        public virtual IList<Message> Messages { get; set; }
+        public virtual IList<Discount> Discounts { get; set; }
+        public virtual bool IsOpen { get; private set; }
+        public virtual string Name { get; private set; }
+
+        [NotMapped()]
+        public virtual Policy Policy
+        {
+            get
+            {
+                // The first (and hopefuly only) policy without a father in the list
+                return Policies.First(pol => pol.OuterPolicy is null);
+            }
+        }
+
+        public virtual ICollection<Purchase> Purchases {get; private set; }
+        public virtual ICollection<Policy> Policies { get; private set; }
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
         
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Store(LoggedInUser owner, string name)
+        public static Store StoreBuilder(LoggedInUser owner, string name)
         {
-            Products = new List<Product>();
-            Managers = new Dictionary<LoggedInUser, LoggedInUser>();
-            Owners = new Dictionary<LoggedInUser, LoggedInUser>();
-            OwnershipRequests=new Dictionary<LoggedInUser, LoggedInUser>();
+            Store newStore = new Store(name);
+            var demo = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals("DEMO"));
+            if (demo == null)
+            {
+                demo = new LoggedInUser("DEMO", new byte[] { 0 });
+                DatabaseProxy.Instance.LoggedInUsers.Add(demo);
+            }
+            DatabaseProxy.Instance.Stores.Add(newStore);
+            DatabaseProxy.Instance.Policies.Add(newStore.Policies.First());   //it will be the first and only policy
+            DatabaseProxy.Instance.SaveChanges();
+
+            Owns ownership = new Owns(owner, newStore, demo);
+            newStore.Ownership.Add(ownership);
+            owner.Owns.Add(ownership);
+            DatabaseProxy.Instance.Owns.Add(ownership);
+            foreach (var auth in ownership.AuthoriztionsOfUser)
+            {
+                DatabaseProxy.Instance.Authorities.Add(auth);
+            }
+            DatabaseProxy.Instance.SaveChanges();
+            return newStore;
+        }
+        public static Store StoreBuilderWithoutDB(LoggedInUser owner, string name)
+        {
+            Store newStore = new Store(name);
+            var demo = new LoggedInUser("DEMO", new byte[] { 0 });
+
+            Owns ownership = new Owns(owner, newStore, demo);
+            newStore.Ownership.Add(ownership);
+            owner.Owns.Add(ownership);
+            return newStore;
+        }
+        
+        public Store()
+        {
+            /* Ownership = new List<Owns>();
+            Management = new List<Manages>();
             Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            Baskets = new List<Basket>();
+            Discounts = new List<Discount>();
+            Name = "";
+            OwnershipRequests = new List<OwnershipRequest>();
+            Policies = new List<Policy>();*/
+        }
+
+        //TODO: Make this private if possible
+        public Store(string name)
+        {
             IsOpen = true;
+            Ownership = new List<Owns>();
+            Management = new List<Manages>();
+            Messages = new List<Message>();
+            Purchases = new List<Purchase>();
+            Products = new List<Product>();
+            Baskets = new List<Basket>();
             Discounts = new List<Discount>();
             Name = name;
-            Policy = new AlwaysTruePolicy(this);
-            Purchases = new List<Purchase>();
-            Owns owns = new Owns(owner, this);
-            owner.Owns.Add(owns);
-            Owners.Add(owner, new LoggedInUser("DEMO", new Byte[0]));
+            Policies = new List<Policy>();
+            var alwaysTrue = new AlwaysTruePolicy(this);
+            Policies.Add(alwaysTrue);
+            OwnershipRequests = new List<OwnershipRequest>();
         }
 
         public void CloseStore()
@@ -66,9 +130,9 @@ namespace SEWorkshop.Models
             {
                 throw new PolicyIsFalse();
             }
-            foreach (var (prod, purchaseQuantity) in basket.Products)
+            foreach (var product in basket.Products)
             {
-                if (prod.Quantity - purchaseQuantity < 0)
+                if (product.Product.Quantity - product.Quantity < 0)
                 {
                     throw new NegativeInventoryException();
                 }
@@ -78,9 +142,9 @@ namespace SEWorkshop.Models
             {
                 supplyAdapter.Supply(basket.Products, address);
                 // Update the quantity in the product itself
-                foreach (var (prod, purchaseQuantity) in basket.Products)
+                foreach (var product in basket.Products)
                 {
-                    prod.Quantity = prod.Quantity - purchaseQuantity;
+                    product.Product.Quantity -= product.Quantity;
                 }
             }
             else
@@ -92,6 +156,45 @@ namespace SEWorkshop.Models
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        public Manages? GetManagement(LoggedInUser manager)
+        {
+            foreach(var manage in Management)
+            {
+                if(manager == manage.LoggedInUser)
+                {
+                    return manage;
+                }
+            }
+            return null;
+        }
+
+        public Owns? GetOwnership(LoggedInUser owner)
+        {
+            foreach(var own in Ownership)
+            {
+                if(owner == own.LoggedInUser)
+                {
+                    return own;
+                }
+            }
+            return null;
+        }
+
+        public bool RequestExists(LoggedInUser candidate)
+        {
+            return OwnershipRequests.Where(req => req.NewOwner.Equals(candidate)).Count() > 0;
+        }
+
+        public override bool Equals(object? other)
+        {
+            if (other is Store)
+            {
+                Store otherStore = (Store)other;
+                return otherStore.Name.Equals(Name);
+            }
+            return false;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SEWorkshop.Exceptions;
 using SEWorkshop.Models;
 using SEWorkshop.Adapters;
+using SEWorkshop.DAL;
 using System.Linq;
 
 namespace SEWorkshop.Facades
@@ -10,12 +11,7 @@ namespace SEWorkshop.Facades
     public class UserFacade : IUserFacade
     {
         private IStoreFacade StoreFacade { get; }
-        private ICollection<LoggedInUser> RegisteredUsers {get; }
         private ICollection<GuestUser> GuestUsers { get; }
-        private ICollection<LoggedInUser> Administrators { get; }
-        private ICollection<Purchase> Purchases {get; }
-
-
         private readonly IBillingAdapter billingAdapter = new BillingAdapterStub();
         private readonly ISupplyAdapter supplyAdapter = new SupplyAdapterStub();
         private readonly ISecurityAdapter securityAdapter = new SecurityAdapter();
@@ -23,23 +19,21 @@ namespace SEWorkshop.Facades
         public UserFacade(IStoreFacade storeFacade)
         {
             StoreFacade = storeFacade;
-            RegisteredUsers = new List<LoggedInUser>();
-            Purchases = new List<Purchase>();
-            Administrators = new List<LoggedInUser>(){new Administrator("admin", securityAdapter.Encrypt("sadnaTeam"))};
             GuestUsers = new List<GuestUser>();
-        }
-
-        public void AddPurchaseToList(Purchase p)
-        {
-            Purchases.Add(p);
+            if (!DatabaseProxy.Instance.Administrators.Any())
+            {
+                DatabaseProxy.Instance.Administrators.Add(new Administrator(Administrator.ADMIN_USER_NAME, securityAdapter.Encrypt("sadnaTeam" )));
+                DatabaseProxy.Instance.SaveChanges();
+            }
         }
 
         public LoggedInUser GetLoggedInUser(string username)
         {
-            var user = RegisteredUsers.FirstOrDefault(usr => usr.Username.Equals(username));
+            var user = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr => usr.Username.Equals(username));
             if (user == null)
             {
-                var admin = Administrators.FirstOrDefault(usr => usr.Username.Equals(username));
+                var admin = DatabaseProxy.Instance.Administrators.OfType<Administrator>().FirstOrDefault(usr =>
+                                                                                usr.Username.Equals(username));
                 if (admin == null)
                 {
                     throw new UserDoesNotExistException();
@@ -51,16 +45,20 @@ namespace SEWorkshop.Facades
 
         public LoggedInUser GetLoggedInUser(string username, byte[] password)
         {
-            var user = RegisteredUsers.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+            var user = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(usr =>
+                                        usr.Username.Equals(username) && usr.Password == password);
             if (user == null)
             {
-                var admin = Administrators.FirstOrDefault(usr => usr.Username.Equals(username) && usr.Password.SequenceEqual(password));
+                var admin = DatabaseProxy.Instance.Administrators.FirstOrDefault(usr => 
+                                        usr.Username.Equals(username) && usr.Password == password);
                 if (admin == null)
                 {
                     throw new UserDoesNotExistException();
                 }
+                admin.Cart = DatabaseProxy.Instance.Carts.FirstOrDefault(admin => admin.Username.Equals(username));
                 return admin;
             }
+            user.Cart = DatabaseProxy.Instance.Carts.FirstOrDefault(cart => cart.Username.Equals(username));
             return user;
         }
 
@@ -79,14 +77,14 @@ namespace SEWorkshop.Facades
         /// </summary>
         public LoggedInUser Register(string username, byte[] password)
         {
-            foreach(var user in RegisteredUsers)
+            foreach(var user in DatabaseProxy.Instance.LoggedInUsers)
             {
                 if(user.Username.Equals(username))
                 {
                     throw new UserAlreadyExistsException();
                 }
             }
-            foreach(var admin in Administrators)
+            foreach(var admin in DatabaseProxy.Instance.Administrators)
             {
                 if(admin.Username.Equals(username))
                 {
@@ -94,7 +92,9 @@ namespace SEWorkshop.Facades
                 }
             }
             LoggedInUser newUser = new LoggedInUser(username, password);
-            RegisteredUsers.Add(newUser);
+            DatabaseProxy.Instance.LoggedInUsers.Add(newUser);
+            DatabaseProxy.Instance.Carts.Add(newUser.Cart);
+            DatabaseProxy.Instance.SaveChanges();
             return newUser;
         }
 
@@ -106,7 +106,7 @@ namespace SEWorkshop.Facades
         public IEnumerable<Purchase> PurchaseHistory(LoggedInUser user)
         {
             ICollection<Purchase> userPurchases = new List<Purchase>();
-            foreach(var purchase in Purchases)
+            foreach(var purchase in DatabaseProxy.Instance.Purchases)
             {
                 if(purchase.User == user)
                 {
@@ -118,16 +118,19 @@ namespace SEWorkshop.Facades
 
         public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
         {
-            return user.Purchase(basket, creditCardNumber, address, this);
+            var prchs = user.Purchase(basket, creditCardNumber, address);
+            DatabaseProxy.Instance.SaveChanges();
+            return prchs;
         }
 
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userNmToView)
         {
-            if (!Administrators.Contains(requesting))
+            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin.Username.Equals(requesting.Username)) == null)
             {
                 throw new UserHasNoPermissionException();
             }
-            var user = RegisteredUsers.Concat(Administrators).FirstOrDefault(user => user.Username.Equals(userNmToView));
+            var user = DatabaseProxy.Instance.LoggedInUsers.FirstOrDefault(user =>
+                                                                            user.Username.Equals(userNmToView));
             if(user is null)
             {
                 throw new UserDoesNotExistException();
@@ -142,6 +145,7 @@ namespace SEWorkshop.Facades
                 throw new ProductNotInTradingSystemException();
             }
             user.AddProductToCart(product, quantity);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public void RemoveProductFromCart(User user, Product product, int quantity)
@@ -151,26 +155,16 @@ namespace SEWorkshop.Facades
                 throw new ProductNotInTradingSystemException();
             }
             user.RemoveProductFromCart(user, product, quantity);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store)
         {
-            if (!Administrators.Contains(requesting))
+            if (DatabaseProxy.Instance.Administrators.FirstOrDefault(admin => admin.Username.Equals(requesting.Username)) == null)
             {
                 throw new UserHasNoPermissionException();
             }
-            ICollection<Purchase> purchaseHistory = new List<Purchase>();
-            foreach (var user in RegisteredUsers)
-            {
-                foreach (var purchase in PurchaseHistory(user))
-                {
-                    if (purchase.Basket.Store.Equals(store))
-                    {
-                        purchaseHistory.Add(purchase);
-                    }
-                }
-            }
-            return purchaseHistory;
+            return DatabaseProxy.Instance.Purchases.Where(prchs => prchs.Basket.StoreName.Equals(store.Name));
         }
 
         public void WriteReview(LoggedInUser user, Product product, string description)
@@ -179,9 +173,11 @@ namespace SEWorkshop.Facades
             {
                 throw new ReviewIsEmptyException();
             }
-            Review review = new Review(user, description);
+            Review review = new Review(user, description, product);
             product.Reviews.Add(review);
-            ((LoggedInUser) user).Reviews.Add(review);
+            user.Reviews.Add(review);
+            DatabaseProxy.Instance.Reviews.Add(review);
+            DatabaseProxy.Instance.SaveChanges();
         }
 
         public Message WriteMessage(LoggedInUser user, Store store, string description)
@@ -193,6 +189,8 @@ namespace SEWorkshop.Facades
             Message message = new Message(user, store, description, true);
             store.Messages.Add(message);
             user.Messages.Add(message);
+            DatabaseProxy.Instance.Messages.Add(message);
+            DatabaseProxy.Instance.SaveChanges();
             return message;
         }
 
@@ -205,16 +203,20 @@ namespace SEWorkshop.Facades
 
         public IEnumerable<string> GetRegisteredUsers()
         {
-            return RegisteredUsers.Select(user => user.Username);
+            return DatabaseProxy.Instance.LoggedInUsers.Select(user => user.Username);
         }
 
         public double GetIncomeInDate(DateTime date)
         {
-            var relevants = Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
+            var relevants = DatabaseProxy.Instance.Purchases.Where(prchs => prchs.TimeStamp.Year == date.Year
                                                     && prchs.TimeStamp.Month == date.Month
                                                     && prchs.TimeStamp.Day == date.Day);
-            var moneyPerPrchs = relevants.Select(prchs => prchs.MoneyPaid);
-            return moneyPerPrchs.Aggregate(0.0, (acc, money) => acc + money);
+            double output = 0.0;
+            foreach(var prchs in relevants)
+            {
+                output += prchs.MoneyPaid;
+            }
+            return output;
         }
 
         public int GetGuestEntriesInDate(DateTime date)

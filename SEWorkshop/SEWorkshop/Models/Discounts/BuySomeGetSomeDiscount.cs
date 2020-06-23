@@ -1,43 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Discounts
 {
     public class BuySomeGetSomeDiscount : ConditionalDiscount
     {
-        public int BuySome { get; set; }
-        public int GetSome { get; set; }
-        public Product ProdUnderDiscount { get; set; }
+        public virtual int BuySome { get; set; }
+        public virtual int GetSome { get; set; }
+        public virtual int ProductIdUnderDiscount { get; set; }
+        public virtual Product ProdUnderDiscount { get; set; }
+
+        public BuySomeGetSomeDiscount() : base()
+        {
+            //ProdUnderDiscount = null!;
+        }
 
         public BuySomeGetSomeDiscount(Store store, int buySome, int getSome, double percentage, DateTime deadline, Product conditionProd, Product underDiscount) : base(percentage, deadline, conditionProd, store)
         {
             BuySome = buySome;
             GetSome = getSome;
             ProdUnderDiscount = underDiscount;
+            ProductIdUnderDiscount = conditionProd.Id;
         }
 
-        public override double ComputeDiscount(ICollection<(Product, int)> itemsList)
+        public override double ComputeDiscount(ICollection<ProductsInBasket> itemsList)
         {
-            foreach (var (product, quantity) in itemsList)
+            foreach (var prod in itemsList)
             {
-                if (product == Product)
+                if (prod.Product.Equals(Product))
                 {
-                    if (quantity >= BuySome)
+                    if (prod.Quantity >= BuySome)
                     {
-                        if (ProdUnderDiscount == Product && GetSome > quantity-BuySome)
+                        if (ProdUnderDiscount == Product && GetSome > prod.Quantity-BuySome)
                         {
                             return 0;
                         }
-                        foreach (var (prod, quant) in itemsList)
+                        foreach (var product in itemsList)
                         {
-                            if (prod == ProdUnderDiscount)
+                            if (product.Product.Equals(ProdUnderDiscount))
                             {
                                 if (GetSome == -1)
                                 {
-                                    return quant * prod.Price * (Percentage / 100);
+                                    return prod.Quantity * product.Product.Price * (Percentage / 100);
                                 }
-                                return GetSome * prod.Price * (Percentage / 100);
+                                return GetSome * product.Product.Price * (Percentage / 100);
                             }
                         }
                     }

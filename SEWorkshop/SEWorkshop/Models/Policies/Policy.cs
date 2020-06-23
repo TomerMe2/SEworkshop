@@ -3,17 +3,32 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using SEWorkshop.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models.Policies
 {
     public abstract class Policy
     {
-        public (Policy, Operator)? InnerPolicy { get; set; }
-        public Store Store { get; }
+        public virtual int Id { get; set; }
+        public virtual string StoreName { get; set; }
+        public virtual int? OuterPolicyId { get; set; }
+        public virtual Policy? OuterPolicy { get; set; }
+        public virtual int? InnerPolicyId { get; set; }
+        public virtual Policy? InnerPolicy { get; set; }
+        public virtual Operator? InnerOperator { get; set; }
+        public virtual Store Store { get; set; }
+
+        public Policy()
+        {
+            /*Store = null!;
+            StoreName = "";*/
+        }
         
         public Policy(Store store)
         {
             Store = store;
+            StoreName = store.Name;
         }
 
         protected Basket? GetBasket(User user)
@@ -29,8 +44,8 @@ namespace SEWorkshop.Models.Policies
             {
                 return IsThisPolicySatisfied(user, address);
             }
-            Policy other = InnerPolicy.Value.Item1;
-            return InnerPolicy.Value.Item2 switch
+            Policy other = InnerPolicy;
+            return InnerOperator switch
             {
                 Operator.And => IsThisPolicySatisfied(user, address) && other.CanPurchase(user, address),
                 Operator.Or => IsThisPolicySatisfied(user, address) || other.CanPurchase(user, address),

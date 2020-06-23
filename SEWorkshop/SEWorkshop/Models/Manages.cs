@@ -5,25 +5,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SEWorkshop.DAL;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SEWorkshop.Models
 {
     public class Manages : AuthorityHandler
     {
-        public LoggedInUser LoggedInUser { get; set; }
-        public Store Store { get; set; }
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-
-        public Manages(LoggedInUser loggedInUser, Store store) : base()
+        public Manages() : base()
         {
-            AuthoriztionsOfUser.Add(Authorizations.Watching);
-            LoggedInUser = loggedInUser;
-            Store = store;
-    
+            /*Store = null!;
+            LoggedInUser = null!;
+            Username = "";
+            StoreName = "";*/
         }
 
-     
+        public Manages(LoggedInUser loggedInUser, Store store, LoggedInUser appointer) : base(loggedInUser, store, appointer)
+        {
+            AuthoriztionsOfUser.Add(new Authority(this, Authorizations.Watching));
+        }
 
         public override void RemoveStoreManager(LoggedInUser managerToRemove)
         {
@@ -36,20 +39,22 @@ namespace SEWorkshop.Models
             }
             if (HasAuthorization(Authorizations.Manager))
             {
-                if (!Store.Managers.ContainsKey(managerToRemove))
+                Manages? management = Store.GetManagement(managerToRemove);
+                if (management == null)
                 {
                     log.Info("The requested manager is not a store manager");
                     throw new UserIsNotMangerOfTheStoreException();
                 }
-                LoggedInUser appointer = Store.Managers[managerToRemove];
+                LoggedInUser appointer = management.Appointer;
                 if (appointer != LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                Store.Managers.Remove(managerToRemove);
-                var management = managerToRemove.Manage.FirstOrDefault(man => man.Store.Equals(Store));
+                Store.Management.Remove(management);
                 managerToRemove.Manage.Remove(management);
+                DatabaseProxy.Instance.Manages.Remove(management);
+                //DatabaseProxy.Instance.SaveChanges();
                 log.Info("The manager has been removed successfully");
                 return;
             }
@@ -71,20 +76,22 @@ namespace SEWorkshop.Models
             }
             if (HasAuthorization(Authorizations.Owner))
             {
-                if (!Store.Owners.ContainsKey(ownerToRemove))
+                Owns? ownership = Store.GetOwnership(ownerToRemove);
+                if (ownership == null)
                 {
                     log.Info("The requested manager is not an owner");
                     throw new UserIsNotOwnerOfThisStore();
                 }
-                LoggedInUser appointer = Store.Owners[ownerToRemove];
+                LoggedInUser appointer = ownership.Appointer;
                 if (appointer != LoggedInUser)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                Store.Owners.Remove(ownerToRemove);
-                var owning = ownerToRemove.Owns.FirstOrDefault(own => own.Store.Equals(Store));
-                ownerToRemove.Owns.Remove(owning);
+                Store.Ownership.Remove(ownership);
+                ownerToRemove.Owns.Remove(ownership);
+                DatabaseProxy.Instance.Owns.Remove(ownership);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -105,6 +112,8 @@ namespace SEWorkshop.Models
                 if (!StoreContainsProduct(newProduct, Store))
                 {
                     Store.Products.Add(newProduct);
+                    DatabaseProxy.Instance.Products.Add(newProduct);
+                    //DatabaseProxy.Instance.SaveChanges();
                     log.Info("Product has been added to store successfully");
                     return newProduct;
                 }
@@ -128,6 +137,8 @@ namespace SEWorkshop.Models
                 if (StoreContainsProduct(productToRemove, Store))
                 {
                     Store.Products.Remove(productToRemove);
+                    DatabaseProxy.Instance.Products.Remove(productToRemove);
+                    DatabaseProxy.Instance.SaveChanges();
                     log.Info("Product has been removed from store successfully");
                     return;
                 }
@@ -152,6 +163,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Description = description;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's description has been modified successfully");
                 return;
             }
@@ -171,6 +183,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Category = category;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's category has been modified successfully");
                 return;
             }
@@ -194,6 +207,7 @@ namespace SEWorkshop.Models
                     throw new StoreWithThisNameAlreadyExistsException();
                 }
                 product.Name = name;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's category has been modified successfully");
             }
         }
@@ -208,6 +222,7 @@ namespace SEWorkshop.Models
                     throw new ProductNotInTradingSystemException();
                 }
                 product.Price = price;
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("Product's price has been modified successfully");
                 return;
             }
@@ -224,8 +239,9 @@ namespace SEWorkshop.Models
                     log.Info("Product does not exist in store");
                     throw new ProductNotInTradingSystemException();
                 }
-                log.Info("Product's quantity has been modified successfully");
                 product.Quantity = quantity;
+                DatabaseProxy.Instance.SaveChanges();
+                log.Info("Product's quantity has been modified successfully");
             }
             else
             {
@@ -235,7 +251,12 @@ namespace SEWorkshop.Models
     
         public bool HasAuthorization(Authorizations autho)
         {
-            return AuthoriztionsOfUser.Contains(autho);
+            foreach(var authority in AuthoriztionsOfUser)
+            {
+                if(authority.Authorization == autho)
+                    return true;
+            }
+            return false;
         }
 
         public override void AddStoreManager(LoggedInUser newManager)
@@ -251,36 +272,15 @@ namespace SEWorkshop.Models
                     log.Info("The requested user is already a store manager or owner");
                     throw new UserIsAlreadyStoreManagerException();
                 }
-                Store.Managers.Add(newManager, LoggedInUser);
-                Manages mangement = new Manages(newManager, Store);
+                Manages mangement = new Manages(newManager, Store, LoggedInUser);
+                Store.Management.Add(mangement);
                 newManager.Manage.Add(mangement);
+                DatabaseProxy.Instance.Manages.Add(mangement);
+                DatabaseProxy.Instance.SaveChanges();
                 log.Info("A new manager has been added successfully");
                 return;
 
         }
-
-        public void AddStoreOwner(LoggedInUser newOwner)
-        {
-            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
-            if (!HasAuthorization(Authorizations.Owner))
-            {
-                log.Info("User has no permission for that action");
-                throw new UserHasNoPermissionException();
-            }
-            if (IsUserStoreManager(newOwner, Store) || IsUserStoreOwner(newOwner, Store))
-            {
-                log.Info("The requested user is already a store manager or owner");
-                throw new UserIsAlreadyStoreManagerException();
-            }
-            Store.Owners.Add(newOwner, LoggedInUser);
-            Owns owning = new Owns(newOwner, Store);
-            newOwner.Owns.Add(owning);
-            log.Info("A new owner has been added successfully");
-            return;
-
-        }
-
-
 
         public void SetPermissionsOfManager(LoggedInUser manager, Authorizations authorization)
         {
@@ -291,19 +291,17 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer.Username == this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                
-                if (!authorizations.Contains(authorization))
+                if (!HasAuthorization(authorization))
                 {
                     log.Info("Permission has been granted successfully");
-                    authorizations.Add(authorization);   
+                    management.AddAuthorization(authorization);   
                 }
                 return;
             }
@@ -320,18 +318,17 @@ namespace SEWorkshop.Models
             log.Info("User tries to set permission of {1} of the manager {0} ", manager.Username, authorization);
             if (!IsUserStoreOwner(manager, Store))
             {
-                if (Store.Managers[manager].Username == this.LoggedInUser.Username)
+                Manages? management = Store.GetManagement(manager);
+                if (management == null || management.Appointer.Username == this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
-                var man = manager.Manage.FirstOrDefault(man => man.Store.Equals(Store));
 
-                ICollection<Authorizations> authorizations = man.AuthoriztionsOfUser;
-                if (authorizations.Contains(authorization))
+                if (HasAuthorization(authorization))
                 {
-                    log.Info("Permission has been taken away successfully");
-                    authorizations.Remove(authorization);
+                    log.Info("Permission has been granted successfully");
+                    management.RemoveAuthorization(authorization);   
                 }
                 return;
             }

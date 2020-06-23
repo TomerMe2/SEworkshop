@@ -50,7 +50,7 @@ namespace SEWorkshop.ServiceLayer
         //All add policies are adding to the end
         public void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op);
         public void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
-        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public void AddSystemDayPolicy(string sessionId, string storeName, Operator op, Weekday cantBuyIn);
         public void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity);
         public void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry);
         public void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity);

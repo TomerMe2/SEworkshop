@@ -44,7 +44,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
 
         public abstract void AddAlwaysTruePolicy(string sessionId, string storeName, Operator op);
         public abstract void AddSingleProductQuantityPolicy(string sessionId, string storeName, Operator op, string productName, int minQuantity, int maxQuantity);
-        public abstract void AddSystemDayPolicy(string sessionId, string storeName, Operator op, DayOfWeek cantBuyIn);
+        public abstract void AddSystemDayPolicy(string sessionId, string storeName, Operator op, Weekday cantBuyIn);
         public abstract void AddUserCityPolicy(string sessionId, string storeName, Operator op, string requiredCity);
         public abstract void AddUserCountryPolicy(string sessionId, string storeName, Operator op, string requiredCountry);
         public abstract void AddWholeStoreQuantityPolicy(string sessionId, string storeName, Operator op, int minQuantity, int maxQuantity);

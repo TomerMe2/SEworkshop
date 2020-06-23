@@ -7,12 +7,12 @@ namespace SEWorkshop.Adapters
 {
     class SupplyAdapterStub : ISupplyAdapter
     {
-        public void Supply(ICollection<(Product, int)> products, Address address)
+        public void Supply(ICollection<ProductsInBasket> products, Address address)
         {
             
         }
 
-        public bool CanSupply(ICollection<(Product, int)> products, Address address)
+        public bool CanSupply(ICollection<ProductsInBasket> products, Address address)
         {
             return true;
         }

@@ -1,0 +1,35 @@
+[
+  {
+    "command": "Register",
+    "username": "Noa",
+    "password": "1234"
+  },
+  {
+    "command": "Register",
+    "username": "Idan",
+    "password": "1234"
+  },
+  {
+    "command": "Login",
+    "username": "Noa",
+    "password": "1234"
+  },
+  {
+    "command": "OpenStore",
+    "storeName": "Zara"
+  },
+  {
+    "command": "AddProduct",
+    "storeName": "Zara",
+    "productName": "T-shirt",
+    "description": "white shirt",
+    "category": "women",
+    "price": 4.5,
+    "quantity": 80
+  },
+  {
+    "command": "AddAlwaysTruePolicy",
+    "storeName": "Zara",
+    "operator": "And"
+  }
+]

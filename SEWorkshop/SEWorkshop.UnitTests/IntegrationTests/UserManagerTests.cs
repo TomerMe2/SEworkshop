@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using SEWorkshop.ServiceLayer;
 using SEWorkshop.Exceptions;
 using System.Linq;
 using SEWorkshop.Models;
+using SEWorkshop.DAL;
 
 namespace SEWorkshop.Tests.IntegrationTests
 {
@@ -16,8 +16,10 @@ namespace SEWorkshop.Tests.IntegrationTests
         private const string DEF_ID = "UserManagerTests";
 
         [OneTimeSetUp]
+        [Obsolete]
         public void Init()
         {
+            DatabaseProxy.MoveToTestDb();
             Manager = new UserManager();
         }
 
@@ -46,8 +48,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
             var cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1);
-            var (prod, quantity) = cart.First().Products.First();
-            Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 1);
+            var prod = cart.First().Products.First();
+            Assert.IsTrue(prod.Product.Name.Equals("CartTestItm1") && prod.Quantity == 1);
             bool isExceptionThrown = false;
             try
             {
@@ -62,8 +64,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm1", 1);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
-            (prod, quantity) = cart.First().Products.First();
-            Assert.IsTrue(prod.Name.Equals("CartTestItm1") && quantity == 2);
+            prod = cart.First().Products.First();
+            Assert.IsTrue(prod.Product.Name.Equals("CartTestItm1") && prod.Quantity == 2);
 
             Manager.AddProductToCart(DEF_ID, "CartTestStr", "CartTestItm2", 3);
             cart = Manager.MyCart(DEF_ID);
@@ -72,12 +74,12 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 2);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 2);
-            Assert.IsTrue(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2") && tup.Item2 == 1).Any());
+            Assert.IsTrue(cart.First().Products.Where(tup => tup.Product.Name.Equals("CartTestItm2") && tup.Quantity == 1).Any());
 
             Manager.RemoveProductFromCart(DEF_ID, "CartTestStr", "CartTestItm2", 1);
             cart = Manager.MyCart(DEF_ID);
             Assert.IsTrue(cart.Count() == 1 && cart.First().Products.Count() == 1);
-            Assert.IsFalse(cart.First().Products.Where(tup => tup.Item1.Name.Equals("CartTestItm2")).Any());
+            Assert.IsFalse(cart.First().Products.Where(tup => tup.Product.Name.Equals("CartTestItm2")).Any());
         }
 
         [Test]
@@ -534,6 +536,24 @@ namespace SEWorkshop.Tests.IntegrationTests
                                 "someItem", "bad review!!!!"));
             Manager.Login(DEF_ID, "wrnp_user1", "1111");
             Manager.WriteReview(DEF_ID, "WriteReviewMultipleStore", "someItem", "bad review!!!!");
-        } 
+        }
+
+        [Test]
+        public void PoliciesTest()
+        {
+            Manager.Register(DEF_ID, "p_user1", "1234");
+            Manager.Login(DEF_ID, "p_user1", "1234");
+            Manager.OpenStore(DEF_ID, "p_store1");
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Sunday);
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Monday);
+            Manager.AddSystemDayPolicy(DEF_ID, "p_store1", Enums.Operator.Or, Enums.Weekday.Tuesday);
+            Assert.That(Manager.SearchStore("p_store1").Policy is DataModels.Policies.DataSystemDayPolicy);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy).CantBuyIn == Enums.Weekday.Sunday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy).CantBuyIn == Enums.Weekday.Monday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy.InnerPolicy).CantBuyIn == Enums.Weekday.Tuesday);
+            Manager.RemovePolicy(DEF_ID, "p_store1", 0);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy).CantBuyIn == Enums.Weekday.Monday);
+            Assert.True(((DataModels.Policies.DataSystemDayPolicy)Manager.SearchStore("p_store1").Policy.InnerPolicy).CantBuyIn == Enums.Weekday.Tuesday);
+        }
     }
 }

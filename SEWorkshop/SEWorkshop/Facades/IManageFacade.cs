@@ -30,5 +30,19 @@ namespace SEWorkshop.Facades
         public bool StoreContainsProduct(Store store, Product product);
 
         public void RemovePermissionsOfManager(LoggedInUser currUser, Store getStore, LoggedInUser getUser, Authorizations authorization);
+        public void AddProductCategoryDiscount(LoggedInUser user, Store storeName, string categoryName, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddSpecificProductDiscount(LoggedInUser user, Store storeName, Product product, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuySomeGetSomeDiscount(LoggedInUser user, Store storeName, Product prod1, Product prod2, int buySome, int getSome, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+        public void AddBuyOverDiscount(LoggedInUser user, Store storeName, Product product, double minSum, DateTime deadline, double percentage, Operator op, int indexInChain, int disId, bool toLeft);
+
+        public void RemoveDiscount(LoggedInUser user, Store storeName, int indexInChain);
+
+        public void AddAlwaysTruePolicy(LoggedInUser user, Store storeName, Operator op);
+        public void AddSingleProductQuantityPolicy(LoggedInUser user, Store storeName, Operator op, Product productName, int minQuantity, int maxQuantity);
+        public void AddSystemDayPolicy(LoggedInUser user, Store storeName, Operator op, Weekday cantBuyIn);
+        public void AddUserCityPolicy(LoggedInUser user, Store storeName, Operator op, string requiredCity);
+        public void AddUserCountryPolicy(LoggedInUser user, Store storeName, Operator op, string requiredCountry);
+        public void AddWholeStoreQuantityPolicy(LoggedInUser user, Store storeName, Operator op, int minQuantity, int maxQuantity);
+        public void RemovePolicy(LoggedInUser user, Store storeName, int indexInChain);
     }
 }

@@ -10,8 +10,8 @@
     if (Model.Store != null && um.IsLoggedIn(sessionId))
     {
         var user = um.GetDataLoggedInUser(sessionId);
-        var isMan = Model.Store.Owners.ContainsKey(um.GetDataLoggedInUser(sessionId));
-        if (Model.Store.Owners.ContainsKey(user) ||
+        var isMan = Model.Store.IsOwner(um.GetDataLoggedInUser(sessionId));
+        if (Model.Store.IsOwner(user) ||
             (isMan && user.Manages[Model.Store].Contains(SEWorkshop.Enums.Authorizations.Watching))
             || Model.UserManager.IsAdministrator(sessionId))
         {
@@ -24,11 +24,11 @@
                     <div class="card-body">
                         <h5 class="card-title">@addressStr</h5>
                         <h6 class="card-subtitle mb-2">@purchase.TimeStamp</h6>
-                        @foreach (var (product, amount) in purchase.Basket.Products)
+                        @foreach (var prod in purchase.Basket.Products)
                         {
-                            <h5 class="card-title">Product name: @product.Name</h5>
-                            <h6 class="card-subtitle mb-2">Category: @product.Category</h6>
-                            <h6 class="card-subtitle mb-2">Amount: @amount</h6>
+                            <h5 class="card-title">Product name: @prod.Product.Name</h5>
+                            <h6 class="card-subtitle mb-2">Category: @prod.Product.Category</h6>
+                            <h6 class="card-subtitle mb-2">Amount: @prod.Quantity</h6>
                         }
                     </div>
                 </div>

@@ -11,22 +11,20 @@ namespace SEWorkshop.DataModels
     {
         public IReadOnlyCollection<DataProduct> Products => InnerModel.Products.Select(prod =>
                         new DataProduct(prod)).ToList().AsReadOnly();
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Managers => InnerModel.Managers
+        public IReadOnlyCollection<DataManages> Management => InnerModel.Management
                 .Select((item) =>
-                    (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
-                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> Owners => InnerModel.Owners
+                    (new DataManages(item))).ToList();
+        public IReadOnlyCollection<DataOwns> Ownership => InnerModel.Ownership
                 .Select((item) =>
-                    (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
-                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+                    (new DataOwns(item))).ToList();
         public IReadOnlyList<DataMessage> Messages => InnerModel.Messages.Select(msg => new DataMessage(msg)).ToList().AsReadOnly();
-        public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Select(discount =>
+        public IReadOnlyCollection<DataDiscount> Discounts => InnerModel.Discounts.Where(discount => discount.Father is null).Select(discount =>
                                                                             DataDiscount.CreateDataFromDiscount(discount)).ToList().AsReadOnly();
+        public IReadOnlyCollection<DataPolicy> Policies => InnerModel.Policies.Select(policy =>
+                                                                            DataPolicy.CreateDataPolFromPol(policy)).ToList().AsReadOnly();
 
-        public IReadOnlyDictionary<DataLoggedInUser, DataLoggedInUser> OwnershipRequests => InnerModel.OwnershipRequests
-            .Select((item) =>
-                (new DataLoggedInUser(item.Key), new DataLoggedInUser(item.Value)))
-            .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+        public IReadOnlyCollection<DataOwnershipRequest> OwnershipRequests => InnerModel.OwnershipRequests.Select(item =>
+                                                                                new DataOwnershipRequest(item)).ToList().AsReadOnly();
 
 
         public bool IsOpen => InnerModel.IsOpen;
@@ -40,6 +38,17 @@ namespace SEWorkshop.DataModels
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        
+        public bool IsManager(DataLoggedInUser user)
+        {
+            return user.IsManager(Management);
+        }
+
+        public bool IsOwner(DataLoggedInUser user)
+        {
+            return user.IsOwner(Ownership);        
         }
     }
 }
