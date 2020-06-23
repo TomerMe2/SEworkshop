@@ -221,8 +221,11 @@ namespace SEWorkshop.Facades
 
         public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
         {
-            var records = DatabaseProxy.Instance.UseRecords.Where(record => record.Timestamp >= dateFrom
-                                                                    && record.Timestamp < dateTo
+            dateFrom = new DateTime(dateFrom.Year, dateFrom.Month, dateFrom.Day);
+            dateTo = new DateTime(dateTo.Year, dateTo.Month, dateTo.Day).AddDays(1);
+
+            var records = DatabaseProxy.Instance.UseRecords.ToList().Where(record => record.Timestamp.CompareTo(dateFrom) >= 0
+                                                                    && record.Timestamp.CompareTo(dateTo) < 0
                                                                     && kinds.Contains(record.Kind));
             var stamps = records.Select(record => new DateTime(record.Timestamp.Year, record.Timestamp.Month,
                                                                record.Timestamp.Day));
@@ -231,8 +234,9 @@ namespace SEWorkshop.Facades
             while (runningOn <= dateTo)
             {
                 dayToAmount[runningOn] = 0;
-                runningOn.AddDays(1);
+                runningOn = runningOn.AddDays(1);
             }
+            dayToAmount.Remove(runningOn.AddDays(-1));
             //now dayToAmount is a dict that contains all the days as keys and 0 as values. gotta fill the values
             foreach (var record in records)
             {
@@ -240,6 +244,24 @@ namespace SEWorkshop.Facades
                 dayToAmount[actualDate]++;
             }
             return dayToAmount;
+        }
+
+        public IDictionary<Enums.KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        {
+            var records = DatabaseProxy.Instance.UseRecords.ToList().Where(record => record.Timestamp.Year == today.Year
+                                                                    && record.Timestamp.Month == today.Month
+                                                                    && record.Timestamp.Day == today.Day);
+            var kindToAmount = new Dictionary<Enums.KindOfUser, int>();
+            kindToAmount[Enums.KindOfUser.Admin] = 0;
+            kindToAmount[Enums.KindOfUser.Guest] = 0;
+            kindToAmount[Enums.KindOfUser.LoggedInNoOwnYesManage] = 0;
+            kindToAmount[Enums.KindOfUser.LoggedInNotOwnNotManage] = 0;
+            kindToAmount[Enums.KindOfUser.LoggedInYesOwn] = 0;
+            foreach (var record in records)
+            {
+                kindToAmount[record.Kind]++;
+            }
+            return kindToAmount;
         }
     }
 }

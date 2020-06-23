@@ -77,5 +77,6 @@ namespace SEWorkshop.Facades
         public IEnumerable<string> GetRegisteredUsers();
         public double GetIncomeInDate(DateTime date);
         public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today);
     }
 }

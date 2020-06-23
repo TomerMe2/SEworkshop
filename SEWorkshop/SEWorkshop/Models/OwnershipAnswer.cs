@@ -14,12 +14,11 @@ namespace SEWorkshop.Models
 
         public virtual RequestState Answer { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public OwnershipAnswer()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         {
-            /*Request = null!;
-            Owner = null!;
-            Answer = default;
-            Username = "";*/
+            
         }
 
         public OwnershipAnswer(OwnershipRequest request, LoggedInUser loggedInUser, RequestState answer)

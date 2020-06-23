@@ -106,7 +106,13 @@ namespace SEWorkshop.ServiceLayer
                     UsersDict[sessionId] = toRet;
                 }
             }
-            UseRecord record = new UseRecord(SecurityAdapter.Encrypt(sessionId), DateTime.Now, KindOfUser.Guest);
+            var encSid = SecurityAdapter.Encrypt(sessionId);
+            if (DAL.DatabaseProxy.Instance.UseRecords.Where(record => record.HashedSessionId == encSid).Any())
+            {
+                //it's already in the db and it's logging in again after a logout
+                return toRet;
+            }
+            UseRecord record = new UseRecord(encSid, DateTime.Now, KindOfUser.Guest);
             DAL.DatabaseProxy.Instance.UseRecords.Add(record);
             DAL.DatabaseProxy.Instance.SaveChanges();
             return toRet;
@@ -711,6 +717,11 @@ namespace SEWorkshop.ServiceLayer
             Log.Info(string.Format("GetUseRecord {0}    {1}    {2}", sessionId, dateFrom, dateTo));
             GetAdmin(sessionId);  //if it throws an exception, the user is not an admin and it should not be served
             return FacadesBridge.GetUseRecord(dateFrom, dateTo, kinds);
+        }
+
+        public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today)
+        {
+
         }
 
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv)
