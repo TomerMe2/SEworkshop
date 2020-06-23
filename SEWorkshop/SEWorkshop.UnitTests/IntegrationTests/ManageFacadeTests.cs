@@ -21,7 +21,7 @@ namespace SEWorkshop.Tests.IntegrationTests
     {
         private IManageFacade Facade { get; set; }
         private ISecurityAdapter SecurityAdapter { get; set; }
-        private Address DEF_ADRS = new Address("1", "1", "1", "1");
+        private Address DEF_ADRS = new Address("1", "1", "1", "1", "1");
 
 
         [OneTimeSetUp]

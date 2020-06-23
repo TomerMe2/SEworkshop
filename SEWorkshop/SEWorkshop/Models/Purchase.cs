@@ -25,6 +25,7 @@ namespace SEWorkshop.Models
         public virtual string City { get; set; }
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
+        public virtual string Zip { get; set; }
 
         public Purchase()
         {
@@ -55,6 +56,7 @@ namespace SEWorkshop.Models
             City = adrs.City;
             Street = adrs.Street;
             HouseNumber = adrs.HouseNumber;
+            Zip = adrs.Zip;
         }
     }
 }

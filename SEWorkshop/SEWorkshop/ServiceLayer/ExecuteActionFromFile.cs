@@ -368,7 +368,7 @@ namespace SEWorkshop.ServiceLayer
                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "", creditCardNumber = "", city = "", street = "", houseNumber = "", country = "";
+            string storeName = "", creditCardNumber = "", city = "", street = "", houseNumber = "", country = "", zip = "";
             foreach (var property in properties)
             {
                 switch (property.Key)
@@ -391,10 +391,13 @@ namespace SEWorkshop.ServiceLayer
                     case "country":
                         country = (string)property.Value;
                         break;
+                    case "zip":
+                        zip = (string)property.Value;
+                        break;
                 }
             }
             IEnumerable<DataBasket> baskets = userManager.MyCart(DEF_SID);
-            Address address = new Address(country, city, street, houseNumber);
+            Address address = new Address(country, city, street, houseNumber, zip);
             foreach (DataBasket basket in baskets)
                 if (basket.Store.Name.Equals(storeName))
                 {

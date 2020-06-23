@@ -39,7 +39,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "store1", "Wakanda", 5);
             Manager.AddProductToCart(DEF_ID, "store2", "Wakanda2", 5);
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 2);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"));
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 1);
             Manager.Logout(DEF_ID);
         }
@@ -50,7 +50,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.Login(DEF_ID, "user4", "1234");
             Assert.IsTrue(Manager.PurchaseHistory(DEF_ID).Count() == 1);
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 1);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"));
             Manager.WriteMessage(DEF_ID, "store2", "Wakanda Forever!");
             Manager.WriteReview(DEF_ID, "store2", "Wakanda2", "Forever!");
             Manager.Logout(DEF_ID);
@@ -60,7 +60,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.SetPermissionsOfManager(DEF_ID, "store2", "user3", "Products");
             Manager.Logout(DEF_ID);
             Manager.AddProductToCart(DEF_ID, "store1", "Wakanda", 3);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"));
         }
 
         [Test, Order(3)]

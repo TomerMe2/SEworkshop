@@ -14,7 +14,7 @@ namespace SEWorkshop
         public virtual string Street { get; set; }
         public virtual string HouseNumber { get; set; }
         public virtual string Country { get; set; }
-        public virtual string zip { get; set; }
+        public virtual string Zip { get; set; }
         public virtual ICollection<Purchase> Purchases { get; set;}
 
         public Address()
@@ -32,7 +32,7 @@ namespace SEWorkshop
             this.Street = street;
             this.HouseNumber = houseNumber;
             this.Country = country;
-            this.zip = zip;
+            this.Zip = zip;
             Purchases = new List<Purchase>();
         }
 
@@ -44,12 +44,12 @@ namespace SEWorkshop
             }
             var other = (Address)obj;
             return Country.Equals(other.Country) && City.Equals(other.City) && Street.Equals(other.Street)
-                && HouseNumber.Equals(other.HouseNumber);
+                && HouseNumber.Equals(other.HouseNumber) && Zip.Equals(other.Zip);
         }
 
         public override int GetHashCode()
         {
-            return Country.GetHashCode() ^ City.GetHashCode() ^ Street.GetHashCode() ^ HouseNumber.GetHashCode();
+            return Country.GetHashCode() ^ City.GetHashCode() ^ Street.GetHashCode() ^ HouseNumber.GetHashCode() ^ Zip.GetHashCode();
         }
     }
 }

@@ -20,7 +20,8 @@ namespace SEWorkshop.Tests.UnitTests
         const string STREET_NAME_STUB = "Shderot Ben Gurion";
         const string HOUSE_NUMBER_STUB = "111";
         const string COUNTRY_STUB = "Israel";
-        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB);
+        const string ZIP_STUB = "1234";
+        Address address = new Address(COUNTRY_STUB, CITY_NAME_STUB, STREET_NAME_STUB, HOUSE_NUMBER_STUB, ZIP_STUB);
 
         [OneTimeSetUp]
         public void Init()
