@@ -17,6 +17,7 @@ namespace SEWorkshop.Models
         public virtual Cart Cart { get; set; }
 
 
+
         public User()
         {
             Cart = new Cart(this);

@@ -15,6 +15,7 @@ namespace SEWorkshop.DataModels
         public DataAdministrator(Administrator admin) : base(admin)
         {
             InnerAdmin = admin;
+
         }
 
     }

@@ -13,6 +13,7 @@ namespace SEWorkshop.Models
         public static int ID_COUNTER = 0;
         public int Id { get; set; }
 
+
         public GuestUser() : base()
         {
             Id = ID_COUNTER++;
@@ -53,6 +54,7 @@ namespace SEWorkshop.Models
         public override void RemoveProductFromCart(User user, Product product, int quantity)
         {
             if (quantity < 1)
+
             {
                 throw new NegativeQuantityException();
             }
