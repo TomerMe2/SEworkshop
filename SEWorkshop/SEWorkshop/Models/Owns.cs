@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Validation;
 using NUnit.Framework;
+using System.Net;
 
 namespace SEWorkshop.Models
 {
@@ -159,6 +160,12 @@ namespace SEWorkshop.Models
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
+            ICollection<Authority> auths = DatabaseProxy.Instance.Authorities.Where(auth => auth.AuthHandlerId == management.Id).ToList();
+            foreach (var auth in auths)
+            {
+                //management.AuthoriztionsOfUser.Remove(auth);
+                DatabaseProxy.Instance.Authorities.Remove(auth);
+            }
             Store.Management.Remove(management);
             managerToRemove.Manage.Remove(management);
             DatabaseProxy.Instance.Manages.Remove(management);
@@ -189,7 +196,12 @@ namespace SEWorkshop.Models
                 log.Info("User has no permission for that action");
                 throw new UserHasNoPermissionException();
             }
-
+            ICollection<Authority> auths = DatabaseProxy.Instance.Authorities.Where(auth => auth.AuthHandlerId == ownership.Id).ToList();
+            foreach (var auth in auths)
+            {
+                //ownership.AuthoriztionsOfUser.Remove(auth);
+                DatabaseProxy.Instance.Authorities.Remove(auth);
+            }
             Store.Ownership.Remove(ownership);
             ownerToRemove.Owns.Remove(ownership);
             DatabaseProxy.Instance.Owns.Remove(ownership);
