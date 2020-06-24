@@ -9,7 +9,7 @@ namespace SEWorkshop.DAL
     {
         private const string DB_NAME = "AzamazonLocal.mdf";
         private static readonly string dbPath =
-            "C:\\Users\\neyem\\Desktop\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\Local.mdf";
+            "C:\\Users\\neyem\\Desktop\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\Database1.mdf";
 
         public LocalDbContext() : base(string.Format(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={0};Integrated Security=True", dbPath))
         {
