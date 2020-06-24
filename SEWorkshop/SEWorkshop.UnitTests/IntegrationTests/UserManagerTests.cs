@@ -584,9 +584,6 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.Login("ActionsTest4", "ActionsTest4", "1234");
 
             var now = DateTime.Now;
-            var allKinds = new List<Enums.KindOfUser> { Enums.KindOfUser.Admin, Enums.KindOfUser.Guest,
-                Enums.KindOfUser.LoggedInNoOwnYesManage,
-                Enums.KindOfUser.LoggedInNotOwnNotManage, Enums.KindOfUser.LoggedInYesOwn};
 
             var dctAll = Manager.GetUseRecord("ActionsTest1", now, now);
             Assert.IsTrue((dctAll.Values).First().Values.First() >= 5);
