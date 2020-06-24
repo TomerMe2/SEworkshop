@@ -11,6 +11,7 @@ using SEWorkshop.Models.Policies;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SEWorkshop.DAL;
+using System.Data.Entity;
 
 namespace SEWorkshop.Models
 {
@@ -117,8 +118,10 @@ namespace SEWorkshop.Models
                 select product).ToList();
         }
 
-        public void PurchaseBasket(Basket basket, string creditCardNumber, Address address, User user)
+        public void PurchaseBasket(Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, User user, string username, string id)
         {
+            int transactionBillingId = -1;
+            int transactionSupplyId = -1;
             if (!Policy.CanPurchase(user, address))
             {
                 throw new PolicyIsFalse();
@@ -130,19 +133,51 @@ namespace SEWorkshop.Models
                     throw new NegativeInventoryException();
                 }
             }
-            if (supplyAdapter.CanSupply(basket.Products, address)
-                && billingAdapter.Bill(basket.Products, creditCardNumber, basket.PriceAfterDiscount()))
+            using (var transaction = DatabaseProxy.Instance.Database.BeginTransaction())
             {
-                supplyAdapter.Supply(basket.Products, address);
-                // Update the quantity in the product itself
-                foreach (var product in basket.Products)
+                try
                 {
-                    product.Product.Quantity -= product.Quantity;
+                    transactionBillingId = billingAdapter.Bill(basket.Products, creditCardNumber, expirationDate, cvv, basket.PriceAfterDiscount(), username, id).Result;
+                    transactionSupplyId = supplyAdapter.Supply(basket.Products, address, username).Result;
+                    if (supplyAdapter.CanSupply(basket.Products, address) && transactionBillingId > -1 && transactionSupplyId > -1)
+                    {
+                        // Update the quantity in the product itself
+                        foreach (var product in basket.Products)
+                        {
+                            Product prod = DatabaseProxy.Instance.Products.ToList().First(prd => prd.Name.Equals(product.Product.Name) &&
+                                                                                        prd.StoreName.Equals(product.Product.StoreName));
+                            prod.Quantity -= product.Quantity;
+                        }
+                        DatabaseProxy.Instance.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new PurchaseFailedException();
+                    }
+                    transaction.Commit();
                 }
-            }
-            else
-            {
-                throw new PurchaseFailedException();
+                catch
+                {
+                    try
+                    {
+                        if (transactionBillingId > -1)
+                            billingAdapter.CancelBill(transactionBillingId);
+                    }
+                    catch
+                    {
+                        throw new BillingCancellationHasFailedException();
+                    }
+                    try
+                    {
+                        if (transactionSupplyId > -1)
+                            supplyAdapter.CancelSupply(transactionSupplyId);
+                    }
+                    catch
+                    {
+                        throw new SupplyCancellationHasFailedException();
+                    }
+                    throw new PurchaseFailedException();
+                }
             }
         }
 

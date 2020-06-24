@@ -7,6 +7,7 @@ using SEWorkshop.Facades;
 using SEWorkshop.TyposFix;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace SEWorkshop.ServiceLayer
@@ -27,6 +28,7 @@ namespace SEWorkshop.ServiceLayer
         private ICollection<IServiceObserver<DataMessage>> MsgObservers { get; }
         private ICollection<IServiceObserver<DataPurchase>> PurchaseObservers { get; }
         private ICollection<IServiceObserver<DataOwnershipRequest>> OwnershipRequestObservers { get; }
+        private ICollection<IServiceObserver<KindOfUser>> NewUseReportObservers { get; }
 
         public UserManager()
         {
@@ -41,6 +43,7 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
+            NewUseReportObservers = new List<IServiceObserver<KindOfUser>>();
             ExecuteActionFromFile executeActionFromFile = new ExecuteActionFromFile(this);
             executeActionFromFile.ReadAndExecute();
         }
@@ -57,6 +60,7 @@ namespace SEWorkshop.ServiceLayer
             UserDictLock = new object();
             MsgObservers = new List<IServiceObserver<DataMessage>>();
             PurchaseObservers = new List<IServiceObserver<DataPurchase>>();
+            NewUseReportObservers = new List<IServiceObserver<KindOfUser>>();
             OwnershipRequestObservers = new List<IServiceObserver<DataOwnershipRequest>>();
             ExecuteActionFromFile executeActionFromFile = new ExecuteActionFromFile(this);
             executeActionFromFile.ReadAndExecute();
@@ -73,6 +77,14 @@ namespace SEWorkshop.ServiceLayer
             config.AddRule(LogLevel.Error, LogLevel.Fatal, errorLogFile);
             // Apply config
             LogManager.Configuration = config;
+        }
+
+        private void NotifyNewUseReportsObservers(KindOfUser kind)
+        {
+            foreach(var obs in NewUseReportObservers)
+            {
+                obs.Notify(kind);
+            }
         }
 
         private void NotifyMsgObservers(DataMessage msg)
@@ -115,6 +127,7 @@ namespace SEWorkshop.ServiceLayer
             UseRecord record = new UseRecord(encSid, DateTime.Now, KindOfUser.Guest);
             DAL.DatabaseProxy.Instance.UseRecords.Add(record);
             DAL.DatabaseProxy.Instance.SaveChanges();
+            NotifyNewUseReportsObservers(KindOfUser.Guest);
             return toRet;
         }
 
@@ -224,6 +237,7 @@ namespace SEWorkshop.ServiceLayer
             {
                 recordToChange.Kind = kind;
                 DAL.DatabaseProxy.Instance.SaveChanges();
+                NotifyNewUseReportsObservers(kind);
             }
         }
 
@@ -258,10 +272,10 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
+        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, DateTime epxirationDate, string cvv, Address address, string username, string id)
         {
             Log.Info(string.Format("Purchase"));
-            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, epxirationDate, cvv, address, username, id);
             NotifyPrchsObservers(prchs);
         }
 
@@ -658,6 +672,11 @@ namespace SEWorkshop.ServiceLayer
             MsgObservers.Add(obsrv);
         }
 
+        public void RegisterNewUseReportObserver(IServiceObserver<KindOfUser> obsrv)
+        {
+            NewUseReportObservers.Add(obsrv);
+        }
+
         public void MarkAllDiscussionAsRead(string sessionId, string storeName, DataMessage msg)
         {
             Log.Info(string.Format("MarkAllDiscussionAsRead    {0}    {1}", storeName, msg.Id));
@@ -750,6 +769,11 @@ namespace SEWorkshop.ServiceLayer
         public void AccessSystem(string sessionId)
         {
             GetUser(sessionId);
+        }
+
+        public bool CancelPayment(string transactionId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

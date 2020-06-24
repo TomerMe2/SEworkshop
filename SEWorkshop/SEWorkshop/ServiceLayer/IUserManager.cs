@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
@@ -31,7 +32,7 @@ namespace SEWorkshop.ServiceLayer
         /// </summary>
         public IEnumerable<DataProduct> SearchProductsByKeywords(ref string input);
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred);
-        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address);
+        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, DateTime expirationDate, string cvv,  Address address, string username, string id);
         public void OpenStore(string sessionId, string storeName);
         public void WriteReview(string sessionId, string storeName, string productName, string description);
         public int WriteMessage(string sessionId, string storeName, string description);
@@ -75,18 +76,20 @@ namespace SEWorkshop.ServiceLayer
         public void RegisterPurchaseObserver(IServiceObserver<DataPurchase> obsrv);
         public IEnumerable<string> GetAllUsers(string sessionId);
         public double GetIncomeInDate(string sessionId, DateTime date);
-        
+
         //keys are days, values are the number of visitors in the day of the key
-        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<DateTime, int> GetUseRecord(string sessionId, DateTime dateFrom, DateTime dateTo, List<KindOfUser> kinds);
         public IDictionary<KindOfUser, int> GetUsersByCategory(string sessionId, DateTime today);
         public void AnswerOwnershipRequest(string sessionId, string storeName, string newOwnerUserName, RequestState answer);
         public void RegisterOwnershipObserver(IServiceObserver<DataOwnershipRequest> obsrv);
+        public void RegisterNewUseReportObserver(IServiceObserver<KindOfUser> obsrv);
         public DataUser GetUser(string sessionId);
         public DataLoggedInUser GetDataLoggedInUser(string sessionId);
         public bool IsLoggedIn(string sessionId);
         public bool IsAdministrator(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public string GetLoggedInUsername(string sessionId);
+        public bool CancelPayment(string transactionId);
         public void AccessSystem(string sessionId);
     }
 }

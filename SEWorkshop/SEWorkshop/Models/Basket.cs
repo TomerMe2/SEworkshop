@@ -12,6 +12,7 @@ namespace SEWorkshop.Models
     {
         public virtual int Id {get; set;}
         public virtual Store Store { get; set; }
+        public virtual int? PurchaseId { get; set; }
         public virtual Purchase? Purchase { get; set; }
         public virtual Cart? Cart { get; set; }
         public virtual int? CartId { get; set; }

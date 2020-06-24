@@ -106,9 +106,9 @@ namespace SEWorkshop.Tests.AccaptanceTests
             return userManager.PurchaseHistory(sid);
         }
 
-        public override void Purchase(string sid, DataBasket basket, string creditCardNumber, Address address)
+        public override void Purchase(string sid, DataBasket basket, string creditCardNumber, DateTime epxirationDate, string cvv, Address address, string username, string id)
         {
-            userManager.Purchase(sid, basket, creditCardNumber, address);
+            userManager.Purchase(sid, basket, creditCardNumber, epxirationDate, cvv, address, username, id);
         }
 
         public override void Register(string sid, string username, string password)

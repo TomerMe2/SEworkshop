@@ -105,7 +105,7 @@ namespace SEWorkshop.Facades
         
         public IEnumerable<Purchase> PurchaseHistory(LoggedInUser user)
         {
-            ICollection<Purchase> userPurchases = new List<Purchase>();
+            /*ICollection<Purchase> userPurchases = new List<Purchase>();
             foreach(var purchase in DatabaseProxy.Instance.Purchases)
             {
                 if(purchase.User == user)
@@ -113,12 +113,14 @@ namespace SEWorkshop.Facades
                     userPurchases.Add(purchase);
                 }
             }
-            return userPurchases;
+            return userPurchases;*/
+            return DatabaseProxy.Instance.Purchases.ToList()
+                .Where(purchase => purchase.Username != null && purchase.Username.Equals(user.Username)).ToList();
         }
 
-        public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address)
+        public Purchase Purchase(User user, Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id)
         {
-            var prchs = user.Purchase(basket, creditCardNumber, address);
+            var prchs = user.Purchase(basket, creditCardNumber, expirationDate, cvv, address, username, id);
             DatabaseProxy.Instance.SaveChanges();
             return prchs;
         }

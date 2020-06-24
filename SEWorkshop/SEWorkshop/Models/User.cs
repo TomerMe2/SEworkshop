@@ -25,6 +25,6 @@ namespace SEWorkshop.Models
 
         public abstract void AddProductToCart(Product product, int quantity);
         public abstract void RemoveProductFromCart(User user, Product product, int quantity);
-        public abstract Purchase Purchase(Basket basket, string creditCardNumber, Address address);
+        public abstract Purchase Purchase(Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id);
     }
 }

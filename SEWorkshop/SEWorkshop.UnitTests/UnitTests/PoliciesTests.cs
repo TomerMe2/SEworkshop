@@ -24,7 +24,7 @@ namespace SEWorkshop.Tests.UnitTests
         private Product Prod4 { get; set; }
         private Product Prod5 { get; set; }
 
-        private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44");
+        private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44", "1234");
 
         [OneTimeSetUp]
         public void Init()
@@ -114,7 +114,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 8));
             var pol = new UserCityPolicy(Str, "Beer Sheva");
-            var addr = new Address("Israel", "Tel Aviv", "Ben Gurion", "44");
+            var addr = new Address("Israel", "Tel Aviv", "Ben Gurion", "44", "1234");
             Assert.False(pol.CanPurchase(Buyer, addr));
         }
 
@@ -131,7 +131,7 @@ namespace SEWorkshop.Tests.UnitTests
         {
             Bskt.Products.Add(new ProductsInBasket(Bskt, Prod2, 8));
             var pol = new UserCountryPolicy(Str, "Israel");
-            var addr = new Address("Germany", "Beer Sheva", "Ben Gurion", "44");
+            var addr = new Address("Germany", "Beer Sheva", "Ben Gurion", "44", "1234");
             Assert.False(pol.CanPurchase(Buyer, addr));
         }
 

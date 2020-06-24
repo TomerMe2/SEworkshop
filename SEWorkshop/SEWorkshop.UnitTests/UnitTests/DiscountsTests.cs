@@ -19,7 +19,7 @@ namespace SEWorkshop.Tests.UnitTests
         private Product Prod4 { get; set; }
         private Product Prod5 { get; set; }
 
-        private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44");
+        private Address DefAdrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "44", "1234");
         
         private DateTime Deadline { get; set; }
 

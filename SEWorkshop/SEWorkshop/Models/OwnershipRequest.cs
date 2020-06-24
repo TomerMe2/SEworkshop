@@ -70,7 +70,7 @@ namespace SEWorkshop.Models
 
         public void Answer(LoggedInUser owner, RequestState decision)
         {
-            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username == owner.Username);
+            var currAnswer = Answers.FirstOrDefault(ans => ans.Owner.Username.Equals(owner.Username));
             currAnswer.Answer = decision;
         }
 
