@@ -6,11 +6,11 @@ namespace SEWorkshop.DAL
 {
     class RemoteDbContext : AppDbContext
     {
-        private static string server = "db4free.net";
-        private static string database = "azamazon";
-        private static string uid = "sadnateamuser";
-        private static string password = "sadnaTeamPass";
-        private static string conString = "SERVER=" + server + ";" + "DATABASE=" +
+        private static readonly string server = "db4free.net";
+        private static readonly string database = "azamazon";
+        private static readonly string uid = "sadnateamuser";
+        private static readonly string password = "sadnaTeamPass";
+        private static readonly string conString = "SERVER=" + server + ";" + "DATABASE=" +
                     database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
         public RemoteDbContext() : base(conString)

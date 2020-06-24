@@ -17,18 +17,18 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		private const string CVV = "512";
 		private const string NAME = "Ben Zini";
 		private const string ID = "1";
-		private DateTime expirationDate = new DateTime(2021, 3, 1);
+		private DateTime ExpirationDate = new DateTime(2021, 3, 1);
 
-        [OneTimeSetUp]
-        public void Init()
-        {
-            DatabaseProxy.MoveToTestDb();
-            Bridge = new ProxyServiceLayer();
-        }
+		[OneTimeSetUp]
+		public void Init()
+		{
+			DatabaseProxy.MoveToTestDb();
+			Bridge = new ProxyServiceLayer();
+		}
 
-        [Test, Order(1)]
+		[Test, Order(1)]
 		public void Test_2_2()
-        {
+		{
 			Assert.That(() => Bridge.Register(DEF_SID, "user", "1234"), Throws.Nothing);
 			Assert.Throws<UserAlreadyExistsException>(delegate { Bridge.Register(DEF_SID, "user", "1234"); });
 			Bridge.Register(DEF_SID, "secondOwner", "1234");
@@ -129,14 +129,17 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			Bridge.AddProductToCart(DEF_SID, "store1", "bisli", 1);
 			var basket = Bridge.MyCart(DEF_SID).First();
-			Assert.That(() => Bridge.Purchase(DEF_SID, basket, "555", new Address("Israel", "Beer Sheva", "Ben Gurion", "99")), Throws.Nothing);
-			Assert.Throws<BasketNotInSystemException>(delegate { Bridge.Purchase(DEF_SID, basket, "555",
-                                                        new Address("Israel", "Beer Sheva", "Ben Gurion", "99")); });
+			Assert.That(() => Bridge.Purchase(DEF_SID, basket, "555", ExpirationDate, CVV,
+					new Address("Israel", "Beer Sheva", "Ben Gurion", "99", "1234"), NAME, ID), Throws.Nothing);
+			Assert.Throws<BasketNotInSystemException>(delegate {
+				Bridge.Purchase(DEF_SID, basket, "555", ExpirationDate, CVV,
+	   new Address("Israel", "Beer Sheva", "Ben Gurion", "99", "1234"), NAME, ID);
+			});
 		}
 
 		[Test, Order(30)]
 		public void Test_3_1()
-		{	
+		{
 			Assert.That(() => Bridge.Logout(DEF_SID), Throws.Nothing);
 			Assert.Throws<UserHasNoPermissionException>(delegate { Bridge.Logout(DEF_SID); });
 		}
@@ -155,7 +158,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		public void Test_3_3()
 		{
 			Assert.Throws<ReviewIsEmptyException>(delegate { Bridge.WriteReview(DEF_SID, "store1", "bisli", ""); });
-			Assert.That(() => Bridge.WriteReview(DEF_SID, "store1", "bisli", "product is good"), Throws.Nothing);	
+			Assert.That(() => Bridge.WriteReview(DEF_SID, "store1", "bisli", "product is good"), Throws.Nothing);
 			Bridge.Logout(DEF_SID);
 			Assert.Throws<UserHasNoPermissionException>(delegate { Bridge.WriteReview(DEF_SID, "store1", "bisli", "product is bad"); });
 		}
@@ -204,8 +207,8 @@ namespace SEWorkshop.Tests.AcceptanceTests
 		{
 			string bamba = "bamba";
 			string bamba2 = "bamba2";
-			
-            var bamb = Bridge.SearchProductsByName(ref bamba).First();
+
+			var bamb = Bridge.SearchProductsByName(ref bamba).First();
 			Assert.That(() => Bridge.EditProductName(DEF_SID, "store1", "bamba", "bamba2"), Throws.Nothing);
 			Assert.That(() => Bridge.EditProductCategory(DEF_SID, "store1", "bamba2", "electronics"), Throws.Nothing);
 			Assert.That(() => Bridge.EditProductPrice(DEF_SID, "store1", "bamba2", 215), Throws.Nothing);
@@ -236,12 +239,12 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Bridge.Login(DEF_SID, "user1", "password");
 			Bridge.AddProductToCart(DEF_SID, storeName, productName, 7);
 			IEnumerable<DataBasket> cart = Bridge.MyCart(DEF_SID);
-			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33");
-			Assert.That(() => Bridge.Purchase(DEF_SID, cart.First(), "123456789", address), Throws.Nothing);
+			Address address = new Address("Israel", "Haifa", "Haim Nahman", "33", "1234");
+			Assert.That(() => Bridge.Purchase(DEF_SID, cart.First(), "123456789", ExpirationDate, CVV, address, NAME, ID), Throws.Nothing);
 			IEnumerable<DataBasket> cart4 = Bridge.MyCart(DEF_SID);  //degub: cart should be empty
 			Bridge.AddProductToCart(DEF_SID, storeName, productName, 12);
 			IEnumerable<DataBasket> cart5 = Bridge.MyCart(DEF_SID);  //degub: cart should be empty
-			Assert.Throws<PolicyIsFalse>(delegate { Bridge.Purchase(DEF_SID, cart5.First(), "123456789", address); });
+			Assert.Throws<PolicyIsFalse>(delegate { Bridge.Purchase(DEF_SID, cart5.First(), "123456789", ExpirationDate, CVV, address, NAME, ID); });
 			IEnumerable<DataBasket> cart3 = Bridge.MyCart(DEF_SID); //debug: check that cart is not empty
 
 			Bridge.Logout(DEF_SID);
@@ -251,7 +254,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Bridge.Logout(DEF_SID);
 			Bridge.Login(DEF_SID, "user1", "password");
 			IEnumerable<DataBasket> cart2 = Bridge.MyCart(DEF_SID);
-			Assert.That(() => Bridge.Purchase(DEF_SID, cart2.First(), "123456789", address), Throws.Nothing);
+			Assert.That(() => Bridge.Purchase(DEF_SID, cart2.First(), "123456789", ExpirationDate, CVV, address, NAME, ID), Throws.Nothing);
 		}
 
 		[Test, Order(34)]
@@ -271,7 +274,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Bridge.Logout(DEF_SID);
 			Bridge.Login(DEF_SID, "user1", "password");
 			Bridge.AddProductToCart(DEF_SID, storeName, productName2, 4);
-			Assert.AreEqual(30*4, Bridge.MyCart(DEF_SID).First().PriceAfterDiscount);
+			Assert.AreEqual(30 * 4, Bridge.MyCart(DEF_SID).First().PriceAfterDiscount);
 		}
 
 		[Test, Order(23)]
@@ -371,29 +374,29 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.That(() => Bridge.UserPurchaseHistory(DEF_SID, "user"), Throws.Nothing);
 		}
 
-        [Test, Order(32)]
-        public void Test_10()
-        {
-            const string SECOND_SID = "Test_10_Sid";
-            var obsrv = new PurchaseObserverMock();
-            Bridge.RegisterPurchaseObserver(obsrv);
-            Bridge.Logout(DEF_SID);
-            Bridge.Register(DEF_SID, "test_10_usr", "1234");
-            Bridge.Login(DEF_SID, "test_10_usr", "1234");
-            Bridge.OpenStore(DEF_SID, "test_10_str");
-            Bridge.AddProduct(DEF_SID, "test_10_str", "some_prod", "ninini", "some_cat", 999, 50);
-            Bridge.Register(SECOND_SID, "test_10_user2", "1234");
-            Bridge.Login(SECOND_SID, "test_10_user2", "1234");
-            Bridge.AddProductToCart(SECOND_SID, "test_10_str", "some_prod", 1);
-            var basket = Bridge.MyCart(SECOND_SID).First(bskt => bskt.Store.Name.Equals("test_10_str"));
-            var adrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "14");
-            Bridge.Purchase(SECOND_SID, basket, "1234", adrs);
-
-            Assert.IsTrue(obsrv.Purchases.Count == 1);
-            var prchs = obsrv.Purchases[0];
-            Assert.IsTrue(prchs.Address.Equals(adrs));
-            Assert.IsTrue(prchs.Basket.Equals(basket));
+		[Test, Order(32)]
+		public void Test_10()
+		{
+			const string SECOND_SID = "Test_10_Sid";
+			var obsrv = new PurchaseObserverMock();
+			Bridge.RegisterPurchaseObserver(obsrv);
 			Bridge.Logout(DEF_SID);
-        }
+			Bridge.Register(DEF_SID, "test_10_usr", "1234");
+			Bridge.Login(DEF_SID, "test_10_usr", "1234");
+			Bridge.OpenStore(DEF_SID, "test_10_str");
+			Bridge.AddProduct(DEF_SID, "test_10_str", "some_prod", "ninini", "some_cat", 999, 50);
+			Bridge.Register(SECOND_SID, "test_10_user2", "1234");
+			Bridge.Login(SECOND_SID, "test_10_user2", "1234");
+			Bridge.AddProductToCart(SECOND_SID, "test_10_str", "some_prod", 1);
+			var basket = Bridge.MyCart(SECOND_SID).First(bskt => bskt.Store.Name.Equals("test_10_str"));
+			var adrs = new Address("Israel", "Beer Sheva", "Ben Gurion", "14", "1234");
+			Bridge.Purchase(SECOND_SID, basket, "1234", ExpirationDate, CVV, adrs, NAME, ID);
+
+			Assert.IsTrue(obsrv.Purchases.Count == 1);
+			var prchs = obsrv.Purchases[0];
+			Assert.IsTrue(prchs.Address.Equals(adrs));
+			Assert.IsTrue(prchs.Basket.Equals(basket));
+			Bridge.Logout(DEF_SID);
+		}
 	}
 }

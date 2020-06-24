@@ -55,12 +55,27 @@ async function connectToAllHubs(userName) {
     const handlersNewReportHub = [
         ["NewUseReport", kind => {
             console.log('got kind of: ' + kind);
+            const domTotal = document.getElementById('TotalNum');
+            if (domTotal !== null) {
+                const currInt = parseInt(domTotal.innerHTML);
+                domTotal.innerHTML = currInt + 1;
+            }
+            const domTotal2 = document.getElementById('SecondTableTotalNum');
+            if (domTotal2 !== null) {
+                const currInt = parseInt(domTotal2.innerHTML);
+                domTotal2.innerHTML = currInt + 1;
+            }
             //TODO: SYNC THIS METHOD IF POSSIBLE
             if (kind === 'Guest') {
                 const dom = document.getElementById('GuestsNum');
                 if (dom !== null) {
                     const currInt = parseInt(dom.innerHTML);
                     dom.innerHTML = currInt + 1;
+                }
+                const dom2 = document.getElementById('SecondTableGuestsNum');
+                if (dom2 !== null) {
+                    const currInt = parseInt(dom2.innerHTML);
+                    dom2.innerHTML = currInt + 1;
                 }
             }
             else if (kind === 'LoggedInNotOwnNotManage') {
@@ -69,12 +84,22 @@ async function connectToAllHubs(userName) {
                     const currInt = parseInt(dom.innerHTML);
                     dom.innerHTML = currInt + 1;
                 }
+                const dom2 = document.getElementById('SecondTableLoggedInNotOwnNotManageNum');
+                if (dom2 !== null) {
+                    const currInt = parseInt(dom2.innerHTML);
+                    dom2.innerHTML = currInt + 1;
+                }
             }
             else if (kind === 'LoggedInNoOwnYesManage') {
                 const dom = document.getElementById('LoggedInNoOwnYesManageNum');
                 if (dom !== null) {
                     const currInt = parseInt(dom.innerHTML);
                     dom.innerHTML = currInt + 1;
+                }
+                const dom2 = document.getElementById('SecondTableLoggedInNoOwnYesManageNum');
+                if (dom2 !== null) {
+                    const currInt = parseInt(dom2.innerHTML);
+                    dom2.innerHTML = currInt + 1;
                 }
             }
             else if (kind === 'LoggedInYesOwn') {
@@ -83,12 +108,22 @@ async function connectToAllHubs(userName) {
                     const currInt = parseInt(dom.innerHTML);
                     dom.innerHTML = currInt + 1;
                 }
+                const dom2 = document.getElementById('SecondTableLoggedInYesOwnNum');
+                if (dom2 !== null) {
+                    const currInt = parseInt(dom2.innerHTML);
+                    dom2.innerHTML = currInt + 1;
+                }
             }
             else if (kind === 'Admin') {
                 const dom = document.getElementById('AdminNum');
                 if (dom !== null) {
                     const currInt = parseInt(dom.innerHTML);
                     dom.innerHTML = currInt + 1;
+                }
+                const dom2 = document.getElementById('SecondTableAdminNum');
+                if (dom2 !== null) {
+                    const currInt = parseInt(dom2.innerHTML);
+                    dom2.innerHTML = currInt + 1;
                 }
             }
         }]
