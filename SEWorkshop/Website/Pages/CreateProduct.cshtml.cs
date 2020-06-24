@@ -19,8 +19,8 @@ namespace Website.Pages
         public string ProductName { get; private set; }
         public string ProductCategory { get; private set; }
         public string ProductDescription { get; private set; }
-        public double ProductPrice { get; private set; }
-        public int ProductQuantity { get; private set; }
+        public string ProductPrice { get; private set; }
+        public string ProductQuantity { get; private set; }
         public string StoreName { get; private set; }
         public string ErrorMsg { get; private set; }
 
@@ -30,8 +30,8 @@ namespace Website.Pages
             StoreName = "";
             ProductCategory = "";
             ProductDescription = "";
-            ProductPrice = 0.00;
-            ProductQuantity = 0;
+            ProductPrice = "";
+            ProductQuantity = "";
             ErrorMsg = "";
 
         }
@@ -89,8 +89,8 @@ namespace Website.Pages
             this.StoreName = StoreName;
             this.ProductCategory = ProductCategory;
             this.ProductDescription = ProductDescription;
-            this.ProductPrice =double.Parse(ProductPrice);
-            this.ProductQuantity =int.Parse(ProductQuantity);
+            this.ProductPrice = ProductPrice;
+            this.ProductQuantity = ProductQuantity;
 
             return RedirectToPage("./Store", new {storeName= StoreName});
 
