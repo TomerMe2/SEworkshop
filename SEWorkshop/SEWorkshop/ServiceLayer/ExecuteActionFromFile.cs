@@ -775,6 +775,7 @@ namespace SEWorkshop.ServiceLayer
                     'productName': {'type':'string'},
                     'newQuantity': {'type':'integer'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'newQuantity' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -809,10 +810,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemoveProduct',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'}
                 },
+                'required': [ 'command', 'storeName', 'productName' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -844,10 +846,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddAlwaysTruePolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']}
                 },
+                'required': [ 'command', 'storeName', 'operator' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
