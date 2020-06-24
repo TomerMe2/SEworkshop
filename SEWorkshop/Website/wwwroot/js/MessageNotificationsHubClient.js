@@ -51,4 +51,47 @@ async function connectToAllHubs(userName) {
         }]
     ];
     ConnectToNotificationsHub(userName, "/ownershiprequesthub", handlerForOwnershupHub);
+
+    const handlersNewReportHub = [
+        ["NewUseReport", kind => {
+            console.log('got kind of: ' + kind);
+            //TODO: SYNC THIS METHOD IF POSSIBLE
+            if (kind === 'Guest') {
+                const dom = document.getElementById('GuestsNum');
+                if (dom !== null) {
+                    const currInt = parseInt(dom.innerHTML);
+                    dom.innerHTML = currInt + 1;
+                }
+            }
+            else if (kind === 'LoggedInNotOwnNotManage') {
+                const dom = document.getElementById('LoggedInNotOwnNotManageNum');
+                if (dom !== null) {
+                    const currInt = parseInt(dom.innerHTML);
+                    dom.innerHTML = currInt + 1;
+                }
+            }
+            else if (kind === 'LoggedInNoOwnYesManage') {
+                const dom = document.getElementById('LoggedInNoOwnYesManageNum');
+                if (dom !== null) {
+                    const currInt = parseInt(dom.innerHTML);
+                    dom.innerHTML = currInt + 1;
+                }
+            }
+            else if (kind === 'LoggedInYesOwn') {
+                const dom = document.getElementById('LoggedInYesOwnNum');
+                if (dom !== null) {
+                    const currInt = parseInt(dom.innerHTML);
+                    dom.innerHTML = currInt + 1;
+                }
+            }
+            else if (kind === 'Admin') {
+                const dom = document.getElementById('AdminNum');
+                if (dom !== null) {
+                    const currInt = parseInt(dom.innerHTML);
+                    dom.innerHTML = currInt + 1;
+                }
+            }
+        }]
+    ];
+    ConnectToNotificationsHub(userName, "/newusereporthub", handlersNewReportHub);
 }

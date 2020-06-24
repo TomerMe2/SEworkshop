@@ -113,6 +113,7 @@ namespace SEWorkshop.ServiceLayer
                 }
                 else
                 {
+                    
                     toRet = FacadesBridge.CreateGuest();
                     UsersDict[sessionId] = toRet;
                 }
