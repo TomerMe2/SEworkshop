@@ -40,7 +40,8 @@ namespace Website.Pages
             }
             catch (Exception e)
             {
-                Error = e.ToString();
+                //Error = e.ToString();
+                Error = "Can't login";
                 return new PageResult();
             }
             return RedirectToPage("./Stores");
