@@ -86,7 +86,7 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Address>()
                     .ToTable("Addresses")
-                    .HasKey(address => new { address.Id, address.City, address.Street, address.HouseNumber, address.Country });
+                    .HasKey(address => new { address.Id, address.City, address.Street, address.HouseNumber, address.Country, address.Zip });
 
             modelBuilder.Entity<Administrator>()
                     .ToTable("Administrators")
@@ -298,8 +298,12 @@ namespace SEWorkshop.DAL
                     .HasKey(pb => new { pb.BasketId, pb.ProductId });
 
             modelBuilder.Entity<Purchase>()
+                .Property(purchase => purchase.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<Purchase>()
                     .ToTable("Purchases")
-                    .HasKey(purchase => purchase.BasketId);
+                    .HasKey(purchase => purchase.Id);
 
             modelBuilder.Entity<Review>()
                     .ToTable("Reviews")
@@ -545,14 +549,35 @@ namespace SEWorkshop.DAL
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Address)
                     .WithMany(address => address.Purchases)
-                    .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country})
+                    .HasForeignKey(prchs => new { prchs.AddressId, prchs.City, prchs.Street, prchs.HouseNumber, prchs.Country, prchs.Zip})
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Basket>()
+                    .HasOptional(basket => basket.Purchase)
+#pragma warning disable CS8603 // Possible null reference return.
+                    .WithMany()
+                    .HasForeignKey(basket => basket.PurchaseId)
+#pragma warning restore CS8603 // Possible null reference return.
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Purchase>()
                     .HasRequired(purchase => purchase.Basket)
 #pragma warning disable CS8603 // Possible null reference return.
-                    .WithOptional(basket => basket.Purchase)
+                    .WithMany()
+                    .HasForeignKey(purchase => purchase.BasketId)
 #pragma warning restore CS8603 // Possible null reference return.
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Purchase>()
+                    .HasRequired(purchase => purchase.store)
+                    .WithMany(store => store.Purchases)
+                    .HasForeignKey(prchs => prchs.storeName)
+                    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Purchase>()
+                    .HasOptional(purchase => purchase.User)
+                    .WithMany(user => user.Purchases)
+                    .HasForeignKey(prchs => prchs.Username)
                     .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Review>()

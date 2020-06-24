@@ -10,7 +10,7 @@ namespace SEWorkshop.DAL
     {
         private const string DB_NAME = "AzamazonTest.mdf";
         private static readonly string dbPath =
-            @"C:\Users\tomer\Source\Repos\SEworkshop3\SEWorkshop\SEWorkshop\DAL\AzamazonLocal.mdf";
+            "C:\\Users\\Ravid\\Desktop\\1st Degree\\3rd Year\\Semester F\\Workshop for SE Project\\Code\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\AzamazonLocal.mdf";
 
         public TestDbContext() : base(string.Format(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={0};Integrated Security=True", dbPath))
         {

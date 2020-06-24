@@ -84,7 +84,8 @@
                                         </div>
                                     </form>
                                     var tempauths = manager.user.Manages.ContainsKey(Model.Store) ? manager.user.Manages[Model.Store] : null;
-                                    if (isOwner || (tempauths != null && tempauths.Contains(SEWorkshop.Enums.Authorizations.Authorizing)))
+                                    var tempauthsAppointer = manager.appointer.Manages.ContainsKey(Model.Store) ? manager.appointer.Manages[Model.Store] : null;
+                                    if (isOwner || (tempauthsAppointer != null && tempauthsAppointer.Contains(SEWorkshop.Enums.Authorizations.Authorizing)))
                                         foreach (SEWorkshop.Enums.Authorizations? auth in Enum.GetValues(typeof(SEWorkshop.Enums.Authorizations)))
                                         {
                                             if (auth is null)

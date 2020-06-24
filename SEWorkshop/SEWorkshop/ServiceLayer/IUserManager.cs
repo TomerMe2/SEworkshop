@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using SEWorkshop.DataModels;
 using SEWorkshop.Enums;
@@ -31,7 +32,7 @@ namespace SEWorkshop.ServiceLayer
         /// </summary>
         public IEnumerable<DataProduct> SearchProductsByKeywords(ref string input);
         public IEnumerable<DataProduct> FilterProducts(ICollection<DataProduct> products, Func<DataProduct, bool> pred);
-        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address);
+        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, DateTime expirationDate, string cvv,  Address address, string username, string id);
         public void OpenStore(string sessionId, string storeName);
         public void WriteReview(string sessionId, string storeName, string productName, string description);
         public int WriteMessage(string sessionId, string storeName, string description);
@@ -88,6 +89,7 @@ namespace SEWorkshop.ServiceLayer
         public bool IsAdministrator(string sessionId);
         public void RegisterMessageObserver(IServiceObserver<DataMessage> obsrv);
         public string GetLoggedInUsername(string sessionId);
+        public bool CancelPayment(string transactionId);
         public void AccessSystem(string sessionId);
     }
 }

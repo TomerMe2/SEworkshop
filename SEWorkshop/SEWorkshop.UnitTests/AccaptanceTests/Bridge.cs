@@ -14,7 +14,7 @@ namespace SEWorkshop.Tests.AccaptanceTests
         public abstract void Logout(string sid);
         public abstract IEnumerable<DataBasket> MyCart(string sid);
         public abstract void OpenStore(string sid, string storeName);
-        public abstract void Purchase(string sid, DataBasket basket, string creditCardNumber, Address address);
+        public abstract void Purchase(string sid, DataBasket basket, string creditCardNumber, DateTime epxirationDate, string cvv, Address address, string username, string id);
         public abstract void Register(string sid, string username, string password);
         public abstract void RemoveProductFromCart(string sid, string storeName, string productName, int quantity);
         public abstract IEnumerable<DataProduct> SearchProductsByName(ref string input);

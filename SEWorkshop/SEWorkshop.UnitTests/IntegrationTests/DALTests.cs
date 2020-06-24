@@ -12,6 +12,10 @@ namespace SEWorkshop.Tests.IntegrationTests
     {
         private IUserManager Manager { get; set; }
         private const string DEF_ID = "DALTests";
+        private const string CVV = "512";
+        private const string NAME = "Ben Zini";
+        private const string ID = "1";
+        private DateTime expirationDate = new DateTime(2021, 3, 1);
 
         //You could run each test separately by its order, or run everything at once
 
@@ -39,7 +43,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AddProductToCart(DEF_ID, "store1", "Wakanda", 5);
             Manager.AddProductToCart(DEF_ID, "store2", "Wakanda2", 5);
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 2);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", expirationDate, CVV,
+                new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"), NAME, ID);
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 1);
             Manager.Logout(DEF_ID);
         }
@@ -50,7 +55,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.Login(DEF_ID, "user4", "1234");
             Assert.IsTrue(Manager.PurchaseHistory(DEF_ID).Count() == 1);
             Assert.IsTrue(Manager.MyCart(DEF_ID).Count() == 1);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", expirationDate, CVV,
+                new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"), NAME, ID);
             Manager.WriteMessage(DEF_ID, "store2", "Wakanda Forever!");
             Manager.WriteReview(DEF_ID, "store2", "Wakanda2", "Forever!");
             Manager.Logout(DEF_ID);
@@ -60,7 +66,8 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.SetPermissionsOfManager(DEF_ID, "store2", "user3", "Products");
             Manager.Logout(DEF_ID);
             Manager.AddProductToCart(DEF_ID, "store1", "Wakanda", 3);
-            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", new Address("Israel", "Beersheba", "Rager blv.", "123"));
+            Manager.Purchase(DEF_ID, Manager.MyCart(DEF_ID).ElementAt(0), "5555", expirationDate, CVV,
+                new Address("Israel", "Beersheba", "Rager blv.", "123", "1234"), NAME, ID);
         }
 
         [Test, Order(3)]
@@ -71,7 +78,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Assert.That(() => Manager.AddProduct(DEF_ID, "store2", "best", "product", "ever", 10, 10), Throws.Nothing);
             Manager.Logout(DEF_ID);
             Manager.Login(DEF_ID, "user1", "1234");
-            Assert.IsTrue(Manager.ManagingPurchaseHistory(DEF_ID, "store1").Count() == 2);
+            Assert.IsTrue(Manager.ManagingPurchaseHistory(DEF_ID, "store1").Count() == 1);
             string input = "Wakanda2";
             Assert.IsTrue(Manager.SearchProductsByName(ref input).ElementAt(0).Reviews.Count() == 1);
             Assert.IsTrue(Manager.ViewMessage(DEF_ID, "store2").Count() == 2);

@@ -12,7 +12,7 @@ namespace SEWorkshop.Facades
         public IEnumerable<Basket> MyCart(User user);
         public void AddProductToCart(User user, Product product, int quantity); //throws exception
         public void RemoveProductFromCart(User user, Product product, int quantity); //throws exception
-        public Purchase Purchase(User user, Basket basket, string creditCardNumber, Address address); //throws exception
+        public Purchase Purchase(User user, Basket basket, string creditCardNumber, DateTime expirationDate, string cvv, Address address, string username, string id); //throws exception
         public IEnumerable<Purchase> PurchaseHistory(LoggedInUser user);
         public IEnumerable<Purchase> UserPurchaseHistory(LoggedInUser requesting, string userToView);
         public IEnumerable<Purchase> StorePurchaseHistory(LoggedInUser requesting, Store store);

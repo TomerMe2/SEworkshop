@@ -13,7 +13,11 @@ namespace SEWorkshop.Tests.AcceptanceTests
 	public class AcceptanceTests
 	{
 		private Bridge Bridge { get; set; }
-        private const string DEF_SID = "1";
+		private const string DEF_SID = "1";
+		private const string CVV = "512";
+		private const string NAME = "Ben Zini";
+		private const string ID = "1";
+		private DateTime expirationDate = new DateTime(2021, 3, 1);
 
         [OneTimeSetUp]
         public void Init()

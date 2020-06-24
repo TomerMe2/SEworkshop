@@ -345,11 +345,18 @@ namespace SEWorkshop.ServiceLayer
                 'properties': {
                     'command': { 'type': 'string', 'required': 'true'},
                     'storeName': { 'type': 'string', 'required': 'true'},
+                    'firstName': { 'type': 'string', 'required': 'true'},
+                    'lastName' : { 'type': 'string', 'required': 'true'},
+                    'id' : { 'type': 'string', 'required': 'true'},
                     'creditCardNumber': {'type':'string', 'required': 'true'},
+                    'expirationMonth': {'type':'integer', 'required': 'true'},
+                    'expirationYear': {'type':'integer', 'required': 'true'},
+                    'cvv': {'type':'string', 'required': 'true'},
                     'city': {'type':'string', 'required': 'true'},
                     'street': {'type':'string', 'required': 'true'},
                     'houseNumber': {'type':'string', 'required': 'true'},
-                    'country': {'type':'string', 'required': 'true'}
+                    'country': {'type':'string', 'required': 'true'},
+                    'zip': {'type':'string', 'required': 'true'},
                 },
                 'additionalProperties': false
             }";
@@ -360,15 +367,23 @@ namespace SEWorkshop.ServiceLayer
                  "Required properties:" +
                  "command           type: string" +
                  "storeName         type: string" +
+                 "firstName         type: string" +
+                 "lastName          type: string" +
+                 "id                type: string" +
                  "creditCardNumber  type: string" +
+                 "expirationMonth   type: integer" +
+                 "expirationYear    type: integer" +
+                 "cvv               type: string" +
                  "city              type: string" +
                  "street            type: string" +
                  "houseNumber       type: string" +
                  "country           type: string" +
+                 "zip               type: string" +
                  "Additional properties are not allowed.");
                 return;
             }
-            string storeName = "", creditCardNumber = "", city = "", street = "", houseNumber = "", country = "";
+            string storeName = "", firstName = "", lastName = "", id = "", creditCardNumber = "", cvv = "", city = "", street = "", houseNumber = "", country = "", zip = "";
+            int expirationMonth = -1, expirationYear = -1;
             foreach (var property in properties)
             {
                 switch (property.Key)
@@ -376,8 +391,26 @@ namespace SEWorkshop.ServiceLayer
                     case "storeName":
                         storeName = (string)property.Value;
                         break;
+                    case "firstName":
+                        firstName = (string)property.Value;
+                        break;
+                    case "lastName":
+                        lastName = (string)property.Value;
+                        break;
+                    case "id":
+                        id = (string)property.Value;
+                        break;
                     case "creditCardNumber":
                         creditCardNumber = (string)property.Value;
+                        break;
+                    case "expirationMonth":
+                        expirationMonth = (int)property.Value;
+                        break;
+                    case "expirationYear":
+                        expirationYear = (int)property.Value;
+                        break;
+                    case "cvv":
+                        cvv = (string)property.Value;
                         break;
                     case "city":
                         city = (string)property.Value;
@@ -391,14 +424,18 @@ namespace SEWorkshop.ServiceLayer
                     case "country":
                         country = (string)property.Value;
                         break;
+                    case "zip":
+                        zip = (string)property.Value;
+                        break;
                 }
             }
             IEnumerable<DataBasket> baskets = userManager.MyCart(DEF_SID);
-            Address address = new Address(country, city, street, houseNumber);
+            Address address = new Address(country, city, street, houseNumber, zip);
+            DateTime expirationDate = new DateTime(expirationYear, expirationMonth, 1);
             foreach (DataBasket basket in baskets)
                 if (basket.Store.Name.Equals(storeName))
                 {
-                    userManager.Purchase(DEF_SID, basket, creditCardNumber, address);
+                    userManager.Purchase(DEF_SID, basket, creditCardNumber, expirationDate, cvv, address, firstName+lastName, id);
                     return;
                 }
             Console.WriteLine("Error! Purchase invalid." +

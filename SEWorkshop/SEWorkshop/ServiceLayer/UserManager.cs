@@ -7,6 +7,7 @@ using SEWorkshop.Facades;
 using SEWorkshop.TyposFix;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace SEWorkshop.ServiceLayer
@@ -272,10 +273,10 @@ namespace SEWorkshop.ServiceLayer
             }
         }
 
-        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, Address address)
+        public void Purchase(string sessionId, DataBasket basket, string creditCardNumber, DateTime epxirationDate, string cvv, Address address, string username, string id)
         {
             Log.Info(string.Format("Purchase"));
-            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, address);
+            var prchs = FacadesBridge.Purchase(GetUser(sessionId), basket, creditCardNumber, epxirationDate, cvv, address, username, id);
             NotifyPrchsObservers(prchs);
         }
 
@@ -769,6 +770,11 @@ namespace SEWorkshop.ServiceLayer
         public void AccessSystem(string sessionId)
         {
             GetUser(sessionId);
+        }
+
+        public bool CancelPayment(string transactionId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
