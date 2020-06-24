@@ -91,7 +91,6 @@ namespace SEWorkshop.Models
                 Store.Ownership.Remove(ownership);
                 ownerToRemove.Owns.Remove(ownership);
                 DatabaseProxy.Instance.Owns.Remove(ownership);
-                DatabaseProxy.Instance.SaveChanges();
                 log.Info("The owner has been removed successfully");
                 return;
             }
@@ -292,13 +291,13 @@ namespace SEWorkshop.Models
             if (!IsUserStoreOwner(manager, Store))
             {
                 Manages? management = Store.GetManagement(manager);
-                if (management == null || management.Appointer.Username == this.LoggedInUser.Username)
+                if (management == null || management.Appointer.Username != this.LoggedInUser.Username)
                 {
                     log.Info("User has no permission for that action");
                     throw new UserHasNoPermissionException();
                 }
 
-                if (!HasAuthorization(authorization))
+                if (!management.HasAuthorization(authorization))
                 {
                     log.Info("Permission has been granted successfully");
                     management.AddAuthorization(authorization);   
@@ -334,6 +333,30 @@ namespace SEWorkshop.Models
             }
             log.Info("User has no permission for that action");
             throw new UserHasNoPermissionException();
+        }
+
+        public void AddStoreOwner(LoggedInUser newOwner)
+        {
+            log.Info("User tries to add a new owner {0} to store", newOwner.Username);
+            if (Store.GetOwnership(newOwner) != null)
+            {
+                throw new UserIsAlreadyStoreOwnerException();
+            }
+            var req = Store.OwnershipRequests.FirstOrDefault(req => req.NewOwnerUsername.Equals(newOwner.Username));
+            if (req != null && req.GetRequestState() != RequestState.Approved)
+            {
+                throw new OwnershipRequestAlreadyExistsException();
+            }
+
+            OwnershipRequest request = new OwnershipRequest(Store, LoggedInUser, newOwner);
+            Store.OwnershipRequests.Add(request);
+            LoggedInUser.OwnershipRequestsFrom.Add(request);
+            newOwner.OwnershipRequests.Add(request);
+            DatabaseProxy.Instance.OwnershipRequests.Add(request);
+            foreach (var ans in request.Answers)
+            {
+                DatabaseProxy.Instance.OwnershipAnswers.Add(ans);
+            }
         }
     }
 }
