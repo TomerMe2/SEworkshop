@@ -174,10 +174,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'Register',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'username': {'type':'string', 'required': 'true'},
-                    'password': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'username': { 'type': 'string'},
+                    'password': { 'type': 'string'}
                 },
+                'required': [ 'command', 'username', 'password'],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -202,17 +203,17 @@ namespace SEWorkshop.ServiceLayer
             userManager.Register(DEF_SID, username, password);
         }
 
-
         void HandleLogin(JObject action, Dictionary<string, object> properties)
         {
             string schemaJson = @"{
                 'description': 'Login',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'username': {'type':'string', 'required': 'true'},
-                    'password': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'username': {'type':'string'},
+                    'password': {'type':'string'}
                 },
+                'required': [ 'command', 'username', 'password'],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -243,8 +244,9 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'Logout',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'}
+                    'command': { 'type': 'string'}
                 },
+                'required': [ 'command' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -265,11 +267,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddProductToCart',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'quantity': {'type':'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'quantity': {'type':'integer'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'quantity'],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -304,11 +307,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemoveProductFromCart',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'quantity': {'type':'integer', 'required': 'true'}
+                    'command': { 'type': 'string' },
+                    'storeName': { 'type': 'string' },
+                    'productName': {'type':'string' },
+                    'quantity': {'type':'integer' }
                 },
+                'required': [ 'command', 'storeName', 'productName', 'quantity' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -343,21 +347,23 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'Purchase',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'firstName': { 'type': 'string', 'required': 'true'},
-                    'lastName' : { 'type': 'string', 'required': 'true'},
-                    'id' : { 'type': 'string', 'required': 'true'},
-                    'creditCardNumber': {'type':'string', 'required': 'true'},
-                    'expirationMonth': {'type':'integer', 'required': 'true'},
-                    'expirationYear': {'type':'integer', 'required': 'true'},
-                    'cvv': {'type':'string', 'required': 'true'},
-                    'city': {'type':'string', 'required': 'true'},
-                    'street': {'type':'string', 'required': 'true'},
-                    'houseNumber': {'type':'string', 'required': 'true'},
-                    'country': {'type':'string', 'required': 'true'},
-                    'zip': {'type':'string', 'required': 'true'},
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'firstName': { 'type': 'string'},
+                    'lastName' : { 'type': 'string'},
+                    'id' : { 'type': 'string'},
+                    'creditCardNumber': {'type':'string'},
+                    'expirationMonth': {'type':'integer'},
+                    'expirationYear': {'type':'integer'},
+                    'cvv': {'type':'string'},
+                    'city': {'type':'string'},
+                    'street': {'type':'string'},
+                    'houseNumber': {'type':'string'},
+                    'country': {'type':'string'},
+                    'zip': {'type':'string'},
                 },
+                'required': [ 'command', 'storeName', 'firstName', 'lastName', 'id', 'creditCardNumber', 'expirationMonth'
+                              'expirationYear', 'cvv', 'city', 'street', 'houseNumber', 'country', 'zip' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -448,9 +454,10 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'OpenStore',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -478,11 +485,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'WriteReview',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': { 'type':'string', 'required': 'true'},
-                    'review': { 'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': { 'type':'string'},
+                    'review': { 'type':'string'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'review' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -516,10 +524,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'WriteMessage',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'message': { 'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'message': { 'type':'string'}
                 },
+                'required': [ 'command', 'storeName', 'message' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -551,14 +560,15 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddProduct',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'description': {'type':'string', 'required': 'true'},
-                    'category': {'type':'string', 'required': 'true'},
-                    'price': {'type':'number', 'required': 'true'},
-                    'quantity': {'type':'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'description': {'type':'string'},
+                    'category': {'type':'string'},
+                    'price': {'type':'number'},
+                    'quantity': {'type':'integer'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'description', 'category', 'price', 'quantity' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -603,11 +613,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'EditProductName',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'newName': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'newName': {'type':'string'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'newName' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -641,11 +652,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'EditProductCategory',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'newCategory': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'newCategory': {'type':'string'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'newCategory' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -679,11 +691,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'EditProductDescription',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'newDescription': {'type':'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': { 'type': 'string'},
+                    'newDescription': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'newDescription' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -717,11 +730,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'EditProductPrice',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'newPrice': {'type':'number', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'newPrice': {'type':'number'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'newDescription' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -756,10 +770,10 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'EditProductQuantity',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': {'type':'string', 'required': 'true'},
-                    'newQuantity': {'type':'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': {'type':'string'},
+                    'newQuantity': {'type':'integer'}
                 },
                 'additionalProperties': false
             }";
@@ -1675,9 +1689,9 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemoveStoreManager',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string' }
                 },
                 'additionalProperties': false
             }";
