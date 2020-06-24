@@ -7,9 +7,9 @@ namespace SEWorkshop.DAL
 {
     class LocalDbContext : AppDbContext
     {
-        private const string DB_NAME = "AzamazonLocal.mdf";
+        private const string DB_NAME = "Database1.mdf";
         private static readonly string dbPath =
-            "C:\\Users\\neyem\\Desktop\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\Database1.mdf";
+            "C:\\Users\\amitv\\University\\SEworkshop\\SEWorkshop\\SEWorkshop\\DAL\\Database1.mdf";
 
         public LocalDbContext() : base(string.Format(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={0};Integrated Security=True", dbPath))
         {
