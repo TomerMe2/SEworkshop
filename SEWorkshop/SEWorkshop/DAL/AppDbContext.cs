@@ -576,7 +576,9 @@ namespace SEWorkshop.DAL
 
             modelBuilder.Entity<Purchase>()
                     .HasOptional(purchase => purchase.User)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     .WithMany(user => user.Purchases)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     .HasForeignKey(prchs => prchs.Username)
                     .WillCascadeOnDelete(false);
 

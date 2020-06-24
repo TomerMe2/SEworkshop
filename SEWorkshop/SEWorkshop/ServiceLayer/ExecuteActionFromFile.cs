@@ -882,13 +882,14 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddSingleProductQuantityPolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'minQuantity': { 'type': 'integer', 'required': 'true'},
-                    'minQuantity': { 'type': 'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'minQuantity': { 'type': 'integer'},
+                    'maxQuantity': { 'type': 'integer'}
                 },
+                'required': [ 'command', 'storeName', 'productName', 'operator', 'minQuantity', 'maxQuantity' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -932,11 +933,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddSystemDayPolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'dayOfWeek': {'type': 'string', 'enum': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'dayOfWeek': {'type': 'string', 'enum': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']}
                 },
+                'required': [ 'command', 'storeName', 'operator', 'dayOfWeek' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -978,11 +980,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddUserCityPolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'city': { 'type': 'string', 'required': 'true'}
+                    'command': { 'type': 'string' },
+                    'storeName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'city': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'operator', 'city' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1017,11 +1020,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddUserCountryPolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'country': { 'type': 'string', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'country': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'operator', 'country' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1056,12 +1060,13 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddWholeStoreQuantityPolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'minQuantity': { 'type': 'integer', 'required': 'true'},
-                    'maxQuantity': { 'type': 'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'minQuantity': { 'type': 'integer'},
+                    'maxQuantity': { 'type': 'integer'}
                 },
+                'required': [ 'command', 'storeName', 'operator', 'minQuantity', 'maxQuantity' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1100,10 +1105,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemovePolicy',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'indexInChain': { 'type': 'integer'}
                 },
+                'required': [ 'command', 'storeName', 'indexInChain' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1135,16 +1141,18 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddProductCategoryDiscount',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'categoryName': { 'type': 'string', 'required': 'true' },
-                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
-                    'percentage': { 'type': 'number', 'required': 'true' },
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true' },
-                    'discountId': { 'type': 'integer', 'required': 'true' },
-                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'categoryName': { 'type': 'string' },
+                    'deadline': { 'type': 'string', 'format': 'date-time'},
+                    'percentage': { 'type': 'number' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'] },
+                    'indexInChain': { 'type': 'integer'},
+                    'discountId': { 'type': 'integer'},
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False']}
                 },
+                'required': [ 'command', 'storeName', 'categoryName', 'deadline', 'percentage', 'operator', 'indexInChain',
+                'discountId', 'toLeft'],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1209,16 +1217,18 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddSpecificProductDiscount',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': { 'type': 'string', 'required': 'true' },
-                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
-                    'percentage': { 'type': 'number', 'required': 'true' },
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true' },
-                    'discountId': { 'type': 'integer', 'required': 'true' },
-                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'}
+                    'command': { 'type': 'string' },
+                    'storeName': { 'type': 'string' },
+                    'productName': { 'type': 'string' },
+                    'deadline': { 'type': 'string', 'format': 'date-time' },
+                    'percentage': { 'type': 'number' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'] },
+                    'indexInChain': { 'type': 'integer' },
+                    'discountId': { 'type': 'integer' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False'] }
                 },
+                'required': [ 'command', 'storeName', 'productName', 'deadline', 'percentage', 'operator', 'indexInChain',
+                              'discountId', 'toLeft'],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1283,19 +1293,20 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddBuySomeGetSomeDiscount',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
-                    'percentage': { 'type': 'number', 'required': 'true' },
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true' },
-                    'discountId': { 'type': 'integer', 'required': 'true' },
-                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'},
-                    'conditionProductName': { 'type': 'string', 'required': 'true'},
-                    'underDiscountProductName': { 'type': 'string', 'required': 'true'},
-                    'buySome': { 'type': 'integer', 'required': 'true' },
-                    'getSome': { 'type': 'integer', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'deadline': { 'type': 'string', 'format': 'date-time'},
+                    'percentage': { 'type': 'number'},
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'indexInChain': { 'type': 'integer'},
+                    'discountId': { 'type': 'integer'},
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False']},
+                    'conditionProductName': { 'type': 'string'},
+                    'underDiscountProductName': { 'type': 'string'},
+                    'buySome': { 'type': 'integer'},
+                    'getSome': { 'type': 'integer'}
                 },
+                'required': [ 'command', 'storeName', 'deadline', 'percentage', 'operator', 'indexInChain', 'discountId', 'toLeft', 'conditionProductName', 'underDiscountProductName', 'buySome', 'getSome' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1373,17 +1384,18 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddBuyOverDiscount',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'productName': { 'type': 'string', 'required': 'true' },
-                    'deadline': { 'type': 'string', 'required': 'true', 'format': 'date-time'},
-                    'percentage': { 'type': 'number', 'required': 'true' },
-                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies'], 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true' },
-                    'discountId': { 'type': 'integer', 'required': 'true' },
-                    'toLeft': {'type': 'string', 'enum': ['True', 'False'], 'required': 'true'},
-                    'minSum' : { 'type': 'number', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'productName': { 'type': 'string' },
+                    'deadline': { 'type': 'string', 'format': 'date-time'},
+                    'percentage': { 'type': 'number' },
+                    'operator': {'type': 'string', 'enum': ['And', 'Or', 'Xor', 'Implies']},
+                    'indexInChain': { 'type': 'integer' },
+                    'discountId': { 'type': 'integer' },
+                    'toLeft': {'type': 'string', 'enum': ['True', 'False']},
+                    'minSum' : { 'type': 'number' }
                 },
+                'required': [ 'command', 'storeName', 'productName', 'deadline', 'percentage', 'operator', 'discountId', 'indexInChain', 'discountId', 'toLeft', 'minSum' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1452,10 +1464,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemoveDiscount',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'indexInChain': { 'type': 'integer', 'required': 'true'}
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'indexInChain': { 'type': 'integer'}
                 },
+                'required': [ 'command', 'storeName', 'indexInChain' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1487,10 +1500,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddStoreOwner',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'username' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1526,10 +1540,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'AddStoreManager',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'username' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1565,11 +1580,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'SetPermissionsOfManager',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' },
-                    'authorization': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string'},
+                    'authorization': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'username', 'authorization' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1609,11 +1625,12 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemovePermissionsOfManager',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' },
-                    'authorization': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string'},
+                    'authorization': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'username', 'authorization' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1653,10 +1670,11 @@ namespace SEWorkshop.ServiceLayer
                 'description': 'RemoveStoreOwner',
                 'type': 'object',
                 'properties': {
-                    'command': { 'type': 'string', 'required': 'true'},
-                    'storeName': { 'type': 'string', 'required': 'true'},
-                    'username': { 'type': 'string', 'required': 'true' }
+                    'command': { 'type': 'string'},
+                    'storeName': { 'type': 'string'},
+                    'username': { 'type': 'string'}
                 },
+                'required': [ 'command', 'storeName', 'username' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
@@ -1696,6 +1714,7 @@ namespace SEWorkshop.ServiceLayer
                     'storeName': { 'type': 'string'},
                     'username': { 'type': 'string' }
                 },
+                'required': [ 'command', 'storeName', 'username' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
