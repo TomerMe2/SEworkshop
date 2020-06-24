@@ -584,27 +584,22 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.Login("ActionsTest4", "ActionsTest4", "1234");
 
             var now = DateTime.Now;
-            var allKinds = new List<SEWorkshop.Enums.KindOfUser> { Enums.KindOfUser.Admin, Enums.KindOfUser.Guest,
+            var allKinds = new List<Enums.KindOfUser> { Enums.KindOfUser.Admin, Enums.KindOfUser.Guest,
                 Enums.KindOfUser.LoggedInNoOwnYesManage,
                 Enums.KindOfUser.LoggedInNotOwnNotManage, Enums.KindOfUser.LoggedInYesOwn};
 
-            var dctAll = Manager.GetUseRecord("ActionsTest1", now, now, allKinds);
+            var dctAll = Manager.GetUseRecord("ActionsTest1", now, now);
             Assert.IsTrue((dctAll.Values).First().Values.First() >= 5);
 
-            var dctOnlyGuest = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Guest });
-            Assert.IsTrue((dctOnlyGuest.Values).First().Values.First() >= 1);
+            Assert.IsTrue((dctAll.Values).First()[Enums.KindOfUser.Guest] >= 1);
 
-            var dctOnlyAdmin = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.Admin });
-            Assert.IsTrue((dctOnlyAdmin.Values).First().Values.First() >= 1);
+            Assert.IsTrue((dctAll.Values).First()[Enums.KindOfUser.Admin] >= 1);
 
-            var dctOnlyUserNoOwnNoManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNotOwnNotManage });
-            Assert.IsTrue((dctOnlyUserNoOwnNoManage.Values).First().Values.First() >= 1);
+            Assert.IsTrue((dctAll.Values).First()[Enums.KindOfUser.LoggedInNotOwnNotManage] >= 1);
 
-            var dctOnlyUserYesOwn = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInYesOwn });
-            Assert.IsTrue((dctOnlyUserYesOwn.Values).First().Values.First() >= 1);
+            Assert.IsTrue((dctAll.Values).First()[Enums.KindOfUser.LoggedInYesOwn] >= 1);
 
-            var dctOnlyUserNoOwnYesManage = Manager.GetUseRecord("ActionsTest1", now, now, new List<Enums.KindOfUser>() { Enums.KindOfUser.LoggedInNoOwnYesManage });
-            Assert.IsTrue((dctOnlyUserNoOwnYesManage.Values).First().Values.First() >= 1);
+            Assert.IsTrue((dctAll.Values).First()[Enums.KindOfUser.LoggedInNoOwnYesManage] >= 1);
         }
     }
 }

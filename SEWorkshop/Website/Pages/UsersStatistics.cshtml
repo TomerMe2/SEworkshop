@@ -57,21 +57,42 @@
                 <tbody>
                     @foreach (DateTime day in Model.SelectedStatistics.Keys)
                     {
-                        <tr>
-                            <td style="text-align: center">@day.ToShortDateString()</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest]</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
-                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin]</td>
-                            <td style="text-align: center">
-                                @(Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest] +
-                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage] +
-                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage] +
-                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn] +
-                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin])
-                            </td>
-                        </tr>
+                        if (day.Year == Model.DateTimeNow.Year && day.Month == Model.DateTimeNow.Month && day.Day == Model.DateTimeNow.Day)
+                        {
+                            <tr>
+                                <td style="text-align: center">@day.ToShortDateString()</td>
+                                <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest]</td>
+                                <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                                <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                                <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                                <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin]</td>
+                                <td style="text-align: center">
+                                    @(Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin])
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td style="text-align: center">@day.ToShortDateString()</td>
+                                <td id="GuestsNum" style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest]</td>
+                                <td id="LoggedInNotOwnNotManageNum" style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                                <td id="LoggedInNoOwnYesManageNum" style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                                <td id="LoggedInYesOwnNum" style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                                <td id="AdminNum" style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin]</td>
+                                <td id="TotalNum" style="text-align: center">
+                                    @(Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn] +
+                                    Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin])
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
