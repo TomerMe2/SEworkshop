@@ -1,35 +1,39 @@
 [
   {
     "command": "Register",
-    "username": "Noa",
-    "password": "1234"
+    "username": "U1",
+    "password": "P1"
   },
   {
     "command": "Register",
-    "username": "Idan",
-    "password": "1234"
+    "username": "U2",
+    "password": "P2"
+  },
+  {
+    "command": "Register",
+    "username": "U11",
+    "password": "P11"
+  },
+  {
+    "command": "Register",
+    "username": "U12",
+    "password": "P12"
+  },
+  {
+    "command": "Register",
+    "username": "U13",
+    "password": "P13"
   },
   {
     "command": "Login",
-    "username": "Noa",
-    "password": "1234"
+    "username": "U11",
+    "password": "P11"
   },
   {
     "command": "OpenStore",
-    "storeName": "Zara"
+    "storeName": "S2"
   },
   {
-    "command": "AddProduct",
-    "storeName": "Zara",
-    "productName": "T-shirt",
-    "description": "white shirt",
-    "category": "women",
-    "price": 4.5,
-    "quantity": 80
-  },
-  {
-    "command": "AddAlwaysTruePolicy",
-    "storeName": "Zara",
-    "operator": "And"
+    "command":  "Logout"
   }
 ]
