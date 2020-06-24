@@ -1704,6 +1704,7 @@ namespace SEWorkshop.ServiceLayer
                     'storeName': { 'type': 'string'},
                     'username': { 'type': 'string' }
                 },
+                'required': [ 'command', 'storeName', 'username' ],
                 'additionalProperties': false
             }";
             JSchema schema = JSchema.Parse(schemaJson);
