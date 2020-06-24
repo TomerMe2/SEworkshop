@@ -9,7 +9,7 @@
 @{
     if (!Model.UserManager.IsAdministrator(Model.HttpContext.Session.Id))
     {
-        <h1>You are not an admin. Go Away.</h1>
+        <h1>Only admin is allowed to watch all purchases</h1>
     }
     else
     {

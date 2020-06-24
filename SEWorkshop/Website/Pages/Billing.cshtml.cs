@@ -66,12 +66,12 @@ namespace Website.Pages
             {
                 expirationDate = new DateTime(int.Parse(ExpirationYear), int.Parse(ExpirationMonth), 1);
             }
-            catch (SupplyCancellationHasFailedException e)
+            catch (SupplyCancellationHasFailedException)
             {
                 ErrorMsg = "Supply error, please contact the store";
                 return new PageResult();
             }
-            catch (BillingCancellationHasFailedException e)
+            catch (BillingCancellationHasFailedException)
             {
                 ErrorMsg = "Billing error, please contact the store";
                 return new PageResult();

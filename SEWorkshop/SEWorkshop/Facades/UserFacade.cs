@@ -5,6 +5,7 @@ using SEWorkshop.Models;
 using SEWorkshop.Adapters;
 using SEWorkshop.DAL;
 using System.Linq;
+using SEWorkshop.Enums;
 
 namespace SEWorkshop.Facades
 {
@@ -221,21 +222,27 @@ namespace SEWorkshop.Facades
             return output;
         }
 
-        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds)
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo)
         {
             dateFrom = new DateTime(dateFrom.Year, dateFrom.Month, dateFrom.Day);
             dateTo = new DateTime(dateTo.Year, dateTo.Month, dateTo.Day).AddDays(1);
 
             var records = DatabaseProxy.Instance.UseRecords.ToList().Where(record => record.Timestamp.CompareTo(dateFrom) >= 0
-                                                                    && record.Timestamp.CompareTo(dateTo) < 0
-                                                                    && kinds.Contains(record.Kind));
+                                                                    && record.Timestamp.CompareTo(dateTo) < 0);
             var stamps = records.Select(record => new DateTime(record.Timestamp.Year, record.Timestamp.Month,
                                                                record.Timestamp.Day));
-            var dayToAmount = new Dictionary<DateTime, int>();
+            var dayToAmount = new Dictionary<DateTime, IDictionary<KindOfUser, int>>();
             DateTime runningOn = dateFrom;
             while (runningOn <= dateTo)
             {
-                dayToAmount[runningOn] = 0;
+                dayToAmount[runningOn] = new Dictionary<KindOfUser, int>
+                {
+                    { KindOfUser.Guest, 0 },
+                    { KindOfUser.LoggedInNotOwnNotManage, 0 },
+                    { KindOfUser.LoggedInNoOwnYesManage, 0 },
+                    { KindOfUser.LoggedInYesOwn, 0 },
+                    { KindOfUser.Admin, 0 }
+                };
                 runningOn = runningOn.AddDays(1);
             }
             dayToAmount.Remove(runningOn.AddDays(-1));
@@ -243,7 +250,7 @@ namespace SEWorkshop.Facades
             foreach (var record in records)
             {
                 var actualDate = new DateTime(record.Timestamp.Year, record.Timestamp.Month, record.Timestamp.Day);
-                dayToAmount[actualDate]++;
+                (dayToAmount[actualDate])[record.Kind]++;
             }
             return dayToAmount;
         }

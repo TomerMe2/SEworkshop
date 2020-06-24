@@ -76,7 +76,7 @@ namespace SEWorkshop.Facades
         public void RemoveDiscount(DataLoggedInUser user, string store, int indexInChain);
         public IEnumerable<string> GetRegisteredUsers();
         public double GetIncomeInDate(DateTime date);
-        public IDictionary<DateTime, int> GetUseRecord(DateTime dateFrom, DateTime dateTo, List<SEWorkshop.Enums.KindOfUser> kinds);
+        public IDictionary<DateTime, IDictionary<KindOfUser, int>> GetUseRecord(DateTime dateFrom, DateTime dateTo);
         public IDictionary<KindOfUser, int> GetUsersByCategory(DateTime today);
     }
 }
