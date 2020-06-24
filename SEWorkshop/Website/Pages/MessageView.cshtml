@@ -20,7 +20,7 @@
         {
             <div class="card" style="width: 100%">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2">@currMsg.WrittenBy.Username wrote this</h6>
+                    <h6 class="card-subtitle mb-2">@currMsg.WrittenBy.Username:</h6>
                     <p class="card-text">@currMsg.Description</p>
                 </div>
             </div>
@@ -31,11 +31,10 @@
             <div class="form-group">
                 <input type="hidden" name="storeWritingTo" value="@Model.StoreWritingTo?.Name">
                 <input type="hidden" name="userNameWritingTo" value="@Model.UserNameWritingTo">
-                <label for="msg_txt_area">Write your message here</label>
-                <textarea class="form-control" id="msg_txt_area" rows="3" name="content"></textarea>
+                <textarea class="form-control" id="msg_txt_area" rows="3" name="content" placeholder="Write your message here..."></textarea>
                 @if (Model.CanRespond)
                 {
-                    <button type="submit" class="form-control btn btn-primary">Send</button>
+                    <button type="submit" style="width: 20%" class="form-control btn btn-primary">Send</button>
                 }
             </div>
         </form>

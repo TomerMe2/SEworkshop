@@ -31,9 +31,50 @@
 
         <form class="statisticsform" method="post">
             <label for="date">Start Date</label>
-            <input type="date" id="date" name="date">
+            <input type="date" id="date" name="StartDate">
             <label for="date">End Date</label>
-            <input type="date" id="date" name="date">
+            <input type="date" id="date" name="EndDate">
             <button class="submit" type="submit" id="submit">Show Statistics</button>
+            <text class="alert-danger">@Model.Error</text>
         </form>
+
+        @if (Model.Selected)
+        {
+        <h4>from @Model.StartDate.ToShortDateString() to @Model.EndDate.ToShortDateString() </h4>
+        <div style="overflow-x:auto">
+            <table class="table table-bordered table-responsive table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th style="text-align: center">Date</th>
+                        <th style="text-align: center">Guests</th>
+                        <th style="text-align: center">Registered (not managers or owners)</th>
+                        <th style="text-align: center">Store Managers (but not owners)</th>
+                        <th style="text-align: center">Store Owners</th>
+                        <th style="text-align: center">System Admins</th>
+                        <th style="text-align: center">Total Entries</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DateTime day in Model.SelectedStatistics.Keys)
+                    {
+                        <tr>
+                            <td style="text-align: center">@day.ToShortDateString()</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn]</td>
+                            <td style="text-align: center">@Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin]</td>
+                            <td style="text-align: center">
+                                @(Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Guest] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNotOwnNotManage] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInNoOwnYesManage] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.LoggedInYesOwn] +
+                                Model.SelectedStatistics[day][SEWorkshop.Enums.KindOfUser.Admin])
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
     </div>
