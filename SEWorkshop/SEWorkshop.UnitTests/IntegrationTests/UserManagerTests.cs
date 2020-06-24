@@ -519,7 +519,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         [Test]
         public void StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory()
         {
-            Manager.Login(DEF_ID, "admin", "sadnaTeam");
+            Manager.Login(DEF_ID, "A1", "sadnaTeam");
             Manager.OpenStore(DEF_ID, "StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory");
             var result = Manager.StorePurchaseHistory(DEF_ID, "StorePurchaseHistory_StoreHasPurchases_ReturnPurchaseHistory");
             ICollection<Purchase> expected = new List<Purchase>();
@@ -571,7 +571,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             Manager.AccessSystem("ActionsTest5");
 
             //admin
-            Manager.Login("ActionsTest1", "admin", "sadnaTeam");
+            Manager.Login("ActionsTest1", "A1", "sadnaTeam");
 
             //logged in user no own no manager
             Manager.Register("ActionsTest2", "ActionsTest2", "1234");

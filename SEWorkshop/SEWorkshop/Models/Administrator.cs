@@ -11,7 +11,7 @@ namespace SEWorkshop.Models
     public class Administrator : LoggedInUser
     {
 
-        public static readonly string ADMIN_USER_NAME = "admin";
+        public static readonly string ADMIN_USER_NAME = "A1";
         public ICollection<Purchase> PurchasesToView { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
