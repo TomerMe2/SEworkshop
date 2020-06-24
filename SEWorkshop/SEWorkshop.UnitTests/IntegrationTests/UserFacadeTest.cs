@@ -91,7 +91,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             try
             {
-                UsrFacade.Register("admin", securityAdaprer.Encrypt("sadnaTeam"));
+                UsrFacade.Register("A1", securityAdaprer.Encrypt("sadnaTeam"));
                 Assert.Fail();
             }
             catch (UserAlreadyExistsException)
@@ -324,7 +324,7 @@ namespace SEWorkshop.Tests.IntegrationTests
             UsrFacade.Purchase(uphria_user1, uphria_user1.Cart.Baskets.ElementAt(0), peb_creditCardNumber, expirationDate,
                     CVV, peb_address, NAME, ID);
             
-            LoggedInUser uphria_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));
+            LoggedInUser uphria_admin1 = UsrFacade.GetLoggedInUser("A1", securityAdaprer.Encrypt("sadnaTeam"));
             var result = UsrFacade.UserPurchaseHistory(uphria_admin1, "uphria_user1");
                         
             CollectionAssert.AreEqual(UsrFacade.PurchaseHistory(uphria_user1), result);
@@ -355,7 +355,7 @@ namespace SEWorkshop.Tests.IntegrationTests
         {
             LoggedInUser sphnp_user1 = UsrFacade.Register("sphnp_user1", securityAdaprer.Encrypt("1111"));
             Store sphnp_store1 = Store.StoreBuilder(sphnp_user1, "sphnp_store1");
-            LoggedInUser sphnp_admin1 = UsrFacade.GetLoggedInUser("admin", securityAdaprer.Encrypt("sadnaTeam"));
+            LoggedInUser sphnp_admin1 = UsrFacade.GetLoggedInUser("A1", securityAdaprer.Encrypt("sadnaTeam"));
             Assert.That(UsrFacade.StorePurchaseHistory(sphnp_admin1, sphnp_store1), Is.Empty);
         }
         

@@ -369,7 +369,7 @@ namespace SEWorkshop.Tests.AcceptanceTests
 			Assert.Throws<UserHasNoPermissionException>(delegate { Bridge.StorePurchaseHistory(DEF_SID, "store1"); });
 			Assert.Throws<UserHasNoPermissionException>(delegate { Bridge.UserPurchaseHistory(DEF_SID, "user"); });
 			Bridge.Logout(DEF_SID);
-			Bridge.Login(DEF_SID, "admin", "sadnaTeam");
+			Bridge.Login(DEF_SID, "A1", "sadnaTeam");
 			Assert.That(() => Bridge.StorePurchaseHistory(DEF_SID, "store1"), Throws.Nothing);
 			Assert.That(() => Bridge.UserPurchaseHistory(DEF_SID, "user"), Throws.Nothing);
 		}

@@ -38,9 +38,10 @@ namespace Website.Pages
             {
                 UserManager.Login(HttpContext.Session.Id, Username, Password);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Error = e.ToString();
+                //Error = e.ToString();
+                Error = "Can't login";
                 return new PageResult();
             }
             return RedirectToPage("./Stores");

@@ -39,7 +39,7 @@ namespace Website.Hubs
         {
             foreach (var keyVal in ConnectionsDict)
             {
-                if (keyVal.Value.Equals("admin"))
+                if (keyVal.Value.Equals("A1"))
                 {
                     await Hub.Clients.Client(keyVal.Key).SendAsync("NewUseReport", arg.ToString());
                 }
